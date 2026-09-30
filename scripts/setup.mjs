@@ -5,6 +5,6 @@ try {
 } catch {
   await copyFile('.env.example', '.env');
   console.log(
-    'Created .env. Supabase public settings are ready. Add your Apple Maps token when available.',
+    'Created .env. The free map and Supabase public settings are ready. No Maps token needed.',
   );
 }

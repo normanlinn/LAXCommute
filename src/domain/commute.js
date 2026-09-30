@@ -90,6 +90,19 @@ export function mapsLink(stop) {
     ? `https://maps.apple.com/?q=${encodeURIComponent(stop.name)}&ll=${stop.lat},${stop.lon}`
     : 'https://maps.apple.com/?q=Los+Angeles+International+Airport';
 }
+export function directionsLinks(stop) {
+  const destination = `${stop.lat},${stop.lon}`;
+  return [
+    {
+      label: 'Apple Maps',
+      href: `https://maps.apple.com/?${new URLSearchParams({ daddr: destination, dirflg: 'w' })}`,
+    },
+    {
+      label: 'Google Maps',
+      href: `https://www.google.com/maps/dir/?${new URLSearchParams({ api: '1', destination, travelmode: 'walking' })}`,
+    },
+  ];
+}
 export function decodePolyline(encoded) {
   if (typeof encoded !== 'string') return [];
   const points = [];

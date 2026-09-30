@@ -20,7 +20,6 @@ import {
   ROUTES,
   boardingStops,
   distanceMeters,
-  mapsLink,
   nearestStop,
   routeForLot,
   savedBoardingStop,
@@ -31,7 +30,8 @@ import { useCommute } from './hooks/useCommute';
 import { useLive, useOnline, useRoute, useSnapshotFresh } from './hooks/useShuttle';
 import Arrivals from './components/Arrivals';
 import InstallApp from './components/InstallApp';
-const AppleMap = lazy(() => import('./components/AppleMap'));
+import DirectionsButton from './components/DirectionsButton';
+const ShuttleMap = lazy(() => import('./components/ShuttleMap'));
 const AccountPanel = lazy(() => import('./components/AccountPanel'));
 const SavedCommute = lazy(() => import('./components/SavedCommute'));
 const EMPTY = Object.freeze([]);
@@ -213,7 +213,7 @@ export default function App() {
                 </div>
               </div>
               <Suspense fallback={<div className="map-surface map-loading">Opening map…</div>}>
-                <AppleMap
+                <ShuttleMap
                   route={route}
                   stops={stops}
                   paths={paths}
@@ -403,16 +403,7 @@ export default function App() {
                   <p>Select another route to check its actual boarding stops and departures.</p>
                 </div>
               </details>
-              {selectedStop && (
-                <a
-                  className="directions-link"
-                  href={mapsLink(selectedStop)}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Open boarding stop in Apple Maps <ExternalLink size={14} />
-                </a>
-              )}
+              {selectedStop && <DirectionsButton stop={selectedStop} />}
             </aside>
           </>
         ) : (

@@ -1,6 +1,6 @@
 # LAXCommute
 
-**Your airport. Your commute.** A responsive React PWA for LAX employee shuttles, built with Tailwind CSS, DaisyUI, Apple Maps, and Supabase.
+**Your airport. Your commute.** A responsive React PWA for LAX employee shuttles, built with Tailwind CSS, DaisyUI, Leaflet/OpenStreetMap, and Supabase.
 
 Check real shuttle predictions, choose a boarding stop, and keep your everyday terminal and parking lot saved. Install the website on an iPhone or Android home screen.
 
@@ -18,12 +18,16 @@ npm run dev
 
 Open the local address printed by Vite, usually **http://localhost:5173**. If SSH is not configured, clone with `https://github.com/normanlinn/LAXCommute.git` instead.
 
-`npm run setup` creates your private, ignored `.env` file without overwriting an existing one. The Supabase URL and **public publishable key** are already supplied. The embedded Apple map needs your own Maps token; departures work without it.
+`npm run setup` creates your private, ignored `.env` file without overwriting an existing one. The Supabase URL and **public publishable key** are already supplied. The free embedded map works without a map token.
+
+If you see `styleText` or Rolldown errors on Node 20.11.1, update Node first. If npm reports a permission error in `~/.npm`, use `npm ci --cache "$HOME/.npm-laxcommute"` instead of running npm with sudo.
 
 ## What works
 
 - South, East, and West employee shuttle routes.
 - Live arrival predictions and reported bus GPS positions from the existing LAX tracker feed.
+- Interactive free map with route lines, tappable stops, bus markers, touch zoom, and camera controls.
+- A directions chooser for Apple Maps or Google Maps, using the currently selected boarding stop.
 - A visible **To work / To parking** direction switch and **Go home** navigation.
 - Saved terminal and exact boarding stops for both directions.
 - A temporary stop for today, without changing your saved commute.
@@ -35,25 +39,39 @@ Open the local address printed by Vite, usually **http://localhost:5173**. If SS
 - Responsive phone, tablet, and desktop layouts; reduced-motion support.
 - PWA manifest, iPhone/Android icons, install help, offline shell, and an explicit update prompt.
 
-## Apple Maps setup
+## Free maps and phone directions
 
-This project uses **Apple MapKit JS**, not OpenFreeMap or another map provider. MapKit JS can run in browsers on iPhone and Android.
+The default embedded map uses **Leaflet + OpenStreetMap**, not OpenFreeMap. No Apple Developer membership, credit card, or Maps API key is needed for this default.
+
+The phone's native map renderer cannot be embedded directly inside a PWA. Use **Directions to this stop** to choose Apple Maps or Google Maps for walking directions. Supported map links can open the corresponding installed app; otherwise they open its web experience. The PWA does not automatically choose every phone's system-default maps app.
+
+OpenStreetMap's public tile service is **best effort**, with no guaranteed availability or unlimited capacity. The map displays attribution, loads only the visible tiles directly in the browser, and uses normal browser HTTP caching. It does not prefetch tiles or offer offline map downloads. Monitor usage as your audience grows; 500–1,000 registered users is not a guarantee that the public tile service can support every traffic pattern.
+
+To switch to another tile provider later, set `VITE_MAP_TILE_URL` and `VITE_MAP_ATTRIBUTION` to that provider's URL template and required attribution, then rebuild. Follow that provider's separate limits and terms.
+
+References: [Leaflet](https://leafletjs.com/), [OpenStreetMap tile policy](https://operations.osmfoundation.org/policies/tiles/), [Apple map links](https://developer.apple.com/library/archive/featuredarticles/iPhoneURLScheme_Reference/MapLinks/MapLinks.html), [Google Maps URLs](https://developers.google.com/maps/documentation/urls/get-started).
+
+## Optional Apple Maps setup
+
+The Apple MapKit JS implementation is available as an optional alternative. MapKit JS can run in browsers on iPhone and Android.
 
 1. Open [Apple Developer](https://developer.apple.com/account).
 2. Go to **Certificates, Identifiers & Profiles → Services → Maps**.
 3. Create a **MapKit JS** Maps token restricted to your website domain.
-4. Put it in `.env` as `VITE_APPLE_MAPS_TOKEN=your_token`.
+4. Put it in `.env` as `VITE_APPLE_MAPS_TOKEN=your_token`, and set `VITE_MAP_PROVIDER=apple`.
 5. Restart the dev server. Rebuild after changing it for a hosted release.
 
 For development, use a separate short-lived test token accepted for your local origin. A domain-restricted production token may not authorize localhost. Keep your production token restricted to the real deployed domain. Only the browser Maps token belongs in this setting; never put Apple's `.p8` signing key into frontend code.
 
-Apple documents a daily allowance of 250,000 map views and 25,000 service calls **per Apple Developer Program membership**. That program normally costs **US$99/year**. Free Cloudflare hosting does not remove Apple's account requirements. If you do not have access to create a valid Maps token, the embedded map stays unavailable; **Open Apple Maps** links and the live departure list still work. This project does not bypass Apple's requirements.
+Apple documents a daily allowance of 250,000 map views and 25,000 service calls **per Apple Developer Program membership**. That program normally costs **US$99/year**. Free Cloudflare hosting does not remove Apple's account requirements. Keep `VITE_MAP_PROVIDER=openstreetmap` for the free default if you do not have an Apple token.
 
 References: [MapKit JS](https://developer.apple.com/maps/web/), [Maps tokens](https://developer.apple.com/help/account/service-configurations/maps-tokens), [membership fees](https://developer.apple.com/programs/whats-included/).
 
 ## Host for free on Cloudflare
 
 The app uses one Cloudflare Workers project: static React assets are served without invoking the API Worker; `/api/*` runs the live-data gateway. A separate paid server, Pages project, custom domain, or Apple App Store submission is not required.
+
+GitHub stores the code. **GitHub Pages alone cannot run this project's live bus API**, so deploy the complete app to Cloudflare Workers. See the step-by-step [hosting guide](docs/HOSTING.md).
 
 ### Option A — deploy from your computer
 
@@ -66,21 +84,22 @@ Wrangler prints your actual `https://...workers.dev` address. Log in to your own
 
 ### Option B — automatic releases from GitHub
 
-In Cloudflare, go to **Workers & Pages → Create → connect a Git repository**. Choose `normanlinn/LAXCommute` and the `main` branch.
+In Cloudflare, go to **Workers & Pages → Create application → Import a repository**. Choose `normanlinn/LAXCommute` and the `main` branch. Keep the Worker name **`laxcommute-web`**, matching `wrangler.jsonc`.
 
 Use:
 
-| Setting        | Value                                                     |
-| -------------- | --------------------------------------------------------- |
-| Build command  | `npm run build`                                           |
-| Deploy command | `npx wrangler deploy`                                     |
-| Root directory | Repository root                                           |
-| Node version   | `24`                                                      |
-| Build variable | `VITE_APPLE_MAPS_TOKEN` with your domain-restricted token |
+| Setting        | Value                                 |
+| -------------- | ------------------------------------- |
+| Build command  | `npm run build`                       |
+| Deploy command | `npx wrangler deploy`                 |
+| Root directory | Repository root                       |
+| Node version   | `24`                                  |
+| Node variable  | `NODE_VERSION=24`                     |
+| Maps token     | Not required for the default free map |
 
 If needed, add `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` as build variables. They are public browser settings, not server secrets. Cloudflare's Git integration owns its own deploy credential; do not commit an API token.
 
-On the first release, you can leave the Maps token empty to obtain your final domain, create a token for that domain, then rebuild. Changing a `VITE_` value requires a new build.
+Changing a `VITE_` value requires a new build. The free map and existing Supabase public settings work with no extra build variables.
 
 The free tier currently allows **100,000 dynamic Worker requests/day**. Static asset requests are free and unlimited. The default **60-second refresh** only runs while the trip screen is open and the page is visible. Server caching reduces upstream LAX requests but incoming Worker requests still count. Free-plan exhaustion can temporarily stop API responses; this code does not enable automatic paid upgrades.
 
@@ -115,12 +134,12 @@ HTTPS is required for production installation and location access. An HTTP LAN a
 
 - One combined live request for the selected route/stop per refresh, rather than independent duplicate arrival/map polling.
 - TanStack Query shares requests, cancels unused requests, caches stops, and handles retries.
-- Apple Maps, account UI, settings UI, and the Supabase SDK have separate chunks.
+- Free map, optional Apple Maps, account UI, settings UI, and the Supabase SDK have separate chunks.
 - Route polylines are decoded when route data loads, not on every countdown tick.
 - The map stays mounted while the user views their trip; markers update by ID and camera changes are explicit.
 - Countdown updates are isolated from the map; refresh pauses on hidden pages and account/settings screens.
 - Predictions expire after 90 seconds; GPS positions expire after 180 seconds. Scheduled predictions are labeled separately.
-- Service worker caching covers the app shell only. **Arrivals, API responses, authentication, and Apple map data are not cached for offline live display.**
+- Service worker caching covers the app shell only. **Arrivals, API responses, authentication, and map tiles are not cached for offline live display.**
 
 This is the web version of the previous SwiftUI prototype. It does not include an Apple Watch app. Background push notifications and automatic departure detection while the app is closed are future work; this version gives departure advice while the app is open.
 
@@ -128,7 +147,7 @@ This is the web version of the previous SwiftUI prototype. It does not include a
 
 ```text
 src/
-  components/     Screens, Apple map, arrivals, installation help
+  components/     Screens, maps, directions, arrivals, installation help
   components/ui/  Shared DaisyUI components
   domain/         Pure commute, distance, route-shape, and prediction rules
   hooks/          Query, account, and saved-commute state

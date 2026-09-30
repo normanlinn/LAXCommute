@@ -4,5 +4,10 @@ export const config = Object.freeze({
     import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
     'sb_publishable_AkClR2bp72pGci-NAX1DBQ_8INzT0v1',
   appleMapsToken: import.meta.env.VITE_APPLE_MAPS_TOKEN || '',
+  mapProvider: import.meta.env.VITE_MAP_PROVIDER === 'apple' ? 'apple' : 'openstreetmap',
+  mapTileUrl: import.meta.env.VITE_MAP_TILE_URL || 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+  mapAttribution:
+    import.meta.env.VITE_MAP_ATTRIBUTION ||
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   refreshInterval: Math.max(30_000, Number(import.meta.env.VITE_REFRESH_INTERVAL_MS) || 60_000),
 });

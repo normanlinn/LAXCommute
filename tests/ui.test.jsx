@@ -35,7 +35,9 @@ vi.mock('../src/hooks/useShuttle', () => ({
 vi.mock('virtual:pwa-register/react', () => ({
   useRegisterSW: () => ({ needRefresh: [false, vi.fn()], updateServiceWorker: vi.fn() }),
 }));
-vi.mock('../src/components/AppleMap', () => ({ default: () => <div aria-label="Apple map" /> }));
+vi.mock('../src/components/ShuttleMap', () => ({
+  default: () => <div aria-label="Shuttle map" />,
+}));
 beforeEach(() => {
   auth.signInWithPassword.mockReset().mockResolvedValue({ error: null });
   auth.signUp.mockReset().mockResolvedValue({ data: { session: null }, error: null });
@@ -54,6 +56,23 @@ beforeEach(() => {
 });
 afterEach(cleanup);
 describe('commute UI', () => {
+  it('offers walking directions to the currently selected stop in Apple or Google Maps', async () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: 'Go home' }));
+    fireEvent.change(screen.getByRole('combobox', { name: 'Boarding stop for this trip' }), {
+      target: { value: '2' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Directions to this stop' }));
+    expect(screen.getByRole('dialog', { name: 'Open directions' })).toBeTruthy();
+    const apple = new URL(screen.getByRole('link', { name: 'Apple Maps' }).href);
+    const google = new URL(screen.getByRole('link', { name: 'Google Maps' }).href);
+    expect(apple.searchParams.get('daddr')).toBe('33.95,-118.4');
+    expect(apple.searchParams.get('dirflg')).toBe('w');
+    expect(google.searchParams.get('destination')).toBe('33.95,-118.4');
+    expect(google.searchParams.get('travelmode')).toBe('walking');
+    fireEvent.click(screen.getByRole('button', { name: 'Close directions' }));
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+  });
   it('shows a return-to-parking flow and preserves the usual terminal after a daily override', async () => {
     render(<App />);
     fireEvent.click(screen.getByRole('button', { name: 'Go home' }));

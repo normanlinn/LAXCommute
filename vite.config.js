@@ -37,7 +37,7 @@ export default defineConfig(({ mode }) => ({
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/api\//],
         cleanupOutdatedCaches: true,
-        // No runtime caching: live arrivals, auth, and Apple map data stay online-only.
+        // No runtime caching: live arrivals, auth, and map tiles stay online-only.
       },
       devOptions: { enabled: false },
     }),

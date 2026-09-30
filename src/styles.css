@@ -234,11 +234,92 @@ h3,
   border-radius: 24px;
   overflow: hidden;
   position: relative;
+  isolation: isolate;
   border: 1px solid #dce6e0;
 }
-.apple-map {
+.apple-map,
+.shuttle-map {
   width: 100%;
   height: 100%;
+}
+.shuttle-map.leaflet-container {
+  background: #e7eeeb;
+  font-family: inherit;
+}
+.shuttle-map.leaflet-container .leaflet-bar {
+  border: 1px solid #dce6e0;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 3px 12px #163a2c12;
+}
+.shuttle-map.leaflet-container .leaflet-bar a {
+  width: 44px;
+  height: 44px;
+  line-height: 44px;
+  color: #122b32;
+}
+.shuttle-map.leaflet-container .leaflet-control-attribution {
+  font-size: 10px;
+  line-height: 1.5;
+  background: #ffffffeb;
+}
+.shuttle-map .leaflet-tooltip {
+  max-width: 240px;
+  white-space: normal;
+  border: 1px solid #dce6e0;
+  border-radius: 10px;
+  padding: 8px 11px;
+  color: #122b32;
+}
+.shuttle-marker {
+  display: grid;
+  place-items: center;
+  background: none;
+  border: 0;
+}
+.shuttle-marker:focus-visible {
+  outline: 3px solid #266beb;
+  border-radius: 50%;
+}
+.map-marker-dot {
+  display: block;
+  width: 19px;
+  height: 19px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: var(--marker-color);
+  box-shadow: 0 2px 7px #122b3240;
+}
+.map-marker-dot.marker-selected {
+  width: 24px;
+  height: 24px;
+  outline: 4px solid #ffffff80;
+}
+.map-marker-dot.marker-bus {
+  display: grid;
+  place-items: center;
+  width: 33px;
+  height: 33px;
+  border-radius: 11px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+}
+.map-marker-dot.marker-you {
+  background: #266beb;
+  outline: 7px solid #266beb30;
+}
+.map-tile-warning {
+  position: absolute;
+  z-index: 500;
+  left: 12px;
+  right: 12px;
+  bottom: 40px;
+  background: #ffffffed;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 12px;
+  line-height: 1.5;
 }
 .map-placeholder {
   position: absolute;
@@ -282,6 +363,7 @@ h3,
 }
 .map-hint {
   position: absolute;
+  z-index: 500;
   left: 16px;
   top: 16px;
   background: #ffffffeb;
@@ -291,6 +373,7 @@ h3,
   gap: 7px;
   align-items: center;
   font-size: 12px;
+  pointer-events: none;
 }
 .dot {
   width: 6px;
@@ -750,9 +833,16 @@ input::placeholder {
   gap: 7px;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
-  color: #8c9f91;
+  font-size: 12px;
+  color: #607970;
   margin-top: 20px;
+  width: 100%;
+  min-height: 44px;
+}
+.directions-options {
+  display: grid;
+  gap: 12px;
+  margin-top: 22px;
 }
 .bottom-nav {
   position: fixed;
