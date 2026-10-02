@@ -4,7 +4,7 @@ import { directionsLinks } from '../domain/commute';
 import Button from './ui/Button';
 import Dialog from './ui/Dialog';
 
-export default function DirectionsButton({ stop }) {
+export default function DirectionsButton({ stop }: { stop: import('../types').Stop }) {
   const [open, setOpen] = useState(false);
   const titleId = useId();
   return (

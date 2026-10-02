@@ -1,3 +1,4 @@
+import type { Commute } from '../types';
 import { useEffect, useState } from 'react';
 import { normalizeCommute } from '../domain/commute';
 import { getAuthClient } from '../services/auth';
@@ -5,7 +6,7 @@ import { useAccount } from './useAccount';
 
 export function readLocalCommute(id = 'guest') {
   try {
-    return normalizeCommute(JSON.parse(localStorage.getItem(`laxcommute:profile:${id}`)));
+    return normalizeCommute(JSON.parse(localStorage.getItem(`laxcommute:profile:${id}`) || 'null'));
   } catch {
     return normalizeCommute(null);
   }
@@ -25,7 +26,7 @@ export function useCommute() {
     setState({ identity, profile: saved });
     setSaveState('');
   }, [identity, ready, user?.user_metadata?.commute]);
-  async function save(value) {
+  async function save(value: Commute) {
     const next = normalizeCommute(value);
     setSaveState('Saving…');
     if (user) {

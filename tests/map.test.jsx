@@ -4,6 +4,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import * as L from 'leaflet';
 import FreeMap from '../src/components/FreeMap';
+import { createSimpleBasemap } from '../src/components/simpleBasemap';
+
+vi.mock('../src/components/simpleBasemap', () => ({ createSimpleBasemap: vi.fn() }));
 
 const stops = [
   { id: 1, name: 'Terminal B - Lower Level', lat: 33.943494, lon: -118.408172 },
@@ -33,6 +36,15 @@ beforeEach(() => {
   vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(800);
   vi.spyOn(HTMLElement.prototype, 'clientHeight', 'get').mockReturnValue(450);
   props.onSelectStop.mockReset();
+  createSimpleBasemap.mockImplementation(() => {
+    const layer = L.layerGroup([], {
+      attribution: 'OpenFreeMap · © OpenMapTiles · © OpenStreetMap',
+    });
+    const events = new L.Evented();
+    layer.getMaplibreMap = () => events;
+    queueMicrotask(() => events.fire('load'));
+    return layer;
+  });
 });
 afterEach(() => {
   cleanup();
@@ -41,20 +53,24 @@ afterEach(() => {
 });
 
 describe('interactive shuttle map', () => {
-  it('survives StrictMode setup, displays attribution, and selects a real stop', () => {
+  it('survives StrictMode setup, displays attribution, and selects a real stop', async () => {
     const { container } = render(
       <StrictMode>
         <FreeMap {...props} />
       </StrictMode>,
     );
+    await act(async () => {});
+    expect(container.querySelectorAll('.leaflet-marker-icon')).toHaveLength(1);
+    fireEvent.click(container.querySelector('.map-stops-toggle'));
     const stop = container.querySelector('[title="Terminal B - Lower Level"]');
     fireEvent.click(stop);
     expect(props.onSelectStop).toHaveBeenCalledWith(stops[0]);
     expect(container.querySelector('.leaflet-control-attribution').textContent).toContain(
       'OpenStreetMap',
     );
-    expect(container.querySelectorAll('.leaflet-overlay-pane path')).toHaveLength(1);
+    expect(container.querySelectorAll('.leaflet-overlay-pane path')).toHaveLength(2);
     expect(container.querySelectorAll('.leaflet-marker-icon')).toHaveLength(2);
+    expect(container.querySelector('.boarding-label').textContent).toContain('South Lot Stop #1');
   });
 
   it('moves existing bus markers by ID and removes old route markers on a route change', () => {
@@ -88,15 +104,65 @@ describe('interactive shuttle map', () => {
     expect(container.querySelector('[title="Bus 55 · Reported GPS"]')).toBeTruthy();
     act(() => vi.advanceTimersByTime(100));
     expect(container.querySelector('[title="Bus 55 · Reported GPS"]')).toBeNull();
-    expect(container.querySelectorAll('.leaflet-marker-icon')).toHaveLength(2);
+    expect(container.querySelectorAll('.leaflet-marker-icon')).toHaveLength(1);
   });
 
   it('treats external feed labels as text, not markup', () => {
     const label = '<img src=x onerror=alert(1)>';
-    const { container } = render(<FreeMap {...props} stops={[{ ...stops[0], name: label }]} />);
+    const { container } = render(
+      <FreeMap
+        {...props}
+        stops={[{ ...stops[0], name: label }]}
+        selectedStop={{ ...stops[0], name: label }}
+      />,
+    );
     fireEvent.mouseOver(container.querySelector('.leaflet-marker-icon'));
     const tooltip = container.querySelector('.leaflet-tooltip');
-    expect(tooltip.textContent).toBe(label);
+    expect(tooltip.textContent).toContain(label);
     expect(tooltip.querySelector('img')).toBeNull();
+  });
+
+  it('switches backgrounds without replacing the stop markers or losing the boarding label', async () => {
+    const { container, getByRole } = render(<FreeMap {...props} />);
+    await act(async () => {});
+    const marker = container.querySelector('.leaflet-marker-icon');
+    fireEvent.click(getByRole('button', { name: 'Street detail' }));
+    expect(getByRole('button', { name: 'Street detail' }).getAttribute('aria-pressed')).toBe(
+      'true',
+    );
+    expect(container.querySelector('.leaflet-marker-icon')).toBe(marker);
+    expect(container.querySelector('.boarding-label').textContent).toContain('BOARD HERE');
+    expect(container.querySelector('.leaflet-control-attribution').textContent).not.toContain(
+      'OpenFreeMap',
+    );
+    fireEvent.click(getByRole('button', { name: 'Simple', exact: true }));
+    await act(async () => {});
+    expect(container.querySelector('.leaflet-marker-icon')).toBe(marker);
+    expect(container.querySelector('.leaflet-control-attribution').textContent).toContain(
+      'OpenFreeMap',
+    );
+  });
+
+  it('falls back to street detail if the vector map cannot initialize', async () => {
+    createSimpleBasemap.mockImplementation(() => {
+      throw new Error('WebGL unavailable');
+    });
+    const { container, getByRole } = render(<FreeMap {...props} />);
+    await act(async () => {});
+    expect(getByRole('status').textContent).toContain('Simple map unavailable');
+    expect(getByRole('button', { name: 'Street detail' }).getAttribute('aria-pressed')).toBe(
+      'true',
+    );
+    expect(container.querySelectorAll('.leaflet-marker-icon')).toHaveLength(1);
+    expect(container.querySelector('.leaflet-control-attribution').textContent).toContain(
+      'OpenStreetMap',
+    );
+  });
+
+  it('moves the persistent boarding label when another stop is selected', () => {
+    const { container, rerender } = render(<FreeMap {...props} />);
+    rerender(<FreeMap {...props} selectedStop={stops[0]} />);
+    expect(container.querySelectorAll('.boarding-label')).toHaveLength(1);
+    expect(container.querySelector('.boarding-label').textContent).toContain('Terminal B');
   });
 });

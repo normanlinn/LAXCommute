@@ -1,6 +1,6 @@
-import { FeedError, ROUTE_IDS, routeDetails, liveSnapshot } from './feed.js';
+import { FeedError, ROUTE_IDS, routeDetails, liveSnapshot } from './feed';
 
-export async function handleAPI(request, options) {
+export async function handleAPI(request: Request, options?: import('./feed').FeedOptions) {
   const url = new URL(request.url);
   const headers = { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' };
   if (request.method !== 'GET')
@@ -37,7 +37,7 @@ export async function handleAPI(request, options) {
 }
 
 export default {
-  async fetch(request) {
+  async fetch(request: Request) {
     if (new URL(request.url).pathname.startsWith('/api/')) return handleAPI(request);
     // Cloudflare serves the static React assets before invoking this Worker.
     return new Response('Not found', { status: 404 });

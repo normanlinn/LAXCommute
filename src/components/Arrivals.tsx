@@ -12,11 +12,20 @@ export default function Arrivals({
   direction,
   profile,
   onRefresh,
+}: {
+  data?: import('../types').LiveData;
+  error: Error | null;
+  loading: boolean;
+  fetching: boolean;
+  stop?: import('../types').Stop;
+  direction: import('../types').Direction;
+  profile: import('../types').Commute;
+  onRefresh: () => void;
 }) {
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
     // Keep the countdown within this small component, away from the map.
-    let timer;
+    let timer: ReturnType<typeof setInterval> | undefined;
     const update = () => setNow(Date.now());
     const start = () => {
       clearInterval(timer);

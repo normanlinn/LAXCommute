@@ -1,6 +1,6 @@
 # LAXCommute
 
-**Your airport. Your commute.** A responsive React PWA for LAX employee shuttles, built with Tailwind CSS, DaisyUI, Leaflet/OpenStreetMap, and Supabase.
+**Your airport. Your commute.** A responsive React + TypeScript PWA for LAX employee shuttles, built with Tailwind CSS, DaisyUI, Leaflet, OpenFreeMap, and Supabase.
 
 Check real shuttle predictions, choose a boarding stop, and keep your everyday terminal and parking lot saved. Install the website on an iPhone or Android home screen.
 
@@ -24,7 +24,7 @@ If you see `styleText` or Rolldown errors on Node 20.11.1, update Node first. If
 
 ## What works
 
-- South, East, and West employee shuttle routes.
+- South, East, and West employee shuttle routes. East/West default to their own lot and also offer South Lot boarding stops listed by the route feed.
 - Live arrival predictions and reported bus GPS positions from the existing LAX tracker feed.
 - Interactive free map with route lines, tappable stops, bus markers, touch zoom, and camera controls.
 - A directions chooser for Apple Maps or Google Maps, using the currently selected boarding stop.
@@ -41,15 +41,21 @@ If you see `styleText` or Rolldown errors on Node 20.11.1, update Node first. If
 
 ## Free maps and phone directions
 
-The default embedded map uses **Leaflet + OpenStreetMap**, not OpenFreeMap. No Apple Developer membership, credit card, or Maps API key is needed for this default.
+The default **Simple** map uses Leaflet for shuttle overlays and MapLibre GL for an **OpenFreeMap Positron** background. It shows your selected boarding stop and buses by default; **Show other stops** reveals other boarding points. Its pale colors make the shuttle route, bus icons, and persistent **BOARD HERE** label stand out. No Apple Developer membership, credit card, or Maps API key is needed. OpenFreeMap currently provides free public hosting without map-view/request caps, but does not offer an uptime guarantee.
+
+The **Street detail** button switches to the original OpenStreetMap raster map. This is also the fallback if the simple map fails to initialize or load within 15 seconds. Switching backgrounds preserves the current camera and shuttle markers. Both views keep visible attribution and load map data online only. `VITE_MAP_PROVIDER=openstreetmap` is retained as the configuration value for this free map component; `apple` still selects the optional Apple implementation.
 
 The phone's native map renderer cannot be embedded directly inside a PWA. Use **Directions to this stop** to choose Apple Maps or Google Maps for walking directions. Supported map links can open the corresponding installed app; otherwise they open its web experience. The PWA does not automatically choose every phone's system-default maps app.
 
-OpenStreetMap's public tile service is **best effort**, with no guaranteed availability or unlimited capacity. The map displays attribution, loads only the visible tiles directly in the browser, and uses normal browser HTTP caching. It does not prefetch tiles or offer offline map downloads. Monitor usage as your audience grows; 500–1,000 registered users is not a guarantee that the public tile service can support every traffic pattern.
+The street-detail fallback uses OpenStreetMap's public tile service, which is **best effort**, with no guaranteed availability or unlimited capacity. It loads only visible tiles directly in the browser and uses normal browser HTTP caching. It does not prefetch tiles or offer offline map downloads. Monitor usage as your audience grows; 500–1,000 registered users is not a guarantee that the public tile service can support every traffic pattern.
 
-To switch to another tile provider later, set `VITE_MAP_TILE_URL` and `VITE_MAP_ATTRIBUTION` to that provider's URL template and required attribution, then rebuild. Follow that provider's separate limits and terms.
+Set `VITE_MAP_STYLE_URL` to choose another compatible OpenFreeMap style. To change the street-detail fallback provider, set `VITE_MAP_TILE_URL` and `VITE_MAP_ATTRIBUTION` to its URL template and required attribution, then rebuild. Follow the provider's separate limits and terms.
 
-References: [Leaflet](https://leafletjs.com/), [OpenStreetMap tile policy](https://operations.osmfoundation.org/policies/tiles/), [Apple map links](https://developer.apple.com/library/archive/featuredarticles/iPhoneURLScheme_Reference/MapLinks/MapLinks.html), [Google Maps URLs](https://developers.google.com/maps/documentation/urls/get-started).
+References: [OpenFreeMap](https://openfreemap.org/), [Leaflet](https://leafletjs.com/), [OpenStreetMap tile policy](https://operations.osmfoundation.org/policies/tiles/), [Apple map links](https://developer.apple.com/library/archive/featuredarticles/iPhoneURLScheme_Reference/MapLinks/MapLinks.html), [Google Maps URLs](https://developers.google.com/maps/documentation/urls/get-started).
+
+## Employee Shuttles QR poster
+
+The poster opens `/employee-shuttles`, which the existing single-page application serves. Optional free Cloudflare Web Analytics can report recorded visits to that path after you configure the public `VITE_CF_WEB_ANALYTICS_TOKEN` and deploy. No analytics is enabled without a token. See [poster and analytics setup](docs/QR-POSTER.md) for setup and counting limitations.
 
 ## Optional Apple Maps setup
 
@@ -143,6 +149,12 @@ HTTPS is required for production installation and location access. An HTTP LAN a
 
 This is the web version of the previous SwiftUI prototype. It does not include an Apple Watch app. Background push notifications and automatic departure detection while the app is closed are future work; this version gives departure advice while the app is open.
 
+## TypeScript and shared boarding
+
+Application components and the Cloudflare Worker use `.ts`/`.tsx` with strict TypeScript checks. `npm run build` runs the type checker before bundling. Tests and small tooling scripts remain JavaScript.
+
+Choose **East** or **West**, then choose a South Lot stop under **Where are you boarding?** The route stays East/West, so the API asks for that route’s arrivals at the selected South stop. Only stops returned by that route are eligible; drop-off and layover stops are excluded. **Usual stop** restores your saved boarding stop (or the selected lot’s first boarding stop). A temporary change does not overwrite your profile.
+
 ## Code layout
 
 ```text
@@ -161,6 +173,7 @@ scripts/          Non-destructive local setup
 ## Check and update
 
 ```bash
+npm run typecheck
 npm test
 npm run format:check
 npm run build

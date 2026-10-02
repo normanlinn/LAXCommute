@@ -2,7 +2,7 @@
 
 Use **GitHub for the source code and Cloudflare Workers for the live website**. This app includes a small `/api/*` gateway for the shuttle feed, so uploading only its static files to GitHub Pages would leave the live arrivals and bus positions unavailable.
 
-The default Leaflet/OpenStreetMap map needs no token. The existing Supabase public settings are already in the code. Keep your Cloudflare account on **Workers Free**.
+The default Leaflet/OpenFreeMap map needs no token. The existing Supabase public settings are already in the code. Keep your Cloudflare account on **Workers Free**.
 
 ## Deploy from your Mac
 

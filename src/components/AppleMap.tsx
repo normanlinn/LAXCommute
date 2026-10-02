@@ -1,10 +1,19 @@
+import type { MapProps } from '../types';
 import { memo, useEffect, useRef, useState } from 'react';
 import { ExternalLink, Map as MapIcon } from 'lucide-react';
 import { config } from '../config';
 import { mapsLink } from '../domain/commute';
 import { validVehicle } from '../domain/arrivals';
 
-let frameworkPromise;
+import type { MapKit } from '@apple/mapkit-loader';
+type AppleState = {
+  map: InstanceType<MapKit['Map']>;
+  mapkit: MapKit;
+  markers: Map<string, InstanceType<MapKit['MarkerAnnotation']>>;
+  overlays: InstanceType<MapKit['PolylineOverlay']>[];
+  select: EventListener;
+};
+let frameworkPromise: Promise<MapKit> | null;
 function loadFramework() {
   frameworkPromise ||= import('@apple/mapkit-loader')
     .then(({ load }) =>
@@ -29,29 +38,31 @@ function AppleMap({
   userLocation,
   onSelectStop,
   focusRequest,
-}) {
-  const element = useRef(null);
-  const state = useRef(null);
+}: MapProps) {
+  const element = useRef<HTMLDivElement>(null);
+  const state = useRef<AppleState | null>(null);
   const selectionHandler = useRef(onSelectStop);
   selectionHandler.current = onSelectStop;
   const [ready, setReady] = useState(false);
   const [error, setError] = useState('');
   useEffect(() => {
     if (!config.appleMapsToken) return;
-    let alive = true,
-      current;
+    let alive = true;
+    let current: AppleState | undefined;
     loadFramework()
       .then((mapkit) => {
         if (!alive) return;
-        const map = new mapkit.Map(element.current, {
+        const map = new mapkit.Map(element.current!, {
           center: new mapkit.Coordinate(33.949, -118.399),
           cameraDistance: 6_000,
           colorScheme: 'light',
           isRotationEnabled: false,
           showsMapTypeControl: false,
         });
-        const select = (event) => {
-          const stop = event.annotation?.data?.stop;
+        const select: AppleState['select'] = (event) => {
+          const stop = (
+            event as Event & { annotation?: { data?: { stop?: import('../types').Stop } } }
+          ).annotation?.data?.stop;
           if (stop) selectionHandler.current(stop);
         };
         map.addEventListener('select', select);
@@ -75,7 +86,12 @@ function AppleMap({
     if (!ready || !state.current) return;
     const { map, mapkit, markers } = state.current;
     const wanted = new Set();
-    const upsert = (key, lat, lon, options) => {
+    const upsert = (
+      key: string,
+      lat: number,
+      lon: number,
+      options: ConstructorParameters<MapKit['MarkerAnnotation']>[1],
+    ) => {
       wanted.add(key);
       let marker = markers.get(key);
       if (!marker) {
@@ -120,7 +136,7 @@ function AppleMap({
     const expiration = setTimeout(() => {
       for (const [key, marker] of markers) {
         if (!key.startsWith('bus-')) continue;
-        const bus = vehicles.find((v) => v.id === marker.data?.busID);
+        const bus = vehicles.find((v) => v.id === (marker.data as { busID?: number })?.busID);
         if (!bus || !validVehicle(bus)) {
           map.removeAnnotation(marker);
           markers.delete(key);
@@ -163,7 +179,11 @@ function AppleMap({
       map.showItems(
         [
           ...state.current.overlays,
-          ...stops.map((s) => markers.get(`stop-${s.id}`)).filter(Boolean),
+          ...stops
+            .map((s) => markers.get(`stop-${s.id}`))
+            .filter((marker): marker is InstanceType<MapKit['MarkerAnnotation']> =>
+              Boolean(marker),
+            ),
         ],
         { animate, padding: new mapkit.Padding(60, 36, 80, 36) },
       );

@@ -5,6 +5,8 @@ export const config = Object.freeze({
     'sb_publishable_AkClR2bp72pGci-NAX1DBQ_8INzT0v1',
   appleMapsToken: import.meta.env.VITE_APPLE_MAPS_TOKEN || '',
   mapProvider: import.meta.env.VITE_MAP_PROVIDER === 'apple' ? 'apple' : 'openstreetmap',
+  mapStyleUrl:
+    import.meta.env.VITE_MAP_STYLE_URL || 'https://tiles.openfreemap.org/styles/positron',
   mapTileUrl: import.meta.env.VITE_MAP_TILE_URL || 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
   mapAttribution:
     import.meta.env.VITE_MAP_ATTRIBUTION ||

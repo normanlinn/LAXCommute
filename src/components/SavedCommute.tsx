@@ -1,3 +1,4 @@
+import { errorMessage } from '../domain/errors';
 import Button from './ui/Button';
 import { useMemo, useState } from 'react';
 import { Bookmark, ArrowRight, Check, Footprints } from 'lucide-react';
@@ -5,7 +6,19 @@ import { boardingStops, ROUTES, TERMINALS, routeForLot, terminalKey } from '../d
 import { useRoute } from '../hooks/useShuttle';
 import { useAccount } from '../hooks/useAccount';
 
-export default function SavedCommute({ profile, save, saveState, onGoHome, onAccount }) {
+export default function SavedCommute({
+  profile,
+  save,
+  saveState,
+  onGoHome,
+  onAccount,
+}: {
+  profile: import('../types').Commute;
+  save: (value: import('../types').Commute) => Promise<void>;
+  saveState: string;
+  onGoHome: () => void;
+  onAccount: () => void;
+}) {
   const { user } = useAccount();
   const [draft, setDraft] = useState(profile);
   const [busy, setBusy] = useState(false);
@@ -21,7 +34,10 @@ export default function SavedCommute({ profile, save, saveState, onGoHome, onAcc
     [stops, draft.lot, draft.terminal],
   );
   const parkingStops = useMemo(() => boardingStops(stops, 'work', draft.lot), [stops, draft.lot]);
-  function edit(key, value) {
+  function edit<K extends keyof import('../types').Commute>(
+    key: K,
+    value: import('../types').Commute[K],
+  ) {
     setDraft((d) => ({
       ...d,
       [key]: value,
@@ -29,7 +45,7 @@ export default function SavedCommute({ profile, save, saveState, onGoHome, onAcc
       ...(key === 'terminal' ? { terminalStopID: 0 } : {}),
     }));
   }
-  async function submit(event) {
+  async function submit(event: React.FormEvent) {
     event.preventDefault();
     setError('');
     const terminal = terminalStops.find((s) => s.id === draft.terminalStopID) || terminalStops[0];
@@ -48,7 +64,7 @@ export default function SavedCommute({ profile, save, saveState, onGoHome, onAcc
         parkingStopName: parking.name,
       });
     } catch (reason) {
-      setError(reason.message);
+      setError(errorMessage(reason));
     } finally {
       setBusy(false);
     }

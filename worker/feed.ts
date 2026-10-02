@@ -1,33 +1,42 @@
+import type { Stop, Vehicle, RawArrival } from '../src/types';
+export interface FeedOptions {
+  cache?: Pick<Cache, 'match' | 'put'>;
+  fetcher?: typeof fetch;
+  origin?: string;
+}
+type Envelope<T = unknown> = { data: T[]; fetchedAt: string };
 const BASE = 'https://laxbus.syncromatics.com/api/rtpi';
 export const ROUTE_IDS = new Set([6883, 6884, 6885]);
-const inFlight = new Map();
+const inFlight = new Map<string, Promise<Envelope>>();
 
 export class FeedError extends Error {
-  constructor(message, status = 502) {
+  status: number;
+  constructor(message: string, status = 502) {
     super(message);
     this.status = status;
   }
 }
 
 // Public data only. This is a fixed-path gateway, never an arbitrary URL proxy.
-export async function cachedFeed(
-  path,
-  ttl,
+export async function cachedFeed<T = unknown>(
+  path: string,
+  ttl: number,
   {
-    cache = globalThis.caches?.default,
+    cache = (globalThis.caches as CacheStorage & { default?: Cache })?.default,
     fetcher = globalThis.fetch,
     origin = 'https://laxcommute-cache.invalid',
-  } = {},
-) {
+  }: FeedOptions = {},
+): Promise<Envelope<T>> {
   const key = new Request(`${origin}/feed/${encodeURIComponent(path)}`);
   const hit = cache && (await cache.match(key));
   if (hit) {
-    const envelope = await hit.json();
+    const envelope = (await hit.json()) as Envelope<T>;
     // Keep an explicit freshness check, including when local cache emulation retains expired entries.
     if (Date.now() - Date.parse(envelope.fetchedAt) < ttl * 1_000) return envelope;
   }
   const pendingKey = `${origin}:${path}`;
-  if (inFlight.has(pendingKey)) return inFlight.get(pendingKey);
+  const pending = inFlight.get(pendingKey);
+  if (pending) return pending as Promise<Envelope<T>>;
   const promise = (async () => {
     const url = new URL(BASE);
     url.searchParams.set('path', path);
@@ -50,7 +59,7 @@ export async function cachedFeed(
     }
     if (!Array.isArray(data))
       throw new FeedError('The shuttle feed returned an unexpected response.');
-    const envelope = { data, fetchedAt };
+    const envelope: Envelope<T> = { data, fetchedAt };
     if (cache)
       await cache.put(
         key,
@@ -62,29 +71,33 @@ export async function cachedFeed(
   return promise;
 }
 
-export async function routeDetails(routeID, options) {
-  const stops = await cachedFeed(`routes/${routeID}/stops`, 3_600, options);
-  let patterns = { data: [] },
+export async function routeDetails(routeID: number, options?: FeedOptions) {
+  const stops = await cachedFeed<Stop>(`routes/${routeID}/stops`, 3_600, options);
+  let patterns: { data: { id: number; shape: string }[] } = { data: [] },
     warning = null;
   try {
-    patterns = await cachedFeed(`routes/${routeID}/patterns`, 3_600, options);
+    patterns = await cachedFeed<{ id: number; shape: string }>(
+      `routes/${routeID}/patterns`,
+      3_600,
+      options,
+    );
   } catch {
     warning = 'The route line is unavailable. Stops and buses can still update.';
   }
   return { stops: stops.data, patterns: patterns.data, warning };
 }
 
-export async function liveSnapshot(routeID, stopID, options) {
+export async function liveSnapshot(routeID: number, stopID: number, options?: FeedOptions) {
   // Membership prevents arbitrary stop probing and mistakes after switching routes.
   if (stopID) {
-    const stops = await cachedFeed(`routes/${routeID}/stops`, 3_600, options);
+    const stops = await cachedFeed<Stop>(`routes/${routeID}/stops`, 3_600, options);
     if (!stops.data.some((s) => s.id === stopID))
       throw new FeedError('Choose a boarding stop on this route.', 400);
   }
   const results = await Promise.allSettled([
-    cachedFeed(`routes/${routeID}/vehicles`, 15, options),
+    cachedFeed<Vehicle>(`routes/${routeID}/vehicles`, 15, options),
     stopID
-      ? cachedFeed(`stops/${stopID}/arrivals?routeId=${routeID}`, 15, options)
+      ? cachedFeed<RawArrival>(`stops/${stopID}/arrivals?routeId=${routeID}`, 15, options)
       : Promise.resolve(null),
   ]);
   const vehicles = results[0].status === 'fulfilled' ? results[0].value : null;

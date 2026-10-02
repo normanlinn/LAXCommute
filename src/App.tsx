@@ -1,3 +1,4 @@
+import type { Direction, Point, Stop } from './types';
 import Button from './components/ui/Button';
 import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import {
@@ -34,7 +35,7 @@ import DirectionsButton from './components/DirectionsButton';
 const ShuttleMap = lazy(() => import('./components/ShuttleMap'));
 const AccountPanel = lazy(() => import('./components/AccountPanel'));
 const SavedCommute = lazy(() => import('./components/SavedCommute'));
-const EMPTY = Object.freeze([]);
+const EMPTY: never[] = [];
 const TABS = [
   { id: 'map', label: 'Explore', Icon: Map },
   { id: 'home', label: 'Go home', Icon: Home },
@@ -47,9 +48,14 @@ export default function App() {
   const { profile, save, saveState } = useCommute();
   const [tab, setTab] = useState('map');
   const [lot, setLot] = useState(profile.lot);
-  const [direction, setDirection] = useState('work');
-  const [override, setOverride] = useState(null);
-  const [userLocation, setUserLocation] = useState(null);
+  const [direction, setDirection] = useState<Direction>('work');
+  const [override, setOverride] = useState<{
+    routeID: number;
+    direction: Direction;
+    id: number;
+    source: string;
+  } | null>(null);
+  const [userLocation, setUserLocation] = useState<Point | null>(null);
   const [locationError, setLocationError] = useState('');
   const [locating, setLocating] = useState(false);
   const [focusRequest, setFocusRequest] = useState({ mode: 'route', serial: 0 });
@@ -58,6 +64,10 @@ export default function App() {
   const routeQuery = useRoute(route.id);
   const stops = routeQuery.data?.stops || EMPTY;
   const paths = routeQuery.data?.paths || EMPTY;
+  const mapStops = useMemo(
+    () => stops.filter((stop) => !/drop[ -]?off|layover/i.test(stop.name)),
+    [stops],
+  );
   const options = useMemo(() => boardingStops(stops, direction, lot), [stops, direction, lot]);
   const usual = useMemo(
     () => savedBoardingStop(profile, stops, direction, lot),
@@ -85,7 +95,7 @@ export default function App() {
   useEffect(() => {
     if (recovering) setTab('account');
   }, [recovering]);
-  function changeTab(next) {
+  function changeTab(next: string) {
     setTab(next);
     if (next === 'home') {
       setDirection('parking');
@@ -93,23 +103,23 @@ export default function App() {
       setOverride(null);
     }
   }
-  function changeDirection(next) {
+  function changeDirection(next: Direction) {
     setDirection(next);
     setOverride(null);
   }
-  function chooseRoute(next) {
+  function chooseRoute(next: string) {
     setLot(next);
     setOverride(null);
   }
   const chooseStop = useCallback(
-    (stop) => {
+    (stop: Stop) => {
       const nextDirection = /terminal/i.test(stop.name) ? 'parking' : 'work';
       setDirection(nextDirection);
       setOverride({ id: stop.id, direction: nextDirection, routeID: route.id, source: 'manual' });
     },
     [route.id],
   );
-  function focus(mode) {
+  function focus(mode: string) {
     setFocusRequest((current) => ({ mode, serial: current.serial + 1 }));
   }
   function locate() {
@@ -215,7 +225,7 @@ export default function App() {
               <Suspense fallback={<div className="map-surface map-loading">Opening map…</div>}>
                 <ShuttleMap
                   route={route}
-                  stops={stops}
+                  stops={mapStops}
                   paths={paths}
                   vehicles={vehicles}
                   selectedStop={selectedStop}
@@ -287,7 +297,7 @@ export default function App() {
                 </Button>
               </div>
               <div className="field route-field">
-                <span>Shuttle route</span>
+                <span>Which shuttle do you want?</span>
                 <div className="route-options">
                   {ROUTES.map((r) => (
                     <Button
@@ -302,6 +312,12 @@ export default function App() {
                   ))}
                 </div>
               </div>
+              {direction === 'work' && lot !== 'South' && (
+                <p className="small muted">
+                  Taking the {lot} shuttle from South Lot? Choose a South Lot stop below. Times are
+                  for the {lot} shuttle.
+                </p>
+              )}
               <div className="trip-destination">
                 <div className="journey-line">
                   <span />
@@ -319,7 +335,7 @@ export default function App() {
                 <ArrowDownUp size={17} />
               </div>
               <label className="field">
-                Boarding stop for this trip
+                Where are you boarding?
                 <select
                   className="select w-full"
                   value={selectedStop?.id || 0}
@@ -354,7 +370,7 @@ export default function App() {
               </div>
               {todayID && (
                 <p className="today-note">
-                  {override.source === 'nearby' ? 'Nearby stop' : 'Today’s stop'} · your saved
+                  {override?.source === 'nearby' ? 'Nearby stop' : 'Today’s stop'} · your saved
                   commute stays the same.
                 </p>
               )}

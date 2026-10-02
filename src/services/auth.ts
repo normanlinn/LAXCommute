@@ -1,5 +1,5 @@
 import { config } from '../config';
-let clientPromise;
+let clientPromise: Promise<import('@supabase/supabase-js').SupabaseClient> | undefined;
 export function getAuthClient() {
   clientPromise ||= import('@supabase/supabase-js').then(({ createClient }) =>
     createClient(config.supabaseUrl, config.supabaseKey, {

@@ -1,10 +1,17 @@
+import { errorMessage } from '../domain/errors';
 import Button from './ui/Button';
 import { useState } from 'react';
 import { Check, Mail, LogOut, ArrowRight, LockKeyhole, UserRound } from 'lucide-react';
 import { useAccount } from '../hooks/useAccount';
 import { getAuthClient } from '../services/auth';
 
-export default function AccountPanel({ profile, onSaved }) {
+export default function AccountPanel({
+  profile,
+  onSaved,
+}: {
+  profile: import('../types').Commute;
+  onSaved: () => void;
+}) {
   const { user, ready, authError, recovering, setRecovering } = useAccount();
   const [mode, setMode] = useState('signin');
   const [email, setEmail] = useState('');
@@ -12,7 +19,7 @@ export default function AccountPanel({ profile, onSaved }) {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-  async function submit(event) {
+  async function submit(event: React.FormEvent) {
     event.preventDefault();
     setBusy(true);
     setError('');
@@ -53,7 +60,7 @@ export default function AccountPanel({ profile, onSaved }) {
       }
       if (result.error) throw result.error;
     } catch (reason) {
-      setError(reason.message || 'Could not complete this request. Please retry.');
+      setError(errorMessage(reason) || 'Could not complete this request. Please retry.');
     } finally {
       setBusy(false);
     }
@@ -67,7 +74,7 @@ export default function AccountPanel({ profile, onSaved }) {
       if (reason) throw reason;
       setMessage('Signed out. Your guest commute is available on this device.');
     } catch (reason) {
-      setError(reason.message);
+      setError(errorMessage(reason));
     } finally {
       setBusy(false);
     }

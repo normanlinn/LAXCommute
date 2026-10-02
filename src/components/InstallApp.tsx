@@ -5,7 +5,7 @@ import { Download, Share, X, Smartphone } from 'lucide-react';
 import { useRegisterSW } from 'virtual:pwa-register/react';
 
 export default function InstallApp() {
-  const [prompt, setPrompt] = useState(null);
+  const [prompt, setPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [open, setOpen] = useState(false);
   const [platform, setPlatform] = useState(
     /iPhone|iPad|iPod/.test(navigator.userAgent) ? 'iphone' : 'android',
@@ -16,7 +16,7 @@ export default function InstallApp() {
     updateServiceWorker,
   } = useRegisterSW();
   useEffect(() => {
-    const receive = (event) => {
+    const receive = (event: BeforeInstallPromptEvent) => {
       event.preventDefault();
       setPrompt(event);
     };

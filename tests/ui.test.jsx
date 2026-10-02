@@ -4,6 +4,7 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import App from '../src/App';
 import AccountPanel from '../src/components/AccountPanel';
 
+const liveRequests = vi.hoisted(() => vi.fn());
 const auth = vi.hoisted(() => ({ signInWithPassword: vi.fn(), signUp: vi.fn() }));
 vi.mock('../src/services/auth', () => ({ getAuthClient: async () => ({ auth }) }));
 
@@ -16,19 +17,36 @@ vi.mock('../src/hooks/useAccount', () => ({
   useAccount: () => ({ user: null, ready: true, recovering: false }),
 }));
 vi.mock('../src/hooks/useShuttle', () => ({
-  useRoute: () => ({
-    data: { stops, paths: [] },
+  useRoute: (routeID) => ({
+    data: {
+      stops:
+        routeID === 6885
+          ? stops
+          : [
+              ...stops,
+              {
+                id: 4,
+                name: `${routeID === 6884 ? 'East' : 'West'} Lot Stop #1`,
+                lat: 33.95,
+                lon: -118.39,
+              },
+            ],
+      paths: [],
+    },
     refetch: vi.fn(),
     isPending: false,
     isError: false,
   }),
-  useLive: () => ({
-    data: undefined,
-    refetch: vi.fn(),
-    isPending: false,
-    isError: false,
-    isFetching: false,
-  }),
+  useLive: (...args) => {
+    liveRequests(...args);
+    return {
+      data: undefined,
+      refetch: vi.fn(),
+      isPending: false,
+      isError: false,
+      isFetching: false,
+    };
+  },
   useOnline: () => true,
   useSnapshotFresh: () => false,
 }));
@@ -59,7 +77,7 @@ describe('commute UI', () => {
   it('offers walking directions to the currently selected stop in Apple or Google Maps', async () => {
     render(<App />);
     fireEvent.click(screen.getByRole('button', { name: 'Go home' }));
-    fireEvent.change(screen.getByRole('combobox', { name: 'Boarding stop for this trip' }), {
+    fireEvent.change(screen.getByRole('combobox', { name: 'Where are you boarding?' }), {
       target: { value: '2' },
     });
     fireEvent.click(screen.getByRole('button', { name: 'Directions to this stop' }));
@@ -76,7 +94,7 @@ describe('commute UI', () => {
   it('shows a return-to-parking flow and preserves the usual terminal after a daily override', async () => {
     render(<App />);
     fireEvent.click(screen.getByRole('button', { name: 'Go home' }));
-    const boarding = screen.getByRole('combobox', { name: 'Boarding stop for this trip' });
+    const boarding = screen.getByRole('combobox', { name: 'Where are you boarding?' });
     expect(boarding.value).toBe('1');
     fireEvent.change(boarding, { target: { value: '2' } });
     expect(boarding.value).toBe('2');
@@ -88,12 +106,12 @@ describe('commute UI', () => {
   });
   it('uses DaisyUI components for buttons, forms, and installation help', async () => {
     render(<App />);
-    await screen.findByRole('combobox', { name: 'Boarding stop for this trip' });
+    await screen.findByRole('combobox', { name: 'Where are you boarding?' });
     for (const button of screen.getAllByRole('button'))
       expect(button.classList.contains('btn')).toBe(true);
     expect(
       screen
-        .getByRole('combobox', { name: 'Boarding stop for this trip' })
+        .getByRole('combobox', { name: 'Where are you boarding?' })
         .classList.contains('select'),
     ).toBe(true);
     fireEvent.click(screen.getByRole('button', { name: 'Add to home screen' }));
@@ -147,4 +165,20 @@ describe('commute UI', () => {
       options: { emailRedirectTo: `${location.origin}/`, data: { commute: profile } },
     });
   });
+});
+
+it.each([
+  ['East', 6884],
+  ['West', 6883],
+])('requests %s arrivals at the selected South boarding stop', async (lot, routeID) => {
+  render(<App />);
+  fireEvent.click(screen.getByRole('button', { name: new RegExp(`^[EW]\\s*${lot}$`) }));
+  const select = screen.getByRole('combobox', { name: 'Where are you boarding?' });
+  expect(select.value).toBe('4');
+  fireEvent.change(select, { target: { value: '3' } });
+  expect(select.value).toBe('3');
+  expect(liveRequests).toHaveBeenLastCalledWith(routeID, 3, true);
+  expect(localStorage.getItem('laxcommute:profile:guest')).toBeNull();
+  fireEvent.click(screen.getByRole('button', { name: 'Usual stop' }));
+  expect(select.value).toBe('4');
 });

@@ -4,7 +4,7 @@ import { config } from '../config';
 import { ARRIVAL_TTL_MS } from '../domain/arrivals';
 import { getRoute, getLive } from '../services/shuttle';
 
-export function useRoute(routeID) {
+export function useRoute(routeID: number) {
   return useQuery({
     queryKey: ['route', routeID],
     queryFn: ({ signal }) => getRoute(routeID, signal),
@@ -13,7 +13,7 @@ export function useRoute(routeID) {
     retry: 2,
   });
 }
-export function useLive(routeID, stopID, enabled = true) {
+export function useLive(routeID: number, stopID?: number, enabled = true) {
   return useQuery({
     queryKey: ['live', routeID, stopID || 0],
     queryFn: ({ signal }) => getLive(routeID, stopID, signal),
@@ -27,7 +27,7 @@ export function useLive(routeID, stopID, enabled = true) {
   });
 }
 // One expiry transition per snapshot, instead of rerendering the map every second.
-export function useSnapshotFresh(timestamp) {
+export function useSnapshotFresh(timestamp?: string | null) {
   const [expired, setExpired] = useState(true);
   useEffect(() => {
     const remaining = Date.parse(timestamp || '') + ARRIVAL_TTL_MS - Date.now();

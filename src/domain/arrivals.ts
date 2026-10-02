@@ -1,8 +1,9 @@
+import type { RawArrival, Vehicle, Prediction } from '../types';
 export const ARRIVAL_TTL_MS = 90_000;
 export const GPS_TTL_MS = 180_000;
 
-export function normalizeArrivals(values, routeID, fetchedAt) {
-  const fetched = Date.parse(fetchedAt);
+export function normalizeArrivals(values: RawArrival[], routeID: number, fetchedAt: string | null) {
+  const fetched = Date.parse(fetchedAt || '');
   if (!Array.isArray(values) || !Number.isFinite(fetched)) return [];
   return values
     .flatMap((value) => {
@@ -31,11 +32,11 @@ export function normalizeArrivals(values, routeID, fetchedAt) {
     })
     .sort((a, b) => a.due - b.due);
 }
-export function snapshotFresh(fetchedAt, now = Date.now()) {
+export function snapshotFresh(fetchedAt: string | null | undefined, now = Date.now()) {
   const stamp = Date.parse(fetchedAt || '');
   return Number.isFinite(stamp) && now - stamp < ARRIVAL_TTL_MS && now - stamp >= -30_000;
 }
-export function validVehicle(vehicle, now = Date.now()) {
+export function validVehicle(vehicle: Partial<Vehicle>, now = Date.now()) {
   const time = Date.parse(vehicle.lastUpdated || '');
   return (
     typeof vehicle.lat === 'number' &&
@@ -47,7 +48,7 @@ export function validVehicle(vehicle, now = Date.now()) {
     now - time >= -30_000
   );
 }
-export function availableArrivals(arrivals, now) {
+export function availableArrivals(arrivals: Prediction[], now: number) {
   return arrivals.filter(
     (a) =>
       a.due > now &&
@@ -56,7 +57,12 @@ export function availableArrivals(arrivals, now) {
         (now - a.vehicleUpdated < GPS_TTL_MS && now - a.vehicleUpdated >= -30_000)),
   );
 }
-export function departureAdvice(arrivals, walkingMinutes, bufferMinutes, now = Date.now()) {
+export function departureAdvice(
+  arrivals: Prediction[],
+  walkingMinutes: number,
+  bufferMinutes: number,
+  now = Date.now(),
+) {
   const walking = walkingMinutes * 60_000;
   const next = availableArrivals(arrivals, now).find(
     (a) =>

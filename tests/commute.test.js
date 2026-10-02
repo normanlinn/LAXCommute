@@ -66,3 +66,30 @@ describe('saved and temporary boarding', () => {
     expect(decodePolyline('~')).toEqual([]);
   });
 });
+
+describe('shared South Lot boarding', () => {
+  const south = { id: 10, name: 'South Lot Stop #1', lat: 33.94, lon: -118.4 };
+  it.each(['East', 'West'])('defaults %s to its own lot while offering South stops', (lot) => {
+    const own = { ...south, id: 20, name: `${lot} Lot Stop #1` };
+    const routeStops = [
+      south,
+      { ...south, id: 11, name: 'South Lot Drop Off' },
+      { ...south, id: 12, name: 'South Lot Layover' },
+      own,
+    ];
+    expect(boardingStops(routeStops, 'work', lot).map((s) => s.id)).toEqual([20, 10]);
+    expect(savedBoardingStop(DEFAULT_COMMUTE, routeStops, 'work', lot)).toEqual(own);
+    // A South stop saved for a different route must not override the route's default.
+    expect(
+      savedBoardingStop({ ...DEFAULT_COMMUTE, parkingStopID: 10 }, routeStops, 'work', lot),
+    ).toEqual(own);
+    // Explicitly saved South boarding on this route is still respected.
+    expect(
+      savedBoardingStop({ ...DEFAULT_COMMUTE, lot, parkingStopID: 10 }, routeStops, 'work', lot),
+    ).toEqual(south);
+  });
+  it('does not invent South stops absent from the selected route feed', () => {
+    expect(boardingStops([stops[2]], 'work', 'East')).toEqual([stops[2]]);
+    expect(boardingStops([south, stops[2]], 'work', 'South')).toEqual([south]);
+  });
+});

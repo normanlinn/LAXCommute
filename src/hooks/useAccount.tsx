@@ -1,15 +1,22 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { getAuthClient } from '../services/auth';
 
-const AccountContext = createContext(null);
-export function AccountProvider({ children }) {
-  const [user, setUser] = useState(null);
+type Account = {
+  user: import('@supabase/supabase-js').User | null;
+  ready: boolean;
+  authError: string;
+  recovering: boolean;
+  setRecovering: (value: boolean) => void;
+};
+const AccountContext = createContext<Account | null>(null);
+export function AccountProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<import('@supabase/supabase-js').User | null>(null);
   const [ready, setReady] = useState(false);
   const [authError, setAuthError] = useState('');
   const [recovering, setRecovering] = useState(false);
   useEffect(() => {
-    let alive = true,
-      subscription;
+    let alive = true;
+    let subscription: import('@supabase/supabase-js').Subscription | undefined;
     getAuthClient()
       .then(async (client) => {
         if (!alive) return;
@@ -45,5 +52,7 @@ export function AccountProvider({ children }) {
   return <AccountContext.Provider value={value}>{children}</AccountContext.Provider>;
 }
 export function useAccount() {
-  return useContext(AccountContext);
+  const account = useContext(AccountContext);
+  if (!account) throw new Error('AccountProvider is required');
+  return account;
 }
