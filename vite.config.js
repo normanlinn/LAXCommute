@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import { cloudflare } from '@cloudflare/vite-plugin';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -6,6 +6,21 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig(({ mode }) => ({
   plugins: [
+    {
+      name: 'search-console-verification',
+      transformIndexHtml() {
+        const token = loadEnv(mode, process.cwd(), 'VITE_').VITE_GOOGLE_SITE_VERIFICATION;
+        return token
+          ? [
+              {
+                tag: 'meta',
+                attrs: { name: 'google-site-verification', content: token },
+                injectTo: 'head',
+              },
+            ]
+          : [];
+      },
+    },
     react(),
     tailwindcss(),
     ...(mode === 'test' ? [] : [cloudflare()]),

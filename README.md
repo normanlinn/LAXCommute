@@ -53,6 +53,10 @@ Set `VITE_MAP_STYLE_URL` to choose another compatible OpenFreeMap style. To chan
 
 References: [OpenFreeMap](https://openfreemap.org/), [Leaflet](https://leafletjs.com/), [OpenStreetMap tile policy](https://operations.osmfoundation.org/policies/tiles/), [Apple map links](https://developer.apple.com/library/archive/featuredarticles/iPhoneURLScheme_Reference/MapLinks/MapLinks.html), [Google Maps URLs](https://developers.google.com/maps/documentation/urls/get-started).
 
+## Free search engine optimization
+
+The initial HTML includes an employee shuttle guide, a descriptive search title, canonical URL, social sharing metadata and structured data. The sitemap and robots file are in `public/`. Optional `VITE_GOOGLE_SITE_VERIFICATION` adds Google Search Console HTML verification at build time. See [SEO setup](docs/SEO.md) for free indexing and monitoring steps.
+
 ## Employee Shuttles QR poster
 
 The poster opens `/employee-shuttles`, which the existing single-page application serves. Optional free Cloudflare Web Analytics can report recorded visits to that path after you configure the public `VITE_CF_WEB_ANALYTICS_TOKEN` and deploy. No analytics is enabled without a token. See [poster and analytics setup](docs/QR-POSTER.md) for setup and counting limitations.

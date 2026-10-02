@@ -6,17 +6,148 @@
     <meta name="theme-color" content="#122b32" />
     <meta
       name="description"
-      content="Live LAX employee shuttles, saved boarding stops, and your way back to parking."
+      content="Track LAX employee shuttles for South, East and West parking lots. Check bus arrival estimates, choose boarding stops and save your commute for free."
+    />
+    <link rel="canonical" href="https://laxcommute.mrzawlinnaing1001.workers.dev/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="LAXCommute" />
+    <meta property="og:title" content="LAX Employee Shuttle Tracker | LAXCommute" />
+    <meta
+      property="og:description"
+      content="Check South, East and West employee shuttle arrivals and boarding stops at Los Angeles International Airport. Free to use."
+    />
+    <meta property="og:url" content="https://laxcommute.mrzawlinnaing1001.workers.dev/" />
+    <meta
+      property="og:image"
+      content="https://laxcommute.mrzawlinnaing1001.workers.dev/icons/icon-512.png"
+    />
+    <meta property="og:image:alt" content="LAXCommute employee shuttle tracker logo" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="LAX Employee Shuttle Tracker | LAXCommute" />
+    <meta
+      name="twitter:description"
+      content="Free tracking for LAX South, East and West employee shuttles."
+    />
+    <meta
+      name="twitter:image"
+      content="https://laxcommute.mrzawlinnaing1001.workers.dev/icons/icon-512.png"
     />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="LAXCommute" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
-    <title>LAXCommute · Your airport. Your commute.</title>
+    <title>LAX Employee Shuttle Tracker | South, East &amp; West Lots | LAXCommute</title>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://laxcommute.mrzawlinnaing1001.workers.dev/#website",
+            "url": "https://laxcommute.mrzawlinnaing1001.workers.dev/",
+            "name": "LAXCommute",
+            "alternateName": "LAX Employee Shuttle Tracker",
+            "inLanguage": "en"
+          },
+          {
+            "@type": "WebApplication",
+            "@id": "https://laxcommute.mrzawlinnaing1001.workers.dev/#app",
+            "name": "LAXCommute",
+            "url": "https://laxcommute.mrzawlinnaing1001.workers.dev/",
+            "description": "Free LAX employee shuttle tracking, bus arrival estimates and boarding stops for South, East and West employee parking routes.",
+            "applicationCategory": "TravelApplication",
+            "operatingSystem": "Any device with a web browser",
+            "isAccessibleForFree": true,
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <header class="initial-app-summary">
+        <h1>LAX employee shuttle tracker</h1>
+        <p>Check South, East and West employee parking shuttle arrivals with LAXCommute.</p>
+        <a href="#shuttle-guide">Read the boarding guide</a>
+        <noscript
+          >Enable JavaScript to use live bus tracking. The boarding guide below is available without
+          JavaScript.</noscript
+        >
+      </header>
+    </div>
+    <section id="shuttle-guide" class="shuttle-guide" aria-labelledby="shuttle-guide-title">
+      <h2 id="shuttle-guide-title">LAX employee shuttle tracking and boarding guide</h2>
+      <p>
+        LAXCommute helps airport employees check shuttle arrival estimates and reported bus
+        locations for South, East and West employee parking routes at Los Angeles International
+        Airport. Choose the shuttle you want, then select where you are boarding. You can use the
+        tracker for free without signing in.
+      </p>
+      <div class="shuttle-guide-grid">
+        <article>
+          <h3>South Lot employee shuttle</h3>
+          <p>
+            The South route serves all terminals. Select South, choose a South Lot boarding stop to
+            go to work, or select a terminal stop to return to parking.
+          </p>
+        </article>
+        <article>
+          <h3>East Lot employee shuttle</h3>
+          <p>
+            The East route serves Terminals 1–3 and Terminal B (TBIT). East Lot is the default
+            boarding area. You can also select South Lot stops #1, #2 or #3 listed on the East route
+            to check when an East shuttle will reach you.
+          </p>
+        </article>
+        <article>
+          <h3>West Lot employee shuttle</h3>
+          <p>
+            The West route serves Terminals 4–7. West Lot is the default boarding area. You can also
+            select South Lot stops #1, #2 or #3 listed on the West route to check an approaching
+            West shuttle.
+          </p>
+        </article>
+      </div>
+      <h3>How do I track an employee shuttle at LAX?</h3>
+      <p>
+        Choose South, East or West under “Which shuttle do you want?” Set “To work” or “To parking,”
+        then choose “Where are you boarding?” The map and next departures update for the selected
+        route and stop. Use “Show other stops” to see more boarding points, or open walking
+        directions in Apple Maps or Google Maps.
+      </p>
+      <h3>Can I catch an East or West shuttle from South Lot?</h3>
+      <p>
+        Yes, when the selected route lists that South Lot boarding stop. Keep East or West selected
+        and choose the South stop. Arrival estimates remain for that shuttle route; selecting South
+        Lot as your boarding location does not switch you to the South shuttle.
+      </p>
+      <h3>Do I need to install an app or create an account?</h3>
+      <p>
+        No. Open LAXCommute in your browser. You can optionally add it to your phone’s home screen
+        and save your usual terminal, boarding stops and walking time. Guest settings are saved on
+        your device; signing in lets you sync your commute.
+      </p>
+      <h3>How reliable are the arrival estimates?</h3>
+      <p>
+        Times and bus positions come from the public LAX shuttle tracker feed and need an internet
+        connection. Estimates can change with traffic and operations. Scheduled times are labeled,
+        and expired predictions are removed. If data is unavailable, check the
+        <a
+          href="https://shuttles.flylax.com/employeeparking"
+          target="_blank"
+          rel="noopener noreferrer"
+          >LAX employee parking shuttle tracker</a
+        >.
+      </p>
+      <p class="shuttle-guide-note">
+        LAXCommute is an independent employee commute tool, not an official LAWA or airline service.
+        It tracks employee parking shuttles rather than hotel, FlyAway or private passenger shuttle
+        services.
+      </p>
+      <a href="#root">Back to the live shuttle tracker</a>
+    </section>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

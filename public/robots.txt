@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://laxcommute.mrzawlinnaing1001.workers.dev/sitemap.xml

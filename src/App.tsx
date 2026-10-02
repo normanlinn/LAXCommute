@@ -207,7 +207,7 @@ export default function App() {
                 <div>
                   <span className="eyebrow">LAX EMPLOYEE SHUTTLES</span>
                   <h1>
-                    {tab === 'home' ? 'Let’s get you home.' : 'A better way to catch your shuttle.'}
+                    {tab === 'home' ? 'Let’s get you home.' : 'LAX employee shuttle tracker.'}
                   </h1>
                 </div>
                 <div className="map-route-label">
