@@ -52,16 +52,21 @@ export default defineConfig(({ mode }) => ({
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/api\//],
         cleanupOutdatedCaches: true,
-        // Cache branding fonts only; arrivals, auth, and map tiles stay online-only.
+        // Cache typography only; arrivals, auth, and map tiles stay online-only.
         runtimeCaching: [
           {
             urlPattern: ({ url }) =>
-              url.hostname === 'api.fontshare.com' || url.hostname === 'cdn.fontshare.com',
+              [
+                'api.fontshare.com',
+                'cdn.fontshare.com',
+                'fonts.googleapis.com',
+                'fonts.gstatic.com',
+              ].includes(url.hostname),
             handler: 'CacheFirst',
             options: {
               cacheName: 'laxcommute-brand-fonts',
               cacheableResponse: { statuses: [0, 200] },
-              expiration: { maxEntries: 8, maxAgeSeconds: 60 * 60 * 24 * 365 },
+              expiration: { maxEntries: 32, maxAgeSeconds: 60 * 60 * 24 * 365 },
             },
           },
         ],

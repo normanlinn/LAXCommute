@@ -27,13 +27,13 @@ The initial HTML retains the English guide for crawlers and visitors without Jav
 
 ## Typography and licenses
 
-**Pally** gives the English logo and headings a friendly tone. The uploaded Pally Variable font contains no Myanmar glyphs. Body copy and arrival numbers retain the simpler existing sans-serif fonts.
+**Pally** gives the English logo and headings a friendly tone. The uploaded Pally Variable font contains no Myanmar glyphs. **Inter** is used for body copy, buttons, forms, and arrival numbers. It loads from the official Google Fonts stylesheet with weights 400–800 and a system sans-serif fallback. See [Inter's source and SIL Open Font License](https://github.com/google/fonts/tree/main/ofl/inter).
 
 Pally is supplied by Indian Type Foundry through [Fontshare's official stylesheet](https://api.fontshare.com/v2/css?f[]=pally@400,500,700&display=swap). The uploaded TTF is not committed, modified, or redistributed in this public repository. See the [Fontshare license](https://www.fontshare.com/licenses/itf-ffl). If the font service is unavailable, system sans-serif fallbacks remain readable.
 
 **Noto Sans Myanmar** handles Myanmar text and shaping. A complete variable WOFF is included in `public/fonts/`, together with its [SIL Open Font License](../public/fonts/NotoSansMyanmar-OFL.txt). Its source is the [Google Fonts Noto Sans Myanmar directory](https://github.com/google/fonts/tree/main/ofl/notosansmyanmar). The local WOFF preserves the source font's glyphs, shaping tables, and variable axes.
 
-The service worker precaches the local Myanmar font with the app shell. Fontshare branding files are cached after loading successfully. Live arrivals, authentication, and map tiles still require an internet connection.
+The service worker precaches the local Myanmar font with the app shell. Fontshare and Google Fonts typography files are cached after loading successfully. Live arrivals, authentication, and map tiles still require an internet connection.
 
 ## Checks
 
