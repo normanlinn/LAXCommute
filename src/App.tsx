@@ -1,3 +1,4 @@
+import { useLanguage } from './i18n/LanguageProvider';
 import type { Direction, Point, Stop } from './types';
 import Button from './components/ui/Button';
 import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
@@ -32,6 +33,7 @@ import { useLive, useOnline, useRoute, useSnapshotFresh } from './hooks/useShutt
 import Arrivals from './components/Arrivals';
 import InstallApp from './components/InstallApp';
 import DirectionsButton from './components/DirectionsButton';
+import LanguageSwitch from './components/LanguageSwitch';
 const ShuttleMap = lazy(() => import('./components/ShuttleMap'));
 const AccountPanel = lazy(() => import('./components/AccountPanel'));
 const SavedCommute = lazy(() => import('./components/SavedCommute'));
@@ -44,6 +46,7 @@ const TABS = [
 ];
 
 export default function App() {
+  const { t, language } = useLanguage();
   const { user, recovering, authReturn } = useAccount();
   const { profile, save, saveState } = useCommute();
   const [tab, setTab] = useState('map');
@@ -166,37 +169,41 @@ export default function App() {
       <header className="navbar app-header">
         <a
           className="brand"
+          lang="en"
           href="#"
           onClick={(e) => {
             e.preventDefault();
             changeTab('map');
           }}
-          aria-label="LAXCommute home"
+          aria-label={t('LAXCommute home')}
         >
           <img src="/icons/icon-192.png" alt="" width={43} height={43} />
           <div>
             <strong>
               LAX<span>Commute</span>
             </strong>
-            <small>YOUR AIRPORT. YOUR COMMUTE.</small>
+            <small lang={language}>{t('YOUR AIRPORT. YOUR COMMUTE.')}</small>
           </div>
         </a>
+        <LanguageSwitch />
         <div className="header-actions">
           <InstallApp />
           <Button
             className="profile-button"
             onClick={() => changeTab('account')}
-            aria-label={user ? 'Open your account' : 'Sign in'}
+            aria-label={user ? t('Open your account') : t('Sign in')}
           >
             <UserRound size={20} />
-            <span>{user ? 'My account' : 'Sign in'}</span>
+            <span>{user ? t('My account') : t('Sign in')}</span>
           </Button>
         </div>
       </header>
       {!online && (
         <div className="offline-banner" role="status">
-          <WifiOff size={16} />
-          You’re offline. Saved settings are available; live data will resume when you reconnect.
+          <WifiOff size={16} />{' '}
+          {t(
+            'You’re offline. Saved settings are available; live data will resume when you reconnect.',
+          )}{' '}
         </div>
       )}
       <main className={showTrip ? 'trip-layout' : 'settings-layout'}>
@@ -205,24 +212,28 @@ export default function App() {
             <section className="map-column">
               <div className="map-topbar">
                 <div>
-                  <span className="eyebrow">LAX EMPLOYEE SHUTTLES</span>
+                  <span className="eyebrow">{t('LAX EMPLOYEE SHUTTLES')}</span>
                   <h1>
-                    {tab === 'home' ? 'Let’s get you home.' : 'LAX employee shuttle tracker.'}
+                    {tab === 'home' ? t('Let’s get you home.') : t('LAX employee shuttle tracker.')}
                   </h1>
                 </div>
                 <div className="map-route-label">
                   <span className="route-square">{route.short}</span>
                   <div>
-                    <strong>{lot} Lot</strong>
+                    <strong>
+                      {lot} {t('Lot')}
+                    </strong>
                     <span>
                       {vehicles.length
-                        ? `${vehicles.length} buses reporting GPS`
-                        : 'Checking bus positions'}
+                        ? t('{count} buses reporting GPS', { count: vehicles.length })
+                        : t('Checking bus positions')}
                     </span>
                   </div>
                 </div>
               </div>
-              <Suspense fallback={<div className="map-surface map-loading">Opening map…</div>}>
+              <Suspense
+                fallback={<div className="map-surface map-loading">{t('Opening map…')}</div>}
+              >
                 <ShuttleMap
                   route={route}
                   stops={mapStops}
@@ -236,68 +247,73 @@ export default function App() {
               </Suspense>
               <div className="map-controls">
                 <Button onClick={() => focus('route')}>
-                  <Route size={16} />
-                  Whole route
+                  <Route size={16} /> {t('Whole route')}{' '}
                 </Button>
                 <Button onClick={() => focus('stop')} disabled={!selectedStop}>
-                  <MapPin size={16} />
-                  My stop
+                  <MapPin size={16} /> {t('My stop')}{' '}
                 </Button>
                 <Button onClick={locate} disabled={locating || options.length === 0}>
                   <LocateFixed size={16} />
-                  {locating ? 'Locating…' : 'Near me'}
+                  {locating ? t('Locating…') : t('Near me')}
                 </Button>
               </div>
-              {routeQuery.data?.warning && <p className="map-warning">{routeQuery.data.warning}</p>}
+              {routeQuery.data?.warning && (
+                <p className="map-warning">{t(routeQuery.data.warning)}</p>
+              )}
               <div className="map-footer">
                 <span>
                   <span className="dot" />
-                  {online ? 'Actual feed data · no simulated buses' : 'Waiting for connection'}
+                  {online
+                    ? t('Actual feed data · no simulated buses')
+                    : t('Waiting for connection')}
                 </span>
                 <a
                   href="https://shuttles.flylax.com/employeeparking"
                   target="_blank"
                   rel="noreferrer"
                 >
-                  LAX tracker <ExternalLink size={13} />
+                  {' '}
+                  {t('LAX tracker')} <ExternalLink size={13} />
                 </a>
               </div>
             </section>
             <aside className="card bg-base-100 trip-card">
               <div className="trip-intro">
                 <span className="eyebrow">
-                  {direction === 'parking' ? 'YOUR RIDE BACK' : 'START YOUR SHIFT'}
+                  {direction === 'parking' ? t('YOUR RIDE BACK') : t('START YOUR SHIFT')}
                 </span>
                 <h2>
-                  {direction === 'parking' ? 'Back to your parking lot.' : 'Where are we headed?'}
+                  {direction === 'parking'
+                    ? t('Back to your parking lot.')
+                    : t('Where are we headed?')}
                 </h2>
                 <p>
                   {direction === 'parking'
-                    ? `${profile.terminal} is your usual terminal. Choose any other stop for today.`
-                    : 'Pick your lot and boarding stop. We’ll check the next departures.'}
+                    ? t('{terminal} is your usual terminal. Choose any other stop for today.', {
+                        terminal: profile.terminal,
+                      })
+                    : t('Pick your lot and boarding stop. We’ll check the next departures.')}
                 </p>
               </div>
               <div
                 className="tabs tabs-box segmented direction-switch"
-                aria-label="Travel direction"
+                aria-label={t('Travel direction')}
               >
                 <Button
                   className={direction === 'work' ? 'tab tab-active active' : 'tab'}
                   onClick={() => changeDirection('work')}
                 >
-                  <BusFront size={16} />
-                  To work
+                  <BusFront size={16} /> {t('To work')}{' '}
                 </Button>
                 <Button
                   className={direction === 'parking' ? 'tab tab-active active' : 'tab'}
                   onClick={() => changeDirection('parking')}
                 >
-                  <Home size={16} />
-                  To parking
+                  <Home size={16} /> {t('To parking')}{' '}
                 </Button>
               </div>
               <div className="field route-field">
-                <span>Which shuttle do you want?</span>
+                <span>{t('Which shuttle do you want?')}</span>
                 <div className="route-options">
                   {ROUTES.map((r) => (
                     <Button
@@ -314,8 +330,10 @@ export default function App() {
               </div>
               {direction === 'work' && lot !== 'South' && (
                 <p className="small muted">
-                  Taking the {lot} shuttle from South Lot? Choose a South Lot stop below. Times are
-                  for the {lot} shuttle.
+                  {t(
+                    'Taking the {lot} shuttle from South Lot? Choose a South Lot stop below. Times are for the {lot} shuttle.',
+                    { lot },
+                  )}
                 </p>
               )}
               <div className="trip-destination">
@@ -325,17 +343,20 @@ export default function App() {
                   <span />
                 </div>
                 <div>
-                  <span>FROM</span>
-                  <strong>{selectedStop?.name || 'Choose your boarding stop'}</strong>
-                  <span>TO</span>
+                  <span>{t('FROM')}</span>
+                  <strong>{selectedStop?.name || t('Choose your boarding stop')}</strong>
+                  <span>{t('TO')}</span>
                   <strong>
-                    {direction === 'parking' ? `${lot} employee parking` : profile.terminal}
+                    {direction === 'parking'
+                      ? t('{lot} employee parking', { lot })
+                      : profile.terminal}
                   </strong>
                 </div>
                 <ArrowDownUp size={17} />
               </div>
               <label className="field">
-                Where are you boarding?
+                {' '}
+                {t('Where are you boarding?')}{' '}
                 <select
                   className="select w-full"
                   value={selectedStop?.id || 0}
@@ -349,7 +370,7 @@ export default function App() {
                   }
                 >
                   <option value={0} disabled>
-                    {routeQuery.isPending ? 'Loading stops…' : 'Choose a boarding stop'}
+                    {routeQuery.isPending ? t('Loading stops…') : t('Choose a boarding stop')}
                   </option>
                   {options.map((s) => (
                     <option key={s.id} value={s.id}>
@@ -360,29 +381,29 @@ export default function App() {
               </label>
               <div className="stop-actions">
                 <Button className={!todayID ? 'active' : ''} onClick={() => setOverride(null)}>
-                  <Bookmark size={14} />
-                  Usual stop
+                  <Bookmark size={14} /> {t('Usual stop')}{' '}
                 </Button>
                 <Button onClick={locate} disabled={locating || options.length === 0}>
                   <Navigation size={14} />
-                  {locating ? 'Finding you…' : 'Use my location'}
+                  {locating ? t('Finding you…') : t('Use my location')}
                 </Button>
               </div>
               {todayID && (
                 <p className="today-note">
-                  {override?.source === 'nearby' ? 'Nearby stop' : 'Today’s stop'} · your saved
-                  commute stays the same.
+                  {override?.source === 'nearby' ? t('Nearby stop') : t('Today’s stop')}{' '}
+                  {t('· your saved commute stays the same.')}{' '}
                 </p>
               )}
               {locationError && (
                 <p className="alert alert-soft alert-warning notice" role="status">
-                  {locationError}
+                  {t(locationError)}
                 </p>
               )}
               {routeQuery.isError && (
                 <p className="alert alert-soft alert-warning notice" role="status">
-                  Boarding stops are unavailable.{' '}
-                  <Button onClick={() => routeQuery.refetch()}>Retry</Button>
+                  {' '}
+                  {t('Boarding stops are unavailable.')}{' '}
+                  <Button onClick={() => routeQuery.refetch()}>{t('Retry')}</Button>
                 </p>
               )}
               <Arrivals
@@ -400,7 +421,7 @@ export default function App() {
               />
               <details className="collapse advanced">
                 <summary className="collapse-title">
-                  <span>Other bus options</span>
+                  <span>{t('Other bus options')}</span>
                   <ChevronDown size={17} />
                 </summary>
                 <div className="collapse-content advanced-content">
@@ -410,13 +431,15 @@ export default function App() {
                         {r.short}
                       </span>
                       <span>
-                        <strong>{r.lot} Lot shuttle</strong>
-                        <small>{r.coverage}</small>
+                        <strong>{t('{lot} Lot shuttle', { lot: r.lot })}</strong>
+                        <small>{t(r.coverage)}</small>
                       </span>
                       <ArrowRight size={17} />
                     </Button>
                   ))}
-                  <p>Select another route to check its actual boarding stops and departures.</p>
+                  <p>
+                    {t('Select another route to check its actual boarding stops and departures.')}
+                  </p>
                 </div>
               </details>
               {selectedStop && <DirectionsButton stop={selectedStop} />}
@@ -425,7 +448,9 @@ export default function App() {
         ) : (
           <Suspense
             fallback={
-              <section className="card bg-base-100 page-card">Opening your settings…</section>
+              <section className="card bg-base-100 page-card">
+                {t('Opening your settings…')}
+              </section>
             }
           >
             {tab === 'saved' ? (
@@ -447,7 +472,7 @@ export default function App() {
           </Suspense>
         )}
       </main>
-      <nav className="bottom-nav" aria-label="Main navigation">
+      <nav className="bottom-nav" aria-label={t('Main navigation')}>
         {TABS.map(({ id, label, Icon }) => (
           <Button
             key={id}
@@ -456,7 +481,7 @@ export default function App() {
             onClick={() => changeTab(id)}
           >
             <Icon size={21} strokeWidth={tab === id ? 2.3 : 1.8} />
-            <span>{label}</span>
+            <span>{t(label)}</span>
           </Button>
         ))}
       </nav>

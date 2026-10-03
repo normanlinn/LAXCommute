@@ -48,11 +48,23 @@ export default defineConfig(({ mode }) => ({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+        globPatterns: ['**/*.{js,css,html,png,svg,ico,woff,woff2}'],
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/api\//],
         cleanupOutdatedCaches: true,
-        // No runtime caching: live arrivals, auth, and map tiles stay online-only.
+        // Cache branding fonts only; arrivals, auth, and map tiles stay online-only.
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }) =>
+              url.hostname === 'api.fontshare.com' || url.hostname === 'cdn.fontshare.com',
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'laxcommute-brand-fonts',
+              cacheableResponse: { statuses: [0, 200] },
+              expiration: { maxEntries: 8, maxAgeSeconds: 60 * 60 * 24 * 365 },
+            },
+          },
+        ],
       },
       devOptions: { enabled: false },
     }),

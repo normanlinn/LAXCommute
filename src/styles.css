@@ -38,9 +38,19 @@
   --noise: 0;
 }
 
+@font-face {
+  font-family: 'Noto Sans Myanmar';
+  src: url('/fonts/NotoSansMyanmar-Variable.woff') format('woff');
+  font-weight: 100 900;
+  font-stretch: 62.5% 100%;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   font-family:
     'DM Sans',
+    'Noto Sans Myanmar',
     system-ui,
     -apple-system,
     sans-serif;
@@ -102,16 +112,18 @@ h1,
 h2,
 h3,
 .brand {
-  font-family: 'Manrope', system-ui, sans-serif;
+  font-family: 'Pally', 'Noto Sans Myanmar', system-ui, sans-serif;
 }
 .app {
   min-height: 100dvh;
   padding-bottom: calc(106px + env(safe-area-inset-bottom));
 }
 .app-header {
-  height: 92px;
+  min-height: 92px;
+  height: auto;
   padding: 0 max(28px, calc((100vw - 1400px) / 2));
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid #e5ebe8;
@@ -130,7 +142,7 @@ h3,
   display: block;
   font-size: 23px;
   letter-spacing: -1px;
-  font-weight: 800;
+  font-weight: 700;
 }
 .brand strong span {
   font-weight: 600;
@@ -204,6 +216,13 @@ h3,
   display: flex;
   gap: 10px;
   align-items: center;
+  max-width: 100%;
+}
+.map-route-label > div {
+  min-width: 0;
+}
+.map-route-label .route-square {
+  flex-shrink: 0;
 }
 .route-square {
   background: var(--route-color);
@@ -1566,6 +1585,25 @@ input::placeholder {
   outline: 3px solid #266beb;
   outline-offset: 2px;
 }
+.map-display-controls {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 700;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  max-width: calc(100% - 68px);
+}
+.map-display-controls .basemap-switch,
+.map-display-controls .map-stops-toggle {
+  position: static;
+  max-width: 100%;
+}
+.map-display-controls .basemap-switch button {
+  min-width: 0;
+}
 
 /* Visible guide stays in the initial HTML for readers and search engines. */
 .initial-app-summary,
@@ -1611,5 +1649,111 @@ input::placeholder {
   .shuttle-guide-grid {
     grid-template-columns: 1fr;
     gap: 0;
+  }
+}
+
+.language-switch {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px;
+  background: #f1f5f2;
+  border: 1px solid #dbe5df;
+  border-radius: 13px;
+}
+.language-switch .btn {
+  min-width: 72px;
+  min-height: 44px;
+  padding: 7px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.language-switch .btn[aria-pressed='true'] {
+  background: #163e32;
+  color: #fff;
+}
+:lang(my) {
+  font-family: 'Noto Sans Myanmar', 'DM Sans', system-ui, sans-serif;
+  letter-spacing: normal;
+}
+html:lang(my) {
+  line-height: 1.8;
+}
+html:lang(my) h1,
+html:lang(my) h2,
+html:lang(my) h3 {
+  font-family: 'Noto Sans Myanmar', system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: normal;
+  line-height: 1.65;
+}
+html:lang(my) .eyebrow {
+  letter-spacing: normal;
+  font-size: 12px;
+  line-height: 1.8;
+}
+html:lang(my) .btn {
+  height: auto;
+  min-height: 44px;
+  line-height: 1.8;
+  white-space: normal;
+}
+html:lang(my) .segmented .tab {
+  height: auto;
+  padding: 9px 8px;
+}
+html:lang(my) .page-card h1 {
+  font-size: clamp(24px, 4vw, 30px);
+}
+html:lang(my) .bottom-nav button span {
+  font-size: 11px;
+  line-height: 1.8;
+}
+html:lang(my) .brand small {
+  font-size: 10px;
+  letter-spacing: normal;
+  line-height: 1.9;
+}
+html:lang(my) .map-route-label strong,
+html:lang(my) .map-route-label div > span {
+  white-space: normal;
+}
+html:lang(my) p {
+  line-height: 1.85;
+}
+html:lang(my) .basemap-switch button {
+  white-space: normal;
+}
+html:lang(my) .basemap-switch button,
+html:lang(my) .boarding-label small,
+html:lang(my) .shuttle-map-legend {
+  font-size: 12px;
+  letter-spacing: normal;
+  line-height: 1.8;
+}
+@media (max-width: 1050px) {
+  .app-header {
+    height: auto;
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding: 12px 18px;
+    gap: 8px;
+  }
+  .app-header .brand {
+    min-width: 0;
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .app-header .brand > div {
+    min-width: 0;
+  }
+  .header-actions {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .language-switch {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: center;
   }
 }

@@ -1,3 +1,4 @@
+import { useLanguage } from '../i18n/LanguageProvider';
 import type { MapProps } from '../types';
 import { memo, useEffect, useRef, useState } from 'react';
 import { ExternalLink, Map as MapIcon } from 'lucide-react';
@@ -39,6 +40,7 @@ function AppleMap({
   onSelectStop,
   focusRequest,
 }: MapProps) {
+  const { t, language } = useLanguage();
   const element = useRef<HTMLDivElement>(null);
   const state = useRef<AppleState | null>(null);
   const selectionHandler = useRef(onSelectStop);
@@ -107,23 +109,23 @@ function AppleMap({
     for (const stop of stops)
       upsert(`stop-${stop.id}`, stop.lat, stop.lon, {
         title: stop.name,
-        subtitle: stop.id === selectedStop?.id ? 'Your boarding stop' : 'Tap for departures',
+        subtitle: stop.id === selectedStop?.id ? t('Your boarding stop') : t('Tap for departures'),
         color: stop.id === selectedStop?.id ? route.color : '#718181',
         glyphText: '•',
         data: { stop },
       });
     for (const bus of vehicles.filter((v) => validVehicle(v)))
       upsert(`bus-${bus.id}`, bus.lat, bus.lon, {
-        title: `Bus ${bus.name || bus.id}`,
-        subtitle: `GPS ${new Date(bus.lastUpdated).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`,
+        title: t('Bus {name}', { name: bus.name || bus.id }),
+        subtitle: `GPS ${new Date(bus.lastUpdated).toLocaleTimeString(language === 'my' ? 'my-MM-u-nu-latn' : 'en-US', { hour: 'numeric', minute: '2-digit' })}`,
         color: route.color,
         glyphText: 'B',
         data: { busID: bus.id },
       });
     if (userLocation)
       upsert('you', userLocation.lat, userLocation.lon, {
-        title: 'Your location',
-        subtitle: 'Location snapshot',
+        title: t('Your location'),
+        subtitle: t('Location snapshot'),
         color: '#266beb',
         glyphText: '●',
       });
@@ -144,7 +146,7 @@ function AppleMap({
       }
     }, 30_000);
     return () => clearTimeout(expiration);
-  }, [ready, stops, vehicles, selectedStop, userLocation, route.color]);
+  }, [ready, stops, vehicles, selectedStop, userLocation, route.color, t, language]);
   useEffect(() => {
     if (!ready || !state.current) return;
     const { map, mapkit } = state.current;
@@ -193,7 +195,7 @@ function AppleMap({
       <div
         ref={element}
         className="apple-map"
-        aria-label="Apple map showing LAX shuttle stops and reported bus positions"
+        aria-label={t('Apple map showing LAX shuttle stops and reported bus positions')}
       />
       {(!config.appleMapsToken || error || !ready) && (
         <div className="map-placeholder">
@@ -203,16 +205,18 @@ function AppleMap({
           <span className="eyebrow">APPLE MAPS</span>
           <h2>
             {error
-              ? 'Map unavailable'
+              ? t('Map unavailable')
               : config.appleMapsToken
-                ? 'Opening your map…'
-                : 'Your airport, at a glance.'}
+                ? t('Opening your map…')
+                : t('Your airport, at a glance.')}
           </h2>
           <p>
-            {error ||
+            {t(error) ||
               (config.appleMapsToken
-                ? 'Loading the Apple map.'
-                : 'The embedded map needs an Apple Maps token. You can check live departures below while it’s being connected.')}
+                ? t('Loading the Apple map.')
+                : t(
+                    'The embedded map needs an Apple Maps token. You can check live departures below while it’s being connected.',
+                  ))}
           </p>
           {!ready && (
             <a
@@ -221,14 +225,15 @@ function AppleMap({
               rel="noreferrer"
               className="btn btn-soft button button-light"
             >
-              Open Apple Maps <ExternalLink size={15} />
+              {' '}
+              {t('Open Apple Maps')} <ExternalLink size={15} />
             </a>
           )}
         </div>
       )}
       {ready && (
         <div className="map-hint">
-          <span className="dot" /> Reported GPS positions · tap a stop
+          <span className="dot" /> {t('Reported GPS positions · tap a stop')}{' '}
         </div>
       )}
     </div>

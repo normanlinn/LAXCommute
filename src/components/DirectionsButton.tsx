@@ -1,3 +1,4 @@
+import { useLanguage } from '../i18n/LanguageProvider';
 import { useId, useState } from 'react';
 import { ExternalLink, Navigation, X } from 'lucide-react';
 import { directionsLinks } from '../domain/commute';
@@ -5,23 +6,24 @@ import Button from './ui/Button';
 import Dialog from './ui/Dialog';
 
 export default function DirectionsButton({ stop }: { stop: import('../types').Stop }) {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const titleId = useId();
   return (
     <>
       <Button className="directions-link" onClick={() => setOpen(true)}>
-        <Navigation size={15} /> Directions to this stop
+        <Navigation size={15} /> {t('Directions to this stop')}{' '}
       </Button>
       <Dialog open={open} onClose={() => setOpen(false)} titleId={titleId}>
         <Button
           className="modal-close"
-          aria-label="Close directions"
+          aria-label={t('Close directions')}
           onClick={() => setOpen(false)}
         >
           <X size={19} />
         </Button>
-        <span className="eyebrow">WALK TO YOUR SHUTTLE</span>
-        <h2 id={titleId}>Open directions</h2>
+        <span className="eyebrow">{t('WALK TO YOUR SHUTTLE')}</span>
+        <h2 id={titleId}>{t('Open directions')}</h2>
         <p>{stop.name}</p>
         <div className="directions-options">
           {directionsLinks(stop).map(({ label, href }) => (

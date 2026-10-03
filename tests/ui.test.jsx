@@ -3,6 +3,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import App from '../src/App';
 import AccountPanel from '../src/components/AccountPanel';
+import LanguageSwitch from '../src/components/LanguageSwitch';
+import { LanguageProvider } from '../src/i18n/LanguageProvider';
 
 const liveRequests = vi.hoisted(() => vi.fn());
 const auth = vi.hoisted(() => ({ signInWithPassword: vi.fn(), signUp: vi.fn() }));
@@ -74,6 +76,53 @@ beforeEach(() => {
 });
 afterEach(cleanup);
 describe('commute UI', () => {
+  it('keeps the East route and a South Lot override when switching languages', () => {
+    render(
+      <LanguageProvider>
+        <App />
+      </LanguageProvider>,
+    );
+    fireEvent.click(screen.getByRole('button', { name: /^E\s*East$/ }));
+    const boarding = screen.getByRole('combobox', { name: 'Where are you boarding?' });
+    fireEvent.change(boarding, { target: { value: '3' } });
+    fireEvent.click(screen.getByRole('button', { name: 'မြန်မာ' }));
+    expect(boarding.value).toBe('3');
+    expect(boarding.selectedOptions[0].textContent).toBe('South Lot Stop #1');
+    expect(screen.getByRole('combobox', { name: 'ဘယ်မှတ်တိုင်မှ စီးမလဲ။' })).toBe(boarding);
+    expect(liveRequests).toHaveBeenLastCalledWith(6884, 3, true);
+    expect(localStorage.getItem('laxcommute:profile:guest')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'English' }));
+    expect(screen.getByRole('combobox', { name: 'Where are you boarding?' })).toBe(boarding);
+    expect(boarding.value).toBe('3');
+  });
+  it('preserves account input and translates a sign-in error after switching languages', async () => {
+    auth.signInWithPassword.mockResolvedValueOnce({
+      error: { message: 'Invalid login credentials' },
+    });
+    const { container } = render(
+      <LanguageProvider>
+        <LanguageSwitch />
+        <AccountPanel profile={{ lot: 'South', terminal: 'Terminal B (TBIT)' }} />
+      </LanguageProvider>,
+    );
+    const email = screen.getByLabelText('Email address');
+    const password = screen.getByLabelText('Password');
+    fireEvent.change(email, { target: { value: 'employee@example.com' } });
+    fireEvent.change(password, { target: { value: 'example-password' } });
+    fireEvent.click(screen.getByRole('button', { name: 'မြန်မာ' }));
+    expect(screen.getByLabelText('အီးမေးလ်လိပ်စာ')).toBe(email);
+    expect(screen.getByLabelText('စကားဝှက်')).toBe(password);
+    expect(email.value).toBe('employee@example.com');
+    expect(password.value).toBe('example-password');
+    fireEvent.submit(container.querySelector('form'));
+    const error = await screen.findByRole('alert');
+    expect(error.textContent).toContain('အီးမေးလ်');
+    expect(error.textContent).not.toContain('The email or password is incorrect');
+    fireEvent.click(screen.getByRole('button', { name: 'English' }));
+    expect(error.textContent).toBe(
+      'The email or password is incorrect. Try again or use Forgot password.',
+    );
+  });
   it('offers walking directions to the currently selected stop in Apple or Google Maps', async () => {
     render(<App />);
     fireEvent.click(screen.getByRole('button', { name: 'Go home' }));

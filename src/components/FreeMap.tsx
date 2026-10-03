@@ -1,3 +1,4 @@
+import { useLanguage } from '../i18n/LanguageProvider';
 import type { MapProps, Point, Stop, RoutePath } from '../types';
 import { memo, useEffect, useRef, useState } from 'react';
 import * as L from 'leaflet';
@@ -50,6 +51,7 @@ function FreeMap({
   onSelectStop,
   focusRequest,
 }: MapProps) {
+  const { t } = useLanguage();
   const element = useRef<HTMLDivElement>(null);
   type MarkerPoint = Point & { id?: number; name?: string; lastUpdated?: string };
   type Entry = {
@@ -191,7 +193,7 @@ function FreeMap({
         const label = document.createElement('span');
         if (selected) {
           const caption = document.createElement('small');
-          caption.textContent = 'BOARD HERE';
+          caption.textContent = t('BOARD HERE');
           label.append(caption, document.createTextNode(point.name || ''));
         } else label.textContent = title;
         entry.marker.unbindTooltip();
@@ -212,12 +214,17 @@ function FreeMap({
         `stop-${stop.id}`,
         stop,
         'stop',
-        `${stop.name}${stop.id === selectedStop?.id ? ' · Your boarding stop' : ''}`,
+        `${stop.name}${stop.id === selectedStop?.id ? ` · ${t('Your boarding stop')}` : ''}`,
         stop.id === selectedStop?.id,
       );
     for (const bus of vehicles.filter((vehicle) => validVehicle(vehicle)))
-      upsert(`bus-${bus.id}`, bus, 'bus', `Bus ${bus.name || bus.id} · Reported GPS`);
-    if (userLocation) upsert('you', userLocation, 'you', 'Your location snapshot');
+      upsert(
+        `bus-${bus.id}`,
+        bus,
+        'bus',
+        t('Bus {name} · Reported GPS', { name: bus.name || bus.id }),
+      );
+    if (userLocation) upsert('you', userLocation, 'you', t('Your location snapshot'));
     for (const [key, entry] of markers)
       if (!wanted.has(key)) {
         entry.marker.remove();
@@ -243,7 +250,20 @@ function FreeMap({
     };
     expire();
     return () => clearTimeout(expiration);
-  }, [ready, stops, vehicles, selectedStop, userLocation, route.color, showStops]);
+  }, [ready, stops, vehicles, selectedStop, userLocation, route.color, showStops, t]);
+
+  useEffect(() => {
+    if (!ready || !state.current) return;
+    const container = state.current.map.getContainer();
+    for (const [selector, label] of [
+      ['.leaflet-control-zoom-in', 'Zoom in'],
+      ['.leaflet-control-zoom-out', 'Zoom out'],
+    ]) {
+      const button = container.querySelector(selector);
+      button?.setAttribute('title', t(label));
+      button?.setAttribute('aria-label', t(label));
+    }
+  }, [ready, t]);
 
   useEffect(() => {
     if (!ready || !state.current) return;
@@ -280,53 +300,54 @@ function FreeMap({
         ref={element}
         className="shuttle-map"
         role="region"
-        aria-label="Interactive LAX shuttle map with boarding stops and reported bus positions"
+        aria-label={t('Interactive LAX shuttle map with boarding stops and reported bus positions')}
       />
       {ready && (
         <>
-          <div className="basemap-switch" role="group" aria-label="Map appearance">
+          <div className="map-display-controls">
+            <div className="basemap-switch" role="group" aria-label={t('Map appearance')}>
+              <button
+                type="button"
+                aria-pressed={basemap === 'simple'}
+                onClick={() => {
+                  setSimpleUnavailable(false);
+                  setBasemap('simple');
+                }}
+              >
+                {' '}
+                {t('Simple')}{' '}
+              </button>
+              <button
+                type="button"
+                aria-pressed={basemap === 'detailed'}
+                onClick={() => {
+                  setSimpleUnavailable(false);
+                  setBasemap('detailed');
+                }}
+              >
+                {' '}
+                {t('Street detail')}{' '}
+              </button>
+            </div>
             <button
               type="button"
-              aria-pressed={basemap === 'simple'}
-              onClick={() => {
-                setSimpleUnavailable(false);
-                setBasemap('simple');
-              }}
+              className="map-stops-toggle"
+              aria-pressed={showStops}
+              onClick={() => setShowStops((show) => !show)}
             >
-              Simple
-            </button>
-            <button
-              type="button"
-              aria-pressed={basemap === 'detailed'}
-              onClick={() => {
-                setSimpleUnavailable(false);
-                setBasemap('detailed');
-              }}
-            >
-              Street detail
+              {showStops ? t('Hide other stops') : t('Show other stops')}
             </button>
           </div>
-          <button
-            type="button"
-            className="map-stops-toggle"
-            aria-pressed={showStops}
-            onClick={() => setShowStops((show) => !show)}
-          >
-            {showStops ? 'Hide other stops' : 'Show other stops'}
-          </button>
-          <div className="shuttle-map-legend" aria-label="Map legend">
+          <div className="shuttle-map-legend" aria-label={t('Map legend')}>
             <span>
-              <i className="legend-stop" />
-              Stop
+              <i className="legend-stop" /> {t('Stop')}{' '}
             </span>
             <span>
-              <i className="legend-bus" />
-              Bus
+              <i className="legend-bus" /> {t('Bus')}{' '}
             </span>
             {userLocation && (
               <span>
-                <i className="legend-you" />
-                You
+                <i className="legend-you" /> {t('You')}{' '}
               </span>
             )}
           </div>
@@ -334,12 +355,14 @@ function FreeMap({
       )}
       {simpleUnavailable && !tileError && (
         <p className="map-tile-warning" role="status">
-          Simple map unavailable. Showing street detail.
+          {' '}
+          {t('Simple map unavailable. Showing street detail.')}{' '}
         </p>
       )}
       {tileError && (
         <p className="map-tile-warning" role="status">
-          Map images couldn’t load. Stops and departure times remain available.
+          {' '}
+          {t('Map images couldn’t load. Stops and departure times remain available.')}{' '}
         </p>
       )}
     </div>

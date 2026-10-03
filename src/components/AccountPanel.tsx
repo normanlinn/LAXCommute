@@ -1,3 +1,4 @@
+import { useLanguage } from '../i18n/LanguageProvider';
 import { authErrorMessage, authReturnUrl } from '../domain/auth';
 import Button from './ui/Button';
 import { useEffect, useState } from 'react';
@@ -14,6 +15,7 @@ export default function AccountPanel({
   onSaved: () => void;
   onGuest?: () => void;
 }) {
+  const { t } = useLanguage();
   const { user, ready, authError, authMessage, clearAuthError, recovering, setRecovering } =
     useAccount();
   const [mode, setMode] = useState<'signin' | 'signup' | 'reset' | 'confirm' | 'reset-code'>(
@@ -183,7 +185,7 @@ export default function AccountPanel({
   if (!ready)
     return (
       <section className="card bg-base-100 page-card">
-        <p>Loading your account…</p>
+        <p>{t('Loading your account…')}</p>
       </section>
     );
   if (user && !recovering)
@@ -192,8 +194,8 @@ export default function AccountPanel({
         <div className="feature-icon">
           <UserRound size={27} />
         </div>
-        <span className="eyebrow">YOUR ACCOUNT</span>
-        <h1>You’re ready to go.</h1>
+        <span className="eyebrow">{t('YOUR ACCOUNT')}</span>
+        <h1>{t('You’re ready to go.')}</h1>
         <p className="email-display">
           <Mail size={17} />
           {user.email}
@@ -202,26 +204,27 @@ export default function AccountPanel({
           <Check size={19} />
           <div>
             <strong>
-              {profile.terminal} ↔ {profile.lot} Lot
+              {profile.terminal} ↔ {profile.lot} {t('Lot')}{' '}
             </strong>
-            <span>Your saved commute syncs with this account.</span>
+            <span>{t('Your saved commute syncs with this account.')}</span>
           </div>
         </div>
         <Button className="button button-primary full-width" onClick={onSaved}>
-          Edit saved commute <ArrowRight size={17} />
+          {' '}
+          {t('Edit saved commute')} <ArrowRight size={17} />
         </Button>
         <Button className="button button-light full-width" onClick={signOut} disabled={busy}>
           <LogOut size={16} />
-          {busy ? 'Signing out…' : 'Sign out'}
+          {busy ? t('Signing out…') : t('Sign out')}
         </Button>
         {(error || authError) && (
           <p className="alert alert-soft alert-warning notice" role="alert">
-            {error || authError}
+            {t(error || authError)}
           </p>
         )}
         {(message || authMessage) && (
           <p className="alert alert-soft alert-success success-message" role="status">
-            {message || authMessage}
+            {t(message || authMessage)}
           </p>
         )}
       </section>
@@ -231,23 +234,25 @@ export default function AccountPanel({
       <div className="feature-icon">
         <LockKeyhole size={26} />
       </div>
-      <span className="eyebrow">A LITTLE LESS SETUP, EVERY DAY</span>
+      <span className="eyebrow">{t('A LITTLE LESS SETUP, EVERY DAY')}</span>
       <h1>
         {recovering
-          ? 'Choose a new password.'
+          ? t('Choose a new password.')
           : mode === 'signup'
-            ? 'Make it your commute.'
+            ? t('Make it your commute.')
             : mode === 'confirm'
-              ? 'Confirm your email.'
+              ? t('Confirm your email.')
               : mode === 'reset-code'
-                ? 'Check your reset email.'
+                ? t('Check your reset email.')
                 : mode === 'reset'
-                  ? 'Reset your password.'
-                  : 'Welcome back.'}
+                  ? t('Reset your password.')
+                  : t('Welcome back.')}
       </h1>
       <p>
-        Save your terminal, parking lot, and walking time. You can always browse departures as a
-        guest.
+        {' '}
+        {t(
+          'Save your terminal, parking lot, and walking time. You can always browse departures as a guest.',
+        )}{' '}
       </p>
       {!recovering && !needsCode && (
         <div className="tabs tabs-box segmented">
@@ -256,21 +261,24 @@ export default function AccountPanel({
             onClick={() => changeMode('signin')}
             disabled={busy}
           >
-            Sign in
+            {' '}
+            {t('Sign in')}{' '}
           </Button>
           <Button
             className={mode === 'signup' ? 'tab tab-active active' : 'tab'}
             onClick={() => changeMode('signup')}
             disabled={busy}
           >
-            Create account
+            {' '}
+            {t('Create account')}{' '}
           </Button>
         </div>
       )}
       <form onSubmit={submit}>
         {!recovering && (
           <label className="field">
-            Email address
+            {' '}
+            {t('Email address')}{' '}
             <input
               className="input w-full"
               type="email"
@@ -286,7 +294,8 @@ export default function AccountPanel({
         )}
         {(recovering || (mode !== 'reset' && !needsCode)) && (
           <label className="field">
-            Password
+            {' '}
+            {t('Password')}{' '}
             <input
               className="input w-full"
               type="password"
@@ -298,7 +307,7 @@ export default function AccountPanel({
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder={
-                mode === 'signup' || recovering ? 'At least 8 characters' : 'Your password'
+                mode === 'signup' || recovering ? t('At least 8 characters') : t('Your password')
               }
             />
           </label>
@@ -306,7 +315,8 @@ export default function AccountPanel({
         {needsCode && !recovering && (
           <>
             <label className="field">
-              Email code
+              {' '}
+              {t('Email code')}{' '}
               <input
                 className="input w-full"
                 name="code"
@@ -320,37 +330,42 @@ export default function AccountPanel({
                 value={code}
                 disabled={busy}
                 onChange={(event) => setCode(event.target.value.replace(/\D/g, ''))}
-                placeholder="Code from your email"
+                placeholder={t('Code from your email')}
                 aria-describedby="email-code-help"
               />
             </label>
             <p className="small muted" id="email-code-help">
-              If your email only contains a link, open it in the browser where you requested it.
+              {' '}
+              {t(
+                'If your email only contains a link, open it in the browser where you requested it.',
+              )}{' '}
             </p>
           </>
         )}
         <Button type="submit" className="button button-primary full-width" disabled={busy}>
           {busy
-            ? 'Please wait…'
+            ? t('Please wait…')
             : recovering
-              ? 'Update password'
+              ? t('Update password')
               : mode === 'signup'
-                ? 'Create account'
+                ? t('Create account')
                 : needsCode
-                  ? 'Verify email code'
+                  ? t('Verify email code')
                   : mode === 'reset'
-                    ? 'Send reset link'
-                    : 'Sign in'}
+                    ? t('Send reset link')
+                    : t('Sign in')}
           <ArrowRight size={17} />
         </Button>
       </form>
       {!recovering && mode === 'signin' && (
         <>
           <Button className="text-button" onClick={() => changeMode('reset')} disabled={busy}>
-            Forgot password?
+            {' '}
+            {t('Forgot password?')}{' '}
           </Button>
           <Button className="text-button" onClick={() => changeMode('confirm')} disabled={busy}>
-            Confirm email or resend confirmation
+            {' '}
+            {t('Confirm email or resend confirmation')}{' '}
           </Button>
         </>
       )}
@@ -362,29 +377,31 @@ export default function AccountPanel({
             disabled={busy || cooldown > 0}
           >
             {cooldown
-              ? `Resend available in ${cooldown}s`
+              ? t('Resend available in {seconds}s', { seconds: cooldown })
               : mode === 'reset-code'
-                ? 'Resend reset email'
-                : 'Resend confirmation email'}
+                ? t('Resend reset email')
+                : t('Resend confirmation email')}
           </Button>
           <Button className="text-button" onClick={() => changeMode('signin')} disabled={busy}>
-            Back to sign in
+            {' '}
+            {t('Back to sign in')}{' '}
           </Button>
         </>
       )}
       {!recovering && onGuest && (
         <Button className="button button-light full-width" onClick={onGuest}>
-          Continue as guest
+          {' '}
+          {t('Continue as guest')}{' '}
         </Button>
       )}
       {(error || authError) && (
         <p className="alert alert-soft alert-warning notice" role="alert">
-          {error || authError}
+          {t(error || authError)}
         </p>
       )}
       {(message || authMessage) && (
         <p className="alert alert-soft alert-success success-message" role="status">
-          {message || authMessage}
+          {t(message || authMessage)}
         </p>
       )}
     </section>

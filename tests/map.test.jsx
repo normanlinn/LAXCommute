@@ -5,6 +5,8 @@ import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import * as L from 'leaflet';
 import FreeMap from '../src/components/FreeMap';
 import { createSimpleBasemap } from '../src/components/simpleBasemap';
+import LanguageSwitch from '../src/components/LanguageSwitch';
+import { LanguageProvider } from '../src/i18n/LanguageProvider';
 
 vi.mock('../src/components/simpleBasemap', () => ({ createSimpleBasemap: vi.fn() }));
 
@@ -23,6 +25,7 @@ const props = {
   focusRequest: { mode: 'route', serial: 0 },
 };
 beforeEach(() => {
+  localStorage.clear();
   // JSDOM does not implement the SVG feature probe or real layout.
   L.Browser.svg = true;
   vi.stubGlobal(
@@ -53,6 +56,28 @@ afterEach(() => {
 });
 
 describe('interactive shuttle map', () => {
+  it('translates labels without replacing the map or its boarding marker', async () => {
+    const { container, getByRole } = render(
+      <LanguageProvider>
+        <LanguageSwitch />
+        <FreeMap {...props} />
+      </LanguageProvider>,
+    );
+    await act(async () => {});
+    const map = container.querySelector('.leaflet-container');
+    const marker = container.querySelector('.leaflet-marker-icon');
+    fireEvent.click(getByRole('button', { name: 'မြန်မာ' }));
+    expect(container.querySelector('.leaflet-container')).toBe(map);
+    expect(container.querySelector('.leaflet-marker-icon')).toBe(marker);
+    expect(container.querySelector('.boarding-label').textContent).toContain('South Lot Stop #1');
+    expect(container.querySelector('.boarding-label').textContent).not.toContain('BOARD HERE');
+    expect(container.querySelector('.leaflet-control-zoom-in').getAttribute('aria-label')).toMatch(
+      /[\u1000-\u109f]/,
+    );
+    fireEvent.click(getByRole('button', { name: 'English' }));
+    expect(container.querySelector('.boarding-label').textContent).toContain('BOARD HERE');
+    expect(container.querySelector('.leaflet-container')).toBe(map);
+  });
   it('survives StrictMode setup, displays attribution, and selects a real stop', async () => {
     const { container } = render(
       <StrictMode>

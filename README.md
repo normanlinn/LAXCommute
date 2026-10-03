@@ -37,6 +37,7 @@ If you see `styleText` or Rolldown errors on Node 20.11.1, update Node first. If
 - Guest settings saved on the current device.
 - DaisyUI buttons, inputs, selects, tabs, cards, alerts, collapses, and a native accessible dialog.
 - Responsive phone, tablet, and desktop layouts; reduced-motion support.
+- English / မြန်မာ language switching, with the preference saved on the current device.
 - PWA manifest, iPhone/Android icons, install help, offline shell, and an explicit update prompt.
 
 ## Free maps and phone directions
@@ -56,6 +57,10 @@ References: [OpenFreeMap](https://openfreemap.org/), [Leaflet](https://leafletjs
 ## Free search engine optimization
 
 The initial HTML includes an employee shuttle guide, a descriptive search title, canonical URL, social sharing metadata and structured data. The sitemap and robots file are in `public/`. Optional `VITE_GOOGLE_SITE_VERIFICATION` adds Google Search Console HTML verification at build time. See [SEO setup](docs/SEO.md) for free indexing and monitoring steps.
+
+## English and Myanmar
+
+Use **English / မြန်မာ** in the header to change the interface without losing your route, boarding stop, or form input. Stop names and bus identifiers keep their original labels. English headings use Pally from Indian Type Foundry via Fontshare; Myanmar uses locally included Noto Sans Myanmar. See [language review and font licenses](docs/LANGUAGE.md) for the development branch, translation files, and review checklist.
 
 ## Employee Shuttles QR poster
 
@@ -153,7 +158,7 @@ HTTPS is required for production installation and location access. An HTTP LAN a
 - The map stays mounted while the user views their trip; markers update by ID and camera changes are explicit.
 - Countdown updates are isolated from the map; refresh pauses on hidden pages and account/settings screens.
 - Predictions expire after 90 seconds; GPS positions expire after 180 seconds. Scheduled predictions are labeled separately.
-- Service worker caching covers the app shell only. **Arrivals, API responses, authentication, and map tiles are not cached for offline live display.**
+- Service worker caching covers the app shell and fonts. **Arrivals, API responses, authentication, and map tiles are not cached for offline live display.**
 
 This is the web version of the previous SwiftUI prototype. It does not include an Apple Watch app. Background push notifications and automatic departure detection while the app is closed are future work; this version gives departure advice while the app is open.
 
@@ -171,6 +176,7 @@ src/
   components/ui/  Shared DaisyUI components
   domain/         Pure commute, distance, route-shape, and prediction rules
   hooks/          Query, account, and saved-commute state
+  i18n/           English/Myanmar language preference and translations
   services/       Shuttle API and lazy Supabase client
 worker/           Fixed-path public shuttle gateway and caching
 tests/            Arrival, boarding, gateway, and UI regression checks
@@ -197,7 +203,7 @@ To push a change:
 ```bash
 git add .
 git commit -m "Describe your change"
-git push origin main
+git push -u origin HEAD
 ```
 
 Never commit `.env`, service-role keys, signing keys, `node_modules`, or generated `dist` files. The supplied Supabase publishable key is intentionally public.

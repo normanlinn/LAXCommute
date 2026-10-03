@@ -1,3 +1,4 @@
+import { useLanguage } from '../i18n/LanguageProvider';
 import { errorMessage } from '../domain/errors';
 import Button from './ui/Button';
 import { useMemo, useState } from 'react';
@@ -19,6 +20,7 @@ export default function SavedCommute({
   onGoHome: () => void;
   onAccount: () => void;
 }) {
+  const { t } = useLanguage();
   const { user } = useAccount();
   const [draft, setDraft] = useState(profile);
   const [busy, setBusy] = useState(false);
@@ -74,38 +76,45 @@ export default function SavedCommute({
       <div className="feature-icon">
         <Bookmark size={27} />
       </div>
-      <span className="eyebrow">YOUR EVERYDAY ROUTE</span>
-      <h1>A commute that remembers.</h1>
-      <p>Save your usual stops. Changing today’s boarding stop won’t overwrite them.</p>
+      <span className="eyebrow">{t('YOUR EVERYDAY ROUTE')}</span>
+      <h1>{t('A commute that remembers.')}</h1>
+      <p>{t('Save your usual stops. Changing today’s boarding stop won’t overwrite them.')}</p>
       <form onSubmit={submit}>
         <div className="form-grid">
           <label className="field">
-            Usual terminal
+            {' '}
+            {t('Usual terminal')}{' '}
             <select
               className="select w-full"
               value={draft.terminal}
               onChange={(e) => edit('terminal', e.target.value)}
             >
               {TERMINALS.map((t) => (
-                <option key={t}>{t}</option>
+                <option key={t} value={t} lang="en">
+                  {t}
+                </option>
               ))}
             </select>
           </label>
           <label className="field">
-            Parking lot
+            {' '}
+            {t('Parking lot')}{' '}
             <select
               className="select w-full"
               value={draft.lot}
               onChange={(e) => edit('lot', e.target.value)}
             >
               {ROUTES.map((r) => (
-                <option key={r.id}>{r.lot}</option>
+                <option key={r.id} value={r.lot} lang="en">
+                  {r.lot}
+                </option>
               ))}
             </select>
           </label>
         </div>
         <label className="field">
-          Board here to return to parking
+          {' '}
+          {t('Board here to return to parking')}{' '}
           <select
             className="select w-full"
             value={
@@ -117,10 +126,10 @@ export default function SavedCommute({
           >
             <option value={0} disabled>
               {query.isPending
-                ? 'Loading boarding stops…'
+                ? t('Loading boarding stops…')
                 : terminalStops.length
-                  ? 'Choose terminal stop'
-                  : 'This terminal is not served by this lot'}
+                  ? t('Choose terminal stop')
+                  : t('This terminal is not served by this lot')}
             </option>
             {terminalStops.map((s) => (
               <option key={s.id} value={s.id}>
@@ -130,7 +139,8 @@ export default function SavedCommute({
           </select>
         </label>
         <label className="field">
-          Board here to go to work
+          {' '}
+          {t('Board here to go to work')}{' '}
           <select
             className="select w-full"
             value={
@@ -141,7 +151,7 @@ export default function SavedCommute({
             onChange={(e) => edit('parkingStopID', Number(e.target.value))}
           >
             <option value={0} disabled>
-              {query.isPending ? 'Loading parking stops…' : 'Choose parking stop'}
+              {query.isPending ? t('Loading parking stops…') : t('Choose parking stop')}
             </option>
             {parkingStops.map((s) => (
               <option key={s.id} value={s.id}>
@@ -153,13 +163,14 @@ export default function SavedCommute({
         <div className="walk-settings">
           <Footprints size={20} />
           <div>
-            <strong>Time to reach the bus</strong>
-            <span>Include the walk from your office and elevator time.</span>
+            <strong>{t('Time to reach the bus')}</strong>
+            <span>{t('Include the walk from your office and elevator time.')}</span>
           </div>
         </div>
         <div className="form-grid">
           <label className="field">
-            Walking time (minutes)
+            {' '}
+            {t('Walking time (minutes)')}{' '}
             <input
               className="input w-full"
               type="number"
@@ -170,7 +181,8 @@ export default function SavedCommute({
             />
           </label>
           <label className="field">
-            Extra buffer (minutes)
+            {' '}
+            {t('Extra buffer (minutes)')}{' '}
             <input
               className="input w-full"
               type="number"
@@ -183,9 +195,11 @@ export default function SavedCommute({
         </div>
         {query.isError && (
           <p className="alert alert-soft alert-warning notice">
-            Boarding stops could not load.{' '}
+            {' '}
+            {t('Boarding stops could not load.')}{' '}
             <Button type="button" onClick={() => query.refetch()}>
-              Retry
+              {' '}
+              {t('Retry')}{' '}
             </Button>
           </p>
         )}
@@ -194,28 +208,31 @@ export default function SavedCommute({
           className="button button-primary full-width"
           disabled={busy || query.isPending}
         >
-          {busy ? 'Saving…' : 'Save my commute'}
+          {busy ? t('Saving…') : t('Save my commute')}
           <Check size={18} />
         </Button>
       </form>
       {error && (
         <p className="alert alert-soft alert-warning notice" role="alert">
-          {error}
+          {t(error)}
         </p>
       )}
       {saveState && (
         <p className="alert alert-soft alert-success success-message" role="status">
-          {saveState}
+          {t(saveState)}
         </p>
       )}
       <Button className="button button-light full-width" onClick={onGoHome}>
-        See my ride back to parking <ArrowRight size={18} />
+        {' '}
+        {t('See my ride back to parking')} <ArrowRight size={18} />
       </Button>
       {!user && (
         <p className="guest-note">
-          Saved on this device.{' '}
+          {' '}
+          {t('Saved on this device.')}{' '}
           <Button className="text-button" onClick={onAccount}>
-            Sign in to sync your commute.
+            {' '}
+            {t('Sign in to sync your commute.')}{' '}
           </Button>
         </p>
       )}
