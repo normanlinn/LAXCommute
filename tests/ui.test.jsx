@@ -142,7 +142,7 @@ describe('commute UI', () => {
     fireEvent.click(container.querySelector('form button[type="submit"]'));
     expect(await screen.findByRole('alert')).toHaveProperty(
       'textContent',
-      'Invalid login credentials',
+      'The email or password is incorrect. Try again or use Forgot password.',
     );
     expect(auth.signInWithPassword).toHaveBeenCalledWith({
       email: 'employee@example.com',
@@ -158,11 +158,13 @@ describe('commute UI', () => {
     });
     fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'example-password' } });
     fireEvent.click(container.querySelector('form button[type="submit"]'));
-    await screen.findByText('Check your email to confirm your account, then sign in here.');
+    await screen.findByText(
+      'Check your email. Open the confirmation link in this browser, or enter the code if your email includes one.',
+    );
     expect(auth.signUp).toHaveBeenCalledWith({
       email: 'employee@example.com',
       password: 'example-password',
-      options: { emailRedirectTo: `${location.origin}/`, data: { commute: profile } },
+      options: { emailRedirectTo: `${location.origin}/auth/confirm`, data: { commute: profile } },
     });
   });
 });

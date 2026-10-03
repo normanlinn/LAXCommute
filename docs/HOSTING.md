@@ -62,9 +62,12 @@ In **Supabase → Authentication → URL Configuration**:
 
 1. Set **Site URL** to your actual HTTPS Cloudflare address.
 2. Add that address with a trailing `/` to **Redirect URLs**.
-3. Keep `http://localhost:5173/` as an additional redirect if you develop locally.
+3. Add the same origin's `/auth/confirm` and `/auth/recovery` paths as additional redirects.
+4. Keep `http://localhost:5173/`, `http://localhost:5173/auth/confirm`, and `http://localhost:5173/auth/recovery` as additional redirects if you develop locally.
 
 This replaces the old localhost confirmation link. Public signup email also needs a configured SMTP provider; Supabase's default test email service is restricted and is not suitable for 500–1,000 users.
+
+See [account setup](AUTH.md) for email templates, verification codes for installed PWAs, and a real-inbox test plan.
 
 ## Check the deployed app
 

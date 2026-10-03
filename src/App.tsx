@@ -44,7 +44,7 @@ const TABS = [
 ];
 
 export default function App() {
-  const { user, recovering } = useAccount();
+  const { user, recovering, authReturn } = useAccount();
   const { profile, save, saveState } = useCommute();
   const [tab, setTab] = useState('map');
   const [lot, setLot] = useState(profile.lot);
@@ -93,8 +93,8 @@ export default function App() {
     setOverride(null);
   }, [user?.id, profile.lot]);
   useEffect(() => {
-    if (recovering) setTab('account');
-  }, [recovering]);
+    if (recovering || authReturn) setTab('account');
+  }, [recovering, authReturn]);
   function changeTab(next: string) {
     setTab(next);
     if (next === 'home') {
@@ -438,7 +438,11 @@ export default function App() {
                 onAccount={() => changeTab('account')}
               />
             ) : (
-              <AccountPanel profile={profile} onSaved={() => changeTab('saved')} />
+              <AccountPanel
+                profile={profile}
+                onSaved={() => changeTab('saved')}
+                onGuest={() => changeTab('map')}
+              />
             )}
           </Suspense>
         )}

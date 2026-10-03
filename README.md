@@ -119,16 +119,20 @@ Reference: [Cloudflare pricing](https://developers.cloudflare.com/workers/platfo
 
 ## Finish Supabase account setup
 
-Your existing project is configured. No new database schema is required: the small saved commute is stored in the signed-in user's own `user_metadata.commute`.
+The supplied public project settings are reachable, but public email delivery and redirect settings still need verification in your dashboard. No new database schema is required: the small saved commute is stored in the signed-in user's own `user_metadata.commute`. Follow the [account setup and troubleshooting guide](docs/AUTH.md).
 
 In **Supabase → Authentication → URL Configuration**:
 
 - Set **Site URL** to the actual deployed HTTPS address, replacing `localhost`.
 - Add that address with its trailing `/` to **Redirect URLs**.
+- Add that origin's `/auth/confirm` and `/auth/recovery` paths to **Redirect URLs**.
 - Add `http://localhost:5173/` for local development.
+- Add `http://localhost:5173/auth/confirm` and `http://localhost:5173/auth/recovery` for local email returns.
 - If Vite uses another port, allow that exact development address too.
 
 Enable an SMTP provider for public email signups and password recovery. Supabase's default email service is intended for testing, restricted to project-team addresses, and currently allows only two messages/hour. You can keep Supabase Free while using an email provider; the provider has its own allowances. Do not count on the built-in test mailer to onboard 500–1,000 people.
+
+Include `{{ .Token }}` in both confirmation and password-reset email templates to support email-code verification directly in an installed PWA. PKCE links require the browser where the request began; codes avoid that browser-storage dependency. The account screen reports expired/failed callbacks, offers resend with a cooldown, and keeps guest access available.
 
 References: [redirect URLs](https://supabase.com/docs/guides/auth/redirect-urls), [custom SMTP](https://supabase.com/docs/guides/auth/auth-smtp).
 
