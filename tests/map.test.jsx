@@ -4,6 +4,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import * as L from 'leaflet';
 import FreeMap from '../src/components/FreeMap';
+import { ThemeProvider, useTheme } from '../src/theme/ThemeProvider';
+import { config } from '../src/config';
 import { createSimpleBasemap } from '../src/components/simpleBasemap';
 import LanguageSwitch from '../src/components/LanguageSwitch';
 import { LanguageProvider } from '../src/i18n/LanguageProvider';
@@ -190,4 +192,38 @@ describe('interactive shuttle map', () => {
     expect(container.querySelectorAll('.boarding-label')).toHaveLength(1);
     expect(container.querySelector('.boarding-label').textContent).toContain('Terminal B');
   });
+});
+
+function ThemeMap() {
+  const { setPreference } = useTheme();
+  return (
+    <>
+      <button onClick={() => setPreference('dark')}>Dark appearance</button>
+      <FreeMap {...props} />
+    </>
+  );
+}
+it('changes only the basemap for dark mode and keeps the map and selected stop', async () => {
+  window.matchMedia = vi.fn(() => ({
+    matches: false,
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+  }));
+  const { container, getByRole } = render(
+    <ThemeProvider>
+      <ThemeMap />
+    </ThemeProvider>,
+  );
+  await act(async () => {
+    await Promise.resolve();
+  });
+  const map = container.querySelector('.leaflet-container');
+  const marker = container.querySelector('.marker-selected');
+  fireEvent.click(getByRole('button', { name: 'Dark appearance' }));
+  await act(async () => {
+    await Promise.resolve();
+  });
+  expect(createSimpleBasemap).toHaveBeenLastCalledWith(config.mapDarkStyleUrl);
+  expect(container.querySelector('.leaflet-container')).toBe(map);
+  expect(container.querySelector('.marker-selected')).toBe(marker);
 });

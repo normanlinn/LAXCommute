@@ -7,6 +7,8 @@ export const config = Object.freeze({
   mapProvider: import.meta.env.VITE_MAP_PROVIDER === 'apple' ? 'apple' : 'openstreetmap',
   mapStyleUrl:
     import.meta.env.VITE_MAP_STYLE_URL || 'https://tiles.openfreemap.org/styles/positron',
+  mapDarkStyleUrl:
+    import.meta.env.VITE_MAP_DARK_STYLE_URL || 'https://tiles.openfreemap.org/styles/dark',
   mapTileUrl: import.meta.env.VITE_MAP_TILE_URL || 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
   mapAttribution:
     import.meta.env.VITE_MAP_ATTRIBUTION ||

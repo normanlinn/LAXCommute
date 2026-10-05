@@ -1,3 +1,4 @@
+import { useTheme } from '../theme/ThemeProvider';
 import { useLanguage } from '../i18n/LanguageProvider';
 import type { MapProps, Point, Stop, RoutePath } from '../types';
 import { memo, useEffect, useRef, useState } from 'react';
@@ -52,6 +53,7 @@ function FreeMap({
   focusRequest,
 }: MapProps) {
   const { t } = useLanguage();
+  const { appearance } = useTheme();
   const element = useRef<HTMLDivElement>(null);
   type MarkerPoint = Point & { id?: number; name?: string; lastUpdated?: string };
   type Entry = {
@@ -118,7 +120,9 @@ function FreeMap({
       import('./simpleBasemap')
         .then(({ createSimpleBasemap }) => {
           if (cancelled) return;
-          const simpleLayer = createSimpleBasemap(config.mapStyleUrl);
+          const simpleLayer = createSimpleBasemap(
+            appearance === 'dark' ? config.mapDarkStyleUrl : config.mapStyleUrl,
+          );
           layer = simpleLayer;
           layer.addTo(map);
           gl = simpleLayer.getMaplibreMap();
@@ -144,7 +148,7 @@ function FreeMap({
       gl?.off('error', fallback);
       layer?.remove();
     };
-  }, [ready, basemap]);
+  }, [ready, basemap, appearance]);
 
   useEffect(() => {
     if (!ready || !state.current) return;

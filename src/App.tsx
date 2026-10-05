@@ -33,7 +33,10 @@ import { useLive, useOnline, useRoute, useSnapshotFresh } from './hooks/useShutt
 import Arrivals from './components/Arrivals';
 import InstallApp from './components/InstallApp';
 import DirectionsButton from './components/DirectionsButton';
-import LanguageSwitch from './components/LanguageSwitch';
+import AppMenu from './components/AppMenu';
+import { useTheme } from './theme/ThemeProvider';
+const darkRouteColor = (color: string) =>
+  color === '#3262ab' ? '#88b7ff' : color === '#b76328' ? '#e4bb82' : '#88e0bc';
 const ShuttleMap = lazy(() => import('./components/ShuttleMap'));
 const AccountPanel = lazy(() => import('./components/AccountPanel'));
 const SavedCommute = lazy(() => import('./components/SavedCommute'));
@@ -46,6 +49,7 @@ const TABS = [
 ];
 
 export default function App() {
+  const { appearance } = useTheme();
   const { t, language } = useLanguage();
   const { user, recovering, authReturn } = useAccount();
   const { profile, save, saveState } = useCommute();
@@ -165,7 +169,10 @@ export default function App() {
   }
   const showTrip = tab === 'map' || tab === 'home';
   return (
-    <div className="app" style={{ '--route-color': route.color }}>
+    <div
+      className="app"
+      style={{ '--route-color': appearance === 'dark' ? darkRouteColor(route.color) : route.color }}
+    >
       <header className="navbar app-header">
         <a
           className="brand"
@@ -185,9 +192,9 @@ export default function App() {
             <small lang={language}>{t('YOUR AIRPORT. YOUR COMMUTE.')}</small>
           </div>
         </a>
-        <LanguageSwitch />
         <div className="header-actions">
           <InstallApp />
+          <AppMenu />
           <Button
             className="profile-button"
             onClick={() => changeTab('account')}
@@ -320,7 +327,9 @@ export default function App() {
                       key={r.id}
                       className={r.lot === lot ? 'selected' : ''}
                       onClick={() => chooseRoute(r.lot)}
-                      style={{ '--option-color': r.color }}
+                      style={{
+                        '--option-color': appearance === 'dark' ? darkRouteColor(r.color) : r.color,
+                      }}
                     >
                       <span>{r.short}</span>
                       {r.lot}

@@ -227,5 +227,13 @@
   "The embedded map needs an Apple Maps token. You can check live departures below while it’s being connected.": "မြေပုံထည့်သွင်းရန် Apple Maps token လိုအပ်သည်။ မြေပုံချိတ်ဆက်နေစဉ် အောက်တွင် လက်ရှိကားရောက်ချိန်ကို ကြည့်နိုင်သည်။",
   "Open Apple Maps": "Apple Maps ဖွင့်မည်",
   "Reported GPS positions · tap a stop": "ပေးပို့ထားသော GPS တည်နေရာ · မှတ်တိုင်ကို နှိပ်ပါ",
-  "LAX Employee Shuttle Tracker | South, East & West Lots | LAXCommute": "LAX ဝန်ထမ်းကြိုပို့ယာဉ် တည်နေရာ | South, East နှင့် West Lots | LAXCommute"
+  "LAX Employee Shuttle Tracker | South, East & West Lots | LAXCommute": "LAX ဝန်ထမ်းကြိုပို့ယာဉ် တည်နေရာ | South, East နှင့် West Lots | LAXCommute",
+  "Open menu": "မီနူးဖွင့်ရန်",
+  "Close menu": "မီနူးပိတ်ရန်",
+  "Menu": "မီနူး",
+  "Appearance": "အပြင်အဆင်",
+  "System": "စနစ်အတိုင်း",
+  "Light": "အလင်း",
+  "Dark": "အမှောင်",
+  "System follows your device’s light or dark setting.": "စနစ်အတိုင်းကို ရွေးထားလျှင် ဖုန်း၏ အလင်း သို့မဟုတ် အမှောင် ဆက်တင်အတိုင်း ပြောင်းလဲပေးမည်။"
 }

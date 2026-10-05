@@ -2,6 +2,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import App from '../src/App';
+import { ThemeProvider } from '../src/theme/ThemeProvider';
 import AccountPanel from '../src/components/AccountPanel';
 import LanguageSwitch from '../src/components/LanguageSwitch';
 import { LanguageProvider } from '../src/i18n/LanguageProvider';
@@ -79,12 +80,18 @@ describe('commute UI', () => {
   it('keeps the East route and a South Lot override when switching languages', () => {
     render(
       <LanguageProvider>
-        <App />
+        <ThemeProvider>
+          <App />
+        </ThemeProvider>
       </LanguageProvider>,
     );
     fireEvent.click(screen.getByRole('button', { name: /^E\s*East$/ }));
     const boarding = screen.getByRole('combobox', { name: 'Where are you boarding?' });
     fireEvent.change(boarding, { target: { value: '3' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Open menu' }));
+    fireEvent.click(screen.getByRole('radio', { name: 'Dark' }));
+    expect(document.documentElement.dataset.theme).toBe('lax-dark');
+    expect(boarding.value).toBe('3');
     fireEvent.click(screen.getByRole('button', { name: 'မြန်မာ' }));
     expect(boarding.value).toBe('3');
     expect(boarding.selectedOptions[0].textContent).toBe('South Lot Stop #1');

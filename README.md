@@ -211,3 +211,7 @@ Never commit `.env`, service-role keys, signing keys, `node_modules`, or generat
 The shuttle endpoint belongs to the existing public LAX Syncromatics tracker. It is not a published supported API contract; behavior or availability can change. The app shows errors, expires old data, and offers the original [LAX tracker](https://shuttles.flylax.com/employeeparking) when the feed is unavailable.
 
 LAXCommute is an independent employee commute project and is not an official LAWA or airline service.
+
+### Appearance
+
+Open the hamburger menu in the header to choose System, Light, or Dark and switch language. System is the default and follows device changes automatically. Manual choices are saved on the device. Appearance changes keep your selected route, boarding stop, and map position. The free vector map uses a dark style at night; detailed OpenStreetMap tiles keep their original colors. `VITE_MAP_DARK_STYLE_URL` can override the dark vector style.
