@@ -9,17 +9,17 @@
   prefersdark: false;
   color-scheme: light;
   --color-base-100: #ffffff;
-  --color-base-200: #f5f7f6;
-  --color-base-300: #e0e8e2;
-  --color-base-content: #183331;
-  --color-primary: #163e32;
-  --color-primary-content: #e1f8e7;
+  --color-base-200: #f7fbfc;
+  --color-base-300: #d6e6ea;
+  --color-base-content: #14263d;
+  --color-primary: #18bdc7;
+  --color-primary-content: #07272d;
   --color-secondary: #3262ab;
   --color-secondary-content: #ffffff;
-  --color-accent: #68dfb9;
-  --color-accent-content: #122b32;
-  --color-neutral: #122b32;
-  --color-neutral-content: #d8eee6;
+  --color-accent: #18bdc7;
+  --color-accent-content: #0b2332;
+  --color-neutral: #0b2332;
+  --color-neutral-content: #effbfc;
   --color-info: #3262ab;
   --color-info-content: #ffffff;
   --color-success: #249a76;
@@ -43,26 +43,26 @@
   default: false;
   prefersdark: false;
   color-scheme: dark;
-  --color-base-100: #1b2b23;
-  --color-base-200: #101c16;
-  --color-base-300: #3c5548;
-  --color-base-content: #e7f2ec;
-  --color-primary: #285543;
-  --color-primary-content: #e1f8e7;
+  --color-base-100: #102b35;
+  --color-base-200: #081923;
+  --color-base-300: #2c4853;
+  --color-base-content: #effbfc;
+  --color-primary: #18bdc7;
+  --color-primary-content: #07272d;
   --color-secondary: #88b7ff;
-  --color-secondary-content: #122b32;
-  --color-accent: #68dfb9;
-  --color-accent-content: #122b32;
-  --color-neutral: #163b31;
-  --color-neutral-content: #d8eee6;
+  --color-secondary-content: #0b2332;
+  --color-accent: #18bdc7;
+  --color-accent-content: #0b2332;
+  --color-neutral: #0b2332;
+  --color-neutral-content: #effbfc;
   --color-info: #88b7ff;
-  --color-info-content: #122b32;
-  --color-success: #68dfb9;
-  --color-success-content: #122b32;
+  --color-info-content: #0b2332;
+  --color-success: #18bdc7;
+  --color-success-content: #0b2332;
   --color-warning: #e9be72;
-  --color-warning-content: #122b32;
+  --color-warning-content: #0b2332;
   --color-error: #ff9999;
-  --color-error-content: #122b32;
+  --color-error-content: #0b2332;
 }
 
 @font-face {
@@ -380,7 +380,7 @@ h3,
 }
 .boarding-label small {
   display: block;
-  color: #a4e5d7;
+  color: #58dce3;
   font-size: 9px;
   letter-spacing: 1.2px;
   margin-bottom: 3px;
@@ -893,7 +893,7 @@ input::placeholder {
   align-items: center;
   gap: 10px;
   background: var(--surface-163b31, #163b31);
-  color: #dcf8de;
+  color: #effbfc;
   border-radius: 12px;
   padding: 15px;
   margin-top: 16px;
@@ -1020,7 +1020,7 @@ input::placeholder {
 }
 .bottom-nav button.active {
   background: var(--surface-284149, #284149);
-  color: #a9efcc;
+  color: #58dce3;
 }
 .settings-layout {
   padding: 38px 24px;
@@ -1243,7 +1243,7 @@ input::placeholder {
   transform: translateX(-50%);
   border-radius: 14px;
   background: var(--surface-122b32, #122b32);
-  color: #d6f5e2;
+  color: #effbfc;
   padding: 14px;
   display: flex;
   align-items: center;
@@ -1254,7 +1254,7 @@ input::placeholder {
 }
 .update-toast button {
   background: transparent;
-  color: #8ee8b8;
+  color: #58dce3;
   font-size: 13px;
   white-space: nowrap;
 }
@@ -1794,122 +1794,239 @@ html:lang(my) .shuttle-map-legend {
   }
 }
 
-/* Preserve the existing light palette; override surfaces, ink, and lines in dark mode. */
+/* Turquoise brand palette, paired for both appearances. */
+:root,
+[data-theme='lax'] {
+  --ink-087969: #007981;
+  --ink-122b32: #14263d;
+  --ink-183331: #14263d;
+  --ink-1c795a: #007981;
+  --ink-23473a: #14263d;
+  --ink-2c4943: #14263d;
+  --ink-2d4941: #14263d;
+  --ink-328268: #007981;
+  --ink-34714e: #536d78;
+  --ink-35775c: #007981;
+  --ink-38514a: #14263d;
+  --ink-3e7d60: #007981;
+  --ink-408360: #007981;
+  --ink-426651: #536d78;
+  --ink-447e6b: #007981;
+  --ink-466258: #14263d;
+  --ink-496754: #536d78;
+  --ink-50655f: #536d78;
+  --ink-547460: #536d78;
+  --ink-577365: #536d78;
+  --ink-587167: #536d78;
+  --ink-5b7766: #536d78;
+  --ink-5e7969: #536d78;
+  --ink-607970: #536d78;
+  --ink-657870: #536d78;
+  --ink-66847a: #536d78;
+  --ink-6a8172: #536d78;
+  --ink-6a8c76: #536d78;
+  --ink-718479: #536d78;
+  --ink-765026: #795214;
+  --ink-768d7d: #536d78;
+  --ink-778c80: #536d78;
+  --ink-7a8982: #536d78;
+  --ink-7a8984: #536d78;
+  --ink-7a8a85: #536d78;
+  --ink-7a8c82: #536d78;
+  --ink-7b8d84: #536d78;
+  --ink-7c9385: #536d78;
+  --ink-7f9084: #536d78;
+  --ink-81988c: #536d78;
+  --ink-83998b: #536d78;
+  --ink-84998b: #536d78;
+  --ink-875e31: #795214;
+  --ink-87998e: #536d78;
+  --ink-879e8c: #536d78;
+  --ink-886840: #795214;
+  --ink-88978f: #536d78;
+  --ink-896531: #795214;
+  --ink-8c9d92: #536d78;
+  --ink-91a293: #536d78;
+  --ink-92a596: #536d78;
+  --ink-94a29a: #536d78;
+  --ink-94a395: #536d78;
+  --ink-96a89b: #536d78;
+  --ink-9cb2b4: #536d78;
+  --ink-a4c5b0: #536d78;
+  --line-122b32: #d6e6ea;
+  --line-365f4d: #d6e6ea;
+  --line-46665b: #d6e6ea;
+  --line-57bc9b: #d6e6ea;
+  --line-70907f: #d6e6ea;
+  --line-d8e3e1: #d6e6ea;
+  --line-dbe5df: #d6e6ea;
+  --line-dce5df: #d6e6ea;
+  --line-dce6e0: #d6e6ea;
+  --line-dee8df: #d6e6ea;
+  --line-dfede2: #d6e6ea;
+  --line-e0e8e2: #d6e6ea;
+  --line-e1e9e4: #d6e6ea;
+  --line-e2e9e5: #d6e6ea;
+  --line-e3eae6: #d6e6ea;
+  --line-e4ece5: #d6e6ea;
+  --line-e5ebe8: #d6e6ea;
+  --line-e8eee9: #d6e6ea;
+  --line-eaf0eb: #d6e6ea;
+  --line-edf1ee: #d6e6ea;
+  --line-f1e4cc: #d6e6ea;
+  --surface-0e2b2a70: #0b233270;
+  --surface-122b32: #0b2332;
+  --surface-163b31: #0b2332;
+  --surface-163e32: #0b2332;
+  --surface-249a76: #d9f2f5;
+  --surface-265546: #0b2332;
+  --surface-284149: #0b2332;
+  --surface-365f4d: #0b2332;
+  --surface-46665b: #0b2332;
+  --surface-ccdad0: #ecfafc;
+  --surface-d7eadc: #ecfafc;
+  --surface-e3eceb: #ffffff;
+  --surface-e7eeeb: #ffffff;
+  --surface-e7efe9: #ffffff;
+  --surface-e8f5ec: #ffffff;
+  --surface-eaf6ec: #ffffff;
+  --surface-ebf5ed: #ffffff;
+  --surface-edf2ee: #ffffff;
+  --surface-eef2ef: #ffffff;
+  --surface-eef8f2: #ffffff;
+  --surface-eff5f0: #ffffff;
+  --surface-f0f5f0: #ffffff;
+  --surface-f0f5f2: #ffffff;
+  --surface-f1f5f2: #ffffff;
+  --surface-f2f6f3: #ffffff;
+  --surface-f3f9f2: #ffffff;
+  --surface-f5f7f6: #f7fbfc;
+  --surface-f5faf7: #ffffff;
+  --surface-f7faf7: #ffffff;
+  --surface-f8faf8: #ffffff;
+  --surface-fafcfb: #ffffff;
+  --surface-fff: #ffffff;
+  --surface-fff3d7: #fff6e9;
+  --surface-fff6e9: #fff6e9;
+  --surface-ffffffb5: #ffffffb5;
+  --surface-ffffffeb: #ffffffeb;
+  --surface-ffffffed: #ffffffed;
+}
 [data-theme='lax-dark'] {
-  --ink-087969: #adc4b7;
-  --ink-122b32: #e7f2ec;
-  --ink-183331: #e7f2ec;
-  --ink-1c795a: #adc4b7;
-  --ink-23473a: #e7f2ec;
-  --ink-2c4943: #e7f2ec;
-  --ink-2d4941: #e7f2ec;
-  --ink-328268: #adc4b7;
-  --ink-34714e: #adc4b7;
-  --ink-35775c: #adc4b7;
-  --ink-38514a: #e7f2ec;
-  --ink-3e7d60: #adc4b7;
-  --ink-408360: #adc4b7;
-  --ink-426651: #adc4b7;
-  --ink-447e6b: #adc4b7;
-  --ink-466258: #e7f2ec;
-  --ink-496754: #adc4b7;
-  --ink-50655f: #adc4b7;
-  --ink-547460: #adc4b7;
-  --ink-577365: #adc4b7;
-  --ink-587167: #adc4b7;
-  --ink-5b7766: #adc4b7;
-  --ink-5e7969: #adc4b7;
-  --ink-607970: #adc4b7;
-  --ink-657870: #adc4b7;
-  --ink-66847a: #adc4b7;
-  --ink-6a8172: #adc4b7;
-  --ink-6a8c76: #adc4b7;
-  --ink-718479: #adc4b7;
+  --ink-087969: #58dce3;
+  --ink-122b32: #effbfc;
+  --ink-183331: #effbfc;
+  --ink-1c795a: #58dce3;
+  --ink-23473a: #effbfc;
+  --ink-2c4943: #effbfc;
+  --ink-2d4941: #effbfc;
+  --ink-328268: #58dce3;
+  --ink-34714e: #adc8cf;
+  --ink-35775c: #58dce3;
+  --ink-38514a: #effbfc;
+  --ink-3e7d60: #58dce3;
+  --ink-408360: #58dce3;
+  --ink-426651: #adc8cf;
+  --ink-447e6b: #58dce3;
+  --ink-466258: #effbfc;
+  --ink-496754: #adc8cf;
+  --ink-50655f: #adc8cf;
+  --ink-547460: #adc8cf;
+  --ink-577365: #adc8cf;
+  --ink-587167: #adc8cf;
+  --ink-5b7766: #adc8cf;
+  --ink-5e7969: #adc8cf;
+  --ink-607970: #adc8cf;
+  --ink-657870: #adc8cf;
+  --ink-66847a: #adc8cf;
+  --ink-6a8172: #adc8cf;
+  --ink-6a8c76: #adc8cf;
+  --ink-718479: #adc8cf;
   --ink-765026: #edc894;
-  --ink-768d7d: #adc4b7;
-  --ink-778c80: #adc4b7;
-  --ink-7a8982: #adc4b7;
-  --ink-7a8984: #adc4b7;
-  --ink-7a8a85: #adc4b7;
-  --ink-7a8c82: #adc4b7;
-  --ink-7b8d84: #adc4b7;
-  --ink-7c9385: #adc4b7;
-  --ink-7f9084: #adc4b7;
-  --ink-81988c: #adc4b7;
-  --ink-83998b: #adc4b7;
-  --ink-84998b: #adc4b7;
+  --ink-768d7d: #adc8cf;
+  --ink-778c80: #adc8cf;
+  --ink-7a8982: #adc8cf;
+  --ink-7a8984: #adc8cf;
+  --ink-7a8a85: #adc8cf;
+  --ink-7a8c82: #adc8cf;
+  --ink-7b8d84: #adc8cf;
+  --ink-7c9385: #adc8cf;
+  --ink-7f9084: #adc8cf;
+  --ink-81988c: #adc8cf;
+  --ink-83998b: #adc8cf;
+  --ink-84998b: #adc8cf;
   --ink-875e31: #edc894;
-  --ink-87998e: #adc4b7;
-  --ink-879e8c: #adc4b7;
+  --ink-87998e: #adc8cf;
+  --ink-879e8c: #adc8cf;
   --ink-886840: #edc894;
-  --ink-88978f: #adc4b7;
+  --ink-88978f: #adc8cf;
   --ink-896531: #edc894;
-  --ink-8c9d92: #adc4b7;
-  --ink-91a293: #adc4b7;
-  --ink-92a596: #adc4b7;
-  --ink-94a29a: #adc4b7;
-  --ink-94a395: #adc4b7;
-  --ink-96a89b: #adc4b7;
-  --ink-9cb2b4: #adc4b7;
-  --ink-a4c5b0: #adc4b7;
-  --line-122b32: #98cbb0;
-  --line-365f4d: #98cbb0;
-  --line-46665b: #98cbb0;
-  --line-57bc9b: #3c5548;
-  --line-70907f: #98cbb0;
-  --line-d8e3e1: #3c5548;
-  --line-dbe5df: #3c5548;
-  --line-dce5df: #3c5548;
-  --line-dce6e0: #3c5548;
-  --line-dee8df: #3c5548;
-  --line-dfede2: #3c5548;
-  --line-e0e8e2: #3c5548;
-  --line-e1e9e4: #3c5548;
-  --line-e2e9e5: #3c5548;
-  --line-e3eae6: #3c5548;
-  --line-e4ece5: #3c5548;
-  --line-e5ebe8: #3c5548;
-  --line-e8eee9: #3c5548;
-  --line-eaf0eb: #3c5548;
-  --line-edf1ee: #3c5548;
-  --line-f1e4cc: #3c5548;
-  --surface-0e2b2a70: #163b3170;
-  --surface-122b32: #163b31;
-  --surface-163b31: #163b31;
-  --surface-163e32: #163b31;
-  --surface-249a76: #294e3a;
-  --surface-265546: #163b31;
-  --surface-284149: #163b31;
-  --surface-365f4d: #163b31;
-  --surface-46665b: #163b31;
-  --surface-ccdad0: #23372c;
-  --surface-d7eadc: #23372c;
-  --surface-e3eceb: #1b2b23;
-  --surface-e7eeeb: #1b2b23;
-  --surface-e7efe9: #1b2b23;
-  --surface-e8f5ec: #1b2b23;
-  --surface-eaf6ec: #1b2b23;
-  --surface-ebf5ed: #1b2b23;
-  --surface-edf2ee: #1b2b23;
-  --surface-eef2ef: #1b2b23;
-  --surface-eef8f2: #1b2b23;
-  --surface-eff5f0: #1b2b23;
-  --surface-f0f5f0: #1b2b23;
-  --surface-f0f5f2: #1b2b23;
-  --surface-f1f5f2: #1b2b23;
-  --surface-f2f6f3: #1b2b23;
-  --surface-f3f9f2: #1b2b23;
-  --surface-f5f7f6: #101c16;
-  --surface-f5faf7: #1b2b23;
-  --surface-f7faf7: #1b2b23;
-  --surface-f8faf8: #1b2b23;
-  --surface-fafcfb: #1b2b23;
-  --surface-fff: #1b2b23;
+  --ink-8c9d92: #adc8cf;
+  --ink-91a293: #adc8cf;
+  --ink-92a596: #adc8cf;
+  --ink-94a29a: #adc8cf;
+  --ink-94a395: #adc8cf;
+  --ink-96a89b: #adc8cf;
+  --ink-9cb2b4: #adc8cf;
+  --ink-a4c5b0: #adc8cf;
+  --line-122b32: #2c4853;
+  --line-365f4d: #2c4853;
+  --line-46665b: #2c4853;
+  --line-57bc9b: #2c4853;
+  --line-70907f: #2c4853;
+  --line-d8e3e1: #2c4853;
+  --line-dbe5df: #2c4853;
+  --line-dce5df: #2c4853;
+  --line-dce6e0: #2c4853;
+  --line-dee8df: #2c4853;
+  --line-dfede2: #2c4853;
+  --line-e0e8e2: #2c4853;
+  --line-e1e9e4: #2c4853;
+  --line-e2e9e5: #2c4853;
+  --line-e3eae6: #2c4853;
+  --line-e4ece5: #2c4853;
+  --line-e5ebe8: #2c4853;
+  --line-e8eee9: #2c4853;
+  --line-eaf0eb: #2c4853;
+  --line-edf1ee: #2c4853;
+  --line-f1e4cc: #2c4853;
+  --surface-0e2b2a70: #0b233270;
+  --surface-122b32: #0b2332;
+  --surface-163b31: #0b2332;
+  --surface-163e32: #0b2332;
+  --surface-249a76: #123d45;
+  --surface-265546: #0b2332;
+  --surface-284149: #0b2332;
+  --surface-365f4d: #0b2332;
+  --surface-46665b: #0b2332;
+  --surface-ccdad0: #123d45;
+  --surface-d7eadc: #123d45;
+  --surface-e3eceb: #102b35;
+  --surface-e7eeeb: #102b35;
+  --surface-e7efe9: #102b35;
+  --surface-e8f5ec: #102b35;
+  --surface-eaf6ec: #102b35;
+  --surface-ebf5ed: #102b35;
+  --surface-edf2ee: #102b35;
+  --surface-eef2ef: #102b35;
+  --surface-eef8f2: #102b35;
+  --surface-eff5f0: #102b35;
+  --surface-f0f5f0: #102b35;
+  --surface-f0f5f2: #102b35;
+  --surface-f1f5f2: #102b35;
+  --surface-f2f6f3: #102b35;
+  --surface-f3f9f2: #102b35;
+  --surface-f5f7f6: #081923;
+  --surface-f5faf7: #102b35;
+  --surface-f7faf7: #102b35;
+  --surface-f8faf8: #102b35;
+  --surface-fafcfb: #102b35;
+  --surface-fff: #102b35;
   --surface-fff3d7: #3d301f;
   --surface-fff6e9: #3d301f;
-  --surface-ffffffb5: #1b2b23b5;
-  --surface-ffffffeb: #1b2b23eb;
-  --surface-ffffffed: #1b2b23ed;
+  --surface-ffffffb5: #102b35b5;
+  --surface-ffffffeb: #102b35eb;
+  --surface-ffffffed: #102b35ed;
 }
 
 .preferences-menu {
@@ -2021,8 +2138,8 @@ html[data-theme='lax-dark'] {
   caret-color: var(--color-base-content);
 }
 [data-theme='lax-dark'] input::placeholder {
-  color: #adc4b7;
-  -webkit-text-fill-color: #adc4b7;
+  color: #adc8cf;
+  -webkit-text-fill-color: #adc8cf;
   opacity: 1;
 }
 [data-theme='lax-dark'] input:autofill {
@@ -2033,8 +2150,8 @@ html[data-theme='lax-dark'] {
   -webkit-box-shadow: 0 0 0 1000px var(--color-base-100) inset;
 }
 [data-theme='lax-dark'] :is(button, .btn, input, select):disabled {
-  color: #adc4b7;
-  -webkit-text-fill-color: #adc4b7;
+  color: #adc8cf;
+  -webkit-text-fill-color: #adc8cf;
   opacity: 1;
 }
 /* Leaflet supplies its own white tooltip background; pair both colors explicitly. */
@@ -2048,4 +2165,33 @@ html[data-theme='lax-dark'] {
 }
 .route-square {
   background: var(--route-solid-color, var(--route-color));
+}
+
+/* Turquoise actions use navy text in both appearances. */
+.button-primary,
+.language-switch .btn[aria-pressed='true'] {
+  background: var(--color-primary);
+  color: var(--color-primary-content);
+}
+.button-primary:hover {
+  background: color-mix(in srgb, var(--color-primary) 85%, var(--color-primary-content));
+}
+.text-button,
+.shuttle-guide a,
+.initial-app-summary a {
+  color: var(--ink-087969, #007981);
+}
+.bottom-nav button {
+  color: #adc8cf;
+}
+.bottom-nav button.active {
+  background: #123d45;
+  color: #58dce3;
+}
+.leave-card span {
+  color: #adc8cf;
+}
+[data-theme='lax-dark'] .button-primary:disabled {
+  background: #123d45;
+  color: #adc8cf;
 }

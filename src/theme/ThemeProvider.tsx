@@ -34,7 +34,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     document.documentElement.style.colorScheme = appearance;
     document
       .querySelector('meta[name="theme-color"]')
-      ?.setAttribute('content', appearance === 'dark' ? '#101c16' : '#f5f7f6');
+      ?.setAttribute('content', appearance === 'dark' ? '#081923' : '#f7fbfc');
   }, [appearance]);
   function setPreference(value: ThemePreference) {
     updatePreference(value);

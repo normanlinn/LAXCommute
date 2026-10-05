@@ -1,6 +1,6 @@
 import type { Point, Stop, Commute, Direction, Route } from '../types';
 export const ROUTES = Object.freeze<Route[]>([
-  { id: 6885, lot: 'South', color: '#087969', short: 'S', coverage: 'All terminals' },
+  { id: 6885, lot: 'South', color: '#007981', short: 'S', coverage: 'All terminals' },
   { id: 6884, lot: 'East', color: '#3262ab', short: 'E', coverage: 'Terminals 1–3 + B' },
   { id: 6883, lot: 'West', color: '#b76328', short: 'W', coverage: 'Terminals 4–7' },
 ]);

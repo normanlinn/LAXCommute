@@ -16,8 +16,9 @@ function contrast(a, b) {
 }
 describe('dark text contrast', () => {
   it('keeps every dark ink color readable on the app’s dark surfaces', () => {
-    const ink = [...css.matchAll(/--ink-[\da-f]+:\s*(#[\da-f]{6});/g)];
-    const surfaces = [...css.matchAll(/--surface-[\da-f]+:\s*(#[\da-f]{6});/g)];
+    const darkPalette = css.match(/\[data-theme='lax-dark'\] \{([\s\S]*?)\n}/)[1];
+    const ink = [...darkPalette.matchAll(/--ink-[\da-f]+:\s*(#[\da-f]{6});/g)];
+    const surfaces = [...darkPalette.matchAll(/--surface-[\da-f]+:\s*(#[\da-f]{6});/g)];
     expect(ink.length).toBeGreaterThan(30);
     expect(surfaces.length).toBeGreaterThan(20);
     for (const [declaration, foreground] of ink) {
@@ -35,6 +36,15 @@ describe('dark text contrast', () => {
     expect(contrast(get('--color-base-content'), get('--color-base-100'))).toBeGreaterThanOrEqual(
       4.5,
     );
-    expect(contrast('#adc4b7', get('--color-base-100'))).toBeGreaterThanOrEqual(4.5);
+    expect(contrast('#adc8cf', get('--color-base-100'))).toBeGreaterThanOrEqual(4.5);
   });
+});
+
+it.each(['lax', 'lax-dark'])('keeps turquoise button text readable in %s', (name) => {
+  const start = css.indexOf(`name: '${name}';`);
+  const theme = css.slice(start, css.indexOf('\n}', start));
+  const get = (token) => theme.match(new RegExp(`${token}:\\s*(#[\\da-f]{6});`))[1];
+  expect(contrast(get('--color-primary'), get('--color-primary-content'))).toBeGreaterThanOrEqual(
+    4.5,
+  );
 });

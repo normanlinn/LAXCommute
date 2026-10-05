@@ -36,7 +36,7 @@ import DirectionsButton from './components/DirectionsButton';
 import AppMenu from './components/AppMenu';
 import { useTheme } from './theme/ThemeProvider';
 const darkRouteColor = (color: string) =>
-  color === '#3262ab' ? '#88b7ff' : color === '#b76328' ? '#e4bb82' : '#88e0bc';
+  color === '#3262ab' ? '#88b7ff' : color === '#b76328' ? '#e4bb82' : '#58dce3';
 const ShuttleMap = lazy(() => import('./components/ShuttleMap'));
 const AccountPanel = lazy(() => import('./components/AccountPanel'));
 const SavedCommute = lazy(() => import('./components/SavedCommute'));

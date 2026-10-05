@@ -215,3 +215,5 @@ LAXCommute is an independent employee commute project and is not an official LAW
 ### Appearance
 
 Open the hamburger menu in the header to choose System, Light, or Dark and switch language. System is the default and follows device changes automatically. Manual choices are saved on the device. Appearance changes keep your selected route, boarding stop, and map position. The free vector map uses a dark style at night; detailed OpenStreetMap tiles keep their original colors. `VITE_MAP_DARK_STYLE_URL` can override the dark vector style.
+
+The app uses a turquoise and navy brand palette, with off-white and pale aqua surfaces in light mode and navy surfaces with light text in dark mode. The favicon and installed-app icons use the same turquoise bus mark.

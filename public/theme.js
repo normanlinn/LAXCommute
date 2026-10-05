@@ -14,5 +14,5 @@
   document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
   document
     .querySelector('meta[name="theme-color"]')
-    ?.setAttribute('content', dark ? '#101c16' : '#f5f7f6');
+    ?.setAttribute('content', dark ? '#081923' : '#f7fbfc');
 })();
