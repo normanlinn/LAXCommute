@@ -27,10 +27,10 @@ export default defineConfig(({ mode }) => ({
     VitePWA({
       registerType: 'prompt',
       includeAssets: [
-        'icons/apple-touch-icon.png',
-        'icons/icon-192.png',
-        'icons/icon-512.png',
-        'favicon.svg',
+        'icons/apple-touch-v2.png',
+        'icons/commute-v2-192.png',
+        'icons/commute-v2-512.png',
+        'icons/favicon-v2.png',
       ],
       manifest: {
         id: '/',
@@ -43,8 +43,8 @@ export default defineConfig(({ mode }) => ({
         start_url: '/',
         scope: '/',
         icons: [
-          { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
-          { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+          { src: '/icons/commute-v2-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: '/icons/commute-v2-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
         ],
       },
       workbox: {
