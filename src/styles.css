@@ -2195,3 +2195,48 @@ html[data-theme='lax-dark'] {
   background: #123d45;
   color: #adc8cf;
 }
+
+/* Separate controls from their surrounding cards in both appearances. */
+:root {
+  --control-border: #66818c;
+  --control-tray: #ecfafc;
+  --journey-surface: #ecfafc;
+}
+[data-theme='lax-dark'] {
+  --control-border: #5b8490;
+  --control-tray: #081923;
+  --journey-surface: #081923;
+}
+.segmented.tabs {
+  background: var(--control-tray);
+  border: 1px solid var(--control-border);
+}
+.segmented .tab.active {
+  background: var(--color-primary);
+  color: var(--color-primary-content);
+  box-shadow: none;
+}
+.segmented .tab:not(.active) {
+  color: var(--color-base-content);
+}
+.trip-destination {
+  background: var(--journey-surface);
+  border: 1px solid var(--control-border);
+}
+.journey-line span,
+.journey-line span:last-child {
+  border-color: var(--control-border);
+}
+.journey-line span:last-child,
+.journey-line i {
+  background: var(--control-border);
+}
+.route-options button:not(.selected),
+input,
+select,
+.map-controls .btn {
+  border-color: var(--control-border);
+}
+.appearance-options label {
+  border-color: var(--control-border);
+}

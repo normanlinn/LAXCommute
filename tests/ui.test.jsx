@@ -240,3 +240,22 @@ it.each([
   fireEvent.click(screen.getByRole('button', { name: 'Usual stop' }));
   expect(select.value).toBe('4');
 });
+
+it('exposes the selected travel direction when the user changes it', () => {
+  render(
+    <ThemeProvider>
+      <App />
+    </ThemeProvider>,
+  );
+  expect(screen.getByRole('button', { name: 'To work', pressed: true })).toBeTruthy();
+  fireEvent.click(screen.getByRole('button', { name: 'To parking', pressed: false }));
+  expect(screen.getByRole('button', { name: 'To parking', pressed: true })).toBeTruthy();
+  expect(screen.getByRole('button', { name: 'To work', pressed: false })).toBeTruthy();
+});
+it('exposes the selected account option when switching to create account', () => {
+  render(<AccountPanel />);
+  expect(screen.getByRole('button', { name: 'Sign in', pressed: true })).toBeTruthy();
+  fireEvent.click(screen.getByRole('button', { name: 'Create account', pressed: false }));
+  expect(screen.getByRole('button', { name: 'Create account', pressed: true })).toBeTruthy();
+  expect(screen.getByRole('button', { name: 'Sign in', pressed: false })).toBeTruthy();
+});

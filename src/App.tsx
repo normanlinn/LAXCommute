@@ -307,16 +307,19 @@ export default function App() {
               </div>
               <div
                 className="tabs tabs-box segmented direction-switch"
+                role="group"
                 aria-label={t('Travel direction')}
               >
                 <Button
                   className={direction === 'work' ? 'tab tab-active active' : 'tab'}
+                  aria-pressed={direction === 'work'}
                   onClick={() => changeDirection('work')}
                 >
                   <BusFront size={16} /> {t('To work')}{' '}
                 </Button>
                 <Button
                   className={direction === 'parking' ? 'tab tab-active active' : 'tab'}
+                  aria-pressed={direction === 'parking'}
                   onClick={() => changeDirection('parking')}
                 >
                   <Home size={16} /> {t('To parking')}{' '}

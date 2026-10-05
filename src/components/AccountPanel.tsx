@@ -255,9 +255,10 @@ export default function AccountPanel({
         )}{' '}
       </p>
       {!recovering && !needsCode && (
-        <div className="tabs tabs-box segmented">
+        <div className="tabs tabs-box segmented" role="group" aria-label={t('YOUR ACCOUNT')}>
           <Button
             className={mode === 'signin' ? 'tab tab-active active' : 'tab'}
+            aria-pressed={mode === 'signin'}
             onClick={() => changeMode('signin')}
             disabled={busy}
           >
@@ -266,6 +267,7 @@ export default function AccountPanel({
           </Button>
           <Button
             className={mode === 'signup' ? 'tab tab-active active' : 'tab'}
+            aria-pressed={mode === 'signup'}
             onClick={() => changeMode('signup')}
             disabled={busy}
           >

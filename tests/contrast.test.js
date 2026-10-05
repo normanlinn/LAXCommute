@@ -48,3 +48,22 @@ it.each(['lax', 'lax-dark'])('keeps turquoise button text readable in %s', (name
     4.5,
   );
 });
+
+it.each([
+  ['light', ':root', '#ffffff'],
+  ['dark', "[data-theme='lax-dark']", '#102b35'],
+])(
+  'keeps %s control boundaries visible against cards and inset panels',
+  (_name, selector, card) => {
+    const rule = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)].find(
+      ([, name, body]) =>
+        name.replace(/\/\*[\s\S]*?\*\//g, '').trim() === selector &&
+        body.includes('--control-border:'),
+    );
+    const get = (token) => rule[2].match(new RegExp(`${token}:\\s*(#[\\da-f]{6});`))[1];
+    const border = get('--control-border');
+    expect(contrast(border, card)).toBeGreaterThanOrEqual(3);
+    expect(contrast(border, get('--control-tray'))).toBeGreaterThanOrEqual(3);
+    expect(contrast(border, get('--journey-surface'))).toBeGreaterThanOrEqual(3);
+  },
+);
