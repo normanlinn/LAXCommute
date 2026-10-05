@@ -171,7 +171,10 @@ export default function App() {
   return (
     <div
       className="app"
-      style={{ '--route-color': appearance === 'dark' ? darkRouteColor(route.color) : route.color }}
+      style={{
+        '--route-color': appearance === 'dark' ? darkRouteColor(route.color) : route.color,
+        '--route-solid-color': route.color,
+      }}
     >
       <header className="navbar app-header">
         <a

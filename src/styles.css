@@ -2004,3 +2004,48 @@ html:lang(my) .shuttle-map-legend {
 .shuttle-map .leaflet-control-attribution a {
   color: var(--color-secondary);
 }
+
+/* Keep native form text and component defaults readable on dark surfaces. */
+html[data-theme='lax-dark'] {
+  color: var(--color-base-content);
+}
+[data-theme='lax-dark'] :is(.app, .modal-box, .initial-app-summary, .shuttle-guide) {
+  color: var(--color-base-content);
+}
+[data-theme='lax-dark'] :is(h1, h2, h3, legend, .brand strong, .field > span) {
+  color: var(--color-base-content);
+}
+[data-theme='lax-dark'] :is(input, select, textarea, option) {
+  color: var(--color-base-content);
+  -webkit-text-fill-color: var(--color-base-content);
+  caret-color: var(--color-base-content);
+}
+[data-theme='lax-dark'] input::placeholder {
+  color: #adc4b7;
+  -webkit-text-fill-color: #adc4b7;
+  opacity: 1;
+}
+[data-theme='lax-dark'] input:autofill {
+  box-shadow: 0 0 0 1000px var(--color-base-100) inset;
+}
+[data-theme='lax-dark'] input:-webkit-autofill {
+  -webkit-text-fill-color: var(--color-base-content);
+  -webkit-box-shadow: 0 0 0 1000px var(--color-base-100) inset;
+}
+[data-theme='lax-dark'] :is(button, .btn, input, select):disabled {
+  color: #adc4b7;
+  -webkit-text-fill-color: #adc4b7;
+  opacity: 1;
+}
+/* Leaflet supplies its own white tooltip background; pair both colors explicitly. */
+[data-theme='lax-dark'] .shuttle-map .leaflet-tooltip {
+  background: var(--color-base-100);
+  color: var(--color-base-content);
+}
+[data-theme='lax-dark'] .shuttle-map .boarding-label {
+  background: var(--color-neutral);
+  color: var(--color-neutral-content);
+}
+.route-square {
+  background: var(--route-solid-color, var(--route-color));
+}
