@@ -138,3 +138,9 @@ it('keeps the map image fixed when highlighting a location and reports failed ba
   expect(screen.getByRole('status').textContent).toContain('Map background could not load');
   expect(screen.getByRole('link', { name: 'OpenStreetMap' })).toBeTruthy();
 });
+
+it('stops showing geometry loading when the route request has ended without usable data', () => {
+  render(<RouteView {...props} stops={[]} paths={[]} routeLoading={false} />);
+  expect(screen.queryByText('Loading route geometry…')).toBeNull();
+  expect(screen.getByRole('status').textContent).toContain('Retry boarding stops below');
+});

@@ -268,7 +268,13 @@ export default function App() {
                     <span>
                       {vehicles.length
                         ? t('{count} buses reporting GPS', { count: vehicles.length })
-                        : t('Checking bus positions')}
+                        : t(
+                            live.isError || routeQuery.isError
+                              ? 'Bus data unavailable'
+                              : live.isFetching || routeQuery.isPending
+                                ? 'Checking bus positions'
+                                : 'No fresh bus positions',
+                          )}
                     </span>
                   </div>
                 </div>
@@ -277,6 +283,7 @@ export default function App() {
                 fallback={<div className="map-surface map-loading">{t('Opening map…')}</div>}
               >
                 <ShuttleMap
+                  routeLoading={routeQuery.isPending && routeQuery.fetchStatus === 'fetching'}
                   route={route}
                   liveData={live.data}
                   stops={mapStops}

@@ -102,6 +102,7 @@ function RouteView(props: MapProps) {
     onSelectStop,
     focusRequest,
     liveData,
+    routeLoading = true,
   } = props;
   const { t } = useLanguage();
   const reduce = useReducedMotion() === true;
@@ -163,7 +164,11 @@ function RouteView(props: MapProps) {
           <span>{approaching ? t('Bus approaching your stop') : t('Reported GPS')}</span>
         </div>
         {!project ? (
-          <div className="route-view-empty">{t('Loading route geometry…')}</div>
+          <div className="route-view-empty" role="status">
+            {routeLoading
+              ? t('Loading route geometry…')
+              : t('Route map is unavailable. Retry boarding stops below.')}
+          </div>
         ) : (
           <m.svg
             viewBox="0 0 600 420"
