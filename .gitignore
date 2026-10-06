@@ -10,3 +10,9 @@ test-results/
 playwright-report/
 .DS_Store
 *.log
+
+# Native iOS local build/user state
+DerivedData/
+*.xcuserstate
+xcuserdata/
+*.xcarchive
