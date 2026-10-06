@@ -2396,12 +2396,12 @@ select,
   stroke: var(--control-border);
   stroke-width: 3px;
 }
-.route-view-stop circle:first-child {
+.route-view-stop circle:first-of-type {
   fill: transparent;
   stroke: none;
 }
-.route-view-stop.selected circle:not(:first-child),
-.route-view-stop:focus-visible circle:not(:first-child) {
+.route-view-stop.selected circle:not(:first-of-type),
+.route-view-stop:focus-visible circle:not(:first-of-type) {
   stroke: var(--route-color);
 }
 .route-view-stop.selected circle:last-child {
@@ -2465,4 +2465,11 @@ select,
   min-height: 220px;
   padding: 22px;
   font-size: 14px;
+}
+
+.route-view-stop text {
+  fill: var(--color-base-content);
+  font-size: 11px;
+  font-weight: 700;
+  pointer-events: none;
 }

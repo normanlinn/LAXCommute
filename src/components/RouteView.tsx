@@ -4,6 +4,7 @@ import { LazyMotion, domAnimation, m, useReducedMotion } from 'motion/react';
 import { BusFront, MapPin } from 'lucide-react';
 import { ARRIVAL_TTL_MS, GPS_TTL_MS, snapshotFresh, validVehicle } from '../domain/arrivals';
 import { createRouteProjection, routePathData, validRoutePoint } from '../domain/route-view';
+import { terminalKey } from '../domain/commute';
 import { useLanguage } from '../i18n/LanguageProvider';
 import type { MapProps, Vehicle } from '../types';
 
@@ -207,6 +208,7 @@ function RouteView(props: MapProps) {
             {stops.filter(validRoutePoint).map((stop) => {
               const { x, y } = project(stop);
               const selected = stop.id === selectedStop?.id;
+              const terminal = terminalKey(stop.name);
               return (
                 <g key={stop.id} transform={`translate(${x} ${y})`}>
                   <g
@@ -225,8 +227,13 @@ function RouteView(props: MapProps) {
                   >
                     <title>{stop.name}</title>
                     <circle r="22" fill="transparent" stroke="none" />
-                    <circle r={selected ? 12 : 7} />
+                    <circle r={selected ? 12 : terminal ? 11 : 7} />
                     {selected && <circle r="18" fill="none" strokeWidth="2" />}
+                    {terminal && (
+                      <text textAnchor="middle" dominantBaseline="central">
+                        {terminal}
+                      </text>
+                    )}
                   </g>
                 </g>
               );
