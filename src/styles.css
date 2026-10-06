@@ -1108,9 +1108,6 @@ input::placeholder {
     background 0.15s,
     transform 0.15s;
 }
-.button:hover {
-  transform: translateY(-1px);
-}
 .button-primary {
   background: var(--surface-163e32, #163e32);
   color: #e1f8e7;
@@ -2246,4 +2243,91 @@ select,
 }
 .appearance-options label {
   border-color: var(--control-border);
+}
+
+/* Shared interaction treatment: short, finite motion and visible boundaries. */
+:root {
+  --interaction-ring: color-mix(in srgb, var(--color-primary) 20%, transparent);
+  --interaction-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.app .btn,
+.appearance-options label {
+  transition:
+    transform 180ms var(--interaction-ease),
+    border-color 180ms ease,
+    background-color 180ms ease,
+    box-shadow 180ms ease;
+}
+.trip-card,
+.page-card {
+  border-color: color-mix(in srgb, var(--control-border) 65%, var(--color-base-100));
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+.trip-card:focus-within,
+.page-card:focus-within {
+  border-color: var(--control-border);
+  box-shadow: 0 0 0 3px var(--interaction-ring);
+}
+.route-options .selected {
+  box-shadow: inset 0 0 0 1px var(--option-color);
+}
+.app input,
+.app select {
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+.app input:focus-visible,
+.app select:focus-visible {
+  border-color: var(--control-border);
+  box-shadow: 0 0 0 4px var(--interaction-ring);
+}
+/* Touch devices get press feedback without a hover state sticking after a tap. */
+.app .btn:not(:disabled):active,
+.appearance-options label:active {
+  transform: scale(0.97);
+}
+.app .btn:disabled {
+  transform: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .app .btn:not(:disabled):hover,
+  .appearance-options label:hover {
+    transform: translateY(-2px);
+  }
+  .route-options .btn:not(:disabled):hover {
+    border-color: var(--option-color);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--option-color) 15%, transparent);
+  }
+  .map-controls .btn:not(:disabled):hover,
+  .button-light:not(:disabled):hover,
+  .appearance-options label:hover {
+    border-color: var(--control-border);
+    box-shadow: 0 0 0 3px var(--interaction-ring);
+  }
+  .trip-card:hover,
+  .page-card:hover {
+    border-color: var(--control-border);
+  }
+  .bottom-nav .btn:not(:disabled):hover svg {
+    transform: translateY(-2px);
+  }
+}
+.bottom-nav svg {
+  transition: transform 180ms var(--interaction-ease);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .trip-card,
+  .modal[open] .modal-box {
+    animation: enter 240ms var(--interaction-ease);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app .btn,
+  .appearance-options label,
+  .bottom-nav svg {
+    transform: none !important;
+  }
 }

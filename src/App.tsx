@@ -30,6 +30,8 @@ import { validVehicle } from './domain/arrivals';
 import { useAccount } from './hooks/useAccount';
 import { useCommute } from './hooks/useCommute';
 import { useLive, useOnline, useRoute, useSnapshotFresh } from './hooks/useShuttle';
+// The provider stays lazy without a second request for its tiny selector.
+import ShuttleMap from './components/ShuttleMap';
 import Arrivals from './components/Arrivals';
 import InstallApp from './components/InstallApp';
 import DirectionsButton from './components/DirectionsButton';
@@ -37,7 +39,6 @@ import AppMenu from './components/AppMenu';
 import { useTheme } from './theme/ThemeProvider';
 const darkRouteColor = (color: string) =>
   color === '#3262ab' ? '#88b7ff' : color === '#b76328' ? '#e4bb82' : '#58dce3';
-const ShuttleMap = lazy(() => import('./components/ShuttleMap'));
 const AccountPanel = lazy(() => import('./components/AccountPanel'));
 const SavedCommute = lazy(() => import('./components/SavedCommute'));
 const EMPTY: never[] = [];

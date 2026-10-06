@@ -28,11 +28,16 @@ export default function Arrivals({
   useEffect(() => {
     // Keep the countdown within this small component, away from the map.
     let timer: ReturnType<typeof setInterval> | undefined;
-    const update = () => setNow(Date.now());
+    const update = () => {
+      const current = Date.now();
+      setNow(current);
+      if (!snapshotFresh(data?.arrivalFetchedAt, current)) clearInterval(timer);
+    };
     const start = () => {
       clearInterval(timer);
       update();
-      if (!document.hidden) timer = setInterval(update, 1_000);
+      if (!document.hidden && !error && snapshotFresh(data?.arrivalFetchedAt))
+        timer = setInterval(update, 1_000);
     };
     start();
     document.addEventListener('visibilitychange', start);
@@ -40,7 +45,7 @@ export default function Arrivals({
       clearInterval(timer);
       document.removeEventListener('visibilitychange', start);
     };
-  }, []);
+  }, [data?.arrivalFetchedAt, error]);
   const fresh = snapshotFresh(data?.arrivalFetchedAt, now);
   const arrivals = fresh && !error ? availableArrivals(data?.predictions || [], now) : [];
   const advice =
