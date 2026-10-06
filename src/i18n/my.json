@@ -260,5 +260,6 @@
   "No account is needed to remember your commute.": "ခရီးစဉ်ကို မှတ်ထားရန် အကောင့်မလိုပါ။",
   "Saved for this visit. Browser storage is unavailable.": "ယခုအသုံးပြုနေစဉ်အတွက် သိမ်းထားပါတယ်။ ဘရောက်ဇာတွင် အမြဲသိမ်း၍ မရပါ။",
   "Saved for this browser session only.": "ဤဘရောက်ဇာကို အသုံးပြုနေစဉ်အတွက်သာ သိမ်းထားပါတယ်။",
-  "Map background could not load. Route lines and live buses remain available.": "မြေပုံနောက်ခံကို မဖော်ပြနိုင်ပါ။ လမ်းကြောင်းနှင့် လက်ရှိဘတ်စ်ကားများကို ဆက်ကြည့်နိုင်ပါတယ်။"
+  "Map background could not load. Route lines and live buses remain available.": "မြေပုံနောက်ခံကို မဖော်ပြနိုင်ပါ။ လမ်းကြောင်းနှင့် လက်ရှိဘတ်စ်ကားများကို ဆက်ကြည့်နိုင်ပါတယ်။",
+  "The shuttle request timed out. Please retry.": "ဘတ်စ်ကားဒေတာ တောင်းဆိုမှု အချိန်ကြာနေပါတယ်။ ထပ်စမ်းကြည့်ပါ။"
 }

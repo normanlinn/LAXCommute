@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { handleAPI } from '../worker/index';
+import { routeDetails } from '../worker/feed';
 
 function memoryCache() {
   const entries = new Map();
@@ -113,4 +114,26 @@ describe('fixed-path shuttle gateway', () => {
     expect(data.patterns).toEqual([]);
     expect(data.warning).toBeTruthy();
   });
+});
+
+it('starts stops and route lines together so a slow line request does not delay fetching stops', async () => {
+  let resolveStops;
+  const paths = [];
+  const options = {
+    origin: 'https://parallel.test',
+    cache: memoryCache(),
+    fetcher: vi.fn((url) => {
+      const path = new URL(url).searchParams.get('path');
+      paths.push(path);
+      if (path.endsWith('/stops'))
+        return new Promise((resolve) => {
+          resolveStops = resolve;
+        });
+      return Promise.resolve(Response.json([{ id: 1, shape: '' }]));
+    }),
+  };
+  const pending = routeDetails(6884, options);
+  await vi.waitFor(() => expect(paths).toEqual(['routes/6884/stops', 'routes/6884/patterns']));
+  resolveStops(Response.json([{ id: 101, name: 'East Lot' }]));
+  expect((await pending).stops[0].id).toBe(101);
 });

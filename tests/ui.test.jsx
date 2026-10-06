@@ -273,6 +273,9 @@ it('guides a first visit into commute setup and restores remembered choices on r
   first.unmount();
   render(<App />);
   expect(screen.queryByRole('dialog')).toBeNull();
+  expect(screen.getByRole('button', { name: 'Explore' }).getAttribute('aria-current')).toBe('page');
+  expect(screen.getByText('Terminal 3')).toBeTruthy();
+  fireEvent.click(screen.getByRole('button', { name: 'My commute' }));
   expect((await screen.findByRole('combobox', { name: 'Usual terminal' })).value).toBe(
     'Terminal 3',
   );
@@ -285,4 +288,28 @@ it('dismisses the introduction for later visits without inventing a saved commut
   render(<App />);
   expect(screen.queryByRole('dialog')).toBeNull();
   expect(screen.getByRole('button', { name: 'Explore' }).getAttribute('aria-current')).toBe('page');
+});
+
+it('redirects a saved East preference to its map and shows setup again only after clearing site data', async () => {
+  const first = render(<App />);
+  fireEvent.click(screen.getByRole('button', { name: 'Set up my commute' }));
+  const lot = await screen.findByRole('combobox', { name: 'Parking lot' });
+  fireEvent.change(lot, { target: { value: 'East' } });
+  fireEvent.click(screen.getByRole('button', { name: 'Save my commute' }));
+  await screen.findByText('Saved on this device.');
+  expect(screen.getByRole('button', { name: 'Explore' }).getAttribute('aria-current')).toBe('page');
+  expect(
+    screen.getByRole('combobox', { name: 'Where are you boarding?' }).selectedOptions[0]
+      .textContent,
+  ).toBe('East Lot Stop #1');
+  expect(liveRequests).toHaveBeenLastCalledWith(6884, 4, true);
+  first.unmount();
+  const second = render(<App />);
+  expect(screen.queryByRole('dialog')).toBeNull();
+  expect(screen.getByRole('combobox', { name: 'Where are you boarding?' }).value).toBe('4');
+  second.unmount();
+  localStorage.clear();
+  sessionStorage.clear();
+  render(<App />);
+  expect(screen.getByRole('dialog', { name: 'Make this your commute.' })).toBeTruthy();
 });

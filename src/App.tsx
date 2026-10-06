@@ -55,15 +55,14 @@ export default function App() {
   const { t, language } = useLanguage();
   const { user, ready, recovering, authReturn } = useAccount();
   const { profile, hasSaved, remember, save, saveState } = useCommute();
-  const [tab, setTab] = useState(hasSaved ? 'saved' : 'map');
+  const [tab, setTab] = useState('map');
   const [welcome, setWelcome] = useState(false);
   const initialNavigation = useRef(false);
   useEffect(() => {
     if (!ready || initialNavigation.current) return;
     initialNavigation.current = true;
     if (recovering || authReturn) return;
-    if (hasSaved) setTab('saved');
-    else {
+    if (!hasSaved) {
       let seen = false;
       try {
         seen = localStorage.getItem('laxcommute:welcome-seen') === '1';
@@ -113,7 +112,11 @@ export default function App() {
     () => stops.find((s) => s.id === todayID) || usual,
     [todayID, stops, usual],
   );
-  const live = useLive(route.id, selectedStop?.id, tab === 'map' || tab === 'home');
+  const live = useLive(
+    route.id,
+    selectedStop?.id,
+    (tab === 'map' || tab === 'home') && !routeQuery.isPending && !routeQuery.isError,
+  );
   const vehicleFresh = useSnapshotFresh(live.data?.vehicleFetchedAt);
   const vehicles = useMemo(
     () =>
@@ -318,6 +321,11 @@ export default function App() {
               </div>
             </section>
             <aside className="card bg-base-100 trip-card">
+              {saveState && hasSaved && (
+                <p className="alert alert-soft alert-success notice" role="status">
+                  {t(saveState)}
+                </p>
+              )}
               <div className="trip-intro">
                 <span className="eyebrow">
                   {direction === 'parking' ? t('YOUR RIDE BACK') : t('START YOUR SHIFT')}
@@ -503,7 +511,14 @@ export default function App() {
                 key={`${user?.id || 'guest'}-${profile.lot}-${profile.terminal}`}
                 profile={profile}
                 remember={remember}
-                save={save}
+                save={async (next, rememberHere) => {
+                  await save(next, rememberHere);
+                  setLot(next.lot);
+                  setDirection('work');
+                  setOverride(null);
+                  skipWelcome();
+                  changeTab('map');
+                }}
                 saveState={saveState}
                 onGoHome={() => changeTab('home')}
                 onAccount={() => changeTab('account')}

@@ -2,22 +2,42 @@ import type { Stop, LiveData } from '../types';
 import { decodePolyline } from '../domain/commute';
 import { normalizeArrivals } from '../domain/arrivals';
 
+export const SHUTTLE_REQUEST_TIMEOUT_MS = 20_000;
 async function get(path: string, signal?: AbortSignal) {
-  const response = await fetch(path, {
-    signal,
-    cache: 'no-store',
-    headers: { Accept: 'application/json' },
-  });
-  if (!response.ok) {
-    let body;
-    try {
-      body = await response.json();
-    } catch {
-      /* Keep the useful fallback. */
+  const controller = new AbortController();
+  const cancel = () => controller.abort(signal?.reason);
+  signal?.addEventListener('abort', cancel, { once: true });
+  if (signal?.aborted) cancel();
+  let timedOut = false;
+  const timer = setTimeout(() => {
+    timedOut = true;
+    controller.abort();
+  }, SHUTTLE_REQUEST_TIMEOUT_MS);
+  try {
+    const response = await fetch(path, {
+      signal: controller.signal,
+      cache: 'no-store',
+      headers: { Accept: 'application/json' },
+    });
+    if (!response.ok) {
+      let body;
+      try {
+        body = await response.json();
+      } catch {
+        /* Use the fallback message. */
+      }
+      throw new Error(body?.error || 'Shuttle data is unavailable. Please retry.');
     }
-    throw new Error(body?.error || 'Shuttle data is unavailable. Please retry.');
+    // Await the body here so the deadline also covers a stalled response body.
+    return await response.json();
+  } catch (error) {
+    if (timedOut && !signal?.aborted)
+      throw new Error('The shuttle request timed out. Please retry.');
+    throw error;
+  } finally {
+    clearTimeout(timer);
+    signal?.removeEventListener('abort', cancel);
   }
-  return response.json();
 }
 export async function getRoute(routeID: number, signal?: AbortSignal) {
   const data: { stops: Stop[]; patterns: { id: number; shape: string }[]; warning: string | null } =

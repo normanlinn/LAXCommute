@@ -12,7 +12,13 @@ export default function ShuttleMap(props: import('../types').MapProps) {
   const { t } = useLanguage();
   const [view, setView] = useState<'route' | 'street'>('route');
   const MapComponent =
-    view === 'route' ? RouteView : config.mapProvider === 'apple' ? AppleMap : FreeMap;
+    view === 'route'
+      ? config.appleMapsToken
+        ? AppleMap
+        : RouteView
+      : config.mapProvider === 'apple'
+        ? AppleMap
+        : FreeMap;
   return (
     <div className="map-view-wrapper">
       <div className="map-view-switch" role="group" aria-label={t('Map view')}>
@@ -26,7 +32,7 @@ export default function ShuttleMap(props: import('../types').MapProps) {
         </Button>
       </div>
       <Suspense fallback={<div className="map-surface map-loading">{t('Opening map…')}</div>}>
-        <MapComponent {...props} />
+        <MapComponent {...props} fixed={view === 'route'} />
       </Suspense>
     </div>
   );

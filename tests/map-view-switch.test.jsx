@@ -3,12 +3,22 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import ShuttleMap from '../src/components/ShuttleMap';
 const streetLoaded = vi.hoisted(() => vi.fn());
+const settings = vi.hoisted(() => ({ appleMapsToken: '', mapProvider: 'openstreetmap' }));
+vi.mock('../src/config', () => ({ config: settings }));
+vi.mock('../src/components/AppleMap', () => ({
+  default: ({ fixed }) => (
+    <div>{fixed ? 'Fixed Apple route ready' : 'Interactive Apple map ready'}</div>
+  ),
+}));
 vi.mock('../src/components/RouteView', () => ({ default: () => <div>SVG route ready</div> }));
 vi.mock('../src/components/FreeMap', () => {
   streetLoaded();
   return { default: () => <div>Street map ready</div> };
 });
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  settings.appleMapsToken = '';
+});
 it('starts with SVG and loads the street engine only after switching', async () => {
   render(<ShuttleMap />);
   await screen.findByText('SVG route ready');
@@ -22,4 +32,11 @@ it('starts with SVG and loads the street engine only after switching', async () 
   fireEvent.click(screen.getByRole('button', { name: 'Route view' }));
   await screen.findByText('SVG route ready');
   expect(screen.queryByText('Street map ready')).toBeNull();
+});
+
+it('uses a fixed Apple map for Route view when a Maps token is configured', async () => {
+  settings.appleMapsToken = 'test-domain-token';
+  render(<ShuttleMap />);
+  await screen.findByText('Fixed Apple route ready');
+  expect(screen.queryByText('SVG route ready')).toBeNull();
 });

@@ -10,7 +10,7 @@ export function useRoute(routeID: number) {
     queryFn: ({ signal }) => getRoute(routeID, signal),
     staleTime: 5 * 60_000,
     gcTime: 60 * 60_000,
-    retry: 2,
+    retry: false,
   });
 }
 export function useLive(routeID: number, stopID?: number, enabled = true) {
@@ -23,7 +23,7 @@ export function useLive(routeID: number, stopID?: number, enabled = true) {
     refetchInterval: config.refreshInterval,
     refetchIntervalInBackground: false,
     refetchOnWindowFocus: true,
-    retry: 1,
+    retry: false,
   });
 }
 // One expiry transition per snapshot, instead of rerendering the map every second.

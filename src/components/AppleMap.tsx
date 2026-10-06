@@ -3,6 +3,8 @@ import type { MapProps } from '../types';
 import { memo, useEffect, useRef, useState } from 'react';
 import { ExternalLink, Map as MapIcon } from 'lucide-react';
 import { config } from '../config';
+import { useTheme } from '../theme/ThemeProvider';
+import { animate } from 'animejs';
 import { mapsLink } from '../domain/commute';
 import { validVehicle } from '../domain/arrivals';
 
@@ -39,16 +41,21 @@ function AppleMap({
   userLocation,
   onSelectStop,
   focusRequest,
-}: MapProps) {
+  fixed = false,
+}: MapProps & { fixed?: boolean }) {
   const { t, language } = useLanguage();
+  const { appearance } = useTheme();
   const element = useRef<HTMLDivElement>(null);
   const state = useRef<AppleState | null>(null);
   const selectionHandler = useRef(onSelectStop);
   selectionHandler.current = onSelectStop;
+  const animations = useRef(new globalThis.Map<string, ReturnType<typeof animate>>());
   const [ready, setReady] = useState(false);
   const [error, setError] = useState('');
   useEffect(() => {
     if (!config.appleMapsToken) return;
+    setReady(false);
+    setError('');
     let alive = true;
     let current: AppleState | undefined;
     loadFramework()
@@ -57,7 +64,10 @@ function AppleMap({
         const map = new mapkit.Map(element.current!, {
           center: new mapkit.Coordinate(33.949, -118.399),
           cameraDistance: 6_000,
-          colorScheme: 'light',
+          colorScheme: appearance,
+          isScrollEnabled: !fixed,
+          isZoomEnabled: !fixed,
+          showsZoomControl: !fixed,
           isRotationEnabled: false,
           showsMapTypeControl: false,
         });
@@ -77,13 +87,18 @@ function AppleMap({
       });
     return () => {
       alive = false;
+      for (const animation of animations.current.values()) animation.cancel();
+      animations.current.clear();
       if (current) {
         current.map.removeEventListener('select', current.select);
         current.map.destroy();
       }
       state.current = null;
     };
-  }, []);
+  }, [fixed]);
+  useEffect(() => {
+    if (ready && state.current) state.current.map.colorScheme = appearance;
+  }, [ready, appearance]);
   useEffect(() => {
     if (!ready || !state.current) return;
     const { map, mapkit, markers } = state.current;
@@ -101,8 +116,33 @@ function AppleMap({
         markers.set(key, marker);
         map.addAnnotation(marker);
       } else {
-        if (marker.coordinate.latitude !== lat || marker.coordinate.longitude !== lon)
-          marker.coordinate = new mapkit.Coordinate(lat, lon);
+        if (marker.coordinate.latitude !== lat || marker.coordinate.longitude !== lon) {
+          animations.current.get(key)?.cancel();
+          animations.current.delete(key);
+          if (
+            key.startsWith('bus-') &&
+            !document.hidden &&
+            !matchMedia('(prefers-reduced-motion: reduce)').matches
+          ) {
+            const target = marker;
+            const position = { lat: marker.coordinate.latitude, lon: marker.coordinate.longitude };
+            animations.current.set(
+              key,
+              animate(position, {
+                lat,
+                lon,
+                duration: 900,
+                ease: 'outCubic',
+                onUpdate: () => {
+                  target.coordinate = new mapkit.Coordinate(position.lat, position.lon);
+                },
+                onComplete: () => {
+                  animations.current.delete(key);
+                },
+              }),
+            );
+          } else marker.coordinate = new mapkit.Coordinate(lat, lon);
+        }
         Object.assign(marker, options);
       }
     };
@@ -131,6 +171,8 @@ function AppleMap({
       });
     for (const [key, marker] of markers)
       if (!wanted.has(key)) {
+        animations.current.get(key)?.cancel();
+        animations.current.delete(key);
         map.removeAnnotation(marker);
         markers.delete(key);
       }
@@ -140,6 +182,8 @@ function AppleMap({
         if (!key.startsWith('bus-')) continue;
         const bus = vehicles.find((v) => v.id === (marker.data as { busID?: number })?.busID);
         if (!bus || !validVehicle(bus)) {
+          animations.current.get(key)?.cancel();
+          animations.current.delete(key);
           map.removeAnnotation(marker);
           markers.delete(key);
         }
@@ -166,7 +210,7 @@ function AppleMap({
       map.showItems(overlays, { animate: false, padding: new mapkit.Padding(60, 36, 80, 36) });
   }, [ready, paths, route.id, route.color]);
   useEffect(() => {
-    if (!ready || !state.current || !focusRequest.serial) return;
+    if (!ready || !state.current || !focusRequest.serial || fixed) return;
     const { map, mapkit, markers } = state.current;
     const target =
       focusRequest.mode === 'you'
@@ -189,7 +233,7 @@ function AppleMap({
         ],
         { animate, padding: new mapkit.Padding(60, 36, 80, 36) },
       );
-  }, [ready, focusRequest]); // Focus changes only on explicit user actions.
+  }, [ready, focusRequest, fixed]); // Focus changes only on explicit user actions.
   return (
     <div className="map-surface">
       <div

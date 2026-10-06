@@ -72,18 +72,18 @@ export async function cachedFeed<T = unknown>(
 }
 
 export async function routeDetails(routeID: number, options?: FeedOptions) {
-  const stops = await cachedFeed<Stop>(`routes/${routeID}/stops`, 3_600, options);
-  let patterns: { data: { id: number; shape: string }[] } = { data: [] },
-    warning = null;
-  try {
-    patterns = await cachedFeed<{ id: number; shape: string }>(
-      `routes/${routeID}/patterns`,
-      3_600,
-      options,
-    );
-  } catch {
-    warning = 'The route line is unavailable. Stops and buses can still update.';
-  }
+  // Fetch independent geometry together; an unavailable line must not hide usable stops.
+  const [stopResult, patternResult] = await Promise.allSettled([
+    cachedFeed<Stop>(`routes/${routeID}/stops`, 3_600, options),
+    cachedFeed<{ id: number; shape: string }>(`routes/${routeID}/patterns`, 3_600, options),
+  ]);
+  if (stopResult.status === 'rejected') throw stopResult.reason;
+  const stops = stopResult.value;
+  const patterns = patternResult.status === 'fulfilled' ? patternResult.value : { data: [] };
+  const warning =
+    patternResult.status === 'rejected'
+      ? 'The route line is unavailable. Stops and buses can still update.'
+      : null;
   return { stops: stops.data, patterns: patterns.data, warning };
 }
 

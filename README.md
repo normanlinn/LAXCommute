@@ -4,7 +4,7 @@
 
 Check real shuttle predictions, choose a boarding stop, and keep your everyday terminal and parking lot saved. Install the website on an iPhone or Android home screen.
 
-The default **Route view** keeps the map clean and avoids downloading street-map engines during PWA installation. Anime.js transitions buses between GPS snapshots; Motion draws route lines and a short approaching ring. Neither library simulates continuous driving. Reduced motion skips movement, and expired GPS/predictions are removed. Street-map assets are cached only after opening that view; live feeds and map tiles remain online.
+Without an Apple Maps token, the default **Route view** uses a fixed OpenStreetMap image background with geographically aligned SVG overlays. It keeps the map clean and avoids downloading street-map engines during PWA installation. Anime.js transitions buses between GPS snapshots; Motion draws route lines and a short approaching ring. Neither library simulates continuous driving. Reduced motion skips movement, and expired GPS/predictions are removed. Street-map assets are cached only after opening that view; live feeds and map tiles remain online.
 
 ## Start on your computer
 
@@ -56,6 +56,18 @@ The street-detail fallback uses OpenStreetMap's public tile service, which is **
 Set `VITE_MAP_STYLE_URL` to choose another compatible OpenFreeMap style. To change the street-detail fallback provider, set `VITE_MAP_TILE_URL` and `VITE_MAP_ATTRIBUTION` to its URL template and required attribution, then rebuild. Follow the provider's separate limits and terms.
 
 References: [OpenFreeMap](https://openfreemap.org/), [Leaflet](https://leafletjs.com/), [OpenStreetMap tile policy](https://operations.osmfoundation.org/policies/tiles/), [Apple map links](https://developer.apple.com/library/archive/featuredarticles/iPhoneURLScheme_Reference/MapLinks/MapLinks.html), [Google Maps URLs](https://developers.google.com/maps/documentation/urls/get-started).
+
+## Saved setup and request deadlines
+
+Saving My commute opens Explore on the saved lot and boarding stop. Remembered browser preferences do not expire on an app timer. Saving or dismissing the welcome guide records its dismissal; clearing site data resets guest preferences and the guide. Clearing browsing history alone does not necessarily clear site storage. Unchecking Remember keeps the commute only in session storage; signed-in account settings still sync separately.
+
+Shuttle requests have a 20-second browser deadline that covers the response body. Failed loads show Retry instead of waiting indefinitely through automatic retry attempts; live polling continues normally. The gateway fetches route stops and patterns concurrently and retains stops if only the route line fails.
+
+## Optional Apple Route view
+
+Configure a domain-restricted MapKit JS Maps token as `VITE_APPLE_MAPS_TOKEN` in Cloudflare's build variables, then rebuild/deploy. Route view automatically uses a fixed Apple map with shuttle overlays and Anime.js transitions between reported bus coordinates. It follows the app's light/dark theme. `VITE_MAP_PROVIDER=apple` also selects Apple for the interactive Street map. Without a token, Route view retains the working free SVG map; Apple cannot be activated by a map-link URL alone.
+
+Create the token in [Apple Developer Services](https://developer.apple.com/documentation/mapkitjs/creating-a-maps-token), restricted to `employeeshuttlelax.com` and any deployed Worker hostname you use. Apple's published free daily allowance is tied to Apple Developer Program membership. Never put a private signing key into a `VITE_` variable. Apple rendering must be checked on a real device after a valid token is configured; no token was available during this change.
 
 ## Free search engine optimization
 
