@@ -23,9 +23,11 @@
     "@maplibre/maplibre-gl-leaflet": "^0.1.4",
     "@supabase/supabase-js": "^2.117.2",
     "@tanstack/react-query": "^5.104.0",
+    "animejs": "^4.5.0",
     "leaflet": "^1.9.4",
     "lucide-react": "^1.49.0",
     "maplibre-gl": "^6.11.2",
+    "motion": "^14.0.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
   },

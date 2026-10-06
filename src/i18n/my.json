@@ -235,5 +235,14 @@
   "System": "စနစ်အတိုင်း",
   "Light": "အလင်း",
   "Dark": "အမှောင်",
-  "System follows your device’s light or dark setting.": "စနစ်အတိုင်းကို ရွေးထားလျှင် ဖုန်း၏ အလင်း သို့မဟုတ် အမှောင် ဆက်တင်အတိုင်း ပြောင်းလဲပေးမည်။"
+  "System follows your device’s light or dark setting.": "စနစ်အတိုင်းကို ရွေးထားလျှင် ဖုန်း၏ အလင်း သို့မဟုတ် အမှောင် ဆက်တင်အတိုင်း ပြောင်းလဲပေးမည်။",
+  "Route view": "လမ်းကြောင်းမြင်ကွင်း",
+  "Street map": "လမ်းမြေပုံ",
+  "Map view": "မြေပုံမြင်ကွင်း",
+  "Reported GPS": "ရရှိထားသော GPS တည်နေရာ",
+  "Loading route geometry…": "လမ်းကြောင်းကို ရယူနေသည်…",
+  "Shuttle route with reported bus positions": "ဘတ်စ်ကားတည်နေရာများပါသော ကြိုပို့လမ်းကြောင်း",
+  "Bus movement updates only with new GPS reports.": "GPS တည်နေရာအသစ်ရမှသာ ဘတ်စ်ကားနေရာ ပြောင်းပါသည်။",
+  "Route lines unavailable. Showing reported stops and buses.": "လမ်းကြောင်းမျဉ်း မရနိုင်ပါ။ ရရှိထားသော မှတ်တိုင်နှင့် ဘတ်စ်ကားများကို ပြထားပါသည်။",
+  "Bus approaching your stop": "ဘတ်စ်ကား သင့်မှတ်တိုင်သို့ ရောက်လာတော့မည်"
 }

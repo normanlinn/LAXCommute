@@ -4,6 +4,8 @@
 
 Check real shuttle predictions, choose a boarding stop, and keep your everyday terminal and parking lot saved. Install the website on an iPhone or Android home screen.
 
+The default **Route view** keeps the map clean and avoids downloading street-map engines during PWA installation. Anime.js transitions buses between GPS snapshots; Motion draws route lines and a short approaching ring. Neither library simulates continuous driving. Reduced motion skips movement, and expired GPS/predictions are removed. Street-map assets are cached only after opening that view; live feeds and map tiles remain online.
+
 ## Start on your computer
 
 Install Node.js **22.12 or newer** (Node 24 recommended), then open Terminal:
@@ -26,7 +28,8 @@ If you see `styleText` or Rolldown errors on Node 20.11.1, update Node first. If
 
 - South, East, and West employee shuttle routes. East/West default to their own lot and also offer South Lot boarding stops listed by the route feed.
 - Live arrival predictions and reported bus GPS positions from the existing LAX tracker feed.
-- Interactive free map with route lines, tappable stops, bus markers, touch zoom, and camera controls.
+- Animated SVG route view using Anime.js and Motion for React in TypeScript, with actual feed geometry, selectable stops, reported bus positions, and a fresh-prediction approaching cue.
+- Street map available from the view switch, with route lines, tappable stops, bus markers, touch zoom, and camera controls.
 - A directions chooser for Apple Maps or Google Maps, using the currently selected boarding stop.
 - A visible **To work / To parking** direction switch and **Go home** navigation.
 - Saved terminal and exact boarding stops for both directions.

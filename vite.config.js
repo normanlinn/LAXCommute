@@ -49,11 +49,24 @@ export default defineConfig(({ mode }) => ({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,png,svg,ico,woff,woff2}'],
+        // Optional street-map engines should not delay the SVG-first PWA install.
+        globIgnores: ['**/assets/{FreeMap,AppleMap,simpleBasemap,maplibre-gl-worker}-*'],
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/api\//],
         cleanupOutdatedCaches: true,
         // Cache typography only; arrivals, auth, and map tiles stay online-only.
         runtimeCaching: [
+          {
+            urlPattern: ({ url }) =>
+              url.origin === self.location.origin &&
+              /^\/assets\/(FreeMap|AppleMap|simpleBasemap|maplibre-gl-worker)-/.test(url.pathname),
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'optional-map-assets',
+              expiration: { maxEntries: 16, maxAgeSeconds: 30 * 24 * 60 * 60 },
+              cacheableResponse: { statuses: [200] },
+            },
+          },
           {
             urlPattern: ({ url }) =>
               [

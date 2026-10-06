@@ -247,6 +247,7 @@ export default function App() {
               >
                 <ShuttleMap
                   route={route}
+                  liveData={live.data}
                   stops={mapStops}
                   paths={paths}
                   vehicles={vehicles}

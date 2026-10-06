@@ -38,6 +38,7 @@ export interface FocusRequest {
   serial: number;
 }
 export interface MapProps {
+  liveData?: LiveData;
   route: Route;
   stops: Stop[];
   paths: RoutePath[];
