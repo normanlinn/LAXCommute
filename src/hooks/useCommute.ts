@@ -1,5 +1,5 @@
 import type { Commute } from '../types';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { normalizeCommute, ROUTES, TERMINALS } from '../domain/commute';
 import { getAuthClient } from '../services/auth';
 import { useAccount } from './useAccount';
@@ -46,17 +46,21 @@ export function useCommute() {
   const identity = user?.id || 'guest';
   const [state, setState] = useState(() => readCommuteSettings());
   const [saveState, setSaveState] = useState('');
+  const saveNoticeTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  useEffect(() => () => clearTimeout(saveNoticeTimer.current), []);
   const settings =
     state.identity === identity
       ? state
       : readCommuteSettings(identity, user?.user_metadata?.commute);
   useEffect(() => {
     if (!ready) return;
+    clearTimeout(saveNoticeTimer.current);
     setState(readCommuteSettings(identity, user?.user_metadata?.commute));
     setSaveState('');
   }, [identity, ready, user?.user_metadata?.commute]);
   async function save(value: Commute, remember = true) {
     const next = normalizeCommute(value);
+    clearTimeout(saveNoticeTimer.current);
     setSaveState('Saving…');
     if (user) {
       const client = await getAuthClient();
@@ -90,6 +94,7 @@ export function useCommute() {
             ? 'Saved on this device.'
             : 'Saved for this browser session only.',
     );
+    if (persisted || user) saveNoticeTimer.current = setTimeout(() => setSaveState(''), 5_000);
   }
   return {
     profile: settings.profile,

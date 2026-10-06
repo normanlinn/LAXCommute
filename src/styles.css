@@ -1645,7 +1645,7 @@ input::placeholder {
   min-width: 0;
 }
 
-/* Visible guide stays in the initial HTML for readers and search engines. */
+/* The collapsible guide stays in the initial HTML for readers and search engines. */
 .initial-app-summary,
 .shuttle-guide {
   max-width: 1180px;
@@ -2581,4 +2581,31 @@ select,
 }
 .route-view-you.focused {
   stroke-width: 6px;
+}
+
+.shuttle-guide-disclosure > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  list-style: none;
+  color: var(--color-base-content);
+  font-size: 14px;
+  font-weight: 600;
+  min-height: 44px;
+}
+.shuttle-guide-disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+.shuttle-guide-disclosure > summary:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 5px;
+  border-radius: 6px;
+}
+.shuttle-guide-disclosure[open] > summary {
+  margin-bottom: 24px;
+}
+.shuttle-guide-disclosure[open] > summary svg {
+  transform: rotate(180deg);
 }

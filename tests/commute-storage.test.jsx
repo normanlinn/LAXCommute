@@ -17,6 +17,7 @@ beforeEach(() => {
 });
 afterEach(() => {
   cleanup();
+  vi.useRealTimers();
   vi.restoreAllMocks();
 });
 it('restores remembered lot, terminal and exact boarding stops', async () => {
@@ -54,4 +55,20 @@ it('does not treat corrupt or invalid browser data as a configured commute', () 
   expect(readCommuteSettings().hasSaved).toBe(false);
   localStorage.setItem('laxcommute:profile:guest', JSON.stringify({ lot: 'Unknown' }));
   expect(readCommuteSettings().hasSaved).toBe(false);
+});
+
+it('dismisses the saved notice five seconds after the most recent save without deleting preferences', async () => {
+  vi.useFakeTimers();
+  const view = renderHook(useCommute);
+  await act(() => view.result.current.save(commute));
+  act(() => vi.advanceTimersByTime(4000));
+  expect(view.result.current.saveState).toBe('Saved on this device.');
+  await act(() => view.result.current.save(commute));
+  act(() => vi.advanceTimersByTime(4999));
+  expect(view.result.current.saveState).toBe('Saved on this device.');
+  act(() => vi.advanceTimersByTime(1));
+  expect(view.result.current.saveState).toBe('');
+  expect(readCommuteSettings().profile).toMatchObject(commute);
+  view.unmount();
+  expect(vi.getTimerCount()).toBe(0);
 });

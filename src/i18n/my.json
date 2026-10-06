@@ -264,5 +264,6 @@
   "The shuttle request timed out. Please retry.": "ဘတ်စ်ကားဒေတာ တောင်းဆိုမှု အချိန်ကြာနေပါတယ်။ ထပ်စမ်းကြည့်ပါ။",
   "Bus data unavailable": "ဘတ်စ်ကားဒေတာ မရနိုင်ပါ",
   "No fresh bus positions": "လက်ရှိ ဘတ်စ်ကားတည်နေရာ မရသေးပါ",
-  "Route map is unavailable. Retry boarding stops below.": "လမ်းကြောင်းမြေပုံ မရနိုင်ပါ။ အောက်တွင် မှတ်တိုင်များကို ပြန်ရယူရန် နှိပ်ပါ။"
+  "Route map is unavailable. Retry boarding stops below.": "လမ်းကြောင်းမြေပုံ မရနိုင်ပါ။ အောက်တွင် မှတ်တိုင်များကို ပြန်ရယူရန် နှိပ်ပါ။",
+  "Shuttle guide": "ဘတ်စ်ကားစီးနည်းလမ်းညွှန်"
 }
