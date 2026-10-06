@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 enum AppLanguage: String, CaseIterable { case en, my }
 enum Appearance: String, CaseIterable {
@@ -7,6 +8,15 @@ enum Appearance: String, CaseIterable {
 }
 
 enum Design {
+    @MainActor static func configureNativeFonts(_ language: AppLanguage) {
+        let regular = language == .my ? UIFont(name: "Z06Walone", size: 13) ?? .systemFont(ofSize: 13) : .systemFont(ofSize: 13)
+        let bold = language == .my ? UIFont(name: "Z06Walone-Bold", size: 17) ?? .boldSystemFont(ofSize: 17) : .boldSystemFont(ofSize: 17)
+        UITabBarItem.appearance().setTitleTextAttributes([.font: regular], for: .normal)
+        UITabBarItem.appearance().setTitleTextAttributes([.font: regular], for: .selected)
+        UISegmentedControl.appearance().setTitleTextAttributes([.font: regular], for: .normal)
+        UISegmentedControl.appearance().setTitleTextAttributes([.font: regular], for: .selected)
+        UINavigationBar.appearance().titleTextAttributes = [.font: bold]
+    }
     static let accent = Color(hex: 0x18BDC7)
     static let navy = Color(hex: 0x081923)
     static func background(_ scheme: ColorScheme) -> Color { scheme == .dark ? navy : Color(hex: 0xF7FBFC) }

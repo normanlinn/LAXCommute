@@ -2,7 +2,10 @@ import SwiftUI
 import CoreLocation
 
 @MainActor final class AppStore: NSObject, ObservableObject, CLLocationManagerDelegate {
-    @Published var language: AppLanguage { didSet { UserDefaults.standard.set(language.rawValue, forKey: "language") } }
+    @Published var language: AppLanguage { didSet {
+        UserDefaults.standard.set(language.rawValue, forKey: "language")
+        Design.configureNativeFonts(language)
+    } }
     @Published var appearance: Appearance { didSet { UserDefaults.standard.set(appearance.rawValue, forKey: "appearance") } }
     @Published var route: ShuttleRoute = .south
     @Published var direction: TripDirection = .work
@@ -23,6 +26,7 @@ import CoreLocation
         language = AppLanguage(rawValue: UserDefaults.standard.string(forKey: "language") ?? "en") ?? .en
         appearance = Appearance(rawValue: UserDefaults.standard.string(forKey: "appearance") ?? "system") ?? .system
         super.init()
+        Design.configureNativeFonts(language)
         if let url = Bundle.main.url(forResource: "my", withExtension: "json"), let data = try? Data(contentsOf: url) { translations = (try? JSONDecoder().decode([String: String].self, from: data)) ?? [:] }
         profile = localProfile("guest")
         route = ShuttleRoute(rawValue: profile.lot) ?? .south

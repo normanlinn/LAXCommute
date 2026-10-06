@@ -1,7 +1,12 @@
 import XCTest
+import UIKit
 @testable import LAXCommute
 
 final class CommuteTests: XCTestCase {
+    func testUploadedFontsAreRegisteredInTheRunningApp() {
+        XCTAssertNotNil(UIFont(name: "Z06Walone", size: 17))
+        XCTAssertNotNil(UIFont(name: "Z06Walone-Bold", size: 17))
+    }
     func testEastDefaultsToOwnLotAndIncludesSouthStops() {
         let stops = [Stop(id: 1, name: "South Lot Stop #1", lat: 33.94, lon: -118.4),
                      Stop(id: 2, name: "East Lot", lat: 33.94, lon: -118.4),

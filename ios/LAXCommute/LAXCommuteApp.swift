@@ -31,6 +31,7 @@ struct RootView: View {
                 CommuteView().tabItem { Label(store.t("My commute"), systemImage: "bookmark") }.tag(AppTab.saved)
                 AccountView().tabItem { Label(store.t("Account"), systemImage: "person.crop.circle") }.tag(AppTab.account)
             }
+            .id(store.language)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     HStack(spacing: 10) {
@@ -75,9 +76,10 @@ struct SettingsView: View {
                 Section {
                     Link(store.t("LAX tracker"), destination: URL(string: "https://shuttles.flylax.com/employeeparking")!)
                     Link(store.t("Open website"), destination: AppConfig.website)
-                    Text(store.t("Independent employee project. Not an official LAWA app.")).font(.footnote).foregroundStyle(.secondary)
+                    Text(store.t("Independent employee project. Not an official LAWA app.")).font(Design.font(store.language, size: 13, relativeTo: .footnote)).foregroundStyle(.secondary)
                 }
             }
+            .id(store.language)
             .navigationTitle(store.t("Menu"))
             .toolbar { ToolbarItem(placement: .confirmationAction) { Button(store.t("Done")) { dismiss() } } }
         }
