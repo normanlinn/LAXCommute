@@ -87,7 +87,7 @@ describe('language preference', () => {
     expect(screen.getByRole('region').textContent).toContain('boarding guide');
     fireEvent.click(screen.getByRole('button', { name: 'မြန်မာ' }));
     expect(screen.getByRole('region').textContent).toContain('စီးနည်းလမ်းညွှန်');
-    expect(screen.queryByText('How do I save my trip?')).toBeNull();
+    expect(screen.queryByText('Save your trip')).toBeNull();
     expect(target.querySelector('a[target="_blank"]').href).toBe(
       'https://shuttles.flylax.com/employeeparking',
     );

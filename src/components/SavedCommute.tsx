@@ -84,11 +84,7 @@ export default function SavedCommute({
       </div>
       <span className="eyebrow">{t('MY COMMUTE')}</span>
       <h1>{t('Your usual trip.')}</h1>
-      <p>
-        {t(
-          'Save your lot, terminal and usual stops here. You can still pick a different stop for today.',
-        )}
-      </p>
+      <p>{t('Set this once. Pick a different stop on the map whenever you need to.')}</p>
       <form onSubmit={submit}>
         <div className="form-grid">
           <label className="field">
@@ -174,7 +170,7 @@ export default function SavedCommute({
           <Footprints size={20} />
           <div>
             <strong>{t('Time to reach the bus')}</strong>
-            <span>{t('Include the walk from your office and elevator time.')}</span>
+            <span>{t('Give yourself time for the walk and elevator.')}</span>
           </div>
         </div>
         <div className="form-grid">

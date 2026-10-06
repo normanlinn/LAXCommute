@@ -251,7 +251,7 @@ export default function AccountPanel({
       <p>
         {' '}
         {t(
-          'Sign in to use your saved commute on another device. You can check buses without an account.',
+          'Want your usual trip on another phone? Sign in here. Checking buses is free, with or without an account.',
         )}{' '}
       </p>
       {!recovering && !needsCode && (

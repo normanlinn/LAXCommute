@@ -87,6 +87,6 @@ export default defineConfig(({ mode }) => ({
       devOptions: { enabled: false },
     }),
   ],
-  build: { target: 'es2022' },
+  build: { target: 'es2022', sourcemap: false },
   test: { environment: 'node', include: ['tests/**/*.test.{js,jsx}'], restoreMocks: true },
 }));

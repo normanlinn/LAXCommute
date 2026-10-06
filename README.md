@@ -139,6 +139,8 @@ Reference: [Cloudflare pricing](https://developers.cloudflare.com/workers/platfo
 
 ## Finish Supabase account setup
 
+See [the security review and remaining launch checks](docs/SECURITY.md) for API validation, browser storage, dependency updates and Supabase authorization checks. Run `npm run audit` when updating packages.
+
 The supplied public project settings are reachable, but public email delivery and redirect settings still need verification in your dashboard. No new database schema is required: the small saved commute is stored in the signed-in user's own `user_metadata.commute`. Follow the [account setup and troubleshooting guide](docs/AUTH.md).
 
 In **Supabase → Authentication → URL Configuration**:

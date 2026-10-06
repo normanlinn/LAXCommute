@@ -51,6 +51,16 @@ describe('fixed-path shuttle gateway', () => {
     expect(result.status).toBe(400);
     expect(fetcher).toHaveBeenCalledTimes(1);
   });
+  it.each([
+    '/api/live/6884?stopId=',
+    '/api/live/6884?stopId=101&stopId=102',
+    '/api/live/6884?url=https://example.com',
+    '/api/routes/6884?stopId=101',
+  ])('rejects ambiguous or unsupported parameters: %s', async (path) => {
+    const response = await handleAPI(new Request(`https://app.test${path}`), options);
+    expect(response.status).toBe(400);
+    expect(fetcher).not.toHaveBeenCalled();
+  });
   it('returns a combined live response and shares upstream cache', async () => {
     const request = new Request('https://app.test/api/live/6884?stopId=101');
     const first = await handleAPI(request, options);

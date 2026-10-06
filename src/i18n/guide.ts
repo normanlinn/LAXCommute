@@ -13,7 +13,7 @@ export const guides: Record<Language, Guide> = {
   en: {
     title: 'LAX shuttle boarding guide',
     introduction:
-      'Pick South, East or West, then choose the stop where you’re waiting. The map shows that route’s buses, and arrival times are for your selected stop. No account needed.',
+      'Heading to work or back to your car? Pick your route and stop to see the next shuttle.',
     routes: [
       {
         title: 'South Lot',
@@ -30,20 +30,20 @@ export const guides: Record<Language, Guide> = {
     ],
     questions: [
       {
-        title: 'How do I save my trip?',
-        text: 'Open My commute in the bottom menu. Choose your lot, terminal and usual stops, then save. Leave Remember my commute on to keep them in this browser. Clearing this site’s browser data removes them. Sign in if you want to sync across devices.',
+        title: 'Save your trip',
+        text: 'Set your lot, terminal and stops in My commute. Turn on Remember my commute to keep them here, or sign in to use them on another device. Clearing this site’s browser data removes local settings.',
       },
       {
-        title: 'What if I’m at a different stop today?',
-        text: 'Choose that stop on the map page. Your saved commute stays the same. For an East or West bus at South Lot, keep your bus route selected and choose a South stop from its list.',
+        title: 'Using a different stop today',
+        text: 'Pick the stop on the map page; your usual trip stays saved. At South Lot for an East or West bus? Keep East or West selected and choose a South stop.',
       },
       {
-        title: 'Can I put this on my home screen?',
+        title: 'Add it to your phone',
         text: 'Yes. On iPhone, open the browser’s Share menu and choose Add to Home Screen. On Android, look for Install app or Add to Home screen in the browser menu.',
       },
       {
-        title: 'Why did the arrival time change?',
-        text: 'Bus positions and estimates come from the public LAX tracker. Traffic, service changes or a delayed feed can affect them. A scheduled time isn’t a live prediction. If the feed is unavailable, try the original tracker below.',
+        title: 'About arrival times',
+        text: 'Times come from the LAX tracker and can change with traffic or delayed data. “Scheduled” means a timetable time, not a live prediction. If updates stop, check the original tracker below.',
       },
     ],
     sourceLink: 'Open the original LAX tracker',
@@ -53,7 +53,7 @@ export const guides: Record<Language, Guide> = {
   my: {
     title: 'LAX ကြိုပို့ယာဉ် စီးနည်းလမ်းညွှန်',
     introduction:
-      'South၊ East သို့မဟုတ် West ကို ရွေးပြီး သင်စောင့်နေသောမှတ်တိုင်ကို ရွေးပါ။ မြေပုံတွင် ထိုလမ်းကြောင်းရှိကားများနှင့် ရွေးထားသောမှတ်တိုင်အတွက် ရောက်ချိန်ကို ပြပေးပါတယ်။ အကောင့်မလိုပါ။',
+      'အလုပ်သွားမှာလား၊ ကားဆီပြန်မှာလား။ နောက်လာမည့်ကားကို ကြည့်ရန် လမ်းကြောင်းနှင့် မှတ်တိုင်ကို ရွေးပါ။',
     routes: [
       {
         title: 'South Lot',
@@ -70,19 +70,19 @@ export const guides: Record<Language, Guide> = {
     ],
     questions: [
       {
-        title: 'ခရီးစဉ်ကို ဘယ်လိုသိမ်းရမလဲ။',
-        text: 'အောက်ခြေမီနူးမှ ကျွန်ုပ်၏ခရီးစဉ်ကို ဖွင့်ပါ။ ကားရပ်နားကွင်း၊ Terminal နှင့် ပုံမှန်မှတ်တိုင်များကို ရွေးပြီး သိမ်းပါ။ ဤဘရောက်ဇာတွင် သိမ်းထားရန် ခရီးစဉ်ကို မှတ်ထားမည်ကို ဖွင့်ထားပါ။ ဤဝက်ဘ်ဆိုက်၏ ဘရောက်ဇာဒေတာကို ရှင်းလျှင် သိမ်းထားသည်များ ပျက်သွားပါမယ်။ စက်အချင်းချင်း ခရီးစဉ်မျှဝေလိုလျှင် အကောင့်ဝင်ပါ။',
+        title: 'ခရီးစဉ်ကို သိမ်းထားမည်',
+        text: 'ကျွန်ုပ်၏ခရီးစဉ်တွင် ကားရပ်နားကွင်း၊ Terminal နှင့် မှတ်တိုင်များကို သတ်မှတ်ပါ။ ဤစက်တွင် သိမ်းရန် ခရီးစဉ်ကို မှတ်ထားမည်ကို ဖွင့်ပါ။ အခြားစက်တွင် သုံးလိုလျှင် အကောင့်ဝင်ပါ။ ဤဆိုက်၏ ဘရောက်ဇာဒေတာကို ရှင်းလျှင် ဤစက်ရှိ ဆက်တင်များ ပျက်သွားပါမယ်။',
       },
       {
-        title: 'ဒီနေ့ အခြားမှတ်တိုင်မှာ စောင့်နေလျှင် ဘယ်လိုလုပ်ရမလဲ။',
+        title: 'ဒီနေ့ အခြားမှတ်တိုင်မှာ စီးမည်',
         text: 'မြေပုံစာမျက်နှာတွင် ထိုမှတ်တိုင်ကို ရွေးပါ။ သိမ်းထားသောခရီးစဉ် မပြောင်းပါ။ South Lot မှ East သို့မဟုတ် West ကားစီးရန် ထိုကားလမ်းကြောင်းကို ဆက်ရွေးထားပြီး စာရင်းထဲမှ South မှတ်တိုင်ကို ရွေးပါ။',
       },
       {
-        title: 'ဖုန်းပင်မမျက်နှာပြင်မှာ ထည့်နိုင်သလား။',
+        title: 'ဖုန်းပင်မမျက်နှာပြင်မှာ ထည့်မည်',
         text: 'ထည့်နိုင်ပါတယ်။ iPhone တွင် ဘရောက်ဇာ၏ Share မီနူးမှ Add to Home Screen ကို ရွေးပါ။ Android တွင် ဘရောက်ဇာမီနူးရှိ Install app သို့မဟုတ် Add to Home screen ကို ရှာပါ။',
       },
       {
-        title: 'ရောက်ချိန်က ဘာလို့ပြောင်းသွားတာလဲ။',
+        title: 'ကားရောက်ချိန်အကြောင်း',
         text: 'ကားတည်နေရာနှင့် ခန့်မှန်းရောက်ချိန်ကို LAX မူရင်းဒေတာမှ ရယူပါတယ်။ ယာဉ်ကြော၊ ပြေးဆွဲမှုအပြောင်းအလဲနှင့် ဒေတာနောက်ကျမှုကြောင့် ရောက်ချိန် ပြောင်းနိုင်ပါတယ်။ အချိန်ဇယားအရ ပြသောအချိန်သည် လက်ရှိခန့်မှန်းချိန် မဟုတ်ပါ။ ဒေတာမရလျှင် အောက်ပါ မူရင်းလင့်ခ်တွင် ကြည့်ပါ။',
       },
     ],

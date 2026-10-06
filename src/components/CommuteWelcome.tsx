@@ -35,7 +35,7 @@ export default function CommuteWelcome({
             <strong>{t('My commute')}</strong>
             <span>
               {t(
-                'Look for the bookmark in the bottom menu. Leave Remember my commute on to keep your choices.',
+                'Tap the bookmark below. Turn on Remember my commute to save your choices for next time.',
               )}
             </span>
           </div>

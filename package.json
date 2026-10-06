@@ -8,9 +8,10 @@
   },
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "npm run typecheck && node scripts/clean-build.mjs && vite build",
+    "build": "node scripts/public-build-env.mjs && npm run typecheck && node scripts/clean-build.mjs && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "test": "vitest run",
+    "audit": "npm audit --audit-level=high",
     "deploy": "npm run build && wrangler deploy",
     "deploy:check": "npm run build && wrangler deploy --dry-run",
     "setup": "node scripts/setup.mjs",
@@ -30,6 +31,10 @@
     "motion": "^14.0.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
+  },
+  "overrides": {
+    "sharp": "0.35.5",
+    "source-map-js": "1.2.2"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.62.2",

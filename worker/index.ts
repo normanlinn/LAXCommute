@@ -15,7 +15,12 @@ export async function handleAPI(request: Request, options?: import('./feed').Fee
   const routeID = Number(match[2]);
   if (!ROUTE_IDS.has(routeID))
     return Response.json({ error: 'Unknown shuttle route.' }, { status: 400, headers });
-  const rawStop = url.searchParams.get('stopId') || '0';
+  if (
+    [...url.searchParams.keys()].some((key) => key !== 'stopId' || match[1] !== 'live') ||
+    url.searchParams.getAll('stopId').length > 1
+  )
+    return Response.json({ error: 'Invalid request parameters.' }, { status: 400, headers });
+  const rawStop = url.searchParams.get('stopId') ?? '0';
   if (!/^\d{1,12}$/.test(rawStop))
     return Response.json({ error: 'Invalid boarding stop.' }, { status: 400, headers });
   try {
