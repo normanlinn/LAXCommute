@@ -60,7 +60,7 @@ The initial HTML includes an employee shuttle guide, a descriptive search title,
 
 ## English and Myanmar
 
-Use **English / မြန်မာ** in the header to change the interface without losing your route, boarding stop, or form input. Stop names and bus identifiers keep their original labels. English headings use Pally from Indian Type Foundry via Fontshare; body text and controls use Inter from Google Fonts; Myanmar uses locally included Noto Sans Myanmar. See [language review and font licenses](docs/LANGUAGE.md) for the development branch, translation files, and review checklist.
+Use **English / မြန်မာ** in the header to change the interface without losing your route, boarding stop, or form input. Stop names and bus identifiers keep their original labels. English headings use Pally from Indian Type Foundry via Fontshare; body text and controls use Inter from Google Fonts; Myanmar uses your locally included Walone Regular and Bold fonts. See [language review and font licenses](docs/LANGUAGE.md) for the development branch, translation files, and review checklist.
 
 ## Employee Shuttles QR poster
 

@@ -31,9 +31,9 @@ The initial HTML retains the English guide for crawlers and visitors without Jav
 
 Pally is supplied by Indian Type Foundry through [Fontshare's official stylesheet](https://api.fontshare.com/v2/css?f[]=pally@400,500,700&display=swap). The uploaded TTF is not committed, modified, or redistributed in this public repository. See the [Fontshare license](https://www.fontshare.com/licenses/itf-ffl). If the font service is unavailable, system sans-serif fallbacks remain readable.
 
-**Noto Sans Myanmar** handles Myanmar text and shaping. A complete variable WOFF is included in `public/fonts/`, together with its [SIL Open Font License](../public/fonts/NotoSansMyanmar-OFL.txt). Its source is the [Google Fonts Noto Sans Myanmar directory](https://github.com/google/fonts/tree/main/ofl/notosansmyanmar). The local WOFF preserves the source font's glyphs, shaping tables, and variable axes.
+**Walone** handles Myanmar text. The user supplied Z06-Walone Regular and Bold TTF files are converted without subsetting to WOFF for the PWA. Regular serves weights 100–599 and Bold serves 600–900. Their Unicode coverage includes every Myanmar character currently used in the translation file. Original names and copyright metadata are retained. The uploads identify “Copyright (c) 2022 by ZinBo. All rights reserved.” No redistribution/commercial license was included: obtain the designer’s license before including these fonts in a commercial agreement. The interface no longer selects the previous Noto font.
 
-The service worker precaches the local Myanmar font with the app shell. Fontshare and Google Fonts typography files are cached after loading successfully. Live arrivals, authentication, and map tiles still require an internet connection.
+The service worker precaches the local Myanmar fonts with the app shell. Fontshare and Google Fonts typography files are cached after loading successfully. Live arrivals, authentication, and map tiles still require an internet connection.
 
 ## Checks
 
