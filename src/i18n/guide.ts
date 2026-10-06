@@ -11,83 +11,83 @@ type Guide = {
 };
 export const guides: Record<Language, Guide> = {
   en: {
-    title: 'LAX employee shuttle tracking and boarding guide',
+    title: 'LAX shuttle boarding guide',
     introduction:
-      'LAXCommute helps airport employees check South, East and West parking shuttle arrival estimates, choose boarding stops and save an everyday commute. Use the tracker for free without signing in.',
+      'Pick South, East or West, then choose the stop where you’re waiting. The map shows that route’s buses, and arrival times are for your selected stop. No account needed.',
     routes: [
       {
-        title: 'South Lot employee shuttle',
-        text: 'The South route serves all terminals. Select South, choose a South Lot boarding stop to go to work, or select a terminal stop to return to parking.',
+        title: 'South Lot',
+        text: 'Serves all terminals. Choose a South Lot stop for your trip to work, or a terminal stop for the trip back.',
       },
       {
-        title: 'East Lot employee shuttle',
-        text: 'The East route serves Terminals 1–3 and Terminal B (TBIT). East Lot is the default boarding area. You can also select South Lot stops #1, #2 or #3 listed on the East route to check when an East shuttle will reach you.',
+        title: 'East Lot',
+        text: 'Serves Terminals 1–3 and Terminal B (TBIT). East Lot is selected first. Waiting at South Lot instead? Keep East selected and choose a South stop listed on this route.',
       },
       {
-        title: 'West Lot employee shuttle',
-        text: 'The West route serves Terminals 4–7. West Lot is the default boarding area. You can also select South Lot stops #1, #2 or #3 listed on the West route to check an approaching West shuttle.',
+        title: 'West Lot',
+        text: 'Serves Terminals 4–7. West Lot is selected first. You can also board at a South Lot stop listed on the West route. Keep West selected to see West buses.',
       },
     ],
     questions: [
       {
-        title: 'How do I track an employee shuttle at LAX?',
-        text: 'Choose South, East or West under “Which shuttle do you want?” Set “To work” or “To parking,” then choose “Where are you boarding?” The map and next departures update for the selected route and stop. Use “Show other stops” to see more boarding points, or open walking directions in Apple Maps or Google Maps.',
+        title: 'How do I save my trip?',
+        text: 'Open My commute in the bottom menu. Choose your lot, terminal and usual stops, then save. Leave Remember my commute on to keep them in this browser. Clearing this site’s browser data removes them. Sign in if you want to sync across devices.',
       },
       {
-        title: 'Can I catch an East or West shuttle from South Lot?',
-        text: 'Yes, when the selected route lists that South Lot boarding stop. Keep East or West selected and choose the South stop. Arrival estimates remain for that shuttle route; selecting South Lot as your boarding location does not switch you to the South shuttle.',
+        title: 'What if I’m at a different stop today?',
+        text: 'Choose that stop on the map page. Your saved commute stays the same. For an East or West bus at South Lot, keep your bus route selected and choose a South stop from its list.',
       },
       {
-        title: 'Do I need to install an app or create an account?',
-        text: 'No. Open LAXCommute in your browser. You can optionally add it to your phone’s home screen and save your usual terminal, boarding stops and walking time. Guest settings are saved on your device; signing in lets you sync your commute.',
+        title: 'Can I put this on my home screen?',
+        text: 'Yes. On iPhone, open the browser’s Share menu and choose Add to Home Screen. On Android, look for Install app or Add to Home screen in the browser menu.',
       },
       {
-        title: 'How reliable are the arrival estimates?',
-        text: 'Times and bus positions come from the public LAX shuttle tracker feed and need an internet connection. Estimates can change with traffic and operations. Scheduled times are labeled, and expired predictions are removed. If data is unavailable, check the original tracker below.',
+        title: 'Why did the arrival time change?',
+        text: 'Bus positions and estimates come from the public LAX tracker. Traffic, service changes or a delayed feed can affect them. A scheduled time isn’t a live prediction. If the feed is unavailable, try the original tracker below.',
       },
     ],
-    sourceLink: 'LAX employee parking shuttle tracker',
-    note: 'LAXCommute is an independent employee commute tool, not an official LAWA or airline service. It tracks employee parking shuttles rather than hotel, FlyAway or private passenger shuttle services.',
-    back: 'Back to the live shuttle tracker',
+    sourceLink: 'Open the original LAX tracker',
+    note: 'An independent app for LAX employees. Not an official LAWA or airline service. This tracker covers employee parking shuttles; FlyAway and hotel shuttles aren’t included.',
+    back: 'Back to the map',
   },
   my: {
-    title: 'LAX ဝန်ထမ်းကြိုပို့ယာဉ် တည်နေရာနှင့် စီးနည်းလမ်းညွှန်',
+    title: 'LAX ကြိုပို့ယာဉ် စီးနည်းလမ်းညွှန်',
     introduction:
-      'LAXCommute ဖြင့် လေဆိပ်ဝန်ထမ်းများသည် South၊ East နှင့် West ကားရပ်နားကွင်းကြိုပို့ယာဉ် ရောက်ချိန်ကို ကြည့်နိုင်ပြီး စီးမည့်မှတ်တိုင်နှင့် နေ့စဉ်ခရီးစဉ်ကို သိမ်းထားနိုင်သည်။ အကောင့်မဝင်ဘဲ အခမဲ့သုံးနိုင်သည်။',
+      'South၊ East သို့မဟုတ် West ကို ရွေးပြီး သင်စောင့်နေသောမှတ်တိုင်ကို ရွေးပါ။ မြေပုံတွင် ထိုလမ်းကြောင်းရှိကားများနှင့် ရွေးထားသောမှတ်တိုင်အတွက် ရောက်ချိန်ကို ပြပေးပါတယ်။ အကောင့်မလိုပါ။',
     routes: [
       {
-        title: 'South Lot ဝန်ထမ်းကြိုပို့ယာဉ်',
-        text: 'South လမ်းကြောင်းသည် Terminal အားလုံးသို့ ပြေးဆွဲသည်။ အလုပ်သို့သွားရန် South ကိုရွေးပြီး South Lot မှတ်တိုင်ကို ရွေးပါ။ ကားရပ်နားရာသို့ ပြန်ရန် Terminal မှတ်တိုင်ကို ရွေးပါ။',
+        title: 'South Lot',
+        text: 'Terminal အားလုံးသို့ ပြေးဆွဲပါတယ်။ အလုပ်သွားရန် South Lot မှတ်တိုင်ကို ရွေးပါ။ အပြန်ခရီးအတွက် Terminal မှတ်တိုင်ကို ရွေးပါ။',
       },
       {
-        title: 'East Lot ဝန်ထမ်းကြိုပို့ယာဉ်',
-        text: 'East လမ်းကြောင်းသည် Terminal 1–3 နှင့် Terminal B (TBIT) သို့ ပြေးဆွဲသည်။ ပုံမှန်စီးမည့်နေရာသည် East Lot ဖြစ်သည်။ East လမ်းကြောင်းတွင်ပါသော South Lot မှတ်တိုင် #1၊ #2 သို့မဟုတ် #3 ကိုလည်း ရွေးပြီး East ကား သင့်ထံရောက်မည့်အချိန်ကို ကြည့်နိုင်သည်။',
+        title: 'East Lot',
+        text: 'Terminal 1–3 နှင့် Terminal B (TBIT) သို့ ပြေးဆွဲပါတယ်။ အစတွင် East Lot ကို ရွေးထားပါတယ်။ South Lot မှာ စောင့်နေလျှင် East ကို ဆက်ရွေးထားပြီး ဤလမ်းကြောင်းစာရင်းထဲမှ South မှတ်တိုင်ကို ရွေးပါ။',
       },
       {
-        title: 'West Lot ဝန်ထမ်းကြိုပို့ယာဉ်',
-        text: 'West လမ်းကြောင်းသည် Terminal 4–7 သို့ ပြေးဆွဲသည်။ ပုံမှန်စီးမည့်နေရာသည် West Lot ဖြစ်သည်။ West လမ်းကြောင်းတွင်ပါသော South Lot မှတ်တိုင် #1၊ #2 သို့မဟုတ် #3 ကိုလည်း ရွေးပြီး West ကား ရောက်မည့်အချိန်ကို ကြည့်နိုင်သည်။',
+        title: 'West Lot',
+        text: 'Terminal 4–7 သို့ ပြေးဆွဲပါတယ်။ အစတွင် West Lot ကို ရွေးထားပါတယ်။ West လမ်းကြောင်းစာရင်းထဲမှ South Lot မှတ်တိုင်မှာလည်း စီးနိုင်ပါတယ်။ West ကားများကို ကြည့်ရန် West ကို ဆက်ရွေးထားပါ။',
       },
     ],
     questions: [
       {
-        title: 'LAX ဝန်ထမ်းကြိုပို့ယာဉ်ကို ဘယ်လိုကြည့်ရမလဲ။',
-        text: 'ကြိုပို့ယာဉ်ရွေးရာတွင် South၊ East သို့မဟုတ် West ကို ရွေးပါ။ အလုပ်သို့ သို့မဟုတ် ကားရပ်နားရာသို့ကို ရွေးပြီး စီးမည့်မှတ်တိုင်ကို ရွေးပါ။ မြေပုံနှင့် ကားရောက်ချိန်သည် ရွေးထားသောလမ်းကြောင်းနှင့် မှတ်တိုင်အတွက် ပြပေးမည်။ အခြားမှတ်တိုင်များကို ပြနိုင်ပြီး Apple Maps သို့မဟုတ် Google Maps ဖြင့် လမ်းလျှောက်လမ်းညွှန်ကို ဖွင့်နိုင်သည်။',
+        title: 'ခရီးစဉ်ကို ဘယ်လိုသိမ်းရမလဲ။',
+        text: 'အောက်ခြေမီနူးမှ ကျွန်ုပ်၏ခရီးစဉ်ကို ဖွင့်ပါ။ ကားရပ်နားကွင်း၊ Terminal နှင့် ပုံမှန်မှတ်တိုင်များကို ရွေးပြီး သိမ်းပါ။ ဤဘရောက်ဇာတွင် သိမ်းထားရန် ခရီးစဉ်ကို မှတ်ထားမည်ကို ဖွင့်ထားပါ။ ဤဝက်ဘ်ဆိုက်၏ ဘရောက်ဇာဒေတာကို ရှင်းလျှင် သိမ်းထားသည်များ ပျက်သွားပါမယ်။ စက်အချင်းချင်း ခရီးစဉ်မျှဝေလိုလျှင် အကောင့်ဝင်ပါ။',
       },
       {
-        title: 'South Lot မှ East သို့မဟုတ် West ကားကို စီးနိုင်သလား။',
-        text: 'ရွေးထားသောလမ်းကြောင်းတွင် ထို South Lot မှတ်တိုင် ပါလျှင် စီးနိုင်သည်။ East သို့မဟုတ် West ကို ဆက်ရွေးထားပြီး South မှတ်တိုင်ကို ရွေးပါ။ ပြထားသောရောက်ချိန်သည် ထိုကြိုပို့ယာဉ်အတွက်ဖြစ်ပြီး South ကားအဖြစ် လမ်းကြောင်းမပြောင်းပါ။',
+        title: 'ဒီနေ့ အခြားမှတ်တိုင်မှာ စောင့်နေလျှင် ဘယ်လိုလုပ်ရမလဲ။',
+        text: 'မြေပုံစာမျက်နှာတွင် ထိုမှတ်တိုင်ကို ရွေးပါ။ သိမ်းထားသောခရီးစဉ် မပြောင်းပါ။ South Lot မှ East သို့မဟုတ် West ကားစီးရန် ထိုကားလမ်းကြောင်းကို ဆက်ရွေးထားပြီး စာရင်းထဲမှ South မှတ်တိုင်ကို ရွေးပါ။',
       },
       {
-        title: 'အက်ပ်ထည့်ရန် သို့မဟုတ် အကောင့်ဖွင့်ရန် လိုသလား။',
-        text: 'မလိုပါ။ ဘရောက်ဇာတွင် LAXCommute ကို ဖွင့်သုံးနိုင်သည်။ လိုလျှင် ဖုန်းပင်မမျက်နှာပြင်တွင် ထည့်ပြီး ပုံမှန် Terminal၊ မှတ်တိုင်နှင့် လမ်းလျှောက်ချိန်ကို သိမ်းနိုင်သည်။ အကောင့်မဝင်ဘဲ သိမ်းသောဆက်တင်များသည် ဤစက်တွင်ရှိပြီး အကောင့်ဝင်လျှင် စက်အချင်းချင်း ခရီးစဉ်မျှဝေနိုင်သည်။',
+        title: 'ဖုန်းပင်မမျက်နှာပြင်မှာ ထည့်နိုင်သလား။',
+        text: 'ထည့်နိုင်ပါတယ်။ iPhone တွင် ဘရောက်ဇာ၏ Share မီနူးမှ Add to Home Screen ကို ရွေးပါ။ Android တွင် ဘရောက်ဇာမီနူးရှိ Install app သို့မဟုတ် Add to Home screen ကို ရှာပါ။',
       },
       {
-        title: 'ခန့်မှန်းရောက်ချိန်ကို ဘယ်လောက်ယုံကြည်နိုင်သလဲ။',
-        text: 'ရောက်ချိန်နှင့် ကားတည်နေရာကို LAX မူရင်းကြိုပို့ယာဉ်ဒေတာမှ ရယူသဖြင့် အင်တာနက်လိုအပ်သည်။ ယာဉ်ကြောနှင့် ပြေးဆွဲမှုအခြေအနေကြောင့် ခန့်မှန်းချိန် ပြောင်းနိုင်သည်။ အချိန်ဇယားအရဖြစ်လျှင် အညွှန်းပြထားပြီး ဟောင်းနေသောခန့်မှန်းချိန်ကို ဖယ်ရှားပေးသည်။ ဒေတာမရလျှင် အောက်ပါ မူရင်းကားတည်နေရာလင့်ခ်တွင် စစ်ပါ။',
+        title: 'ရောက်ချိန်က ဘာလို့ပြောင်းသွားတာလဲ။',
+        text: 'ကားတည်နေရာနှင့် ခန့်မှန်းရောက်ချိန်ကို LAX မူရင်းဒေတာမှ ရယူပါတယ်။ ယာဉ်ကြော၊ ပြေးဆွဲမှုအပြောင်းအလဲနှင့် ဒေတာနောက်ကျမှုကြောင့် ရောက်ချိန် ပြောင်းနိုင်ပါတယ်။ အချိန်ဇယားအရ ပြသောအချိန်သည် လက်ရှိခန့်မှန်းချိန် မဟုတ်ပါ။ ဒေတာမရလျှင် အောက်ပါ မူရင်းလင့်ခ်တွင် ကြည့်ပါ။',
       },
     ],
-    sourceLink: 'LAX မူရင်းဝန်ထမ်းကြိုပို့ယာဉ် တည်နေရာ',
-    note: 'LAXCommute သည် ဝန်ထမ်းတစ်ဦးချင်းခရီးအတွက် သီးခြားဖန်တီးထားသောဝန်ဆောင်မှုဖြစ်ပြီး LAWA သို့မဟုတ် လေကြောင်းလိုင်း၏ တရားဝင်ဝန်ဆောင်မှု မဟုတ်ပါ။ ဝန်ထမ်းကားရပ်နားကွင်းကြိုပို့ယာဉ်များကိုသာ ပြပြီး ဟိုတယ်၊ FlyAway သို့မဟုတ် ပုဂ္ဂလိကခရီးသည်ကြိုပို့ယာဉ်များ မပါဝင်ပါ။',
-    back: 'လက်ရှိကြိုပို့ယာဉ် တည်နေရာသို့ ပြန်သွားမည်',
+    sourceLink: 'LAX မူရင်းကားတည်နေရာကို ဖွင့်မည်',
+    note: 'LAX ဝန်ထမ်းများအတွက် သီးခြားဖန်တီးထားသောအက်ပ်ပါ။ LAWA သို့မဟုတ် လေကြောင်းလိုင်း၏ တရားဝင်ဝန်ဆောင်မှု မဟုတ်ပါ။ ဝန်ထမ်းကားရပ်နားကွင်းကြိုပို့ယာဉ်များကို ပြပေးပြီး FlyAway နှင့် ဟိုတယ်ကားများ မပါဝင်ပါ။',
+    back: 'မြေပုံသို့ ပြန်သွားမည်',
   },
 };

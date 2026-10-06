@@ -161,7 +161,7 @@ function RouteView(props: MapProps) {
             <MapPin size={15} />
             {t('Route view')}
           </span>
-          <span>{approaching ? t('Bus approaching your stop') : t('Reported GPS')}</span>
+          <span>{approaching ? t('Bus approaching your stop') : t('Latest bus locations')}</span>
         </div>
         {!project ? (
           <div className="route-view-empty" role="status">
@@ -269,7 +269,7 @@ function RouteView(props: MapProps) {
         )}
         <div className="route-view-caption">
           <strong>{selectedStop ? selectedStop.name : t('Choose a boarding stop')}</strong>
-          <span>{t('Bus movement updates only with new GPS reports.')}</span>
+          <span>{t('Bus locations refresh as new reports arrive.')}</span>
         </div>
         <div
           className="route-view-attribution"

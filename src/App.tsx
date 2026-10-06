@@ -256,7 +256,7 @@ export default function App() {
                 <div>
                   <span className="eyebrow">{t('LAX EMPLOYEE SHUTTLES')}</span>
                   <h1>
-                    {tab === 'home' ? t('Let’s get you home.') : t('LAX employee shuttle tracker.')}
+                    {tab === 'home' ? t('Let’s get you home.') : t('Find your next shuttle.')}
                   </h1>
                 </div>
                 <div className="map-route-label">
@@ -267,7 +267,7 @@ export default function App() {
                     </strong>
                     <span>
                       {vehicles.length
-                        ? t('{count} buses reporting GPS', { count: vehicles.length })
+                        ? t('{count} buses on the map', { count: vehicles.length })
                         : t(
                             live.isError || routeQuery.isError
                               ? 'Bus data unavailable'
@@ -313,9 +313,7 @@ export default function App() {
               <div className="map-footer">
                 <span>
                   <span className="dot" />
-                  {online
-                    ? t('Actual feed data · no simulated buses')
-                    : t('Waiting for connection')}
+                  {online ? t('Live data from the LAX tracker') : t('Waiting for connection')}
                 </span>
                 <a
                   href="https://shuttles.flylax.com/employeeparking"
@@ -335,19 +333,19 @@ export default function App() {
               )}
               <div className="trip-intro">
                 <span className="eyebrow">
-                  {direction === 'parking' ? t('YOUR RIDE BACK') : t('START YOUR SHIFT')}
+                  {direction === 'parking' ? t('YOUR RIDE BACK') : t('TO WORK')}
                 </span>
                 <h2>
                   {direction === 'parking'
                     ? t('Back to your parking lot.')
-                    : t('Where are we headed?')}
+                    : t('Where are you waiting?')}
                 </h2>
                 <p>
                   {direction === 'parking'
                     ? t('{terminal} is your usual terminal. Choose any other stop for today.', {
                         terminal: profile.terminal,
                       })
-                    : t('Pick your lot and boarding stop. We’ll check the next departures.')}
+                    : t('Choose your shuttle and the stop you’re waiting at.')}
                 </p>
               </div>
               <div
@@ -390,10 +388,7 @@ export default function App() {
               </div>
               {direction === 'work' && lot !== 'South' && (
                 <p className="small muted">
-                  {t(
-                    'Taking the {lot} shuttle from South Lot? Choose a South Lot stop below. Times are for the {lot} shuttle.',
-                    { lot },
-                  )}
+                  {t('Waiting at South Lot? Choose your stop below to see {lot} buses.', { lot })}
                 </p>
               )}
               <div className="trip-destination">

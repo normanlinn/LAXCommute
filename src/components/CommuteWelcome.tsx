@@ -27,21 +27,21 @@ export default function CommuteWelcome({
           </Button>
         </div>
         <span className="eyebrow">{t('WELCOME TO LAXCOMMUTE')}</span>
-        <h2 id={titleId}>{t('Make this your commute.')}</h2>
-        <p>{t('Tap My commute to choose your terminal, parking lot and usual boarding stops.')}</p>
+        <h2 id={titleId}>{t('Save your usual trip.')}</h2>
+        <p>{t('Which lot do you park in? Set your lot and terminal in My commute.')}</p>
         <div className="welcome-tip">
           <Bookmark size={22} />
           <div>
             <strong>{t('My commute')}</strong>
             <span>
               {t(
-                'Find it in the bottom menu. Turn on Remember my commute to restore your choices next time.',
+                'Look for the bookmark in the bottom menu. Leave Remember my commute on to keep your choices.',
               )}
             </span>
           </div>
         </div>
         <p className="small muted">
-          {t('South Lot and Terminal B are examples until you choose your own settings.')}
+          {t('The first trip shown is South Lot to Terminal B. Change it to match your commute.')}
         </p>
         <Button className="button button-primary full-width" onClick={onSetup}>
           {t('Set up my commute')}

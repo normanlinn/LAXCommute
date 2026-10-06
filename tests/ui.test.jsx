@@ -264,7 +264,7 @@ it('exposes the selected account option when switching to create account', () =>
 
 it('guides a first visit into commute setup and restores remembered choices on reopening', async () => {
   const first = render(<App />);
-  expect(screen.getByRole('dialog', { name: 'Make this your commute.' })).toBeTruthy();
+  expect(screen.getByRole('dialog', { name: 'Save your usual trip.' })).toBeTruthy();
   fireEvent.click(screen.getByRole('button', { name: 'Set up my commute' }));
   const terminal = await screen.findByRole('combobox', { name: 'Usual terminal' });
   fireEvent.change(terminal, { target: { value: 'Terminal 3' } });
@@ -311,5 +311,5 @@ it('redirects a saved East preference to its map and shows setup again only afte
   localStorage.clear();
   sessionStorage.clear();
   render(<App />);
-  expect(screen.getByRole('dialog', { name: 'Make this your commute.' })).toBeTruthy();
+  expect(screen.getByRole('dialog', { name: 'Save your usual trip.' })).toBeTruthy();
 });

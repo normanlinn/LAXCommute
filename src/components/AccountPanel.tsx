@@ -234,12 +234,12 @@ export default function AccountPanel({
       <div className="feature-icon">
         <LockKeyhole size={26} />
       </div>
-      <span className="eyebrow">{t('A LITTLE LESS SETUP, EVERY DAY')}</span>
+      <span className="eyebrow">{t('YOUR ACCOUNT')}</span>
       <h1>
         {recovering
           ? t('Choose a new password.')
           : mode === 'signup'
-            ? t('Make it your commute.')
+            ? t('Create your account.')
             : mode === 'confirm'
               ? t('Confirm your email.')
               : mode === 'reset-code'
@@ -251,7 +251,7 @@ export default function AccountPanel({
       <p>
         {' '}
         {t(
-          'Save your terminal, parking lot, and walking time. You can always browse departures as a guest.',
+          'Sign in to use your saved commute on another device. You can check buses without an account.',
         )}{' '}
       </p>
       {!recovering && !needsCode && (

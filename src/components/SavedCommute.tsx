@@ -82,9 +82,13 @@ export default function SavedCommute({
       <div className="feature-icon">
         <Bookmark size={27} />
       </div>
-      <span className="eyebrow">{t('YOUR EVERYDAY ROUTE')}</span>
-      <h1>{t('A commute that remembers.')}</h1>
-      <p>{t('Save your usual stops. Changing today’s boarding stop won’t overwrite them.')}</p>
+      <span className="eyebrow">{t('MY COMMUTE')}</span>
+      <h1>{t('Your usual trip.')}</h1>
+      <p>
+        {t(
+          'Save your lot, terminal and usual stops here. You can still pick a different stop for today.',
+        )}
+      </p>
       <form onSubmit={submit}>
         <div className="form-grid">
           <label className="field">
