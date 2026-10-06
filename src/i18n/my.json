@@ -244,5 +244,21 @@
   "Shuttle route with reported bus positions": "ဘတ်စ်ကားတည်နေရာများပါသော ကြိုပို့လမ်းကြောင်း",
   "Bus movement updates only with new GPS reports.": "GPS တည်နေရာအသစ်ရမှသာ ဘတ်စ်ကားနေရာ ပြောင်းပါသည်။",
   "Route lines unavailable. Showing reported stops and buses.": "လမ်းကြောင်းမျဉ်း မရနိုင်ပါ။ ရရှိထားသော မှတ်တိုင်နှင့် ဘတ်စ်ကားများကို ပြထားပါသည်။",
-  "Bus approaching your stop": "ဘတ်စ်ကား သင့်မှတ်တိုင်သို့ ရောက်လာတော့မည်"
+  "Bus approaching your stop": "ဘတ်စ်ကား သင့်မှတ်တိုင်သို့ ရောက်လာတော့မည်",
+  "Close introduction": "မိတ်ဆက်စာကို ပိတ်မည်",
+  "WELCOME TO LAXCOMMUTE": "LAXCOMMUTE မှ ကြိုဆိုပါတယ်",
+  "Make this your commute.": "သင့်ခရီးစဉ်ကို သတ်မှတ်ထားပါ။",
+  "Tap My commute to choose your terminal, parking lot and usual boarding stops.": "သင့်တာမီနယ်၊ ကားရပ်နားရာနှင့် ပုံမှန်စီးသည့်မှတ်တိုင်များကို ရွေးရန် ကျွန်ုပ်၏ခရီးစဉ်ကို နှိပ်ပါ။",
+  "Find it in the bottom menu. Turn on Remember my commute to restore your choices next time.": "အောက်ခြေမီနူးတွင် ရှာနိုင်ပါတယ်။ နောက်တစ်ကြိမ်တွင် ရွေးချယ်ထားသည်များကို ပြန်ရရန် ခရီးစဉ်ကို မှတ်ထားမည်ကို ဖွင့်ပါ။",
+  "South Lot and Terminal B are examples until you choose your own settings.": "သင့်ခရီးစဉ်ကို မရွေးရသေးမီ South Lot နှင့် Terminal B ကို နမူနာအဖြစ် ပြထားပါတယ်။",
+  "Set up my commute": "ကျွန်ုပ်၏ခရီးစဉ်ကို သတ်မှတ်မည်",
+  "Explore first": "အရင်ကြည့်မည်",
+  "Remember my commute on this browser": "ဤဘရောက်ဇာတွင် ကျွန်ုပ်၏ခရီးစဉ်ကို မှတ်ထားမည်",
+  "Restore my lot, terminal and stops when I return.": "ပြန်လာသည့်အခါ ကျွန်ုပ်၏ကားရပ်နားရာ၊ တာမီနယ်နှင့် မှတ်တိုင်များကို ပြန်ဖော်ပြမည်။",
+  "Unchecked: keep settings for this browser session only.": "မရွေးထားလျှင် ဤဘရောက်ဇာကို အသုံးပြုနေစဉ်အတွင်းသာ မှတ်ထားမည်။",
+  "Your signed-in account also syncs your commute.": "သင့်အကောင့်တွင်လည်း ခရီးစဉ်ကို သိမ်းထားပါတယ်။",
+  "No account is needed to remember your commute.": "ခရီးစဉ်ကို မှတ်ထားရန် အကောင့်မလိုပါ။",
+  "Saved for this visit. Browser storage is unavailable.": "ယခုအသုံးပြုနေစဉ်အတွက် သိမ်းထားပါတယ်။ ဘရောက်ဇာတွင် အမြဲသိမ်း၍ မရပါ။",
+  "Saved for this browser session only.": "ဤဘရောက်ဇာကို အသုံးပြုနေစဉ်အတွက်သာ သိမ်းထားပါတယ်။",
+  "Map background could not load. Route lines and live buses remain available.": "မြေပုံနောက်ခံကို မဖော်ပြနိုင်ပါ။ လမ်းကြောင်းနှင့် လက်ရှိဘတ်စ်ကားများကို ဆက်ကြည့်နိုင်ပါတယ်။"
 }

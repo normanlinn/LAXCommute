@@ -1,7 +1,7 @@
 import { useLanguage } from './i18n/LanguageProvider';
 import type { Direction, Point, Stop } from './types';
 import Button from './components/ui/Button';
-import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
+import { lazy, Suspense, useCallback, useRef, useEffect, useMemo, useState } from 'react';
 import {
   ArrowDownUp,
   ArrowRight,
@@ -36,6 +36,7 @@ import Arrivals from './components/Arrivals';
 import InstallApp from './components/InstallApp';
 import DirectionsButton from './components/DirectionsButton';
 import AppMenu from './components/AppMenu';
+import CommuteWelcome from './components/CommuteWelcome';
 import { useTheme } from './theme/ThemeProvider';
 const darkRouteColor = (color: string) =>
   color === '#3262ab' ? '#88b7ff' : color === '#b76328' ? '#e4bb82' : '#58dce3';
@@ -52,9 +53,34 @@ const TABS = [
 export default function App() {
   const { appearance } = useTheme();
   const { t, language } = useLanguage();
-  const { user, recovering, authReturn } = useAccount();
-  const { profile, save, saveState } = useCommute();
-  const [tab, setTab] = useState('map');
+  const { user, ready, recovering, authReturn } = useAccount();
+  const { profile, hasSaved, remember, save, saveState } = useCommute();
+  const [tab, setTab] = useState(hasSaved ? 'saved' : 'map');
+  const [welcome, setWelcome] = useState(false);
+  const initialNavigation = useRef(false);
+  useEffect(() => {
+    if (!ready || initialNavigation.current) return;
+    initialNavigation.current = true;
+    if (recovering || authReturn) return;
+    if (hasSaved) setTab('saved');
+    else {
+      let seen = false;
+      try {
+        seen = localStorage.getItem('laxcommute:welcome-seen') === '1';
+      } catch {
+        /* Show the introduction if storage is unavailable. */
+      }
+      setWelcome(!seen);
+    }
+  }, [ready, hasSaved, recovering, authReturn]);
+  function skipWelcome() {
+    setWelcome(false);
+    try {
+      localStorage.setItem('laxcommute:welcome-seen', '1');
+    } catch {
+      /* Dismiss still works. */
+    }
+  }
   const [lot, setLot] = useState(profile.lot);
   const [direction, setDirection] = useState<Direction>('work');
   const [override, setOverride] = useState<{
@@ -104,6 +130,8 @@ export default function App() {
     if (recovering || authReturn) setTab('account');
   }, [recovering, authReturn]);
   function changeTab(next: string) {
+    initialNavigation.current = true;
+    setWelcome(false);
     setTab(next);
     if (next === 'home') {
       setDirection('parking');
@@ -474,6 +502,7 @@ export default function App() {
               <SavedCommute
                 key={`${user?.id || 'guest'}-${profile.lot}-${profile.terminal}`}
                 profile={profile}
+                remember={remember}
                 save={save}
                 saveState={saveState}
                 onGoHome={() => changeTab('home')}
@@ -489,6 +518,11 @@ export default function App() {
           </Suspense>
         )}
       </main>
+      <CommuteWelcome
+        open={welcome && !hasSaved && !recovering && !authReturn}
+        onSetup={() => changeTab('saved')}
+        onSkip={skipWelcome}
+      />
       <nav className="bottom-nav" aria-label={t('Main navigation')}>
         {TABS.map(({ id, label, Icon }) => (
           <Button

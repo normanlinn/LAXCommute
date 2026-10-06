@@ -4,6 +4,7 @@ import { LazyMotion, domAnimation, m, useReducedMotion } from 'motion/react';
 import { BusFront, MapPin } from 'lucide-react';
 import { ARRIVAL_TTL_MS, GPS_TTL_MS, snapshotFresh, validVehicle } from '../domain/arrivals';
 import { createRouteProjection, routePathData, validRoutePoint } from '../domain/route-view';
+import { config } from '../config';
 import { terminalKey } from '../domain/commute';
 import { useLanguage } from '../i18n/LanguageProvider';
 import type { MapProps, Vehicle } from '../types';
@@ -142,24 +143,10 @@ function RouteView(props: MapProps) {
           freshBuses.some((bus) => bus.id === prediction.vehicleID),
       )
     : undefined;
-  const latest = useRef({ selectedStop, userLocation });
-  latest.current = { selectedStop, userLocation };
-  const [viewBox, setViewBox] = useState('0 0 600 420');
-  useEffect(() => setViewBox('0 0 600 420'), [route.id, project]);
-  useEffect(() => {
-    if (!project || !focusRequest.serial) return;
-    const { selectedStop, userLocation } = latest.current;
-    const target =
-      focusRequest.mode === 'you'
-        ? userLocation
-        : focusRequest.mode === 'stop'
-          ? selectedStop
-          : null;
-    if (target && validRoutePoint(target)) {
-      const { x, y } = project(target);
-      setViewBox(`${x - 180} ${y - 126} 360 252`);
-    } else if (focusRequest.mode === 'route') setViewBox('0 0 600 420');
-  }, [focusRequest, project]);
+  const [backgroundError, setBackgroundError] = useState(false);
+  useEffect(() => setBackgroundError(false), [project]);
+  // The backdrop stays fixed; focus controls highlight markers instead of moving the image.
+  const focusYou = focusRequest.mode === 'you' && focusRequest.serial > 0;
   return (
     <LazyMotion features={domAnimation} strict>
       <m.div
@@ -179,13 +166,28 @@ function RouteView(props: MapProps) {
           <div className="route-view-empty">{t('Loading route geometry…')}</div>
         ) : (
           <m.svg
-            viewBox={viewBox}
-            animate={{ viewBox }}
-            transition={{ duration: reduce ? 0 : 0.35 }}
+            viewBox="0 0 600 420"
             className="route-view-svg"
             role="group"
             aria-label={t('Shuttle route with reported bus positions')}
           >
+            <g className="route-view-backdrop" aria-hidden="true">
+              {project.tiles.map((tile) => (
+                <image
+                  key={tile.key}
+                  x={tile.x}
+                  y={tile.y}
+                  width={tile.size + 0.5}
+                  height={tile.size + 0.5}
+                  preserveAspectRatio="none"
+                  href={config.mapTileUrl
+                    .replace('{z}', String(tile.zoom))
+                    .replace('{x}', String(tile.column))
+                    .replace('{y}', String(tile.row))}
+                  onError={() => setBackgroundError(true)}
+                />
+              ))}
+            </g>
             <g fill="none" strokeLinecap="round" strokeLinejoin="round">
               {paths.map((path) => (
                 <g key={`${route.id}:${path.id}`}>
@@ -243,7 +245,7 @@ function RouteView(props: MapProps) {
                 cx={project(userLocation).x}
                 cy={project(userLocation).y}
                 r="8"
-                className="route-view-you"
+                className={`route-view-you ${focusYou ? 'focused' : ''}`}
               >
                 <title>{t('Your location snapshot')}</title>
               </circle>
@@ -264,6 +266,15 @@ function RouteView(props: MapProps) {
           <strong>{selectedStop ? selectedStop.name : t('Choose a boarding stop')}</strong>
           <span>{t('Bus movement updates only with new GPS reports.')}</span>
         </div>
+        <div
+          className="route-view-attribution"
+          dangerouslySetInnerHTML={{ __html: config.mapAttribution }}
+        />
+        {backgroundError && (
+          <p className="route-view-notice" role="status">
+            {t('Map background could not load. Route lines and live buses remain available.')}
+          </p>
+        )}
         {!paths.length && project && (
           <p className="route-view-notice">
             {t('Route lines unavailable. Showing reported stops and buses.')}

@@ -63,6 +63,7 @@ beforeEach(() => {
   auth.signInWithPassword.mockReset().mockResolvedValue({ error: null });
   auth.signUp.mockReset().mockResolvedValue({ data: { session: null }, error: null });
   localStorage.clear();
+  sessionStorage.clear();
   window.matchMedia = vi.fn(() => ({
     matches: false,
     addEventListener: vi.fn(),
@@ -162,6 +163,7 @@ describe('commute UI', () => {
   });
   it('uses DaisyUI components for buttons, forms, and installation help', async () => {
     render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: 'Explore first' }));
     await screen.findByRole('combobox', { name: 'Where are you boarding?' });
     for (const button of screen.getAllByRole('button'))
       expect(button.classList.contains('btn')).toBe(true);
@@ -258,4 +260,29 @@ it('exposes the selected account option when switching to create account', () =>
   fireEvent.click(screen.getByRole('button', { name: 'Create account', pressed: false }));
   expect(screen.getByRole('button', { name: 'Create account', pressed: true })).toBeTruthy();
   expect(screen.getByRole('button', { name: 'Sign in', pressed: false })).toBeTruthy();
+});
+
+it('guides a first visit into commute setup and restores remembered choices on reopening', async () => {
+  const first = render(<App />);
+  expect(screen.getByRole('dialog', { name: 'Make this your commute.' })).toBeTruthy();
+  fireEvent.click(screen.getByRole('button', { name: 'Set up my commute' }));
+  const terminal = await screen.findByRole('combobox', { name: 'Usual terminal' });
+  fireEvent.change(terminal, { target: { value: 'Terminal 3' } });
+  fireEvent.click(screen.getByRole('button', { name: 'Save my commute' }));
+  await screen.findByText('Saved on this device.');
+  first.unmount();
+  render(<App />);
+  expect(screen.queryByRole('dialog')).toBeNull();
+  expect((await screen.findByRole('combobox', { name: 'Usual terminal' })).value).toBe(
+    'Terminal 3',
+  );
+});
+it('dismisses the introduction for later visits without inventing a saved commute', () => {
+  const first = render(<App />);
+  fireEvent.click(screen.getByRole('button', { name: 'Explore first' }));
+  expect(localStorage.getItem('laxcommute:profile:guest')).toBeNull();
+  first.unmount();
+  render(<App />);
+  expect(screen.queryByRole('dialog')).toBeNull();
+  expect(screen.getByRole('button', { name: 'Explore' }).getAttribute('aria-current')).toBe('page');
 });

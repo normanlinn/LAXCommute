@@ -2473,3 +2473,112 @@ select,
   font-weight: 700;
   pointer-events: none;
 }
+
+.remember-commute {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 17px;
+  margin: 20px 0 8px;
+  background: var(--control-tray);
+  border: 1px solid var(--control-border);
+  border-radius: 14px;
+  cursor: pointer;
+}
+.remember-commute input {
+  width: 21px;
+  height: 21px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  padding: 0;
+  accent-color: var(--color-primary);
+}
+.remember-commute strong,
+.remember-commute small {
+  display: block;
+  color: var(--color-base-content);
+}
+.remember-commute strong {
+  font-size: 14px;
+}
+.remember-commute small {
+  font-size: 12px;
+  line-height: 1.5;
+  margin-top: 5px;
+}
+.commute-welcome h2 {
+  font-size: 28px;
+  line-height: 1.25;
+  margin: 8px 0 15px;
+}
+.commute-welcome p {
+  font-size: 14px;
+  line-height: 1.7;
+  margin-bottom: 18px;
+}
+.commute-welcome .feature-icon {
+  margin-bottom: 14px;
+}
+.welcome-tip {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid var(--control-border);
+  background: var(--control-tray);
+  padding: 18px;
+  border-radius: 15px;
+  margin: 20px 0;
+}
+.welcome-tip svg {
+  flex-shrink: 0;
+  color: var(--ink-087969);
+}
+.welcome-tip strong,
+.welcome-tip span {
+  display: block;
+}
+.welcome-tip span {
+  font-size: 12px;
+  line-height: 1.6;
+  margin-top: 5px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .modal[open] .welcome-bookmark {
+    animation: welcome-bookmark 650ms ease-out;
+  }
+}
+@keyframes welcome-bookmark {
+  from {
+    opacity: 0;
+    transform: translateY(12px) rotate(-12deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(0);
+  }
+}
+
+.route-view-backdrop {
+  opacity: 0.88;
+}
+[data-theme='lax-dark'] .route-view-backdrop {
+  opacity: 0.72;
+}
+.route-view-track {
+  stroke: var(--color-base-100);
+  stroke-opacity: 0.88;
+}
+.route-view-attribution {
+  font-size: 10px;
+  text-align: right;
+  padding: 0 14px 25px;
+  background: var(--control-tray);
+  color: var(--color-base-content);
+}
+.route-view-attribution a {
+  color: inherit;
+  text-decoration: underline;
+}
+.route-view-you.focused {
+  stroke-width: 6px;
+}

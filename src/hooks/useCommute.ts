@@ -1,32 +1,61 @@
 import type { Commute } from '../types';
 import { useEffect, useState } from 'react';
-import { normalizeCommute } from '../domain/commute';
+import { normalizeCommute, ROUTES, TERMINALS } from '../domain/commute';
 import { getAuthClient } from '../services/auth';
 import { useAccount } from './useAccount';
 
-export function readLocalCommute(id = 'guest') {
+function storedCommute(storage: Storage, key: string) {
   try {
-    return normalizeCommute(JSON.parse(localStorage.getItem(`laxcommute:profile:${id}`) || 'null'));
+    const value = JSON.parse(storage.getItem(key) || 'null');
+    if (
+      !value ||
+      !ROUTES.some((route) => route.lot === value.lot) ||
+      !TERMINALS.includes(value.terminal)
+    )
+      return null;
+    return normalizeCommute(value);
   } catch {
-    return normalizeCommute(null);
+    return null;
   }
+}
+export function readCommuteSettings(identity = 'guest', accountCommute?: unknown) {
+  let local: Commute | null = null;
+  let session: Commute | null = null;
+  try {
+    local = storedCommute(localStorage, `laxcommute:profile:${identity}`);
+  } catch {
+    /* Unavailable storage. */
+  }
+  try {
+    session = storedCommute(sessionStorage, `laxcommute:session-profile:${identity}`);
+  } catch {
+    /* Unavailable storage. */
+  }
+  return {
+    identity,
+    profile: normalizeCommute(accountCommute || session || local),
+    hasSaved: Boolean(accountCommute || session || local),
+    remember: Boolean(local) || !session,
+  };
+}
+export function readLocalCommute(identity = 'guest') {
+  return readCommuteSettings(identity).profile;
 }
 export function useCommute() {
   const { user, ready } = useAccount();
   const identity = user?.id || 'guest';
-  const [state, setState] = useState(() => ({ identity: 'guest', profile: readLocalCommute() }));
+  const [state, setState] = useState(() => readCommuteSettings());
   const [saveState, setSaveState] = useState('');
-  const profile =
+  const settings =
     state.identity === identity
-      ? state.profile
-      : normalizeCommute(user?.user_metadata?.commute || readLocalCommute(identity));
+      ? state
+      : readCommuteSettings(identity, user?.user_metadata?.commute);
   useEffect(() => {
     if (!ready) return;
-    const saved = normalizeCommute(user?.user_metadata?.commute || readLocalCommute(identity));
-    setState({ identity, profile: saved });
+    setState(readCommuteSettings(identity, user?.user_metadata?.commute));
     setSaveState('');
   }, [identity, ready, user?.user_metadata?.commute]);
-  async function save(value: Commute) {
+  async function save(value: Commute, remember = true) {
     const next = normalizeCommute(value);
     setSaveState('Saving…');
     if (user) {
@@ -37,13 +66,36 @@ export function useCommute() {
         throw error;
       }
     }
+    let persisted = false;
     try {
-      localStorage.setItem(`laxcommute:profile:${identity}`, JSON.stringify(next));
+      if (remember) {
+        localStorage.setItem(`laxcommute:profile:${identity}`, JSON.stringify(next));
+        sessionStorage.removeItem(`laxcommute:session-profile:${identity}`);
+      } else {
+        // An explicit opt-out also removes a previously remembered profile.
+        localStorage.removeItem(`laxcommute:profile:${identity}`);
+        sessionStorage.setItem(`laxcommute:session-profile:${identity}`, JSON.stringify(next));
+      }
+      persisted = true;
     } catch {
-      /* Cloud saves still work if browser storage is unavailable. */
+      /* Keep current settings in memory and report the actual save outcome. */
     }
-    setState({ identity, profile: next });
-    setSaveState(user ? 'Saved to your account.' : 'Saved on this device.');
+    setState({ identity, profile: next, hasSaved: true, remember: remember && persisted });
+    setSaveState(
+      user
+        ? 'Saved to your account.'
+        : !persisted
+          ? 'Saved for this visit. Browser storage is unavailable.'
+          : remember
+            ? 'Saved on this device.'
+            : 'Saved for this browser session only.',
+    );
   }
-  return { profile, save, saveState };
+  return {
+    profile: settings.profile,
+    hasSaved: settings.hasSaved,
+    remember: settings.remember,
+    save,
+    saveState,
+  };
 }

@@ -111,3 +111,30 @@ it('does not draw invented paths when route lines are unavailable', () => {
     screen.getByText('Route lines unavailable. Showing reported stops and buses.'),
   ).toBeTruthy();
 });
+it('aligns map tile corners and route markers with the same geographic projection', () => {
+  const project = createRouteProjection(stops, props.paths);
+  expect(project.tiles.length).toBeGreaterThan(0);
+  expect(project.tiles.length).toBeLessThanOrEqual(12);
+  for (const tile of project.tiles) {
+    const count = 2 ** tile.zoom;
+    const lon = (tile.column / count) * 360 - 180;
+    const lat = (Math.atan(Math.sinh(Math.PI * (1 - (2 * tile.row) / count))) * 180) / Math.PI;
+    expect(project({ lat, lon }).x).toBeCloseTo(tile.x, 5);
+    expect(project({ lat, lon }).y).toBeCloseTo(tile.y, 5);
+  }
+});
+it('keeps the map image fixed when highlighting a location and reports failed background loading', () => {
+  const { container, rerender } = render(<RouteView {...props} />);
+  const image = container.querySelector('image');
+  expect(image.getAttribute('href')).toMatch(/tile.openstreetmap.org\/\d+\/\d+\/\d+\.png/);
+  const svg = image.closest('svg');
+  expect(svg.getAttribute('viewBox')).toBe('0 0 600 420');
+  rerender(
+    <RouteView {...props} userLocation={stops[0]} focusRequest={{ mode: 'you', serial: 1 }} />,
+  );
+  expect(svg.getAttribute('viewBox')).toBe('0 0 600 420');
+  expect(container.querySelector('.route-view-you').classList.contains('focused')).toBe(true);
+  fireEvent.error(image);
+  expect(screen.getByRole('status').textContent).toContain('Map background could not load');
+  expect(screen.getByRole('link', { name: 'OpenStreetMap' })).toBeTruthy();
+});

@@ -9,13 +9,15 @@ import { useAccount } from '../hooks/useAccount';
 
 export default function SavedCommute({
   profile,
+  remember = true,
   save,
   saveState,
   onGoHome,
   onAccount,
 }: {
   profile: import('../types').Commute;
-  save: (value: import('../types').Commute) => Promise<void>;
+  remember?: boolean;
+  save: (value: import('../types').Commute, remember?: boolean) => Promise<void>;
   saveState: string;
   onGoHome: () => void;
   onAccount: () => void;
@@ -23,6 +25,7 @@ export default function SavedCommute({
   const { t } = useLanguage();
   const { user } = useAccount();
   const [draft, setDraft] = useState(profile);
+  const [rememberHere, setRememberHere] = useState(remember);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const route = routeForLot(draft.lot);
@@ -58,13 +61,16 @@ export default function SavedCommute({
     }
     setBusy(true);
     try {
-      await save({
-        ...draft,
-        terminalStopID: terminal.id,
-        terminalStopName: terminal.name,
-        parkingStopID: parking.id,
-        parkingStopName: parking.name,
-      });
+      await save(
+        {
+          ...draft,
+          terminalStopID: terminal.id,
+          terminalStopName: terminal.name,
+          parkingStopID: parking.id,
+          parkingStopName: parking.name,
+        },
+        rememberHere,
+      );
     } catch (reason) {
       setError(errorMessage(reason));
     } finally {
@@ -193,6 +199,25 @@ export default function SavedCommute({
             />
           </label>
         </div>
+        <label className="remember-commute">
+          <input
+            type="checkbox"
+            checked={rememberHere}
+            onChange={(event) => setRememberHere(event.target.checked)}
+          />
+          <span>
+            <strong>{t('Remember my commute on this browser')}</strong>
+            <small>{t('Restore my lot, terminal and stops when I return.')}</small>
+          </span>
+        </label>
+        {!rememberHere && (
+          <p className="small muted">
+            {t('Unchecked: keep settings for this browser session only.')}
+          </p>
+        )}
+        {user && (
+          <p className="small muted">{t('Your signed-in account also syncs your commute.')}</p>
+        )}
         {query.isError && (
           <p className="alert alert-soft alert-warning notice">
             {' '}
@@ -229,7 +254,7 @@ export default function SavedCommute({
       {!user && (
         <p className="guest-note">
           {' '}
-          {t('Saved on this device.')}{' '}
+          {t('No account is needed to remember your commute.')}{' '}
           <Button className="text-button" onClick={onAccount}>
             {' '}
             {t('Sign in to sync your commute.')}{' '}
