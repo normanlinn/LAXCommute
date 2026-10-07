@@ -66,6 +66,22 @@ it('removes the timeout after successful geometry loading', async () => {
     'fetch',
     vi.fn(async () => Response.json({ stops: [], patterns: [], warning: null })),
   );
-  expect(await getRoute(6884)).toEqual({ stops: [], paths: [], warning: null });
+  expect(await getRoute(6884)).toEqual({ stops: [], paths: [], warning: null, cached: false });
   expect(vi.getTimerCount()).toBe(0);
+});
+
+it('marks an offline service-worker snapshot without changing its original timestamps', async () => {
+  const timestamp = '2026-10-01T12:00:00Z';
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async () =>
+      Response.json(
+        { routeID: 6884, arrivals: [], arrivalFetchedAt: timestamp },
+        { headers: { 'X-LAXCommute-Cached': '1' } },
+      ),
+    ),
+  );
+  const result = await getLive(6884, 101);
+  expect(result.cached).toBe(true);
+  expect(result.arrivalFetchedAt).toBe(timestamp);
 });

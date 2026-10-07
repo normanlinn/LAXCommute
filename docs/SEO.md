@@ -6,7 +6,7 @@ The homepage includes a descriptive title, description, canonical URL, social sh
 
 1. Confirm the homepage returns HTTP 200 and is publicly reachable. SEO cannot work while a site returns 404 or requires sign-in. Check `/robots.txt` and `/sitemap.xml` too.
 2. Open [Google Search Console](https://search.google.com/search-console/) with your Google account. It is free.
-3. Add a **URL-prefix** property: `https://laxcommute.mrzawlinnaing1001.workers.dev/`. You do not own the workers.dev parent domain, so use URL-prefix rather than a Domain property.
+3. Add a **URL-prefix** property: `https://employeeshuttlelax.com/`. Alternatively, verify a Domain property using your domain’s DNS settings.
 4. Choose **HTML tag** verification. Copy only its `content` value into the Cloudflare build variable `VITE_GOOGLE_SITE_VERIFICATION`, then rebuild/deploy. Keep the token in later builds so verification stays valid. No token is included until one is supplied.
 5. Click Verify in Search Console. Submit `sitemap.xml` under Sitemaps.
 6. Inspect the homepage URL, run Test live URL, and choose Request indexing. Submission and structured data do not guarantee indexing, rankings, or rich results.
@@ -18,7 +18,7 @@ Focus on LAX employee shuttle tracker, LAX employee shuttle tracking, LAX South 
 
 Share the tool with employees where posting is permitted and ask relevant airport employee resources to link to it when useful. Keep boarding information accurate and current. Do not buy links, add fake reviews, or repeat keyword lists.
 
-The canonical, sharing, structured-data, robots and sitemap URLs currently use the public workers.dev address. If you change the domain, update all of them together. Keep a permanent redirect from the old domain when possible.
+The canonical, sharing, structured-data, robots and sitemap URLs use https://employeeshuttlelax.com. If you change the domain, update all of them together. Keep a permanent redirect from the old domain when possible.
 
 ## References
 

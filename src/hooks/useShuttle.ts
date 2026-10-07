@@ -6,6 +6,8 @@ import { getRoute, getLive } from '../services/shuttle';
 
 export function useRoute(routeID: number) {
   return useQuery({
+    // Let the service worker serve a cached response when the device is offline.
+    networkMode: 'always',
     queryKey: ['route', routeID],
     queryFn: ({ signal }) => getRoute(routeID, signal),
     staleTime: 5 * 60_000,
@@ -15,6 +17,8 @@ export function useRoute(routeID: number) {
 }
 export function useLive(routeID: number, stopID?: number, enabled = true) {
   return useQuery({
+    // Let the service worker serve a cached response when the device is offline.
+    networkMode: 'always',
     queryKey: ['live', routeID, stopID || 0],
     queryFn: ({ signal }) => getLive(routeID, stopID, signal),
     enabled,

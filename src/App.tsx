@@ -115,12 +115,12 @@ export default function App() {
   const live = useLive(
     route.id,
     selectedStop?.id,
-    (tab === 'map' || tab === 'home') && !routeQuery.isPending && !routeQuery.isError,
+    (tab === 'map' || tab === 'home') && Boolean(routeQuery.data),
   );
   const vehicleFresh = useSnapshotFresh(live.data?.vehicleFetchedAt);
   const vehicles = useMemo(
     () =>
-      vehicleFresh && !live.isError
+      vehicleFresh && !live.isError && !live.data?.cached
         ? (live.data?.vehicles || EMPTY).filter((v) => validVehicle(v))
         : EMPTY,
     [live.data?.vehicles, vehicleFresh, live.isError],
@@ -310,10 +310,30 @@ export default function App() {
               {routeQuery.data?.warning && (
                 <p className="map-warning">{t(routeQuery.data.warning)}</p>
               )}
+              {(live.isError ||
+                routeQuery.isError ||
+                live.data?.cached ||
+                routeQuery.data?.cached ||
+                Boolean(live.data?.warnings?.length)) && (
+                <p className="alert alert-soft alert-warning notice" role="status">
+                  {t('Shuttle source unavailable. Try again or check the official LAX tracker.')}{' '}
+                  <a
+                    href="https://shuttles.flylax.com/employeeparking"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {t('LAX tracker')}
+                  </a>
+                </p>
+              )}
               <div className="map-footer">
                 <span>
                   <span className="dot" />
-                  {online ? t('Live data from the LAX tracker') : t('Waiting for connection')}
+                  {live.data?.cached
+                    ? t('Showing the last saved update')
+                    : online
+                      ? t('Live data from the LAX tracker')
+                      : t('Waiting for connection')}
                 </span>
                 <a
                   href="https://shuttles.flylax.com/employeeparking"

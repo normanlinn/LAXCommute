@@ -1,3 +1,4 @@
+import { feedCaching } from './scripts/feed-cache.mjs';
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import { cloudflare } from '@cloudflare/vite-plugin';
@@ -31,6 +32,8 @@ export default defineConfig(({ mode }) => ({
         'icons/commute-v2-192.png',
         'icons/commute-v2-512.png',
         'icons/favicon-v2.png',
+        'icons/maskable-512.png',
+        'social-preview.png',
       ],
       manifest: {
         id: '/',
@@ -45,17 +48,24 @@ export default defineConfig(({ mode }) => ({
         icons: [
           { src: '/icons/commute-v2-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
           { src: '/icons/commute-v2-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+          {
+            src: '/icons/maskable-512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable',
+          },
         ],
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,png,svg,ico,woff,woff2}'],
-        // Optional street-map engines should not delay the SVG-first PWA install.
-        globIgnores: ['**/assets/{FreeMap,AppleMap,simpleBasemap,maplibre-gl-worker}-*'],
+        // Precache the primary map engine so routes can render offline.
+        globIgnores: ['**/assets/{AppleMap,simpleBasemap,maplibre-gl-worker}-*'],
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/api\//],
         cleanupOutdatedCaches: true,
-        // Cache typography only; arrivals, auth, and map tiles stay online-only.
+        // Cache public feed snapshots only. Auth and third-party map tiles are never cached here.
         runtimeCaching: [
+          ...feedCaching,
           {
             urlPattern: ({ url }) =>
               url.origin === self.location.origin &&

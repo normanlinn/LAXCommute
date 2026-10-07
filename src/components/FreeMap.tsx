@@ -3,6 +3,7 @@ import { useLanguage } from '../i18n/LanguageProvider';
 import type { MapProps, Point, Stop, RoutePath } from '../types';
 import { memo, useEffect, useRef, useState } from 'react';
 import * as L from 'leaflet';
+import { animate } from 'animejs';
 import 'leaflet/dist/leaflet.css';
 import { config } from '../config';
 import { GPS_TTL_MS, validVehicle } from '../domain/arrivals';
@@ -62,6 +63,7 @@ function FreeMap({
     appearance: string;
     title?: string;
     selected?: boolean;
+    animation?: ReturnType<typeof animate>;
   };
   const state = useRef<{ map: L.Map; overlays: L.LayerGroup; markers: Map<string, Entry> } | null>(
     null,
@@ -97,6 +99,7 @@ function FreeMap({
     setReady(true);
     return () => {
       observer.disconnect();
+      for (const entry of state.current?.markers.values() || []) entry.animation?.cancel();
       map.remove();
       state.current = null;
     };
@@ -184,8 +187,21 @@ function FreeMap({
           });
       } else {
         entry.marker.options.title = title;
-        if (entry.point.lat !== point.lat || entry.point.lon !== point.lon)
-          entry.marker.setLatLng(coordinates(point));
+        if (entry.point.lat !== point.lat || entry.point.lon !== point.lon) {
+          entry.animation?.cancel();
+          if (kind === 'bus' && !reducedMotion() && !document.hidden) {
+            const start = entry.marker.getLatLng();
+            const moving = { lat: start.lat, lon: start.lng };
+            const marker = entry.marker;
+            entry.animation = animate(moving, {
+              lat: point.lat,
+              lon: point.lon,
+              duration: 900,
+              ease: 'outCubic',
+              onUpdate: () => marker.setLatLng(coordinates(moving)),
+            });
+          } else entry.marker.setLatLng(coordinates(point));
+        }
         if (entry.appearance !== appearance) {
           entry.marker.setIcon(markerIcon(kind, color, selected));
           entry.marker.setZIndexOffset(kind === 'bus' ? 500 : selected ? 1500 : 1000);
@@ -231,6 +247,7 @@ function FreeMap({
     if (userLocation) upsert('you', userLocation, 'you', t('Your location snapshot'));
     for (const [key, entry] of markers)
       if (!wanted.has(key)) {
+        entry.animation?.cancel();
         entry.marker.remove();
         markers.delete(key);
       }
@@ -242,6 +259,7 @@ function FreeMap({
       for (const [key, entry] of markers) {
         if (!key.startsWith('bus-')) continue;
         if (!validVehicle(entry.point)) {
+          entry.animation?.cancel();
           entry.marker.remove();
           markers.delete(key);
         } else
@@ -273,14 +291,44 @@ function FreeMap({
     if (!ready || !state.current) return;
     const { map, overlays } = state.current;
     overlays.clearLayers();
+    fitRoute(map, stops, paths);
+    const animations: ReturnType<typeof animate>[] = [];
     for (const path of paths) {
       const points = path.coordinates.filter(validPoint).map(coordinates);
       if (points.length > 1) {
         L.polyline(points, { color: '#fff', weight: 9, opacity: 0.95 }).addTo(overlays);
-        L.polyline(points, { color: route.color, weight: 5, opacity: 0.8 }).addTo(overlays);
+        const line = L.polyline(points, {
+          color: route.color,
+          weight: 5,
+          opacity: 0.9,
+          interactive: false,
+        }).addTo(overlays);
+        const svgPath = line.getElement() as SVGPathElement | undefined;
+        if (
+          svgPath &&
+          !reducedMotion() &&
+          !document.hidden &&
+          typeof svgPath.getTotalLength === 'function'
+        ) {
+          const length = svgPath.getTotalLength();
+          svgPath.style.strokeDasharray = `${length}`;
+          animations.push(
+            animate(svgPath, {
+              strokeDashoffset: [length, 0],
+              duration: 1100,
+              ease: 'outCubic',
+              onComplete: () => {
+                svgPath.style.strokeDasharray = '';
+                svgPath.style.strokeDashoffset = '';
+              },
+            }),
+          );
+        }
       }
     }
-    fitRoute(map, stops, paths);
+    return () => {
+      for (const animation of animations) animation.cancel();
+    };
   }, [ready, paths, stops, route.id, route.color]);
 
   useEffect(() => {

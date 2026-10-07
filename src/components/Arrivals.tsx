@@ -36,7 +36,7 @@ export default function Arrivals({
     const start = () => {
       clearInterval(timer);
       update();
-      if (!document.hidden && !error && snapshotFresh(data?.arrivalFetchedAt))
+      if (!document.hidden && !error && !data?.cached && snapshotFresh(data?.arrivalFetchedAt))
         timer = setInterval(update, 1_000);
     };
     start();
@@ -45,8 +45,23 @@ export default function Arrivals({
       clearInterval(timer);
       document.removeEventListener('visibilitychange', start);
     };
-  }, [data?.arrivalFetchedAt, error]);
-  const fresh = snapshotFresh(data?.arrivalFetchedAt, now);
+  }, [data?.arrivalFetchedAt, data?.cached, error]);
+  useEffect(() => {
+    if (!data?.arrivalFetchedAt) return;
+    let timer: ReturnType<typeof setInterval> | undefined;
+    const update = () => {
+      clearInterval(timer);
+      setNow(Date.now());
+      if (!document.hidden) timer = setInterval(() => setNow(Date.now()), 60_000);
+    };
+    update();
+    document.addEventListener('visibilitychange', update);
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener('visibilitychange', update);
+    };
+  }, [data?.arrivalFetchedAt]);
+  const fresh = !data?.cached && snapshotFresh(data?.arrivalFetchedAt, now);
   const arrivals = fresh && !error ? availableArrivals(data?.predictions || [], now) : [];
   const advice =
     fresh && direction === 'parking'
@@ -78,7 +93,10 @@ export default function Arrivals({
       )}
       {error && (
         <div className="alert alert-soft alert-warning notice" role="status">
-          {t(error.message)}{' '}
+          {t('Shuttle source unavailable. Try again or check the official LAX tracker.')}{' '}
+          <a href="https://shuttles.flylax.com/employeeparking" target="_blank" rel="noreferrer">
+            {t('LAX tracker')}
+          </a>{' '}
           <Button type="button" onClick={onRefresh}>
             {' '}
             {t('Try again')}{' '}
@@ -103,9 +121,11 @@ export default function Arrivals({
           <p>
             {!data
               ? t('Waiting for live updates.')
-              : !fresh && data.arrivalFetchedAt
-                ? t('These times have expired. Checking for a fresh update.')
-                : t('No upcoming departures reported at this stop.')}
+              : data.cached
+                ? t('Saved data only. Reconnect to check the next shuttle.')
+                : !fresh && data.arrivalFetchedAt
+                  ? t('These times have expired. Checking for a fresh update.')
+                  : t('No upcoming departures reported at this stop.')}
           </p>
           <span>{t('We’ll keep checking while the app is open.')}</span>
         </div>
@@ -155,7 +175,10 @@ export default function Arrivals({
       {data?.arrivalFetchedAt && (
         <p className="updated">
           {' '}
-          {t('Updated')}{' '}
+          {t('Last updated {minutes} min ago', {
+            minutes: Math.max(0, Math.floor((now - Date.parse(data.arrivalFetchedAt)) / 60_000)),
+          })}{' '}
+          ·{' '}
           {new Date(data.arrivalFetchedAt).toLocaleTimeString(
             language === 'my' ? 'my-MM-u-nu-latn' : 'en-US',
             {

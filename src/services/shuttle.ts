@@ -29,7 +29,8 @@ async function get(path: string, signal?: AbortSignal) {
       throw new Error(body?.error || 'Shuttle data is unavailable. Please retry.');
     }
     // Await the body here so the deadline also covers a stalled response body.
-    return await response.json();
+    const data = await response.json();
+    return { ...data, cached: response.headers.get('X-LAXCommute-Cached') === '1' };
   } catch (error) {
     if (timedOut && !signal?.aborted)
       throw new Error('The shuttle request timed out. Please retry.');
@@ -40,8 +41,12 @@ async function get(path: string, signal?: AbortSignal) {
   }
 }
 export async function getRoute(routeID: number, signal?: AbortSignal) {
-  const data: { stops: Stop[]; patterns: { id: number; shape: string }[]; warning: string | null } =
-    await get(`/api/routes/${routeID}`, signal);
+  const data: {
+    stops: Stop[];
+    patterns: { id: number; shape: string }[];
+    warning: string | null;
+    cached?: boolean;
+  } = await get(`/api/routes/${routeID}`, signal);
   return {
     stops: data.stops.filter(
       (s: Stop) =>
@@ -57,6 +62,7 @@ export async function getRoute(routeID: number, signal?: AbortSignal) {
       }))
       .filter((p: { coordinates: unknown[] }) => p.coordinates.length > 1),
     warning: data.warning,
+    cached: data.cached,
   };
 }
 export async function getLive(routeID: number, stopID?: number, signal?: AbortSignal) {

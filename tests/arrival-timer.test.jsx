@@ -32,18 +32,18 @@ it('does not schedule countdown work while waiting for data or after an error', 
   const { rerender } = render(<Arrivals {...props} />);
   expect(vi.getTimerCount()).toBe(0);
   rerender(<Arrivals {...props} data={freshData()} error={new Error('Unavailable')} />);
-  expect(vi.getTimerCount()).toBe(0);
+  expect(vi.getTimerCount()).toBe(1);
 });
 
 it('expires predictions, stops the timer, and resumes on a fresh snapshot', () => {
   const { rerender } = render(<Arrivals {...props} data={freshData()} />);
-  expect(vi.getTimerCount()).toBe(1);
+  expect(vi.getTimerCount()).toBe(2);
   act(() => vi.advanceTimersByTime(90_000));
   expect(screen.getByText('These times have expired. Checking for a fresh update.')).toBeTruthy();
-  expect(vi.getTimerCount()).toBe(0);
+  expect(vi.getTimerCount()).toBe(1);
   rerender(<Arrivals {...props} data={freshData()} />);
   expect(screen.getByText('Next shuttle')).toBeTruthy();
-  expect(vi.getTimerCount()).toBe(1);
+  expect(vi.getTimerCount()).toBe(2);
 });
 
 it('pauses in the background and checks expiry immediately when visible again', () => {
@@ -55,5 +55,13 @@ it('pauses in the background and checks expiry immediately when visible again', 
   Object.defineProperty(document, 'hidden', { configurable: true, value: false });
   fireEvent(document, new Event('visibilitychange'));
   expect(screen.getByText('These times have expired. Checking for a fresh update.')).toBeTruthy();
-  expect(vi.getTimerCount()).toBe(0);
+  expect(vi.getTimerCount()).toBe(1);
+});
+
+it('never shows cached predictions as live even when their timestamp is recent', () => {
+  render(<Arrivals {...props} data={{ ...freshData(), cached: true }} />);
+  expect(screen.queryByText('Next shuttle')).toBeNull();
+  expect(screen.getByText('Saved data only. Reconnect to check the next shuttle.')).toBeTruthy();
+  act(() => vi.advanceTimersByTime(120_000));
+  expect(screen.getByText(/Last updated 2 min ago/)).toBeTruthy();
 });
