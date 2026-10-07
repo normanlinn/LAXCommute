@@ -137,6 +137,8 @@ function FreeMap({
       // Visible tiles only, with normal browser caching and attribution.
       layer = L.tileLayer(config.mapTileUrl, {
         attribution: config.mapAttribution,
+        // OSM requires a valid site origin. Keep paths and auth query strings private.
+        referrerPolicy: 'strict-origin',
         maxZoom: 19,
         updateWhenIdle: true,
         updateWhenZooming: false,

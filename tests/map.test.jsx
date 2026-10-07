@@ -159,6 +159,7 @@ describe('interactive shuttle map', () => {
     );
     expect(container.querySelector('.leaflet-marker-icon')).toBe(marker);
     expect(container.querySelector('.boarding-label').textContent).toContain('BOARD HERE');
+    expect(container.querySelector('.leaflet-tile').referrerPolicy).toBe('strict-origin');
     expect(container.querySelector('.leaflet-control-attribution').textContent).not.toContain(
       'OpenFreeMap',
     );
