@@ -379,7 +379,9 @@ h3,
   font-size: 12px;
   font-weight: 700;
   text-align: center;
+  width: max-content;
   max-width: 190px;
+  white-space: normal;
   box-shadow: 0 3px 12px #122b3220;
 }
 .shuttle-map .boarding-label::before {
