@@ -1004,20 +1004,21 @@ input::placeholder {
   left: 50%;
   transform: translateX(-50%);
   width: 470px;
-  background: var(--surface-122b32, #122b32);
+  background: var(--color-base-100);
   z-index: 10;
   border-radius: 23px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   padding: 8px;
-  box-shadow: 0 7px 35px #163a2c30;
+  border: 1px solid var(--control-border);
+  box-shadow: 0 7px 35px color-mix(in srgb, var(--color-base-content) 16%, transparent);
 }
 .bottom-nav button {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 5px;
-  color: var(--ink-9cb2b4, #9cb2b4);
+  color: var(--ink-607970, #607970);
   background: transparent;
   border-radius: 16px;
   padding: 9px 4px;
@@ -1026,8 +1027,8 @@ input::placeholder {
   font-size: 10px;
 }
 .bottom-nav button.active {
-  background: var(--surface-284149, #284149);
-  color: #58dce3;
+  background: color-mix(in srgb, var(--color-primary) 17%, var(--color-base-100));
+  color: var(--ink-087969, #007981);
 }
 .settings-layout {
   padding: 38px 24px;
@@ -2184,13 +2185,6 @@ html[data-theme='lax-dark'] {
 .shuttle-guide a,
 .initial-app-summary a {
   color: var(--ink-087969, #007981);
-}
-.bottom-nav button {
-  color: #adc8cf;
-}
-.bottom-nav button.active {
-  background: #123d45;
-  color: #58dce3;
 }
 .leave-card span {
   color: #adc8cf;
