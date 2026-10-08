@@ -220,7 +220,7 @@ export default function App() {
           }}
           aria-label={t('LAXCommute home')}
         >
-          <img src="/icons/commute-v3-192.png" alt="" width={43} height={43} />
+          <img src="/icons/commute-v4-192.png" alt="" width={43} height={43} />
           <div>
             <strong>
               LAX<span>Commute</span>
