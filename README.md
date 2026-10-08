@@ -141,7 +141,7 @@ Reference: [Cloudflare pricing](https://developers.cloudflare.com/workers/platfo
 
 See [the security review and remaining launch checks](docs/SECURITY.md) for API validation, browser storage, dependency updates and Supabase authorization checks. Run `npm run audit` when updating packages.
 
-The supplied public project settings are reachable, but public email delivery and redirect settings still need verification in your dashboard. No new database schema is required: the small saved commute is stored in the signed-in user's own `user_metadata.commute`. Follow the [account setup and troubleshooting guide](docs/AUTH.md).
+The supplied public project settings are reachable, but public email delivery and redirect settings still need verification in your dashboard. Saved commutes use the owner-protected `public.commute_profiles` table. Existing metadata remains readable until the next save. See [backend setup](docs/BACKEND.md). Follow the [account setup and troubleshooting guide](docs/AUTH.md).
 
 In **Supabase → Authentication → URL Configuration**:
 

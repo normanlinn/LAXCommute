@@ -1,6 +1,6 @@
 # Finish sign-in and account setup
 
-The app supports email/password accounts, confirmation links or email codes, resending confirmation, and password recovery. Guests can use live shuttles and save their commute on the device without an account. Account settings sync through the user's own Supabase `user_metadata.commute`; no new database table is required.
+The app supports email/password accounts, confirmation links or email codes, resending confirmation, and password recovery. Guests can use live shuttles and save their commute on the device without an account. Account settings sync through `public.commute_profiles`, protected by owner-only row-level security. Existing account metadata remains a fallback until the next save. See [backend setup](BACKEND.md).
 
 ## What was verified
 

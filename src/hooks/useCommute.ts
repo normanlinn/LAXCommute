@@ -1,7 +1,7 @@
 import type { Commute } from '../types';
 import { useEffect, useRef, useState } from 'react';
 import { normalizeCommute, ROUTES, TERMINALS } from '../domain/commute';
-import { getAuthClient } from '../services/auth';
+import { loadAccountCommute, saveAccountCommute } from '../services/commute';
 import { useAccount } from './useAccount';
 
 function storedCommute(storage: Storage, key: string) {
@@ -47,6 +47,9 @@ export function useCommute() {
   const [state, setState] = useState(() => readCommuteSettings());
   const [saveState, setSaveState] = useState('');
   const saveNoticeTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const operation = useRef(0);
+  const activeIdentity = useRef(identity);
+  activeIdentity.current = identity;
   useEffect(() => () => clearTimeout(saveNoticeTimer.current), []);
   const settings =
     state.identity === identity
@@ -57,19 +60,41 @@ export function useCommute() {
     clearTimeout(saveNoticeTimer.current);
     setState(readCommuteSettings(identity, user?.user_metadata?.commute));
     setSaveState('');
+    const version = ++operation.current;
+    let alive = true;
+    if (user) {
+      loadAccountCommute(identity)
+        .then((profile) => {
+          if (!alive || version !== operation.current || activeIdentity.current !== identity)
+            return;
+          if (profile) setState((previous) => ({ ...previous, identity, profile, hasSaved: true }));
+        })
+        .catch(() => {
+          if (alive && version === operation.current && activeIdentity.current === identity)
+            setSaveState(
+              'Could not load account settings. Your saved device settings are still available.',
+            );
+        });
+    }
+    return () => {
+      alive = false;
+    };
   }, [identity, ready, user?.user_metadata?.commute]);
   async function save(value: Commute, remember = true) {
     const next = normalizeCommute(value);
+    const version = ++operation.current;
     clearTimeout(saveNoticeTimer.current);
     setSaveState('Saving…');
     if (user) {
-      const client = await getAuthClient();
-      const { error } = await client.auth.updateUser({ data: { commute: next } });
-      if (error) {
-        setSaveState(error.message);
+      try {
+        await saveAccountCommute(identity, next);
+      } catch (error) {
+        if (activeIdentity.current === identity && version === operation.current)
+          setSaveState('Could not save to your account. Please try again.');
         throw error;
       }
     }
+    if (activeIdentity.current !== identity || version !== operation.current) return;
     let persisted = false;
     try {
       if (remember) {
