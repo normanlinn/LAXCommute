@@ -95,7 +95,7 @@ describe('fixed-path shuttle gateway', () => {
     ).json();
     expect(data.vehicles).toHaveLength(1);
     expect(data.arrivalFetchedAt).toBeNull();
-    expect(data.warnings).toContain('Arrival times unavailable.');
+    expect(data.warnings.some((w) => w.startsWith('Arrival times unavailable.'))).toBe(true);
   });
   it('keeps predictions available when vehicle positions fail', async () => {
     const original = fetcher.getMockImplementation();
@@ -144,6 +144,6 @@ it('starts stops and route lines together so a slow line request does not delay 
   };
   const pending = routeDetails(6884, options);
   await vi.waitFor(() => expect(paths).toEqual(['routes/6884/stops', 'routes/6884/patterns']));
-  resolveStops(Response.json([{ id: 101, name: 'East Lot' }]));
+  resolveStops(Response.json([{ id: 101, name: 'East Lot', lat: 33.94, lon: -118.4 }]));
   expect((await pending).stops[0].id).toBe(101);
 });

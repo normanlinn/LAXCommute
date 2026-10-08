@@ -135,15 +135,18 @@ function RouteView(props: MapProps) {
     };
   }, [vehicles, liveData]);
   const freshBuses = vehicles.filter((bus) => validVehicle(bus, now));
-  const approaching = snapshotFresh(liveData?.arrivalFetchedAt, now)
-    ? liveData?.predictions.find(
-        (prediction) =>
-          !prediction.scheduled &&
-          prediction.due > now &&
-          prediction.due - now <= 180_000 &&
-          freshBuses.some((bus) => bus.id === prediction.vehicleID),
-      )
-    : undefined;
+  const approaching =
+    !liveData?.cached &&
+    !liveData?.sourceUnavailable &&
+    snapshotFresh(liveData?.arrivalFetchedAt, now)
+      ? liveData?.predictions.find(
+          (prediction) =>
+            !prediction.scheduled &&
+            prediction.due > now &&
+            prediction.due - now <= 180_000 &&
+            freshBuses.some((bus) => bus.id === prediction.vehicleID),
+        )
+      : undefined;
   const [backgroundError, setBackgroundError] = useState(false);
   useEffect(() => setBackgroundError(false), [project]);
   // The backdrop stays fixed; focus controls highlight markers instead of moving the image.

@@ -175,7 +175,7 @@ HTTPS is required for production installation and location access. An HTTP LAN a
 - The map stays mounted while the user views their trip; markers update by ID and camera changes are explicit.
 - Countdown updates are isolated from the map; refresh pauses on hidden pages and account/settings screens.
 - Predictions expire after 90 seconds; GPS positions expire after 180 seconds. Scheduled predictions are labeled separately.
-- Service worker caching covers the app shell and fonts. **Arrivals, API responses, authentication, and map tiles are not cached for offline live display.**
+- Service worker caching covers the app shell, fonts, and public shuttle snapshots for offline fallback. Original timestamps are preserved; saved data is never presented as a live countdown. Authentication, account requests, and map tiles are excluded.
 
 This is the web version of the previous SwiftUI prototype. It does not include an Apple Watch app. Background push notifications and automatic departure detection while the app is closed are future work; this version gives departure advice while the app is open.
 
@@ -195,7 +195,7 @@ src/
   hooks/          Query, account, and saved-commute state
   i18n/           English/Myanmar language preference and translations
   services/       Shuttle API and lazy Supabase client
-worker/           Fixed-path public shuttle gateway and caching
+worker/           Same-origin gateway to the Supabase shuttle backend
 tests/            Arrival, boarding, gateway, and UI regression checks
 public/           PWA icons and response headers
 scripts/          Non-destructive local setup
@@ -234,3 +234,7 @@ LAXCommute is an independent employee commute project and is not an official LAW
 Open the hamburger menu in the header to choose System, Light, or Dark and switch language. System is the default and follows device changes automatically. Manual choices are saved on the device. Appearance changes keep your selected route, boarding stop, and map position. The free vector map uses a dark style at night; detailed OpenStreetMap tiles keep their original colors. `VITE_MAP_DARK_STYLE_URL` can override the dark vector style.
 
 The app uses a turquoise and navy brand palette, with off-white and pale aqua surfaces in light mode and navy surfaces with light text in dark mode. The favicon and installed-app icons use the same turquoise bus mark.
+
+### Supabase shuttle backend
+
+Official LAX feed requests now run in Supabase Edge Functions, with a shared 15-second live-data cache, outage fallback, validation, request limits, passwordless sign-in, and account deletion. Cloudflare keeps the same-origin API and a short edge cache. See [backend operation and remaining SMTP setup](docs/SUPABASE-BACKEND.md).

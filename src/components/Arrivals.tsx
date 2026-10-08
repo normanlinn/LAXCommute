@@ -36,7 +36,13 @@ export default function Arrivals({
     const start = () => {
       clearInterval(timer);
       update();
-      if (!document.hidden && !error && !data?.cached && snapshotFresh(data?.arrivalFetchedAt))
+      if (
+        !document.hidden &&
+        !error &&
+        !data?.cached &&
+        !data?.arrivalSourceUnavailable &&
+        snapshotFresh(data?.arrivalFetchedAt)
+      )
         timer = setInterval(update, 1_000);
     };
     start();
@@ -45,7 +51,7 @@ export default function Arrivals({
       clearInterval(timer);
       document.removeEventListener('visibilitychange', start);
     };
-  }, [data?.arrivalFetchedAt, data?.cached, error]);
+  }, [data?.arrivalFetchedAt, data?.cached, data?.arrivalSourceUnavailable, error]);
   useEffect(() => {
     if (!data?.arrivalFetchedAt) return;
     let timer: ReturnType<typeof setInterval> | undefined;
@@ -61,7 +67,8 @@ export default function Arrivals({
       document.removeEventListener('visibilitychange', update);
     };
   }, [data?.arrivalFetchedAt]);
-  const fresh = !data?.cached && snapshotFresh(data?.arrivalFetchedAt, now);
+  const fresh =
+    !data?.cached && !data?.arrivalSourceUnavailable && snapshotFresh(data?.arrivalFetchedAt, now);
   const arrivals = fresh && !error ? availableArrivals(data?.predictions || [], now) : [];
   const advice =
     fresh && direction === 'parking'
@@ -94,7 +101,7 @@ export default function Arrivals({
           <BusFront size={15} /> {stop.name}
         </p>
       )}
-      {error && (
+      {(error || data?.sourceUnavailable) && (
         <div className="alert alert-soft alert-warning notice" role="status">
           {t('Shuttle source unavailable. Try again or check the official LAX tracker.')}{' '}
           <a href="https://shuttles.flylax.com/employeeparking" target="_blank" rel="noreferrer">
@@ -133,7 +140,7 @@ export default function Arrivals({
           <span className="sr-only">{t('Checking the shuttle feed…')}</span>
         </div>
       )}
-      {!loading && !error && stop && arrivals.length === 0 && (
+      {!loading && !error && !data?.arrivalSourceUnavailable && stop && arrivals.length === 0 && (
         <div className="empty-arrivals">
           <Clock3 size={24} />
           <p>
@@ -148,32 +155,45 @@ export default function Arrivals({
           <span>{t('We’ll keep checking while the app is open.')}</span>
         </div>
       )}
-      {arrivals.slice(0, 4).map((arrival, index) => {
-        const minutes = Math.max(0, Math.ceil((arrival.due - now) / 60_000));
-        return (
-          <div key={arrival.id} className={`arrival-row ${index === 0 ? 'arrival-next' : ''}`}>
-            <div className="bus-symbol">
-              <BusFront size={22} />
-            </div>
-            <div className="arrival-description">
-              <strong>{index === 0 ? t('Next shuttle') : t('Following shuttle')}</strong>
-              <div className="arrival-meta">
-                <span className={`arrival-badge ${arrival.scheduled ? 'is-scheduled' : 'is-live'}`}>
-                  {!arrival.scheduled && <i aria-hidden="true" />}
-                  {arrival.scheduled ? t('Scheduled') : t('Live')}
-                </span>
-                <span className="arrival-bus-name">
-                  {arrival.busName ? t('Bus {name}', { name: arrival.busName }) : ''}
-                </span>
+      {(data?.arrivalSourceUnavailable ? data.predictions || [] : arrivals)
+        .slice(0, 4)
+        .map((arrival, index) => {
+          const reportedAt = data?.arrivalSourceUnavailable
+            ? Date.parse(data.arrivalFetchedAt || '')
+            : now;
+          const minutes = Math.max(0, Math.ceil((arrival.due - reportedAt) / 60_000));
+          return (
+            <div key={arrival.id} className={`arrival-row ${index === 0 ? 'arrival-next' : ''}`}>
+              <div className="bus-symbol">
+                <BusFront size={22} />
+              </div>
+              <div className="arrival-description">
+                <strong>{index === 0 ? t('Next shuttle') : t('Following shuttle')}</strong>
+                <div className="arrival-meta">
+                  <span
+                    className={`arrival-badge ${arrival.scheduled ? 'is-scheduled' : 'is-live'}`}
+                  >
+                    {!arrival.scheduled && !data?.arrivalSourceUnavailable && (
+                      <i aria-hidden="true" />
+                    )}
+                    {data?.arrivalSourceUnavailable
+                      ? t('Last reported')
+                      : arrival.scheduled
+                        ? t('Scheduled')
+                        : t('Live')}
+                  </span>
+                  <span className="arrival-bus-name">
+                    {arrival.busName ? t('Bus {name}', { name: arrival.busName }) : ''}
+                  </span>
+                </div>
+              </div>
+              <div className="arrival-time">
+                <strong>{minutes < 1 ? '<1' : minutes}</strong>
+                <span>{t('min')}</span>
               </div>
             </div>
-            <div className="arrival-time">
-              <strong>{minutes < 1 ? '<1' : minutes}</strong>
-              <span>{t('min')}</span>
-            </div>
-          </div>
-        );
-      })}
+          );
+        })}
       {advice && (
         <div className="leave-card">
           <Footprints size={21} />

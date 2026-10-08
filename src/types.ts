@@ -65,6 +65,9 @@ export interface Prediction {
   vehicleUpdated: number;
 }
 export interface LiveData {
+  sourceUnavailable?: boolean;
+  arrivalSourceUnavailable?: boolean;
+  vehicleSourceUnavailable?: boolean;
   cached?: boolean;
   routeID: number;
   stopID: number;

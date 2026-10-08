@@ -249,6 +249,7 @@ function FreeMap({
       );
       const approaching =
         !liveData?.cached &&
+        !liveData?.sourceUnavailable &&
         snapshotFresh(liveData?.arrivalFetchedAt) &&
         liveData?.predictions?.some(
           (prediction) =>

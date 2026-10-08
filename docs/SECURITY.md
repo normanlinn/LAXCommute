@@ -47,3 +47,9 @@ Map attribution HTML comes from trusted build configuration, not from users or t
 - New regression tests exercise malicious attribution, security headers and private/cross-origin cache exclusions.
 
 These protections take effect for the frontend and Worker after deployment of this commit. Public-header checks alone do not verify auth inbox delivery or prove the app is vulnerability-free. Lighthouse results are a separate snapshot of the deployed site, which may predate these code changes.
+
+## Supabase backend update — October 8, 2026
+
+The feed now runs in Supabase Edge Functions with shared cache leases, stale-data limits, schema validation, one retry, strict origin checks, and backend-only cache/counter access. Cloudflare adds per-IP request limits. Supabase sign-in and verification limits were reduced to 10 attempts per five minutes per IP; recent-session password changes and 30-minute email links are enabled. Passwordless email sign-in and user-confirmed account deletion were added. See [backend controls and limitations](SUPABASE-BACKEND.md).
+
+The current Security Advisor reports only leaked-password protection being disabled, which requires a Pro plan. No upgrade was made. Public auth email delivery still requires custom SMTP configuration.

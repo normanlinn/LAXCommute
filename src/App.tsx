@@ -328,7 +328,7 @@ export default function App() {
               <div className="map-footer">
                 <span>
                   <span className="dot" />
-                  {live.data?.cached
+                  {live.data?.cached || live.data?.sourceUnavailable
                     ? t('Showing the last saved update')
                     : online
                       ? t('Live data from the LAX tracker')

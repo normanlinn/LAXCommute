@@ -9,6 +9,7 @@ const auth = vi.hoisted(() => ({
   getSession: vi.fn(),
   onAuthStateChange: vi.fn(),
   signInWithPassword: vi.fn(),
+  signInWithOtp: vi.fn(),
   signUp: vi.fn(),
   resetPasswordForEmail: vi.fn(),
   resend: vi.fn(),
@@ -26,6 +27,7 @@ beforeEach(() => {
   auth.getSession.mockResolvedValue({ data: { session: null }, error: null });
   auth.onAuthStateChange.mockReturnValue({ data: { subscription: { unsubscribe: vi.fn() } } });
   auth.signInWithPassword.mockResolvedValue({ error: null });
+  auth.signInWithOtp.mockResolvedValue({ error: null });
   auth.signUp.mockResolvedValue({ data: { session: null }, error: null });
   auth.resend.mockResolvedValue({ error: null });
   auth.resetPasswordForEmail.mockResolvedValue({ error: null });
@@ -188,4 +190,35 @@ describe('account flow', () => {
     expect(auth.signInWithPassword).not.toHaveBeenCalled();
     online.mockRestore();
   });
+});
+
+it('requests a passwordless sign-in link without sending a password or commute metadata', async () => {
+  openAccount();
+  await screen.findByRole('heading', { name: 'Welcome back.' });
+  fireEvent.change(screen.getByLabelText('Email address'), { target: { value: user.email } });
+  fireEvent.click(screen.getByRole('button', { name: 'Email me a sign-in link' }));
+  await screen.findByRole('heading', { name: 'Confirm your email.' });
+  expect(auth.signInWithOtp).toHaveBeenCalledWith({
+    email: user.email,
+    options: { emailRedirectTo: `${location.origin}/auth/confirm`, shouldCreateUser: false },
+  });
+  expect(auth.signInWithPassword).not.toHaveBeenCalled();
+});
+it('requires confirmation before deleting an account', async () => {
+  auth.getSession.mockResolvedValue({
+    data: { session: { user, access_token: 'user-token' } },
+    error: null,
+  });
+  const fetcher = vi.fn();
+  vi.stubGlobal('fetch', fetcher);
+  openAccount();
+  await screen.findByRole('heading', { name: 'You’re ready to go.' });
+  fireEvent.click(screen.getByRole('button', { name: 'Delete my account' }));
+  expect(
+    screen.getByText('Permanently delete your account and synced commute? This cannot be undone.'),
+  ).toBeTruthy();
+  expect(fetcher).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+  expect(screen.queryByRole('button', { name: 'Permanently delete my account' })).toBeNull();
+  vi.unstubAllGlobals();
 });

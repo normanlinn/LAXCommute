@@ -62,6 +62,11 @@ export default function AppMenu() {
             <h3>{t('Privacy')}</h3>
             <p>
               {t(
+                'We use hashed network identifiers to limit abusive requests. You can delete your account from Account.',
+              )}
+            </p>
+            <p>
+              {t(
                 'Guest commute, theme and language settings stay in your browser. If you create an account, Supabase stores your email, password hash and saved commute. Location is used on your device to find nearby stops and is not saved to your account. Map providers receive requests for the area you view. Signing out does not remove settings stored on this device.',
               )}
             </p>

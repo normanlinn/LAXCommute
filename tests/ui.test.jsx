@@ -207,7 +207,7 @@ describe('commute UI', () => {
       password: 'example-password',
     });
   });
-  it('creates an account with the current commute and the current site confirmation URL', async () => {
+  it('creates an account without duplicating commute data in auth metadata', async () => {
     const profile = { lot: 'South', terminal: 'Terminal B (TBIT)' };
     const { container } = render(<AccountPanel profile={profile} />);
     fireEvent.click(screen.getByRole('button', { name: 'Create account' }));
@@ -222,7 +222,7 @@ describe('commute UI', () => {
     expect(auth.signUp).toHaveBeenCalledWith({
       email: 'employee@example.com',
       password: 'example-password',
-      options: { emailRedirectTo: `${location.origin}/auth/confirm`, data: { commute: profile } },
+      options: { emailRedirectTo: `${location.origin}/auth/confirm` },
     });
   });
 });

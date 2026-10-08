@@ -10,7 +10,8 @@
     "noEmit": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "types": ["vite/client", "vite-plugin-pwa/client", "node"]
+    "types": ["vite/client", "vite-plugin-pwa/client", "node"],
+    "allowImportingTsExtensions": true
   },
   "include": ["src", "worker"]
 }

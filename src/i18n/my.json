@@ -274,5 +274,12 @@
   "This app uses Cloudflare Web Analytics to measure visits without analytics cookies.": "ဤအက်ပ်သည် analytics cookies မသုံးဘဲ ဝင်ရောက်အသုံးပြုမှုကို Cloudflare Web Analytics ဖြင့် တိုင်းတာသည်။",
   "Live": "တိုက်ရိုက်",
   "Scheduled": "အချိန်ဇယား",
-  "Updated {seconds}s ago": "လွန်ခဲ့သော {seconds} စက္ကန့်က နောက်ဆုံးရရှိသည်"
+  "Updated {seconds}s ago": "လွန်ခဲ့သော {seconds} စက္ကန့်က နောက်ဆုံးရရှိသည်",
+  "Last reported": "နောက်ဆုံးဖော်ပြချက်",
+  "Email me a sign-in link": "အကောင့်ဝင်ရန် လင့်ခ်ကို အီးမေးလ်ပို့ပါ",
+  "Delete my account": "ကျွန်ုပ်၏အကောင့်ကို ဖျက်ရန်",
+  "Permanently delete my account": "ကျွန်ုပ်၏အကောင့်ကို အပြီးဖျက်ရန်",
+  "Permanently delete your account and synced commute? This cannot be undone.": "သင့်အကောင့်နှင့် သိမ်းဆည်းထားသော ခရီးစဉ်ကို အပြီးဖျက်မလား။ ပြန်ယူ၍ မရနိုင်ပါ။",
+  "Your account and saved commute have been deleted.": "သင့်အကောင့်နှင့် သိမ်းဆည်းထားသော ခရီးစဉ်ကို ဖျက်ပြီးပါပြီ။",
+  "We use hashed network identifiers to limit abusive requests. You can delete your account from Account.": "မသင့်လျော်သော တောင်းဆိုမှုများကို ကန့်သတ်ရန် hash ပြုလုပ်ထားသော ကွန်ရက်အမှတ်အသားများကို အသုံးပြုပါသည်။ အကောင့်စာမျက်နှာမှ သင့်အကောင့်ကို ဖျက်နိုင်ပါသည်။"
 }

@@ -28,6 +28,8 @@ export default function AccountPanel({
   const [error, setError] = useState('');
   const [code, setCode] = useState('');
   const [cooldown, setCooldown] = useState(0);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [linkAccount, setLinkAccount] = useState<boolean | null>(null);
   const needsCode = mode === 'confirm' || mode === 'reset-code';
   useEffect(() => {
     if (!cooldown) return;
@@ -36,6 +38,7 @@ export default function AccountPanel({
   }, [cooldown]);
   function changeMode(next: typeof mode) {
     setMode(next);
+    setLinkAccount(null);
     setError('');
     setMessage('');
     setPassword('');
@@ -81,7 +84,7 @@ export default function AccountPanel({
         result = await client.auth.signUp({
           email: email.trim(),
           password,
-          options: { emailRedirectTo: authReturnUrl('confirm'), data: { commute: profile } },
+          options: { emailRedirectTo: authReturnUrl('confirm') },
         });
         if (!result.error) {
           setPassword('');
@@ -144,21 +147,91 @@ export default function AccountPanel({
     try {
       const client = await getAuthClient();
       const result =
-        mode === 'reset-code'
-          ? await client.auth.resetPasswordForEmail(email.trim(), {
-              redirectTo: authReturnUrl('recovery'),
-            })
-          : await client.auth.resend({
-              type: 'signup',
+        linkAccount !== null
+          ? await client.auth.signInWithOtp({
               email: email.trim(),
-              options: { emailRedirectTo: authReturnUrl('confirm') },
-            });
+              options: { emailRedirectTo: authReturnUrl('confirm'), shouldCreateUser: linkAccount },
+            })
+          : mode === 'reset-code'
+            ? await client.auth.resetPasswordForEmail(email.trim(), {
+                redirectTo: authReturnUrl('recovery'),
+              })
+            : await client.auth.resend({
+                type: 'signup',
+                email: email.trim(),
+                options: { emailRedirectTo: authReturnUrl('confirm') },
+              });
       if (result.error) throw result.error;
       setCooldown(60);
       setCode('');
       setMessage(
         'If your account needs this email, a new one has been sent. Use the most recent link or code.',
       );
+    } catch (reason) {
+      setError(authErrorMessage(reason));
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function emailSignIn() {
+    if (busy || cooldown) return;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      setError('Enter your email address first.');
+      return;
+    }
+    setBusy(true);
+    setError('');
+    setMessage('');
+    try {
+      const client = await getAuthClient();
+      const { error: reason } = await client.auth.signInWithOtp({
+        email: email.trim(),
+        options: { emailRedirectTo: authReturnUrl('confirm'), shouldCreateUser: mode === 'signup' },
+      });
+      if (reason) throw reason;
+      setPassword('');
+      setCooldown(60);
+      setLinkAccount(mode === 'signup');
+      setMode('confirm');
+      setMessage(
+        'Check your email for a secure sign-in link. Open it in this browser, or enter the email code.',
+      );
+    } catch (reason) {
+      setError(authErrorMessage(reason));
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function deleteAccount() {
+    if (busy || !user) return;
+    setBusy(true);
+    setError('');
+    try {
+      const client = await getAuthClient();
+      const {
+        data: { session },
+      } = await client.auth.getSession();
+      if (!session) throw new Error('Sign in again to delete your account.');
+      const response = await fetch('/api/account', {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        cache: 'no-store',
+        signal: AbortSignal.timeout(20000),
+      });
+      const result = await response.json();
+      if (!response.ok || !result.deleted)
+        throw new Error(result.error || 'Could not delete your account.');
+      for (const storage of [localStorage, sessionStorage]) {
+        try {
+          storage.removeItem(`laxcommute:profile:${user.id}`);
+          storage.removeItem(`laxcommute:session-profile:${user.id}`);
+        } catch {
+          /* Still sign out if device storage is unavailable. */
+        }
+      }
+      await client.auth.signOut({ scope: 'local' });
+      setConfirmDelete(false);
+      setMessage('Your account and saved commute have been deleted.');
     } catch (reason) {
       setError(authErrorMessage(reason));
     } finally {
@@ -217,6 +290,25 @@ export default function AccountPanel({
           <LogOut size={16} />
           {busy ? t('Signing out…') : t('Sign out')}
         </Button>
+        {confirmDelete ? (
+          <div className="notice" role="group" aria-label={t('Delete account')}>
+            <p>{t('Permanently delete your account and synced commute? This cannot be undone.')}</p>
+            <Button
+              className="button button-light full-width"
+              disabled={busy}
+              onClick={deleteAccount}
+            >
+              {t('Permanently delete my account')}
+            </Button>
+            <Button className="text-button" disabled={busy} onClick={() => setConfirmDelete(false)}>
+              {t('Cancel')}
+            </Button>
+          </div>
+        ) : (
+          <Button className="text-button" disabled={busy} onClick={() => setConfirmDelete(true)}>
+            {t('Delete my account')}
+          </Button>
+        )}
         {(error || authError) && (
           <p className="alert alert-soft alert-warning notice" role="alert">
             {t(error || authError)}
@@ -275,6 +367,15 @@ export default function AccountPanel({
             {t('Create account')}{' '}
           </Button>
         </div>
+      )}
+      {!recovering && (mode === 'signin' || mode === 'signup') && (
+        <Button
+          className="button button-light full-width"
+          disabled={busy || cooldown > 0}
+          onClick={emailSignIn}
+        >
+          {t('Email me a sign-in link')}
+        </Button>
       )}
       <form onSubmit={submit}>
         {!recovering && (
