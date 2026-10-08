@@ -82,7 +82,23 @@ export default function App() {
     }
   }
   const [lot, setLot] = useState(profile.lot);
-  const [direction, setDirection] = useState<Direction>('work');
+  const [direction, setDirection] = useState<Direction>(() => {
+    try {
+      return localStorage.getItem('laxcommute:last-direction') === 'parking' ? 'parking' : 'work';
+    } catch {
+      return 'work';
+    }
+  });
+  useEffect(() => {
+    try {
+      localStorage.setItem('laxcommute:last-direction', direction);
+    } catch {
+      /* Navigation still works without storage. */
+    }
+  }, [direction]);
+  const [mapExpanded, setMapExpanded] = useState(
+    () => !window.matchMedia('(max-width: 760px)').matches,
+  );
   const [override, setOverride] = useState<{
     routeID: number;
     direction: Direction;
@@ -280,31 +296,43 @@ export default function App() {
                   </div>
                 </div>
               </div>
-              <Suspense fallback={<MapLoading />}>
-                <ShuttleMap
-                  routeLoading={routeQuery.isPending && routeQuery.fetchStatus === 'fetching'}
-                  route={route}
-                  liveData={live.data}
-                  stops={mapStops}
-                  paths={paths}
-                  vehicles={vehicles}
-                  selectedStop={selectedStop}
-                  userLocation={userLocation}
-                  onSelectStop={chooseStop}
-                  focusRequest={focusRequest}
-                />
-              </Suspense>
-              <div className="map-controls">
-                <Button onClick={() => focus('route')}>
-                  <Route size={16} /> {t('Whole route')}{' '}
-                </Button>
-                <Button onClick={() => focus('stop')} disabled={!selectedStop}>
-                  <MapPin size={16} /> {t('My stop')}{' '}
-                </Button>
-                <Button onClick={locate} disabled={locating || options.length === 0}>
-                  <LocateFixed size={16} />
-                  {locating ? t('Locating…') : t('Near me')}
-                </Button>
+              <Button
+                className="map-toggle"
+                aria-expanded={mapExpanded}
+                aria-controls="shuttle-map-panel"
+                onClick={() => setMapExpanded((value) => !value)}
+              >
+                <Map size={18} /> {mapExpanded ? t('Hide map') : t('Show map')}
+              </Button>
+              <div id="shuttle-map-panel" hidden={!mapExpanded}>
+                {mapExpanded && (
+                  <Suspense fallback={<MapLoading />}>
+                    <ShuttleMap
+                      routeLoading={routeQuery.isPending && routeQuery.fetchStatus === 'fetching'}
+                      route={route}
+                      liveData={live.data}
+                      stops={mapStops}
+                      paths={paths}
+                      vehicles={vehicles}
+                      selectedStop={selectedStop}
+                      userLocation={userLocation}
+                      onSelectStop={chooseStop}
+                      focusRequest={focusRequest}
+                    />
+                  </Suspense>
+                )}
+                <div className="map-controls">
+                  <Button onClick={() => focus('route')}>
+                    <Route size={16} /> {t('Whole route')}{' '}
+                  </Button>
+                  <Button onClick={() => focus('stop')} disabled={!selectedStop}>
+                    <MapPin size={16} /> {t('My stop')}{' '}
+                  </Button>
+                  <Button onClick={locate} disabled={locating || options.length === 0}>
+                    <LocateFixed size={16} />
+                    {locating ? t('Locating…') : t('Near me')}
+                  </Button>
+                </div>
               </div>
               {routeQuery.data?.warning && (
                 <p className="map-warning">{t(routeQuery.data.warning)}</p>

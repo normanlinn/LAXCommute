@@ -2825,3 +2825,36 @@ select,
     font-size: 21px;
   }
 }
+
+/* Keep departures within reach on small screens; mount the heavy map on demand. */
+.map-toggle {
+  margin-bottom: 12px;
+  min-height: 44px;
+}
+#shuttle-map-panel[hidden] {
+  display: none;
+}
+.updated.freshness-fresh {
+  color: var(--color-primary);
+}
+.updated.freshness-aging,
+.updated.freshness-stale {
+  font-weight: 650;
+}
+.last-known-notice {
+  border-left: 3px solid var(--color-warning);
+}
+.arrival-time span {
+  max-width: 110px;
+  text-align: right;
+}
+@media (max-width: 760px) {
+  .trip-card {
+    order: -1;
+  }
+  .direction-switch .tab,
+  .stop-actions button,
+  .route-options button {
+    min-height: 44px;
+  }
+}

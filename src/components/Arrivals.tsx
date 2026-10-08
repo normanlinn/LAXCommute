@@ -69,6 +69,11 @@ export default function Arrivals({
   }, [data?.arrivalFetchedAt]);
   const fresh =
     !data?.cached && !data?.arrivalSourceUnavailable && snapshotFresh(data?.arrivalFetchedAt, now);
+  const lastKnown = Boolean(data?.cached || data?.arrivalSourceUnavailable || error);
+  const reportedPredictions = (data?.predictions || []).filter(
+    (arrival) =>
+      Number.isFinite(arrival.due) && arrival.due >= Date.parse(data?.arrivalFetchedAt || ''),
+  );
   const arrivals = fresh && !error ? availableArrivals(data?.predictions || [], now) : [];
   const advice =
     fresh && direction === 'parking'
@@ -76,7 +81,7 @@ export default function Arrivals({
       : null;
   const warnings = data?.warnings || [];
   const ageSeconds = data?.arrivalFetchedAt
-    ? Math.max(0, Math.floor((now - Date.parse(data.arrivalFetchedAt)) / 1_000))
+    ? Math.max(0, Math.floor((now - Date.parse(data?.arrivalFetchedAt)) / 1_000))
     : 0;
   return (
     <section className="arrivals" aria-label={t('Upcoming departures')}>
@@ -140,60 +145,60 @@ export default function Arrivals({
           <span className="sr-only">{t('Checking the shuttle feed…')}</span>
         </div>
       )}
-      {!loading && !error && !data?.arrivalSourceUnavailable && stop && arrivals.length === 0 && (
-        <div className="empty-arrivals">
-          <Clock3 size={24} />
-          <p>
-            {!data
-              ? t('Waiting for live updates.')
-              : data.cached
-                ? t('Saved data only. Reconnect to check the next shuttle.')
-                : !fresh && data.arrivalFetchedAt
-                  ? t('These times have expired. Checking for a fresh update.')
-                  : t('No upcoming departures reported at this stop.')}
-          </p>
-          <span>{t('We’ll keep checking while the app is open.')}</span>
-        </div>
+      {lastKnown && stop && reportedPredictions.length > 0 && (
+        <p className="notice last-known-notice" role="status">
+          {t('Last known times · not current arrivals. Check the LAX tracker before leaving.')}
+        </p>
       )}
-      {(data?.arrivalSourceUnavailable ? data.predictions || [] : arrivals)
-        .slice(0, 4)
-        .map((arrival, index) => {
-          const reportedAt = data?.arrivalSourceUnavailable
-            ? Date.parse(data.arrivalFetchedAt || '')
-            : now;
-          const minutes = Math.max(0, Math.ceil((arrival.due - reportedAt) / 60_000));
-          return (
-            <div key={arrival.id} className={`arrival-row ${index === 0 ? 'arrival-next' : ''}`}>
-              <div className="bus-symbol">
-                <BusFront size={22} />
-              </div>
-              <div className="arrival-description">
-                <strong>{index === 0 ? t('Next shuttle') : t('Following shuttle')}</strong>
-                <div className="arrival-meta">
-                  <span
-                    className={`arrival-badge ${arrival.scheduled ? 'is-scheduled' : 'is-live'}`}
-                  >
-                    {!arrival.scheduled && !data?.arrivalSourceUnavailable && (
-                      <i aria-hidden="true" />
-                    )}
-                    {data?.arrivalSourceUnavailable
-                      ? t('Last reported')
-                      : arrival.scheduled
-                        ? t('Scheduled')
-                        : t('Live')}
-                  </span>
-                  <span className="arrival-bus-name">
-                    {arrival.busName ? t('Bus {name}', { name: arrival.busName }) : ''}
-                  </span>
-                </div>
-              </div>
-              <div className="arrival-time">
-                <strong>{minutes < 1 ? '<1' : minutes}</strong>
-                <span>{t('min')}</span>
+      {!loading &&
+        !error &&
+        !data?.arrivalSourceUnavailable &&
+        stop &&
+        arrivals.length === 0 &&
+        (!lastKnown || reportedPredictions.length === 0) && (
+          <div className="empty-arrivals">
+            <Clock3 size={24} />
+            <p>
+              {!data
+                ? t('Waiting for live updates.')
+                : data.cached
+                  ? t('Saved data only. Reconnect to check the next shuttle.')
+                  : !fresh && data.arrivalFetchedAt
+                    ? t('These times have expired. Checking for a fresh update.')
+                    : t('No upcoming departures reported at this stop.')}
+            </p>
+            <span>{t('We’ll keep checking while the app is open.')}</span>
+          </div>
+        )}
+      {(lastKnown ? reportedPredictions : arrivals).slice(0, 4).map((arrival, index) => {
+        const reportedAt = lastKnown ? Date.parse(data?.arrivalFetchedAt || '') : now;
+        const minutes = Math.max(0, Math.ceil((arrival.due - reportedAt) / 60_000));
+        return (
+          <div key={arrival.id} className={`arrival-row ${index === 0 ? 'arrival-next' : ''}`}>
+            <div className="bus-symbol">
+              <BusFront size={22} />
+            </div>
+            <div className="arrival-description">
+              <strong>{index === 0 ? t('Next shuttle') : t('Following shuttle')}</strong>
+              <div className="arrival-meta">
+                <span
+                  className={`arrival-badge ${lastKnown || arrival.scheduled ? 'is-scheduled' : 'is-live'}`}
+                >
+                  {!arrival.scheduled && !lastKnown && <i aria-hidden="true" />}
+                  {lastKnown ? t('Last reported') : arrival.scheduled ? t('Scheduled') : t('Live')}
+                </span>
+                <span className="arrival-bus-name">
+                  {arrival.busName ? t('Bus {name}', { name: arrival.busName }) : ''}
+                </span>
               </div>
             </div>
-          );
-        })}
+            <div className="arrival-time">
+              <strong>{minutes < 1 ? '<1' : minutes}</strong>
+              <span>{lastKnown ? t('min at last update') : t('min')}</span>
+            </div>
+          </div>
+        );
+      })}
       {advice && (
         <div className="leave-card">
           <Footprints size={21} />
@@ -216,7 +221,9 @@ export default function Arrivals({
         </div>
       )}
       {data?.arrivalFetchedAt && (
-        <p className="updated">
+        <p
+          className={`updated freshness-${fresh ? (ageSeconds < 60 ? 'fresh' : 'aging') : 'stale'}`}
+        >
           {' '}
           {ageSeconds < 60 && fresh
             ? t('Updated {seconds}s ago', { seconds: ageSeconds })

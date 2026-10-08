@@ -60,10 +60,14 @@ it('pauses in the background and checks expiry immediately when visible again', 
 
 it('never shows cached predictions as live even when their timestamp is recent', () => {
   render(<Arrivals {...props} data={{ ...freshData(), cached: true }} />);
-  expect(screen.queryByText('Next shuttle')).toBeNull();
-  expect(screen.getByText('Saved data only. Reconnect to check the next shuttle.')).toBeTruthy();
+  expect(screen.getByText('Next shuttle')).toBeTruthy();
+  expect(screen.getByText('Last reported')).toBeTruthy();
+  expect(screen.queryByText('Live')).toBeNull();
+  expect(screen.getByText('min at last update')).toBeTruthy();
+  expect(screen.getByText('2')).toBeTruthy();
   act(() => vi.advanceTimersByTime(120_000));
   expect(screen.getByText(/Last updated 2 min ago/)).toBeTruthy();
+  expect(screen.getByText('2')).toBeTruthy();
 });
 
 it('labels scheduled predictions accurately and reports sub-minute update age', () => {
