@@ -65,3 +65,11 @@ it('never shows cached predictions as live even when their timestamp is recent',
   act(() => vi.advanceTimersByTime(120_000));
   expect(screen.getByText(/Last updated 2 min ago/)).toBeTruthy();
 });
+
+it('labels scheduled predictions accurately and reports sub-minute update age', () => {
+  render(<Arrivals {...props} data={freshData()} />);
+  expect(screen.getByText('Scheduled')).toBeTruthy();
+  expect(screen.queryByText('Live')).toBeNull();
+  act(() => vi.advanceTimersByTime(30_000));
+  expect(screen.getByText(/Updated 30s ago/)).toBeTruthy();
+});

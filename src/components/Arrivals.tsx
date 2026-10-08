@@ -68,6 +68,9 @@ export default function Arrivals({
       ? departureAdvice(arrivals, profile.walkingMinutes, profile.bufferMinutes, now)
       : null;
   const warnings = data?.warnings || [];
+  const ageSeconds = data?.arrivalFetchedAt
+    ? Math.max(0, Math.floor((now - Date.parse(data.arrivalFetchedAt)) / 1_000))
+    : 0;
   return (
     <section className="arrivals" aria-label={t('Upcoming departures')}>
       <div className="section-heading">
@@ -111,8 +114,23 @@ export default function Arrivals({
       )}
       {loading && (
         <div className="arrival-loading" role="status">
-          <div className="skeleton" />
-          <span>{t('Checking the shuttle feed…')}</span>
+          <div className="arrival-skeleton-row" aria-hidden="true">
+            <div className="skeleton skeleton-icon" />
+            <div className="skeleton-copy">
+              <div className="skeleton skeleton-label" />
+              <div className="skeleton skeleton-hint" />
+            </div>
+            <div className="skeleton skeleton-time" />
+          </div>
+          <div className="arrival-skeleton-row" aria-hidden="true">
+            <div className="skeleton skeleton-icon" />
+            <div className="skeleton-copy">
+              <div className="skeleton skeleton-label" />
+              <div className="skeleton skeleton-hint" />
+            </div>
+            <div className="skeleton skeleton-time" />
+          </div>
+          <span className="sr-only">{t('Checking the shuttle feed…')}</span>
         </div>
       )}
       {!loading && !error && stop && arrivals.length === 0 && (
@@ -139,10 +157,15 @@ export default function Arrivals({
             </div>
             <div className="arrival-description">
               <strong>{index === 0 ? t('Next shuttle') : t('Following shuttle')}</strong>
-              <span>
-                {arrival.busName ? t('Bus {name} · ', { name: arrival.busName }) : ''}
-                {arrival.scheduled ? t('Scheduled time') : t('Live prediction')}
-              </span>
+              <div className="arrival-meta">
+                <span className={`arrival-badge ${arrival.scheduled ? 'is-scheduled' : 'is-live'}`}>
+                  {!arrival.scheduled && <i aria-hidden="true" />}
+                  {arrival.scheduled ? t('Scheduled') : t('Live')}
+                </span>
+                <span className="arrival-bus-name">
+                  {arrival.busName ? t('Bus {name}', { name: arrival.busName }) : ''}
+                </span>
+              </div>
             </div>
             <div className="arrival-time">
               <strong>{minutes < 1 ? '<1' : minutes}</strong>
@@ -175,9 +198,9 @@ export default function Arrivals({
       {data?.arrivalFetchedAt && (
         <p className="updated">
           {' '}
-          {t('Last updated {minutes} min ago', {
-            minutes: Math.max(0, Math.floor((now - Date.parse(data.arrivalFetchedAt)) / 60_000)),
-          })}{' '}
+          {ageSeconds < 60 && fresh
+            ? t('Updated {seconds}s ago', { seconds: ageSeconds })
+            : t('Last updated {minutes} min ago', { minutes: Math.floor(ageSeconds / 60) })}{' '}
           ·{' '}
           {new Date(data.arrivalFetchedAt).toLocaleTimeString(
             language === 'my' ? 'my-MM-u-nu-latn' : 'en-US',

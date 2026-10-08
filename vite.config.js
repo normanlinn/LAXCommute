@@ -28,11 +28,11 @@ export default defineConfig(({ mode }) => ({
     VitePWA({
       registerType: 'prompt',
       includeAssets: [
-        'icons/apple-touch-v2.png',
-        'icons/commute-v2-192.png',
-        'icons/commute-v2-512.png',
-        'icons/favicon-v2.png',
-        'icons/maskable-512.png',
+        'icons/apple-touch-v3.png',
+        'icons/commute-v3-192.png',
+        'icons/commute-v3-512.png',
+        'icons/favicon-v3.png',
+        'icons/maskable-v3-512.png',
         'social-preview.png',
       ],
       manifest: {
@@ -46,10 +46,10 @@ export default defineConfig(({ mode }) => ({
         start_url: '/',
         scope: '/',
         icons: [
-          { src: '/icons/commute-v2-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
-          { src: '/icons/commute-v2-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+          { src: '/icons/commute-v3-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: '/icons/commute-v3-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
           {
-            src: '/icons/maskable-512.png',
+            src: '/icons/maskable-v3-512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable',

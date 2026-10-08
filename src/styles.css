@@ -146,7 +146,7 @@ h1,
 h2,
 h3,
 .brand {
-  font-family: 'Pally', 'Walone', system-ui, sans-serif;
+  font-family: 'Inter', 'Walone', system-ui, sans-serif;
 }
 .shuttle-map.leaflet-container,
 .shuttle-map.leaflet-container .leaflet-control-attribution {
@@ -2604,4 +2604,224 @@ select,
 }
 .shuttle-guide-disclosure[open] > summary svg {
   transform: rotate(180deg);
+}
+
+/* Arrival-first visual refresh. Burmese keeps its dedicated readable typeface. */
+.trip-card,
+.page-card {
+  border-radius: 24px;
+  box-shadow: 0 8px 30px rgb(7 25 35 / 5%);
+}
+.trip-card {
+  padding: 28px;
+}
+[data-theme='lax-dark'] .trip-card,
+[data-theme='lax-dark'] .page-card {
+  box-shadow: 0 10px 32px rgb(0 0 0 / 16%);
+}
+.map-topbar h1 {
+  font-weight: 700;
+  letter-spacing: -0.035em;
+}
+.brand strong {
+  font-weight: 750;
+  letter-spacing: -0.045em;
+}
+.arrivals .section-heading {
+  margin-bottom: 18px;
+}
+.arrivals h3 {
+  font-size: 22px;
+  letter-spacing: -0.035em;
+  font-weight: 700;
+}
+.arrival-row {
+  gap: 14px;
+  padding: 20px 0;
+}
+.arrival-row.arrival-next {
+  padding: 22px 16px;
+  border-radius: 18px;
+  margin: 16px 0 4px;
+  background: color-mix(in srgb, var(--color-primary) 8%, var(--color-base-100));
+  border-color: color-mix(in srgb, var(--color-primary) 22%, var(--color-base-100));
+}
+.arrival-time strong {
+  font-size: 36px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 750;
+  letter-spacing: -0.055em;
+}
+.arrival-next .arrival-time strong {
+  font-size: 50px;
+}
+.arrival-time span {
+  font-size: 12px;
+}
+.arrival-description strong {
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.45;
+}
+.arrival-meta {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.arrival-description .arrival-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+  border-radius: 20px;
+  padding: 4px 8px;
+  font-size: 10px;
+  font-weight: 650;
+  line-height: 1.2;
+  color: var(--color-base-content);
+  background: var(--control-tray);
+}
+.arrival-description .arrival-badge.is-live {
+  color: #075746;
+  background: #d9f4e9;
+}
+[data-theme='lax-dark'] .arrival-description .arrival-badge.is-live {
+  color: #a3f2d8;
+  background: #173e36;
+}
+.arrival-badge i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.arrival-description .arrival-bus-name {
+  margin: 0;
+  font-size: 11px;
+}
+.updated {
+  font-size: 11px;
+  line-height: 1.7;
+  text-align: left;
+  padding-top: 18px;
+}
+.arrival-loading {
+  padding: 12px 0;
+}
+.arrival-skeleton-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 0;
+}
+.arrival-skeleton-row .skeleton {
+  margin: 0;
+}
+.skeleton-icon {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  border-radius: 12px;
+}
+.skeleton-copy {
+  flex: 1;
+  display: grid;
+  gap: 9px;
+}
+.skeleton-label {
+  height: 13px;
+  width: 80%;
+}
+.skeleton-hint {
+  height: 9px;
+  width: 52%;
+}
+.skeleton-time {
+  height: 42px;
+  width: 48px;
+}
+.map-skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--control-tray);
+}
+.map-skeleton-road {
+  position: absolute;
+  width: 110%;
+  height: 18px;
+  background: var(--color-base-100);
+  border-radius: 30px;
+  opacity: 0.8;
+}
+.road-one {
+  transform: rotate(-22deg);
+  top: 40%;
+}
+.road-two {
+  transform: rotate(32deg);
+  top: 65%;
+}
+.map-skeleton-stop {
+  position: absolute;
+  width: 38px;
+  height: 38px;
+  top: 42%;
+  left: 47%;
+  border-radius: 50%;
+}
+.map-skeleton-card {
+  position: absolute;
+  bottom: 32px;
+  left: 24px;
+  right: 24px;
+  padding: 18px;
+  border-radius: 18px;
+  background: var(--color-base-100);
+}
+.map-skeleton-card .skeleton {
+  display: block;
+  height: 10px;
+  width: 45%;
+  margin-bottom: 12px;
+}
+.map-skeleton-card > span:last-child {
+  font-size: 12px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .bus-approaching::after {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border: 2px solid var(--marker-color);
+    border-radius: 50%;
+    animation: bus-ring 2.4s ease-out 3;
+    pointer-events: none;
+  }
+}
+@keyframes bus-ring {
+  from {
+    transform: scale(0.85);
+    opacity: 0.45;
+  }
+  to {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+@media (max-width: 600px) {
+  .trip-card {
+    padding: 24px 20px;
+    border-radius: 22px;
+  }
+  .arrival-row.arrival-next {
+    padding: 20px 13px;
+  }
+  .arrival-next .arrival-time strong {
+    font-size: 46px;
+  }
+  .arrivals h3 {
+    font-size: 21px;
+  }
 }

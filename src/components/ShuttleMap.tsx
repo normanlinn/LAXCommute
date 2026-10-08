@@ -1,11 +1,10 @@
 import { lazy, Suspense } from 'react';
-import { useLanguage } from '../i18n/LanguageProvider';
+import MapLoading from './MapLoading';
 const FreeMap = lazy(() => import('./FreeMap'));
 export default function ShuttleMap(props: import('../types').MapProps) {
-  const { t } = useLanguage();
   return (
     <div className="map-view-wrapper">
-      <Suspense fallback={<div className="map-surface map-loading">{t('Opening map…')}</div>}>
+      <Suspense fallback={<MapLoading />}>
         <FreeMap {...props} />
       </Suspense>
     </div>

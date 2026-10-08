@@ -36,6 +36,7 @@ import Arrivals from './components/Arrivals';
 import InstallApp from './components/InstallApp';
 import DirectionsButton from './components/DirectionsButton';
 import AppMenu from './components/AppMenu';
+import MapLoading from './components/MapLoading';
 import CommuteWelcome from './components/CommuteWelcome';
 import { useTheme } from './theme/ThemeProvider';
 const darkRouteColor = (color: string) =>
@@ -219,7 +220,7 @@ export default function App() {
           }}
           aria-label={t('LAXCommute home')}
         >
-          <img src="/icons/commute-v2-192.png" alt="" width={43} height={43} />
+          <img src="/icons/commute-v3-192.png" alt="" width={43} height={43} />
           <div>
             <strong>
               LAX<span>Commute</span>
@@ -279,9 +280,7 @@ export default function App() {
                   </div>
                 </div>
               </div>
-              <Suspense
-                fallback={<div className="map-surface map-loading">{t('Opening map…')}</div>}
-              >
+              <Suspense fallback={<MapLoading />}>
                 <ShuttleMap
                   routeLoading={routeQuery.isPending && routeQuery.fetchStatus === 'fetching'}
                   route={route}

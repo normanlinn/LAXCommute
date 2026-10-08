@@ -6,7 +6,7 @@ import * as L from 'leaflet';
 import { animate } from 'animejs';
 import 'leaflet/dist/leaflet.css';
 import { config } from '../config';
-import { GPS_TTL_MS, validVehicle } from '../domain/arrivals';
+import { GPS_TTL_MS, snapshotFresh, validVehicle } from '../domain/arrivals';
 
 const coordinates = (point: Point): L.LatLngTuple => [point.lat, point.lon];
 const validPoint = (point: Point) =>
@@ -52,6 +52,7 @@ function FreeMap({
   userLocation,
   onSelectStop,
   focusRequest,
+  liveData,
 }: MapProps) {
   const { t } = useLanguage();
   const { appearance } = useTheme();
@@ -239,13 +240,29 @@ function FreeMap({
         `${stop.name}${stop.id === selectedStop?.id ? ` · ${t('Your boarding stop')}` : ''}`,
         stop.id === selectedStop?.id,
       );
-    for (const bus of vehicles.filter((vehicle) => validVehicle(vehicle)))
+    for (const bus of vehicles.filter((vehicle) => validVehicle(vehicle))) {
       upsert(
         `bus-${bus.id}`,
         bus,
         'bus',
         t('Bus {name} · Reported GPS', { name: bus.name || bus.id }),
       );
+      const approaching =
+        !liveData?.cached &&
+        snapshotFresh(liveData?.arrivalFetchedAt) &&
+        liveData?.predictions?.some(
+          (prediction) =>
+            !prediction.scheduled &&
+            prediction.vehicleID === bus.id &&
+            prediction.due > Date.now() &&
+            prediction.due - Date.now() <= 300_000,
+        );
+      markers
+        .get(`bus-${bus.id}`)
+        ?.marker.getElement()
+        ?.querySelector('.map-marker-dot')
+        ?.classList.toggle('bus-approaching', Boolean(approaching));
+    }
     if (userLocation) upsert('you', userLocation, 'you', t('Your location snapshot'));
     for (const [key, entry] of markers)
       if (!wanted.has(key)) {
@@ -274,7 +291,7 @@ function FreeMap({
     };
     expire();
     return () => clearTimeout(expiration);
-  }, [ready, stops, vehicles, selectedStop, userLocation, route.color, showStops, t]);
+  }, [ready, stops, vehicles, selectedStop, userLocation, route.color, showStops, t, liveData]);
 
   useEffect(() => {
     if (!ready || !state.current) return;
