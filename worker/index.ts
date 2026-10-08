@@ -2,7 +2,14 @@ import { FeedError, ROUTE_IDS, routeDetails, liveSnapshot } from './feed';
 
 export async function handleAPI(request: Request, options?: import('./feed').FeedOptions) {
   const url = new URL(request.url);
-  const headers = { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' };
+  const headers = {
+    'Cache-Control': 'no-store',
+    'X-Content-Type-Options': 'nosniff',
+    'Content-Security-Policy': "default-src 'none'; frame-ancestors 'none'; sandbox",
+    'X-Frame-Options': 'DENY',
+    'Referrer-Policy': 'no-referrer',
+    'Cross-Origin-Resource-Policy': 'same-origin',
+  };
   if (request.method !== 'GET')
     return Response.json(
       { error: 'Method not allowed.' },

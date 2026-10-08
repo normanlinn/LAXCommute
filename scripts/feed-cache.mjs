@@ -1,5 +1,8 @@
 export const feedCaching = ['routes', 'live'].map((kind) => ({
-  urlPattern: new RegExp(`/api/${kind}/[0-9]+(?:\\?|$)`),
+  urlPattern:
+    kind === 'routes'
+      ? ({ url, sameOrigin }) => sameOrigin && /^\/api\/routes\/[0-9]+$/.test(url.pathname)
+      : ({ url, sameOrigin }) => sameOrigin && /^\/api\/live\/[0-9]+$/.test(url.pathname),
   handler: 'NetworkFirst',
   options: {
     cacheName: `laxcommute-${kind}-v1`,

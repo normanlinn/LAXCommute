@@ -268,5 +268,8 @@
   "Showing the last saved update": "နောက်ဆုံးသိမ်းထားသော အချက်အလက်ကို ပြနေသည်",
   "Shuttle source unavailable. Try again or check the official LAX tracker.": "ယာဉ်အချက်အလက် မရနိုင်ပါ။ ထပ်စမ်းပါ သို့မဟုတ် LAX ၏ မူရင်း tracker ကို ကြည့်ပါ။",
   "Saved data only. Reconnect to check the next shuttle.": "သိမ်းထားသော အချက်အလက်သာ ဖြစ်သည်။ နောက်ယာဉ်အချိန်ကို ကြည့်ရန် အင်တာနက်ပြန်ချိတ်ပါ။",
-  "Last updated {minutes} min ago": "လွန်ခဲ့သော {minutes} မိနစ်က နောက်ဆုံးပြင်ဆင်ထားသည်"
+  "Last updated {minutes} min ago": "လွန်ခဲ့သော {minutes} မိနစ်က နောက်ဆုံးပြင်ဆင်ထားသည်",
+  "Privacy": "ကိုယ်ရေးအချက်အလက်",
+  "Guest commute, theme and language settings stay in your browser. If you create an account, Supabase stores your email, password hash and saved commute. Location is used on your device to find nearby stops and is not saved to your account. Map providers receive requests for the area you view. Signing out does not remove settings stored on this device.": "အကောင့်မဝင်ဘဲ သိမ်းထားသော ခရီးစဉ်၊ အရောင်နှင့် ဘာသာစကားကို သင့်ဘရောက်ဇာတွင် သိမ်းထားသည်။ အကောင့်ဖွင့်ပါက အီးမေးလ်၊ စကားဝှက် hash နှင့် ခရီးစဉ်ကို Supabase တွင် သိမ်းထားသည်။ တည်နေရာကို အနီးဆုံးမှတ်တိုင် ရှာရန်သာ အသုံးပြုပြီး အကောင့်တွင် မသိမ်းပါ။ မြေပုံဝန်ဆောင်မှုများက သင်ကြည့်နေသော နေရာအတွက် တောင်းဆိုချက်များကို လက်ခံရရှိသည်။ အကောင့်ထွက်ခြင်းသည် ဤစက်တွင် သိမ်းထားသော အချက်အလက်များကို မဖျက်ပါ။",
+  "This app uses Cloudflare Web Analytics to measure visits without analytics cookies.": "ဤအက်ပ်သည် analytics cookies မသုံးဘဲ ဝင်ရောက်အသုံးပြုမှုကို Cloudflare Web Analytics ဖြင့် တိုင်းတာသည်။"
 }

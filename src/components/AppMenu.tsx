@@ -58,6 +58,21 @@ export default function AppMenu() {
             <h3>{t('Language')}</h3>
             <LanguageSwitch />
           </div>
+          <div className="privacy-note">
+            <h3>{t('Privacy')}</h3>
+            <p>
+              {t(
+                'Guest commute, theme and language settings stay in your browser. If you create an account, Supabase stores your email, password hash and saved commute. Location is used on your device to find nearby stops and is not saved to your account. Map providers receive requests for the area you view. Signing out does not remove settings stored on this device.',
+              )}
+            </p>
+            {import.meta.env.VITE_CF_WEB_ANALYTICS_TOKEN && (
+              <p>
+                {t(
+                  'This app uses Cloudflare Web Analytics to measure visits without analytics cookies.',
+                )}
+              </p>
+            )}
+          </div>
         </div>
       </Dialog>
     </>

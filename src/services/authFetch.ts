@@ -9,7 +9,12 @@ export async function authFetch(input: RequestInfo | URL, init?: RequestInit) {
   if (original?.aborted) cancel();
   const timer = setTimeout(cancel, AUTH_REQUEST_TIMEOUT_MS);
   try {
-    return await fetch(input, { ...init, signal: controller.signal });
+    return await fetch(input, {
+      ...init,
+      cache: 'no-store',
+      referrerPolicy: 'no-referrer',
+      signal: controller.signal,
+    });
   } finally {
     clearTimeout(timer);
     original?.removeEventListener('abort', cancel);

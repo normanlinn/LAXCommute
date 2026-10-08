@@ -3,7 +3,7 @@
   X-Frame-Options: DENY
   Referrer-Policy: no-referrer
   Permissions-Policy: geolocation=(self), camera=(), microphone=()
-  Content-Security-Policy: object-src 'none'; base-uri 'self'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.apple-mapkit.com https://static.cloudflareinsights.com; script-src-attr 'none'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com https://cdn.apple-mapkit.com; img-src 'self' data: blob: https://tiles.openfreemap.org https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://*.apple-mapkit.com https://*.apple.com; font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com https://tiles.openfreemap.org; connect-src 'self' https://yzdoarjleozzblvsjbhx.supabase.co wss://yzdoarjleozzblvsjbhx.supabase.co https://tiles.openfreemap.org https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://*.apple-mapkit.com https://*.apple.com https://cloudflareinsights.com; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests
 /sw.js
   Cache-Control: no-cache
 /manifest.webmanifest
