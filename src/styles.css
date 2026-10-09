@@ -2947,3 +2947,24 @@ select,
     font-size: 16px;
   }
 }
+
+.developer-credit {
+  margin: 20px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-base-300);
+  font-size: 13px;
+  text-align: center;
+}
+.developer-credit a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--color-base-content);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.developer-credit a:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+  border-radius: 4px;
+}

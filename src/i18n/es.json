@@ -295,5 +295,6 @@
   "Show map": "Mostrar mapa",
   "Hide map": "Ocultar mapa",
   "min at last update": "min en la última actualización",
-  "Last known times · not current arrivals. Check the LAX tracker before leaving.": "Últimos horarios reportados; no son llegadas actuales. Consulta el seguimiento de LAX antes de salir."
+  "Last known times · not current arrivals. Check the LAX tracker before leaving.": "Últimos horarios reportados; no son llegadas actuales. Consulta el seguimiento de LAX antes de salir.",
+  "Created by {name}": "Creado por {name}"
 }

@@ -78,6 +78,15 @@ export default function AppMenu() {
               </p>
             )}
           </div>
+          <p className="developer-credit">
+            <a
+              href="https://normanlinn.github.io/portfolio"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {t('Created by {name}', { name: 'Norman Linn' })}
+            </a>
+          </p>
         </div>
       </Dialog>
     </>

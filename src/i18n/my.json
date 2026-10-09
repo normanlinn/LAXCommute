@@ -295,5 +295,6 @@
   "Copy link": "လင့်ခ်ကို ကူးမည်",
   "Link copied.": "လင့်ခ်ကို ကူးပြီးပါပြီ။",
   "Select the link above and copy it manually.": "အပေါ်က လင့်ခ်ကို ရွေးပြီး ကိုယ်တိုင် ကူးပါ။",
-  "To install, open the link and tap Add to home screen.": "ထည့်သွင်းရန် လင့်ခ်ကို ဖွင့်ပြီး ပင်မမျက်နှာပြင်တွင် ထည့်မည်ကို နှိပ်ပါ။"
+  "To install, open the link and tap Add to home screen.": "ထည့်သွင်းရန် လင့်ခ်ကို ဖွင့်ပြီး ပင်မမျက်နှာပြင်တွင် ထည့်မည်ကို နှိပ်ပါ။",
+  "Created by {name}": "{name} မှ ဖန်တီးထားသည်"
 }
