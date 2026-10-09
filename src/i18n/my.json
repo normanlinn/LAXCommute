@@ -285,5 +285,15 @@
   "Show map": "မြေပုံပြမည်",
   "Hide map": "မြေပုံဖျောက်မည်",
   "min at last update": "နောက်ဆုံးရရှိချိန်က မိနစ်",
-  "Last known times · not current arrivals. Check the LAX tracker before leaving.": "နောက်ဆုံးရရှိထားသောအချိန်များ ဖြစ်ပြီး လက်ရှိရောက်မည့်အချိန် မဟုတ်ပါ။ မထွက်ခွာမီ LAX tracker ကို စစ်ဆေးပါ။"
+  "Last known times · not current arrivals. Check the LAX tracker before leaving.": "နောက်ဆုံးရရှိထားသောအချိန်များ ဖြစ်ပြီး လက်ရှိရောက်မည့်အချိန် မဟုတ်ပါ။ မထွက်ခွာမီ LAX tracker ကို စစ်ဆေးပါ။",
+  "Share app": "အက်ပ်ကို မျှဝေမည်",
+  "Close sharing": "မျှဝေခြင်းကို ပိတ်မည်",
+  "Share LAXCommute": "LAXCommute ကို မျှဝေမည်",
+  "Check your next LAX shuttle. Open the link and add it to your home screen.": "နောက်လာမည့် LAX ကားကို ကြည့်ပါ။ လင့်ခ်ကို ဖွင့်ပြီး ဖုန်းပင်မမျက်နှာပြင်တွင် ထည့်ပါ။",
+  "Send this link to a friend or coworker. They can check buses without an account.": "ဤလင့်ခ်ကို သူငယ်ချင်း သို့မဟုတ် လုပ်ဖော်ကိုင်ဖက်ထံ ပို့ပါ။ အကောင့်မလိုဘဲ ကားများကို ကြည့်နိုင်ပါတယ်။",
+  "App link": "အက်ပ်လင့်ခ်",
+  "Copy link": "လင့်ခ်ကို ကူးမည်",
+  "Link copied.": "လင့်ခ်ကို ကူးပြီးပါပြီ။",
+  "Select the link above and copy it manually.": "အပေါ်က လင့်ခ်ကို ရွေးပြီး ကိုယ်တိုင် ကူးပါ။",
+  "To install, open the link and tap Add to home screen.": "ထည့်သွင်းရန် လင့်ခ်ကို ဖွင့်ပြီး ပင်မမျက်နှာပြင်တွင် ထည့်မည်ကို နှိပ်ပါ။"
 }

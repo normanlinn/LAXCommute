@@ -12,7 +12,9 @@ export default function InstallApp() {
   const [platform, setPlatform] = useState(
     /iPhone|iPad|iPod/.test(navigator.userAgent) ? 'iphone' : 'android',
   );
-  const installed = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  const [installed, setInstalled] = useState(() =>
+    Boolean(matchMedia('(display-mode: standalone)').matches || navigator.standalone),
+  );
   const {
     needRefresh: [needRefresh, setNeedRefresh],
     updateServiceWorker,
@@ -25,12 +27,18 @@ export default function InstallApp() {
     const done = () => {
       setPrompt(null);
       setOpen(false);
+      setInstalled(true);
     };
+    const displayMode = matchMedia('(display-mode: standalone)');
+    const updateDisplayMode = () =>
+      setInstalled(Boolean(displayMode.matches || navigator.standalone));
+    displayMode.addEventListener('change', updateDisplayMode);
     addEventListener('beforeinstallprompt', receive);
     addEventListener('appinstalled', done);
     return () => {
       removeEventListener('beforeinstallprompt', receive);
       removeEventListener('appinstalled', done);
+      displayMode.removeEventListener('change', updateDisplayMode);
     };
   }, []);
   async function install() {
@@ -38,9 +46,14 @@ export default function InstallApp() {
       setOpen(true);
       return;
     }
-    await prompt.prompt();
-    await prompt.userChoice;
-    setPrompt(null);
+    try {
+      await prompt.prompt();
+      await prompt.userChoice;
+    } catch {
+      setOpen(true);
+    } finally {
+      setPrompt(null);
+    }
   }
   return (
     <>

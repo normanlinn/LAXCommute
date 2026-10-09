@@ -2539,7 +2539,7 @@ select,
   margin-top: 5px;
 }
 @media (prefers-reduced-motion: no-preference) {
-  .modal[open] .welcome-bookmark {
+  .app-dialog[open] .welcome-bookmark {
     animation: welcome-bookmark 650ms ease-out;
   }
 }
@@ -2856,5 +2856,94 @@ select,
   .stop-actions button,
   .route-options button {
     min-height: 44px;
+  }
+}
+/* Native dialog owns the top layer; only its panel animates. In particular,
+   avoid DaisyUI's discrete transitions and a blurred map backdrop on iOS. */
+.app-dialog {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 20px;
+  border: 0;
+  background: transparent;
+  color: var(--color-base-content);
+  overflow: hidden;
+  overscroll-behavior: contain;
+  transition: none;
+}
+.app-dialog:not([open]) {
+  display: none;
+}
+.app-dialog[open] {
+  display: grid;
+  place-items: center;
+}
+.app-dialog::backdrop {
+  display: block;
+  background: #0e2b2a70;
+  backdrop-filter: none;
+}
+.app-dialog > .app-dialog-panel {
+  opacity: 1;
+  scale: 1;
+  translate: none;
+  transition: none;
+  animation: none;
+  max-height: calc(100dvh - 40px);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+.share-button {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 11px 12px;
+  border-radius: 30px;
+  color: var(--color-base-content);
+}
+.share-link-field {
+  display: grid;
+  gap: 8px;
+  margin: 20px 0;
+}
+.share-link-field input {
+  width: 100%;
+  min-width: 0;
+  font-size: 14px;
+}
+.menu-language .language-switch {
+  flex-wrap: wrap;
+}
+.menu-language .language-switch .btn {
+  min-width: 0;
+  padding-inline: 8px;
+}
+@media (max-width: 700px) {
+  .share-button {
+    padding: 9px;
+  }
+  .share-button span {
+    display: none;
+  }
+  .header-actions {
+    gap: 4px;
+  }
+  .header-actions .btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+@media (max-width: 380px) {
+  .app-header .brand > img,
+  .app-header .brand small {
+    display: none;
+  }
+  .app-header .brand strong {
+    font-size: 16px;
   }
 }

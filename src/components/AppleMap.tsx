@@ -157,7 +157,7 @@ function AppleMap({
     for (const bus of vehicles.filter((v) => validVehicle(v)))
       upsert(`bus-${bus.id}`, bus.lat, bus.lon, {
         title: t('Bus {name}', { name: bus.name || bus.id }),
-        subtitle: `GPS ${new Date(bus.lastUpdated).toLocaleTimeString(language === 'my' ? 'my-MM-u-nu-latn' : 'en-US', { hour: 'numeric', minute: '2-digit' })}`,
+        subtitle: `GPS ${new Date(bus.lastUpdated).toLocaleTimeString(language === 'my' ? 'my-MM-u-nu-latn' : language === 'es' ? 'es-US' : 'en-US', { hour: 'numeric', minute: '2-digit' })}`,
         color: route.color,
         glyphText: 'B',
         data: { busID: bus.id },

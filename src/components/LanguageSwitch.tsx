@@ -11,6 +11,9 @@ export default function LanguageSwitch() {
       <Button lang="my" aria-pressed={language === 'my'} onClick={() => setLanguage('my')}>
         မြန်မာ
       </Button>
+      <Button lang="es" aria-pressed={language === 'es'} onClick={() => setLanguage('es')}>
+        Español
+      </Button>
     </div>
   );
 }

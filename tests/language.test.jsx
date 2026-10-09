@@ -93,3 +93,23 @@ describe('language preference', () => {
     );
   });
 });
+
+it('restores Spanish on reopening and translates the guide and arrival placeholders', () => {
+  const first = openSwitch();
+  fireEvent.click(screen.getByRole('button', { name: 'Español' }));
+  expect(screen.getByText('Sal en 12 min')).toBeTruthy();
+  expect(document.documentElement.lang).toBe('es');
+  expect(localStorage.getItem(LANGUAGE_STORAGE_KEY)).toBe('es');
+  first.unmount();
+  openSwitch();
+  expect(screen.getByRole('button', { name: 'Español', pressed: true })).toBeTruthy();
+  const target = document.createElement('section');
+  target.id = 'shuttle-guide';
+  document.body.append(target);
+  render(
+    <LanguageProvider>
+      <ShuttleGuide target={target} />
+    </LanguageProvider>,
+  );
+  expect(target.textContent).toContain('Guardar tu trayecto');
+});

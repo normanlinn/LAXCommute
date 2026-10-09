@@ -1,12 +1,13 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import myanmar from './my.json';
+import spanish from './es.json';
 
-export type Language = 'en' | 'my';
+export type Language = 'en' | 'my' | 'es';
 type Variables = Record<string, string | number>;
 export const LANGUAGE_STORAGE_KEY = 'laxcommute:language';
-const messages: Record<string, string> = myanmar;
+const messages: Record<string, Record<string, string>> = { my: myanmar, es: spanish };
 export function translate(language: Language, message: string, variables: Variables = {}) {
-  const template = language === 'my' ? messages[message] || message : message;
+  const template = messages[language]?.[message] || message;
   return template.replace(/\{(\w+)\}/g, (original, key: string) =>
     Object.hasOwn(variables, key) ? String(variables[key]) : original,
   );
@@ -19,7 +20,8 @@ const english = {
 const LanguageContext = createContext(english);
 function savedLanguage(): Language {
   try {
-    return localStorage.getItem(LANGUAGE_STORAGE_KEY) === 'my' ? 'my' : 'en';
+    const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+    return stored === 'my' || stored === 'es' ? stored : 'en';
   } catch {
     return 'en';
   }

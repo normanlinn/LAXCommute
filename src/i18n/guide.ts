@@ -10,6 +10,46 @@ type Guide = {
   back: string;
 };
 export const guides: Record<Language, Guide> = {
+  es: {
+    title: 'Guía del transporte de LAX',
+    introduction:
+      '¿Vas al trabajo o de regreso a tu auto? Elige tu ruta y parada para ver el próximo autobús.',
+    routes: [
+      {
+        title: 'South Lot',
+        text: 'Llega a todas las terminales. Para ir al trabajo, elige una parada de South Lot. Para volver, elige una parada de terminal.',
+      },
+      {
+        title: 'East Lot',
+        text: 'Llega a las terminales 1–3 y Terminal B (TBIT). La primera parada seleccionada está en East Lot. ¿Esperas en South Lot? Mantén East seleccionado y elige una parada de South de esta ruta.',
+      },
+      {
+        title: 'West Lot',
+        text: 'Llega a las terminales 4–7. La primera parada seleccionada está en West Lot. También puedes subir en una parada de South Lot incluida en esta ruta. Mantén West seleccionado para ver sus autobuses.',
+      },
+    ],
+    questions: [
+      {
+        title: 'Guardar tu trayecto',
+        text: 'Configura tu estacionamiento, terminal y paradas en Mi trayecto. Activa Recordar mi trayecto para guardarlos aquí o inicia sesión para usarlos en otro dispositivo. Borrar los datos de este sitio elimina los ajustes locales.',
+      },
+      {
+        title: 'Usar otra parada hoy',
+        text: 'Elige la parada en el mapa; tu trayecto habitual sigue guardado. ¿Estás en South Lot esperando un autobús de East o West? Mantén esa ruta seleccionada y elige una parada de South.',
+      },
+      {
+        title: 'Añadir la app al teléfono',
+        text: 'En iPhone, abre el menú Compartir del navegador y elige Añadir a pantalla de inicio. En Android, busca Instalar app o Añadir a la pantalla de inicio en el menú del navegador.',
+      },
+      {
+        title: 'Sobre las horas de llegada',
+        text: 'Los horarios vienen del seguimiento de LAX y pueden cambiar por el tráfico o retrasos en los datos. «Hora programada» indica el horario previsto, no una estimación en tiempo real. Si dejan de llegar actualizaciones, consulta el seguimiento original abajo.',
+      },
+    ],
+    sourceLink: 'Abrir el seguimiento original de LAX',
+    note: 'Una app independiente para empleados de LAX. No es un servicio oficial de LAWA ni de ninguna aerolínea. Muestra el transporte de los estacionamientos de empleados; no incluye FlyAway ni autobuses de hoteles.',
+    back: 'Volver al mapa',
+  },
   en: {
     title: 'LAX shuttle boarding guide',
     introduction:

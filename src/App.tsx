@@ -34,6 +34,7 @@ import { useLive, useOnline, useRoute, useSnapshotFresh } from './hooks/useShutt
 import ShuttleMap from './components/ShuttleMap';
 import Arrivals from './components/Arrivals';
 import InstallApp from './components/InstallApp';
+import ShareApp from './components/ShareApp';
 import DirectionsButton from './components/DirectionsButton';
 import AppMenu from './components/AppMenu';
 import MapLoading from './components/MapLoading';
@@ -245,6 +246,7 @@ export default function App() {
           </div>
         </a>
         <div className="header-actions">
+          <ShareApp />
           <InstallApp />
           <AppMenu />
           <Button

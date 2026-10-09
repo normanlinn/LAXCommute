@@ -230,7 +230,7 @@ export default function Arrivals({
             : t('Last updated {minutes} min ago', { minutes: Math.floor(ageSeconds / 60) })}{' '}
           ·{' '}
           {new Date(data.arrivalFetchedAt).toLocaleTimeString(
-            language === 'my' ? 'my-MM-u-nu-latn' : 'en-US',
+            language === 'my' ? 'my-MM-u-nu-latn' : language === 'es' ? 'es-US' : 'en-US',
             {
               hour: 'numeric',
               minute: '2-digit',
