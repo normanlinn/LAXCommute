@@ -33,6 +33,7 @@ import { useLive, useOnline, useRoute, useSnapshotFresh } from './hooks/useShutt
 // The provider stays lazy without a second request for its tiny selector.
 import ShuttleMap from './components/ShuttleMap';
 import Arrivals from './components/Arrivals';
+import CrowdReports from './components/CrowdReports';
 import InstallApp from './components/InstallApp';
 import ShareApp from './components/ShareApp';
 import DirectionsButton from './components/DirectionsButton';
@@ -523,6 +524,7 @@ export default function App() {
                   if (routeQuery.isError) routeQuery.refetch();
                 }}
               />
+              <CrowdReports routeId={route.id} vehicles={vehicles} />
               <details className="collapse advanced">
                 <summary className="collapse-title">
                   <span>{t('Other bus options')}</span>
