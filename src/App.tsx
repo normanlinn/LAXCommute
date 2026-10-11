@@ -408,14 +408,16 @@ export default function App() {
                   aria-pressed={direction === 'work'}
                   onClick={() => changeDirection('work')}
                 >
-                  <BusFront size={16} /> {t('To work')}{' '}
+                  <BusFront size={16} aria-hidden="true" />
+                  <span className="direction-label">{t('To work')}</span>
                 </Button>
                 <Button
                   className={direction === 'parking' ? 'tab tab-active active' : 'tab'}
                   aria-pressed={direction === 'parking'}
                   onClick={() => changeDirection('parking')}
                 >
-                  <Home size={16} /> {t('To parking')}{' '}
+                  <Home size={16} aria-hidden="true" />
+                  <span className="direction-label">{t('To parking')}</span>
                 </Button>
               </div>
               <div className="field route-field">
