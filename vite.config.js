@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react';
 import { cloudflare } from '@cloudflare/vite-plugin';
 import { VitePWA } from 'vite-plugin-pwa';
 import tailwindcss from '@tailwindcss/vite';
+import './scripts/materialize-brand-v5.mjs';
 
 export default defineConfig(({ mode }) => ({
   plugins: [
@@ -28,12 +29,12 @@ export default defineConfig(({ mode }) => ({
     VitePWA({
       registerType: 'prompt',
       includeAssets: [
-        'icons/apple-touch-v4.png',
-        'icons/commute-v4-192.png',
-        'icons/commute-v4-512.png',
-        'icons/favicon-v4.png',
-        'icons/maskable-v4-512.png',
-        'social-preview.png',
+        'icons/apple-touch-v5.png',
+        'icons/commute-v5-192.png',
+        'icons/commute-v5-512.png',
+        'icons/favicon-v5.png',
+        'icons/maskable-v5-512.png',
+        'social-preview-v5.png',
       ],
       manifest: {
         id: '/',
@@ -46,10 +47,10 @@ export default defineConfig(({ mode }) => ({
         start_url: '/',
         scope: '/',
         icons: [
-          { src: '/icons/commute-v4-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
-          { src: '/icons/commute-v4-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+          { src: '/icons/commute-v5-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: '/icons/commute-v5-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
           {
-            src: '/icons/maskable-v4-512.png',
+            src: '/icons/maskable-v5-512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable',
