@@ -3450,7 +3450,6 @@ select,
   }
 }
 
-
 /* Map actions: desktop shortcuts stay visible; phones use one unobtrusive tool button. */
 .map-tools-toggle {
   display: none !important;

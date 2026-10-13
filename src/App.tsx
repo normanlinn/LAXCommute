@@ -68,7 +68,9 @@ export default function App() {
   const { appearance } = useTheme();
   const { t, language } = useLanguage();
   const reduceMotion = useReducedMotion() === true;
-  const [compactMap, setCompactMap] = useState(() => window.matchMedia('(max-width: 760px)').matches);
+  const [compactMap, setCompactMap] = useState(
+    () => window.matchMedia('(max-width: 760px)').matches,
+  );
   useEffect(() => {
     const query = window.matchMedia('(max-width: 760px)');
     const update = () => setCompactMap(query.matches);
@@ -391,7 +393,10 @@ export default function App() {
                     />
                   </Suspense>
                 )}
-                <div ref={mapToolsRef} className={`map-controls${mapToolsOpen ? ' mobile-open' : ''}`}>
+                <div
+                  ref={mapToolsRef}
+                  className={`map-controls${mapToolsOpen ? ' mobile-open' : ''}`}
+                >
                   <Button
                     className="map-tools-toggle"
                     aria-label={mapToolsOpen ? t('Close map tools') : t('Map tools')}
