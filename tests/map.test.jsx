@@ -3,7 +3,7 @@ import { StrictMode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import * as L from 'leaflet';
-import FreeMap from '../src/components/FreeMap';
+import FreeMap, { boardingAreaPoints } from '../src/components/FreeMap';
 import { ThemeProvider, useTheme } from '../src/theme/ThemeProvider';
 import { config } from '../src/config';
 import { createSimpleBasemap } from '../src/components/simpleBasemap';
@@ -98,6 +98,27 @@ describe('interactive shuttle map', () => {
     expect(container.querySelectorAll('.leaflet-overlay-pane path')).toHaveLength(2);
     expect(container.querySelectorAll('.leaflet-marker-icon')).toHaveLength(2);
     expect(container.querySelector('.boarding-label').textContent).toContain('South Lot Stop #1');
+  });
+
+  it('centers a nearby boarding stop and GPS buses instead of fitting the whole route', () => {
+    const bus = {
+      id: 8024,
+      name: '8024',
+      lat: 33.95015,
+      lon: -118.3898,
+      lastUpdated: new Date().toISOString(),
+    };
+    const far = { ...bus, id: 9000, lat: 33.98, lon: -118.41 };
+    expect(boardingAreaPoints(stops[1], [bus, far])).toHaveLength(2);
+    const spy = vi.spyOn(L.Map.prototype, 'fitBounds');
+    const { container } = render(<FreeMap {...props} vehicles={[bus]} />);
+    const fitted = spy.mock.calls.at(-1)?.[0];
+    expect(fitted.getSouth()).toBeGreaterThan(33.949);
+    expect(fitted.getWest()).toBeGreaterThan(-118.392);
+    const label = container.querySelector('.bus-marker-number');
+    expect(label.textContent).toBe('8024');
+    expect(label.closest('.marker-bus')).toBeTruthy();
+    spy.mockRestore();
   });
 
   it('moves existing bus markers by ID and removes old route markers on a route change', () => {
