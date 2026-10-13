@@ -1,13 +1,13 @@
 import { useTheme } from '../theme/ThemeProvider';
 import { useLanguage } from '../i18n/LanguageProvider';
-import type { MapProps, Point, Stop, RoutePath } from '../types';
+import type { MapProps, Point, Stop, RoutePath, Vehicle } from '../types';
 import { memo, useEffect, useRef, useState } from 'react';
 import * as L from 'leaflet';
 import { animate } from 'animejs';
 import 'leaflet/dist/leaflet.css';
 import { config } from '../config';
 import { GPS_TTL_MS, snapshotFresh, validVehicle } from '../domain/arrivals';
-import { routeMotionPath, positionOnMotionPath } from '../domain/map-motion';
+import { routeMotionPath, positionOnMotionPath, segmentMeters } from '../domain/map-motion';
 
 const coordinates = (point: Point): L.LatLngTuple => [point.lat, point.lon];
 const validPoint = (point: Point) =>
@@ -27,14 +27,14 @@ function markerIcon(kind: string, color: string, selected: boolean, busName = ''
       '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="15" rx="4"/><path d="M4 11h16M7.5 19v2m9-2v2M8 7.5h8"/><circle cx="8.5" cy="15" r="1"/><circle cx="15.5" cy="15" r="1"/></svg>';
     const badge = document.createElement('span');
     badge.className = 'bus-marker-number';
-    badge.textContent = busName.slice(0, 14);
+    badge.textContent = busName.slice(0, 8);
     content.append(badge);
   }
   return L.divIcon({
     html: content,
     className: 'shuttle-marker',
-    iconSize: kind === 'bus' ? [68, 64] : [44, 44],
-    iconAnchor: kind === 'bus' ? [34, 27] : [22, 22],
+    iconSize: kind === 'bus' ? [54, 54] : [44, 44],
+    iconAnchor: kind === 'bus' ? [27, 27] : [22, 22],
   });
 }
 
@@ -46,6 +46,44 @@ function fitRoute(map: L.Map, stops: Stop[], paths: RoutePath[], animate = false
       maxZoom: 16,
       animate,
     });
+}
+
+// The full route is useful on demand, but too wide for the default mobile view.
+// Fit the boarding stop and real, nearby shuttle GPS positions instead.
+export function boardingAreaPoints(stop: Stop, vehicles: Vehicle[]): Point[] {
+  if (!validPoint(stop)) return [];
+  const close = vehicles
+    .filter((bus) => validVehicle(bus) && validPoint(bus))
+    .map((bus) => ({ bus, distance: segmentMeters(stop, bus) }))
+    .filter(({ distance }) => distance <= 850)
+    .sort((a, b) => a.distance - b.distance)
+    .slice(0, 12)
+    .map(({ bus }) => ({ lat: bus.lat, lon: bus.lon }));
+  return [stop, ...close];
+}
+function fitBoardingArea(
+  map: L.Map,
+  stop: Stop | undefined,
+  vehicles: Vehicle[],
+  stops: Stop[],
+  paths: RoutePath[],
+  animate = false,
+) {
+  if (!stop || !validPoint(stop)) return fitRoute(map, stops, paths, animate);
+  const points = boardingAreaPoints(stop, vehicles);
+  const mobile = map.getContainer().clientWidth <= 760;
+  if (points.length === 1) {
+    map.setView(coordinates(stop), mobile ? 15 : 16, { animate });
+    return;
+  }
+  map.fitBounds(L.latLngBounds(points.map(coordinates)), {
+    // The map contains controls on the right and an arrival card at the bottom.
+    // Keep the boarding area visibly centered in the unobstructed space.
+    paddingTopLeft: mobile ? [46, 100] : [58, 64],
+    paddingBottomRight: mobile ? [83, 165] : [58, 64],
+    maxZoom: mobile ? 15.5 : 16,
+    animate,
+  });
 }
 
 function FreeMap({
@@ -76,11 +114,14 @@ function FreeMap({
   );
   const selectionHandler = useRef(onSelectStop);
   selectionHandler.current = onSelectStop;
-  const latest = useRef({ stops, paths, selectedStop, userLocation });
-  latest.current = { stops, paths, selectedStop, userLocation };
+  const latest = useRef({ stops, paths, selectedStop, userLocation, vehicles });
+  latest.current = { stops, paths, selectedStop, userLocation, vehicles };
+  const framedNearbyKey = useRef('');
+  const userMovedMap = useRef(false);
   const [ready, setReady] = useState(false);
   const [tileError, setTileError] = useState(false);
-  const [showStops, setShowStops] = useState(() => window.innerWidth <= 760);
+  // Keeping other stops hidden initially prevents labels from covering buses.
+  const [showStops, setShowStops] = useState(false);
   const [selectedBusID, setSelectedBusID] = useState<number | null>(null);
   useEffect(() => setSelectedBusID(null), [route.id]);
   const [basemap, setBasemap] = useState('simple');
@@ -100,6 +141,8 @@ function FreeMap({
       inertia: motion,
     });
     L.control.zoom({ position: 'topright' }).addTo(map);
+    // Avoid recentering the map after someone drags it themselves.
+    map.on('dragstart', () => { userMovedMap.current = true; });
     const overlays = L.layerGroup().addTo(map);
     state.current = { map, overlays, markers: new Map() };
     const observer = new ResizeObserver(() => map.invalidateSize({ pan: false }));
@@ -350,7 +393,9 @@ function FreeMap({
     if (!ready || !state.current) return;
     const { map, overlays } = state.current;
     overlays.clearLayers();
-    fitRoute(map, stops, paths);
+    framedNearbyKey.current = '';
+    userMovedMap.current = false;
+    fitBoardingArea(map, selectedStop, latest.current.vehicles, stops, paths);
     const animations: ReturnType<typeof animate>[] = [];
     for (const path of paths) {
       const points = path.coordinates.filter(validPoint).map(coordinates);
@@ -388,7 +433,18 @@ function FreeMap({
     return () => {
       for (const animation of animations) animation.cancel();
     };
-  }, [ready, paths, stops, route.id, route.color]);
+  }, [ready, paths, stops, route.id, route.color, selectedStop?.id]);
+
+  // On first fresh GPS snapshot, include the arriving buses. Never chase every
+  // feed refresh, and leave the camera alone after the user moves it.
+  useEffect(() => {
+    if (!ready || !state.current || !selectedStop || userMovedMap.current) return;
+    const key = `${route.id}:${selectedStop.id}`;
+    if (framedNearbyKey.current === key) return;
+    if (boardingAreaPoints(selectedStop, vehicles).length <= 1) return;
+    framedNearbyKey.current = key;
+    fitBoardingArea(state.current.map, selectedStop, vehicles, stops, paths, !reducedMotion());
+  }, [ready, route.id, selectedStop, vehicles, stops, paths]);
 
   useEffect(() => {
     if (!ready || !state.current || !focusRequest.serial) return;
