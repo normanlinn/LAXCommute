@@ -1,6 +1,7 @@
 import { useLanguage } from './i18n/LanguageProvider';
 import type { Direction, Point, Stop } from './types';
 import Button from './components/ui/Button';
+import { motion, useReducedMotion } from 'motion/react';
 import {
   lazy,
   Suspense,
@@ -26,6 +27,7 @@ import {
   UserRound,
   WifiOff,
   ChevronDown,
+  SlidersHorizontal,
 } from 'lucide-react';
 import {
   ROUTES,
@@ -65,6 +67,14 @@ const TABS = [
 export default function App() {
   const { appearance } = useTheme();
   const { t, language } = useLanguage();
+  const reduceMotion = useReducedMotion() === true;
+  const [compactMap, setCompactMap] = useState(() => window.matchMedia('(max-width: 760px)').matches);
+  useEffect(() => {
+    const query = window.matchMedia('(max-width: 760px)');
+    const update = () => setCompactMap(query.matches);
+    query.addEventListener?.('change', update);
+    return () => query.removeEventListener?.('change', update);
+  }, []);
   const { user, ready, recovering, authReturn } = useAccount();
   const { profile, hasSaved, remember, save, saveState } = useCommute();
   const [tab, setTab] = useState('map');
@@ -109,6 +119,23 @@ export default function App() {
   }, [direction]);
   // Mobile opens on the map, like a transit app. Users can still collapse it.
   const [mapExpanded, setMapExpanded] = useState(true);
+  const [mapToolsOpen, setMapToolsOpen] = useState(false);
+  const mapToolsRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!mapToolsOpen) return;
+    const closeOutside = (event: PointerEvent) => {
+      if (!mapToolsRef.current?.contains(event.target as Node)) setMapToolsOpen(false);
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMapToolsOpen(false);
+    };
+    document.addEventListener('pointerdown', closeOutside);
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('pointerdown', closeOutside);
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [mapToolsOpen]);
   const tripCardRef = useRef<HTMLElement>(null);
   const [override, setOverride] = useState<{
     routeID: number;
@@ -332,9 +359,11 @@ export default function App() {
                   aria-label={t('Which shuttle do you want?')}
                 >
                   {ROUTES.map((r) => (
-                    <button
+                    <motion.button
                       type="button"
                       key={r.id}
+                      whileTap={reduceMotion ? undefined : { scale: 0.96 }}
+                      transition={{ type: 'spring', stiffness: 460, damping: 32 }}
                       className="btn transit-route-button"
                       aria-pressed={r.lot === lot}
                       aria-label={t('{lot} Lot shuttle', { lot: r.lot })}
@@ -343,7 +372,7 @@ export default function App() {
                     >
                       <span aria-hidden="true">{r.short}</span>
                       {r.lot}
-                    </button>
+                    </motion.button>
                   ))}
                 </div>
                 {mapExpanded && (
@@ -362,35 +391,81 @@ export default function App() {
                     />
                   </Suspense>
                 )}
-                <div className="map-controls">
+                <div ref={mapToolsRef} className={`map-controls${mapToolsOpen ? ' mobile-open' : ''}`}>
                   <Button
-                    onClick={() => focus('route')}
-                    aria-label={t('Whole route')}
-                    title={t('Whole route')}
+                    className="map-tools-toggle"
+                    aria-label={mapToolsOpen ? t('Close map tools') : t('Map tools')}
+                    aria-expanded={mapToolsOpen}
+                    aria-controls="map-tools-actions"
+                    onClick={() => setMapToolsOpen((open) => !open)}
                   >
-                    <Route size={16} /> {t('Whole route')}{' '}
+                    <motion.span
+                      className="map-tools-icon"
+                      aria-hidden="true"
+                      animate={reduceMotion ? undefined : { rotate: mapToolsOpen ? 90 : 0 }}
+                      transition={{ type: 'spring', stiffness: 400, damping: 29 }}
+                    >
+                      <SlidersHorizontal size={21} />
+                    </motion.span>
                   </Button>
-                  <Button
-                    onClick={() => focus('stop')}
-                    disabled={!selectedStop}
-                    aria-label={t('My stop')}
-                    title={t('My stop')}
+                  <motion.div
+                    className="map-tools-actions"
+                    id="map-tools-actions"
+                    aria-hidden={compactMap && !mapToolsOpen}
+                    initial={false}
+                    animate={
+                      reduceMotion || !compactMap
+                        ? { opacity: 1, y: 0, scale: 1 }
+                        : {
+                            opacity: mapToolsOpen ? 1 : 0,
+                            y: mapToolsOpen ? 0 : -6,
+                            scale: mapToolsOpen ? 1 : 0.97,
+                          }
+                    }
+                    transition={{ duration: 0.19, ease: 'easeOut' }}
                   >
-                    <MapPin size={16} /> {t('My stop')}{' '}
-                  </Button>
-                  <Button
-                    onClick={locate}
-                    disabled={locating || options.length === 0}
-                    aria-label={t('Near me')}
-                    title={t('Near me')}
-                  >
-                    <LocateFixed size={16} />
-                    {locating ? t('Locating…') : t('Near me')}
-                  </Button>
+                    <Button
+                      onClick={() => {
+                        focus('route');
+                        setMapToolsOpen(false);
+                      }}
+                      aria-label={t('Whole route')}
+                      title={t('Whole route')}
+                    >
+                      <Route size={16} /> {t('Whole route')}
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        focus('stop');
+                        setMapToolsOpen(false);
+                      }}
+                      disabled={!selectedStop}
+                      aria-label={t('My stop')}
+                      title={t('My stop')}
+                    >
+                      <MapPin size={16} /> {t('My stop')}
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        locate();
+                        setMapToolsOpen(false);
+                      }}
+                      disabled={locating || options.length === 0}
+                      aria-label={t('Near me')}
+                      title={t('Near me')}
+                    >
+                      <LocateFixed size={16} />
+                      {locating ? t('Locating…') : t('Near me')}
+                    </Button>
+                  </motion.div>
                 </div>
-                <button
+                <motion.button
                   type="button"
                   className="btn transit-arrival-peek"
+                  initial={reduceMotion ? false : { opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: reduceMotion ? 0 : 0.36, ease: 'easeOut' }}
+                  whileTap={reduceMotion ? undefined : { scale: 0.985 }}
                   onClick={() =>
                     tripCardRef.current?.scrollIntoView({
                       behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -426,7 +501,7 @@ export default function App() {
                     )}
                     <ChevronDown size={15} aria-hidden="true" />
                   </span>
-                </button>
+                </motion.button>
               </div>
               {routeQuery.data?.warning && (
                 <p className="map-warning">{t(routeQuery.data.warning)}</p>

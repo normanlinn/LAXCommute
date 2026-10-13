@@ -335,5 +335,7 @@
   "Unable to send feedback. Please try again.": "No se pudo enviar. Intenta de nuevo.",
   "View arrivals": "Ver llegadas",
   "Last GPS update": "Última posición GPS",
-  "Close bus details": "Cerrar detalles del autobús"
+  "Close bus details": "Cerrar detalles del autobús",
+  "Map tools": "Herramientas del mapa",
+  "Close map tools": "Cerrar herramientas del mapa"
 }

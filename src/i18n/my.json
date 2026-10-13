@@ -335,5 +335,7 @@
   "Unable to send feedback. Please try again.": "မပို့နိုင်ပါ။ ပြန်ကြိုးစားပါ။",
   "View arrivals": "ရောက်ရှိချိန်များ ကြည့်မည်",
   "Last GPS update": "နောက်ဆုံး GPS အချက်အလက်",
-  "Close bus details": "ကားအသေးစိတ် ပိတ်မည်"
+  "Close bus details": "ကားအသေးစိတ် ပိတ်မည်",
+  "Map tools": "မြေပုံကိရိယာများ",
+  "Close map tools": "မြေပုံကိရိယာများ ပိတ်မည်"
 }

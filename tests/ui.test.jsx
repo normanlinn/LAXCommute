@@ -163,6 +163,30 @@ describe('commute UI', () => {
     expect(saved.value).toBe('Terminal B (TBIT)');
     expect(localStorage.getItem('laxcommute:profile:guest')).toBeNull();
   });
+  it('keeps mobile map actions collapsed until requested', () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: 'Explore first' }));
+    const tools = screen.getByRole('button', { name: 'Map tools' });
+    expect(tools.getAttribute('aria-expanded')).toBe('false');
+    expect(document.querySelector('.map-controls').classList.contains('mobile-open')).toBe(false);
+
+    fireEvent.click(tools);
+    const close = screen.getByRole('button', { name: 'Close map tools' });
+    expect(close.getAttribute('aria-expanded')).toBe('true');
+    expect(document.querySelector('.map-controls').classList.contains('mobile-open')).toBe(true);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Whole route' }));
+    expect(screen.getByRole('button', { name: 'Map tools' }).getAttribute('aria-expanded')).toBe(
+      'false',
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Map tools' }));
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(screen.getByRole('button', { name: 'Map tools' }).getAttribute('aria-expanded')).toBe(
+      'false',
+    );
+  });
+
   it('uses DaisyUI components for buttons, forms, and installation help', async () => {
     render(<App />);
     fireEvent.click(screen.getByRole('button', { name: 'Explore first' }));
