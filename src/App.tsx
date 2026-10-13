@@ -335,6 +335,7 @@ export default function App() {
                     <button
                       type="button"
                       key={r.id}
+                      className="btn transit-route-button"
                       aria-pressed={r.lot === lot}
                       aria-label={t('{lot} Lot shuttle', { lot: r.lot })}
                       style={{ '--picker-color': r.color } as CSSProperties}
@@ -389,7 +390,7 @@ export default function App() {
                 </div>
                 <button
                   type="button"
-                  className="transit-arrival-peek"
+                  className="btn transit-arrival-peek"
                   onClick={() =>
                     tripCardRef.current?.scrollIntoView({
                       behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
