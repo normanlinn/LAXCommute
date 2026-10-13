@@ -10,7 +10,8 @@ type Hit = { segment: number; fraction: number; distance: number; point: Point }
 function closest(point: Point, shape: Point[]): Hit | null {
   let best: Hit | null = null;
   for (let i = 0; i < shape.length - 1; i++) {
-    const a = shape[i], b = shape[i + 1];
+    const a = shape[i],
+      b = shape[i + 1];
     if (![a.lat, a.lon, b.lat, b.lon].every(Number.isFinite)) continue;
     const mx = 111320 * Math.cos(point.lat * rad);
     const my = 110540;
@@ -18,9 +19,10 @@ function closest(point: Point, shape: Point[]): Hit | null {
     const dy = (b.lat - a.lat) * my;
     const lengthSquared = dx * dx + dy * dy;
     if (lengthSquared < 0.01) continue;
-    const fraction = Math.max(0, Math.min(1,
-      ((point.lon - a.lon) * mx * dx + (point.lat - a.lat) * my * dy) / lengthSquared,
-    ));
+    const fraction = Math.max(
+      0,
+      Math.min(1, ((point.lon - a.lon) * mx * dx + (point.lat - a.lat) * my * dy) / lengthSquared),
+    );
     const projected = {
       lat: a.lat + (b.lat - a.lat) * fraction,
       lon: a.lon + (b.lon - a.lon) * fraction,

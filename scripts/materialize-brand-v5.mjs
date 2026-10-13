@@ -18,7 +18,8 @@ const permitted = new Set([
 ]);
 
 for (const [publicPath, encoded] of Object.entries(assets)) {
-  if (!permitted.has(publicPath)) throw new Error('Unexpected LAXCommute brand file: ' + publicPath);
+  if (!permitted.has(publicPath))
+    throw new Error('Unexpected LAXCommute brand file: ' + publicPath);
   const output = join(projectRoot, publicPath);
   mkdirSync(dirname(output), { recursive: true });
   writeFileSync(output, Buffer.from(encoded, 'base64'));

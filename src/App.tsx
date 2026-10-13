@@ -1,7 +1,16 @@
 import { useLanguage } from './i18n/LanguageProvider';
 import type { Direction, Point, Stop } from './types';
 import Button from './components/ui/Button';
-import { lazy, Suspense, useCallback, useRef, useEffect, useMemo, useState, type CSSProperties } from 'react';
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useRef,
+  useEffect,
+  useMemo,
+  useState,
+  type CSSProperties,
+} from 'react';
 import {
   ArrowDownUp,
   ArrowRight,
@@ -138,8 +147,12 @@ export default function App() {
   );
   const vehicleFresh = useSnapshotFresh(live.data?.vehicleFetchedAt);
   const arrivalFresh = useSnapshotFresh(live.data?.arrivalFetchedAt);
-  const nextMapArrival = arrivalFresh && !live.data?.cached && !live.isError &&
-    !live.data?.arrivalSourceUnavailable && selectedStop
+  const nextMapArrival =
+    arrivalFresh &&
+    !live.data?.cached &&
+    !live.isError &&
+    !live.data?.arrivalSourceUnavailable &&
+    selectedStop
       ? availableArrivals(live.data?.predictions || EMPTY, Date.now())[0]
       : undefined;
   const vehicles = useMemo(
@@ -313,7 +326,11 @@ export default function App() {
                 <Map size={18} /> {mapExpanded ? t('Hide map') : t('Show map')}
               </Button>
               <div id="shuttle-map-panel" hidden={!mapExpanded}>
-                <div className="transit-route-picker" role="group" aria-label={t('Which shuttle do you want?')}>
+                <div
+                  className="transit-route-picker"
+                  role="group"
+                  aria-label={t('Which shuttle do you want?')}
+                >
                   {ROUTES.map((r) => (
                     <button
                       type="button"
@@ -345,13 +362,27 @@ export default function App() {
                   </Suspense>
                 )}
                 <div className="map-controls">
-                  <Button onClick={() => focus('route')} aria-label={t('Whole route')} title={t('Whole route')}>
+                  <Button
+                    onClick={() => focus('route')}
+                    aria-label={t('Whole route')}
+                    title={t('Whole route')}
+                  >
                     <Route size={16} /> {t('Whole route')}{' '}
                   </Button>
-                  <Button onClick={() => focus('stop')} disabled={!selectedStop} aria-label={t('My stop')} title={t('My stop')}>
+                  <Button
+                    onClick={() => focus('stop')}
+                    disabled={!selectedStop}
+                    aria-label={t('My stop')}
+                    title={t('My stop')}
+                  >
                     <MapPin size={16} /> {t('My stop')}{' '}
                   </Button>
-                  <Button onClick={locate} disabled={locating || options.length === 0} aria-label={t('Near me')} title={t('Near me')}>
+                  <Button
+                    onClick={locate}
+                    disabled={locating || options.length === 0}
+                    aria-label={t('Near me')}
+                    title={t('Near me')}
+                  >
                     <LocateFixed size={16} />
                     {locating ? t('Locating…') : t('Near me')}
                   </Button>
@@ -359,21 +390,39 @@ export default function App() {
                 <button
                   type="button"
                   className="transit-arrival-peek"
-                  onClick={() => tripCardRef.current?.scrollIntoView({
-                    behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
-                    block: 'start',
-                  })}
+                  onClick={() =>
+                    tripCardRef.current?.scrollIntoView({
+                      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+                        ? 'auto'
+                        : 'smooth',
+                      block: 'start',
+                    })
+                  }
                 >
-                  <span className="transit-peek-symbol" aria-hidden="true"><BusFront size={23} /></span>
+                  <span className="transit-peek-symbol" aria-hidden="true">
+                    <BusFront size={23} />
+                  </span>
                   <span className="transit-peek-copy">
                     <small>{t('Your next shuttle')}</small>
                     <strong>{selectedStop?.name || t('Choose a boarding stop')}</strong>
-                    {nextMapArrival && <span>{nextMapArrival.scheduled ? t('Scheduled') : t('Live')} · {t('Bus {name}', { name: nextMapArrival.busName || route.short })}</span>}
+                    {nextMapArrival && (
+                      <span>
+                        {nextMapArrival.scheduled ? t('Scheduled') : t('Live')} ·{' '}
+                        {t('Bus {name}', { name: nextMapArrival.busName || route.short })}
+                      </span>
+                    )}
                   </span>
                   <span className="transit-peek-eta">
-                    {nextMapArrival
-                      ? <><strong>{Math.max(0, Math.ceil((nextMapArrival.due - Date.now()) / 60000))}</strong><small>{t('min')}</small></>
-                      : <span>{t('View arrivals')}</span>}
+                    {nextMapArrival ? (
+                      <>
+                        <strong>
+                          {Math.max(0, Math.ceil((nextMapArrival.due - Date.now()) / 60000))}
+                        </strong>
+                        <small>{t('min')}</small>
+                      </>
+                    ) : (
+                      <span>{t('View arrivals')}</span>
+                    )}
                     <ChevronDown size={15} aria-hidden="true" />
                   </span>
                 </button>
