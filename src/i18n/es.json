@@ -332,5 +332,8 @@
   "Send feedback": "Enviar comentarios",
   "Sending…": "Enviando…",
   "Your feedback was sent. Thank you!": "¡Gracias! Tus comentarios se enviaron.",
-  "Unable to send feedback. Please try again.": "No se pudo enviar. Intenta de nuevo."
+  "Unable to send feedback. Please try again.": "No se pudo enviar. Intenta de nuevo.",
+  "View arrivals": "Ver llegadas",
+  "Last GPS update": "Última posición GPS",
+  "Close bus details": "Cerrar detalles del autobús"
 }
