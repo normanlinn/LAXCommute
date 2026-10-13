@@ -80,7 +80,7 @@ function FreeMap({
   latest.current = { stops, paths, selectedStop, userLocation };
   const [ready, setReady] = useState(false);
   const [tileError, setTileError] = useState(false);
-  const [showStops, setShowStops] = useState(true);
+  const [showStops, setShowStops] = useState(() => window.innerWidth <= 760);
   const [selectedBusID, setSelectedBusID] = useState<number | null>(null);
   useEffect(() => setSelectedBusID(null), [route.id]);
   const [basemap, setBasemap] = useState('simple');
