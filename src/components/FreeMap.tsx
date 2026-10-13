@@ -142,7 +142,9 @@ function FreeMap({
     });
     L.control.zoom({ position: 'topright' }).addTo(map);
     // Avoid recentering the map after someone drags it themselves.
-    map.on('dragstart', () => { userMovedMap.current = true; });
+    map.on('dragstart', () => {
+      userMovedMap.current = true;
+    });
     const overlays = L.layerGroup().addTo(map);
     state.current = { map, overlays, markers: new Map() };
     const observer = new ResizeObserver(() => map.invalidateSize({ pan: false }));
