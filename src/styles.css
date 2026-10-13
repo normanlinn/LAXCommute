@@ -2991,19 +2991,476 @@ select,
   border-radius: 4px;
 }
 
-
 /* Community contributions */
-.crowd-panel { border-top:1px solid var(--color-base-300); margin-top:22px; padding-top:20px; display:grid; gap:12px; }
-.crowd-heading,.crowd-heading>div { display:flex; align-items:center; gap:9px; justify-content:space-between; }
-.crowd-heading strong { font-size:1.03rem; }
-.crowd-note,.crowd-message { margin:0; font-size:.83rem; color:var(--color-base-content); opacity:.84; line-height:1.55; }
-.crowd-summary { display:flex; flex-wrap:wrap; gap:6px 12px; justify-content:space-between; align-items:center; border:1px solid var(--color-base-300); border-radius:13px; padding:12px; }
-.crowd-summary strong { color:var(--color-primary); }
-.crowd-summary small { width:100%; opacity:.7; }
-.crowd-form,.feedback-modal form { display:grid; gap:12px; }
-.crowd-form label,.feedback-modal label { display:grid; gap:6px; font-size:.9rem; font-weight:600; }
-.crowd-form select,.feedback-modal select,.feedback-modal textarea,.feedback-modal input { background:var(--color-base-100); color:var(--color-base-content); width:100%; min-width:0; border:1px solid var(--color-base-300); border-radius:10px; padding:11px; font:inherit; font-size:16px; }
-.crowd-form button,.feedback-modal form button { min-height:44px; }
-.feedback-menu-button { width:100%; justify-content:flex-start; gap:12px; margin:8px 0 14px; }
-.feedback-modal { display:grid; gap:14px; }
-.feedback-modal p { margin:0; font-size:.9rem; line-height:1.55; }
+.crowd-panel {
+  border-top: 1px solid var(--color-base-300);
+  margin-top: 22px;
+  padding-top: 20px;
+  display: grid;
+  gap: 12px;
+}
+.crowd-heading,
+.crowd-heading > div {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  justify-content: space-between;
+}
+.crowd-heading strong {
+  font-size: 1.03rem;
+}
+.crowd-note,
+.crowd-message {
+  margin: 0;
+  font-size: 0.83rem;
+  color: var(--color-base-content);
+  opacity: 0.84;
+  line-height: 1.55;
+}
+.crowd-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid var(--color-base-300);
+  border-radius: 13px;
+  padding: 12px;
+}
+.crowd-summary strong {
+  color: var(--color-primary);
+}
+.crowd-summary small {
+  width: 100%;
+  opacity: 0.7;
+}
+.crowd-form,
+.feedback-modal form {
+  display: grid;
+  gap: 12px;
+}
+.crowd-form label,
+.feedback-modal label {
+  display: grid;
+  gap: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.crowd-form select,
+.feedback-modal select,
+.feedback-modal textarea,
+.feedback-modal input {
+  background: var(--color-base-100);
+  color: var(--color-base-content);
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--color-base-300);
+  border-radius: 10px;
+  padding: 11px;
+  font: inherit;
+  font-size: 16px;
+}
+.crowd-form button,
+.feedback-modal form button {
+  min-height: 44px;
+}
+.feedback-menu-button {
+  width: 100%;
+  justify-content: flex-start;
+  gap: 12px;
+  margin: 8px 0 14px;
+}
+.feedback-modal {
+  display: grid;
+  gap: 14px;
+}
+.feedback-modal p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+/* LAXCommute transit-style map, with genuine route geometry and GPS snapshots. */
+.transit-route-picker,
+.transit-arrival-peek {
+  display: none;
+}
+.map-marker-dot.marker-bus {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: 3px solid #fff;
+  border-radius: 16px;
+  box-shadow: 0 7px 22px #061f3645;
+  color: #fff;
+}
+.map-marker-dot.marker-bus svg {
+  width: 26px;
+  height: 26px;
+  flex: none;
+}
+.bus-marker-number {
+  position: absolute;
+  display: block;
+  top: calc(100% - 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 94px;
+  min-width: 36px;
+  padding: 2px 8px 3px;
+  border: 1px solid var(--marker-color);
+  border-radius: 10px;
+  background: var(--color-base-100);
+  color: var(--color-base-content);
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.4;
+  white-space: nowrap;
+  text-align: center;
+  box-shadow: 0 4px 14px #061f3629;
+}
+.map-marker-dot.marker-bus.bus-focused {
+  outline: 3px solid var(--marker-color);
+  outline-offset: 3px;
+  box-shadow: 0 7px 24px #061f3666;
+}
+.transit-bus-detail {
+  position: absolute;
+  left: 14px;
+  right: auto;
+  bottom: 87px;
+  z-index: 750;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(315px, calc(100% - 28px));
+  min-width: 0;
+  padding: 11px 12px;
+  border: 1px solid var(--color-base-300);
+  border-radius: 17px;
+  background: var(--color-base-100);
+  color: var(--color-base-content);
+  box-shadow: 0 10px 30px #061f3634;
+}
+.transit-bus-detail-icon {
+  color: var(--route-color);
+  font-size: 19px;
+}
+.transit-bus-detail > div {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+.transit-bus-detail strong {
+  font-size: 13px;
+}
+.transit-bus-detail small {
+  font-size: 11px;
+  opacity: 0.73;
+}
+.transit-bus-detail button {
+  flex: none;
+  margin-left: auto;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: var(--color-base-200);
+  color: var(--color-base-content);
+  font-size: 24px;
+}
+@media (max-width: 760px) {
+  .trip-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 4px;
+    padding: 0 12px;
+  }
+  .trip-layout > .map-column {
+    order: 0;
+    width: 100%;
+    position: relative;
+    min-width: 0;
+  }
+  .trip-layout > .trip-card {
+    order: 1;
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    margin: 8px 0 24px;
+    padding: 30px 20px 24px;
+    border: 1px solid var(--color-base-300);
+    border-radius: 28px;
+    box-shadow: 0 12px 36px #091e3620;
+    scroll-margin-top: 16px;
+  }
+  .trip-layout > .trip-card::before {
+    content: '';
+    position: absolute;
+    top: 11px;
+    left: calc(50% - 22px);
+    width: 44px;
+    height: 5px;
+    border-radius: 20px;
+    background: var(--color-base-300);
+  }
+  .map-topbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 6px 14px;
+  }
+  .map-topbar h1 {
+    max-width: 100%;
+    font-size: clamp(22px, 6vw, 29px);
+  }
+  .map-route-label {
+    flex: none;
+    max-width: 118px;
+  }
+  .map-route-label div > span {
+    display: none;
+  }
+  .map-route-label strong {
+    display: block;
+    white-space: normal;
+    font-size: 12px;
+    margin: 0;
+  }
+  .map-toggle {
+    margin: 0 0 10px;
+    min-height: 40px;
+    border-radius: 12px;
+  }
+  #shuttle-map-panel {
+    position: relative;
+  }
+  .transit-route-picker {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 10px;
+    width: 100%;
+  }
+  .transit-route-picker button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-width: 0;
+    min-height: 48px;
+    padding: 7px 5px;
+    border: 1px solid var(--color-base-300);
+    border-radius: 15px;
+    background: var(--color-base-100);
+    color: var(--color-base-content);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 750;
+    box-shadow: 0 2px 8px #122b3210;
+    transition:
+      background-color 0.18s ease,
+      transform 0.18s ease,
+      border-color 0.18s ease;
+  }
+  .transit-route-picker button span {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 25px;
+    height: 25px;
+    border-radius: 9px;
+    background: var(--picker-color);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .transit-route-picker button[aria-pressed='true'] {
+    background: var(--color-base-200);
+    border: 2px solid var(--picker-color);
+    padding: 6px 4px;
+  }
+  .map-surface {
+    height: clamp(365px, 54svh, 640px);
+    min-height: 365px;
+    max-height: none;
+    border-radius: 23px;
+  }
+  .map-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    position: absolute;
+    top: 144px;
+    right: 12px;
+    left: auto;
+    z-index: 5;
+    width: auto;
+    margin: 0;
+  }
+  .map-controls .btn {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 10px;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 0;
+    line-height: 0;
+    border-radius: 14px;
+  }
+  .map-controls .btn svg {
+    width: 18px;
+    height: 18px;
+  }
+  .transit-arrival-peek {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    z-index: 6;
+    width: calc(100% - 24px);
+    min-height: 87px;
+    margin: -100px 12px 15px;
+    padding: 13px 15px;
+    border: 1px solid var(--color-base-300);
+    border-radius: 22px;
+    background: var(--color-base-100);
+    color: var(--color-base-content);
+    box-shadow: 0 12px 35px #061f3650;
+    text-align: left;
+  }
+  .transit-peek-symbol {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 47px;
+    height: 47px;
+    border-radius: 16px;
+    background: var(--route-color);
+    color: #fff;
+  }
+  .transit-peek-copy {
+    display: grid;
+    min-width: 0;
+    flex: 1;
+    gap: 4px;
+  }
+  .transit-peek-copy small {
+    font-size: 10px;
+    font-weight: 700;
+    opacity: 0.7;
+  }
+  .transit-peek-copy strong {
+    font-size: 14px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+  .transit-peek-copy > span {
+    font-size: 10px;
+    opacity: 0.72;
+  }
+  .transit-peek-eta {
+    display: flex;
+    align-items: baseline;
+    flex: none;
+    gap: 3px;
+    color: var(--color-base-content);
+  }
+  .transit-peek-eta strong {
+    font-size: 29px;
+    line-height: 1;
+  }
+  .transit-peek-eta small {
+    font-size: 11px;
+  }
+  .transit-peek-eta > span {
+    font-weight: 700;
+    font-size: 12px;
+    max-width: 66px;
+  }
+  .transit-peek-eta svg {
+    align-self: center;
+    opacity: 0.55;
+  }
+  .map-footer {
+    padding: 8px 5px 13px;
+    font-size: 10px;
+  }
+  .shuttle-map-legend {
+    display: none;
+  }
+  /* Keep tile attribution visible above the overlapping arrival card. */
+  .shuttle-map.leaflet-container .leaflet-control-attribution {
+    margin-bottom: 109px;
+  }
+  .transit-bus-detail {
+    left: 10px;
+    bottom: 122px;
+  }
+}
+@media (max-width: 375px) {
+  .map-topbar .map-route-label {
+    max-width: 90px;
+  }
+  .transit-route-picker button {
+    gap: 4px;
+    font-size: 12px;
+  }
+  .transit-arrival-peek {
+    padding: 10px;
+    gap: 7px;
+  }
+  .transit-peek-symbol {
+    width: 40px;
+    height: 40px;
+  }
+  .transit-peek-copy strong {
+    font-size: 12px;
+  }
+  .transit-peek-eta strong {
+    font-size: 24px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .transit-route-picker button {
+    transition: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) and (max-width: 760px) {
+  .transit-arrival-peek {
+    animation: transit-card-enter 0.3s ease-out both;
+  }
+  .transit-route-picker button:active {
+    transform: scale(0.97);
+  }
+  .map-marker-dot.marker-selected:not(.marker-bus) {
+    animation: transit-stop-attention 0.55s ease-out both;
+  }
+}
+@keyframes transit-card-enter {
+  from {
+    opacity: 0.65;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes transit-stop-attention {
+  from {
+    transform: scale(0.78);
+  }
+  to {
+    transform: scale(1);
+  }
+}

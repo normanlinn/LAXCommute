@@ -59,6 +59,8 @@ vi.mock('virtual:pwa-register/react', () => ({
 vi.mock('../src/components/ShuttleMap', () => ({
   default: () => <div aria-label="Shuttle map" />,
 }));
+// Crowd reporting is covered separately; keep these UI tests focused on commute navigation.
+vi.mock('../src/components/CrowdReports', () => ({ default: () => null }));
 beforeEach(() => {
   auth.signInWithPassword.mockReset().mockResolvedValue({ error: null });
   auth.signUp.mockReset().mockResolvedValue({ data: { session: null }, error: null });

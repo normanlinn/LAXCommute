@@ -15,7 +15,8 @@ async function community(path: string, options: RequestInit = {}) {
     signal: AbortSignal.timeout(12000),
   });
   const json = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(typeof json.error === 'string' ? json.error : 'Request failed.');
+  if (!response.ok)
+    throw new Error(typeof json.error === 'string' ? json.error : 'Request failed.');
   return json;
 }
 export async function getCrowdReports(routeId: number): Promise<CrowdSummary[]> {
@@ -23,8 +24,14 @@ export async function getCrowdReports(routeId: number): Promise<CrowdSummary[]> 
   return Array.isArray(result.reports) ? result.reports : [];
 }
 export async function sendCrowdReport(routeId: number, vehicleId: number, occupancy: CrowdLevel) {
-  await community('', { method: 'POST', body: JSON.stringify({ type: 'crowd', routeId, vehicleId, occupancy }) });
+  await community('', {
+    method: 'POST',
+    body: JSON.stringify({ type: 'crowd', routeId, vehicleId, occupancy }),
+  });
 }
 export async function sendDeveloperFeedback(category: string, message: string, email: string) {
-  await community('', { method: 'POST', body: JSON.stringify({ type: 'feedback', category, message, email }) });
+  await community('', {
+    method: 'POST',
+    body: JSON.stringify({ type: 'feedback', category, message, email }),
+  });
 }

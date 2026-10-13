@@ -1,7 +1,16 @@
 import { useLanguage } from './i18n/LanguageProvider';
 import type { Direction, Point, Stop } from './types';
 import Button from './components/ui/Button';
-import { lazy, Suspense, useCallback, useRef, useEffect, useMemo, useState } from 'react';
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useRef,
+  useEffect,
+  useMemo,
+  useState,
+  type CSSProperties,
+} from 'react';
 import {
   ArrowDownUp,
   ArrowRight,
@@ -26,7 +35,7 @@ import {
   routeForLot,
   savedBoardingStop,
 } from './domain/commute';
-import { validVehicle } from './domain/arrivals';
+import { availableArrivals, validVehicle } from './domain/arrivals';
 import { useAccount } from './hooks/useAccount';
 import { useCommute } from './hooks/useCommute';
 import { useLive, useOnline, useRoute, useSnapshotFresh } from './hooks/useShuttle';
@@ -98,9 +107,9 @@ export default function App() {
       /* Navigation still works without storage. */
     }
   }, [direction]);
-  const [mapExpanded, setMapExpanded] = useState(
-    () => !window.matchMedia('(max-width: 760px)').matches,
-  );
+  // Mobile opens on the map, like a transit app. Users can still collapse it.
+  const [mapExpanded, setMapExpanded] = useState(true);
+  const tripCardRef = useRef<HTMLElement>(null);
   const [override, setOverride] = useState<{
     routeID: number;
     direction: Direction;
@@ -137,6 +146,15 @@ export default function App() {
     (tab === 'map' || tab === 'home') && Boolean(routeQuery.data),
   );
   const vehicleFresh = useSnapshotFresh(live.data?.vehicleFetchedAt);
+  const arrivalFresh = useSnapshotFresh(live.data?.arrivalFetchedAt);
+  const nextMapArrival =
+    arrivalFresh &&
+    !live.data?.cached &&
+    !live.isError &&
+    !live.data?.arrivalSourceUnavailable &&
+    selectedStop
+      ? availableArrivals(live.data?.predictions || EMPTY, Date.now())[0]
+      : undefined;
   const vehicles = useMemo(
     () =>
       vehicleFresh && !live.isError && !live.data?.cached
@@ -308,6 +326,26 @@ export default function App() {
                 <Map size={18} /> {mapExpanded ? t('Hide map') : t('Show map')}
               </Button>
               <div id="shuttle-map-panel" hidden={!mapExpanded}>
+                <div
+                  className="transit-route-picker"
+                  role="group"
+                  aria-label={t('Which shuttle do you want?')}
+                >
+                  {ROUTES.map((r) => (
+                    <button
+                      type="button"
+                      key={r.id}
+                      className="btn transit-route-button"
+                      aria-pressed={r.lot === lot}
+                      aria-label={t('{lot} Lot shuttle', { lot: r.lot })}
+                      style={{ '--picker-color': r.color } as CSSProperties}
+                      onClick={() => chooseRoute(r.lot)}
+                    >
+                      <span aria-hidden="true">{r.short}</span>
+                      {r.lot}
+                    </button>
+                  ))}
+                </div>
                 {mapExpanded && (
                   <Suspense fallback={<MapLoading />}>
                     <ShuttleMap
@@ -325,17 +363,70 @@ export default function App() {
                   </Suspense>
                 )}
                 <div className="map-controls">
-                  <Button onClick={() => focus('route')}>
+                  <Button
+                    onClick={() => focus('route')}
+                    aria-label={t('Whole route')}
+                    title={t('Whole route')}
+                  >
                     <Route size={16} /> {t('Whole route')}{' '}
                   </Button>
-                  <Button onClick={() => focus('stop')} disabled={!selectedStop}>
+                  <Button
+                    onClick={() => focus('stop')}
+                    disabled={!selectedStop}
+                    aria-label={t('My stop')}
+                    title={t('My stop')}
+                  >
                     <MapPin size={16} /> {t('My stop')}{' '}
                   </Button>
-                  <Button onClick={locate} disabled={locating || options.length === 0}>
+                  <Button
+                    onClick={locate}
+                    disabled={locating || options.length === 0}
+                    aria-label={t('Near me')}
+                    title={t('Near me')}
+                  >
                     <LocateFixed size={16} />
                     {locating ? t('Locating…') : t('Near me')}
                   </Button>
                 </div>
+                <button
+                  type="button"
+                  className="btn transit-arrival-peek"
+                  onClick={() =>
+                    tripCardRef.current?.scrollIntoView({
+                      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+                        ? 'auto'
+                        : 'smooth',
+                      block: 'start',
+                    })
+                  }
+                >
+                  <span className="transit-peek-symbol" aria-hidden="true">
+                    <BusFront size={23} />
+                  </span>
+                  <span className="transit-peek-copy">
+                    <small>{t('Your next shuttle')}</small>
+                    <strong>{selectedStop?.name || t('Choose a boarding stop')}</strong>
+                    {nextMapArrival && (
+                      <span>
+                        {nextMapArrival.scheduled ? t('Scheduled') : t('Live')} ·{' '}
+                        {t('Bus {name}', { name: nextMapArrival.busName || route.short })}
+                      </span>
+                    )}
+                  </span>
+                  <span className="transit-peek-eta">
+                    {nextMapArrival ? (
+                      <>
+                        <strong>
+                          {Math.max(0, Math.ceil((nextMapArrival.due - Date.now()) / 60000))}
+                        </strong>
+                        <small>{t('min')}</small>
+                      </>
+                    ) : (
+                      <span>{t('View arrivals')}</span>
+                    )}
+                    <ChevronDown size={15} aria-hidden="true" />
+                  </span>
+                </button>
               </div>
               {routeQuery.data?.warning && (
                 <p className="map-warning">{t(routeQuery.data.warning)}</p>
@@ -375,7 +466,7 @@ export default function App() {
                 </a>
               </div>
             </section>
-            <aside className="card bg-base-100 trip-card">
+            <aside ref={tripCardRef} className="card bg-base-100 trip-card">
               {saveState && hasSaved && (
                 <p className="alert alert-soft alert-success notice" role="status">
                   {t(saveState)}

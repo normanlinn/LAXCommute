@@ -7,6 +7,7 @@ import { animate } from 'animejs';
 import 'leaflet/dist/leaflet.css';
 import { config } from '../config';
 import { GPS_TTL_MS, snapshotFresh, validVehicle } from '../domain/arrivals';
+import { routeMotionPath, positionOnMotionPath } from '../domain/map-motion';
 
 const coordinates = (point: Point): L.LatLngTuple => [point.lat, point.lon];
 const validPoint = (point: Point) =>
@@ -16,20 +17,24 @@ const validPoint = (point: Point) =>
   Math.abs(point.lon) <= 180;
 const reducedMotion = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
-function markerIcon(kind: string, color: string, selected: boolean) {
+function markerIcon(kind: string, color: string, selected: boolean, busName = '') {
   const content = document.createElement('span');
-  content.className = `map-marker-dot marker-${kind}${selected ? ' marker-selected' : ''}`;
+  content.className = `map-marker-dot marker-${kind}${selected ? (kind === 'bus' ? ' bus-focused' : ' marker-selected') : ''}`;
   content.style.setProperty('--marker-color', color);
   if (kind === 'bus') {
     // Fixed artwork only; all feed-supplied names are inserted as text below.
     content.innerHTML =
-      '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="5" y="3" width="14" height="16" rx="3"/><path d="M5 11h14M8 19v2m8-2v2M8 6h8"/><circle cx="8.5" cy="15" r="1"/><circle cx="15.5" cy="15" r="1"/></svg>';
+      '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="15" rx="4"/><path d="M4 11h16M7.5 19v2m9-2v2M8 7.5h8"/><circle cx="8.5" cy="15" r="1"/><circle cx="15.5" cy="15" r="1"/></svg>';
+    const badge = document.createElement('span');
+    badge.className = 'bus-marker-number';
+    badge.textContent = busName.slice(0, 14);
+    content.append(badge);
   }
   return L.divIcon({
     html: content,
     className: 'shuttle-marker',
-    iconSize: [44, 44],
-    iconAnchor: [22, 22],
+    iconSize: kind === 'bus' ? [68, 64] : [44, 44],
+    iconAnchor: kind === 'bus' ? [34, 27] : [22, 22],
   });
 }
 
@@ -75,7 +80,9 @@ function FreeMap({
   latest.current = { stops, paths, selectedStop, userLocation };
   const [ready, setReady] = useState(false);
   const [tileError, setTileError] = useState(false);
-  const [showStops, setShowStops] = useState(false);
+  const [showStops, setShowStops] = useState(() => window.innerWidth <= 760);
+  const [selectedBusID, setSelectedBusID] = useState<number | null>(null);
+  useEffect(() => setSelectedBusID(null), [route.id]);
   const [basemap, setBasemap] = useState('simple');
   const [simpleUnavailable, setSimpleUnavailable] = useState(false);
 
@@ -170,18 +177,29 @@ function FreeMap({
       if (!validPoint(point)) return;
       wanted.add(key);
       const color = kind === 'you' ? '#266beb' : route.color;
-      const appearance = `${kind}:${color}:${selected}`;
+      const appearance = `${kind}:${color}:${selected}:${kind === 'bus' ? point.name || point.id || '' : ''}`;
       let entry = markers.get(key);
       if (!entry) {
         const marker = L.marker(coordinates(point), {
-          icon: markerIcon(kind, color, selected),
+          icon: markerIcon(kind, color, selected, String(point.name || point.id || '')),
           title,
-          keyboard: kind === 'stop',
-          interactive: kind === 'stop',
+          keyboard: kind === 'stop' || kind === 'bus',
+          interactive: kind === 'stop' || kind === 'bus',
           zIndexOffset: kind === 'bus' ? 500 : selected ? 1500 : 1000,
         }).addTo(map);
         entry = { marker, point, appearance };
         markers.set(key, entry);
+        if (kind === 'bus')
+          marker.on('click', () => {
+            const current = markers.get(key)?.point;
+            if (current?.id === undefined) return;
+            setSelectedBusID(current.id);
+            if (validPoint(current))
+              map.flyTo(coordinates(current), Math.max(15, map.getZoom()), {
+                animate: !reducedMotion(),
+                duration: 0.65,
+              });
+          });
         if (kind === 'stop')
           marker.on('click', () => {
             const current = markers.get(key)?.point;
@@ -194,19 +212,27 @@ function FreeMap({
           entry.animation?.cancel();
           if (kind === 'bus' && !reducedMotion() && !document.hidden) {
             const start = entry.marker.getLatLng();
-            const moving = { lat: start.lat, lon: start.lng };
-            const marker = entry.marker;
-            entry.animation = animate(moving, {
-              lat: point.lat,
-              lon: point.lon,
-              duration: 900,
-              ease: 'outCubic',
-              onUpdate: () => marker.setLatLng(coordinates(moving)),
-            });
+            const motionPath = routeMotionPath({ lat: start.lat, lon: start.lng }, point, paths);
+            if (motionPath) {
+              // Animate only along known road geometry between actual GPS observations.
+              // Do not continuously extrapolate movement after the last GPS fix.
+              const marker = entry.marker;
+              const motion = { progress: 0 };
+              entry.animation = animate(motion, {
+                progress: 1,
+                duration: 2100,
+                ease: 'inOutSine',
+                onUpdate: () =>
+                  marker.setLatLng(coordinates(positionOnMotionPath(motionPath, motion.progress))),
+                onComplete: () => marker.setLatLng(coordinates(point)),
+              });
+            } else entry.marker.setLatLng(coordinates(point));
           } else entry.marker.setLatLng(coordinates(point));
         }
         if (entry.appearance !== appearance) {
-          entry.marker.setIcon(markerIcon(kind, color, selected));
+          entry.marker.setIcon(
+            markerIcon(kind, color, selected, String(point.name || point.id || '')),
+          );
           entry.marker.setZIndexOffset(kind === 'bus' ? 500 : selected ? 1500 : 1000);
           entry.appearance = appearance;
         }
@@ -246,6 +272,7 @@ function FreeMap({
         bus,
         'bus',
         t('Bus {name} · Reported GPS', { name: bus.name || bus.id }),
+        selectedBusID === bus.id,
       );
       const approaching =
         !liveData?.cached &&
@@ -292,7 +319,19 @@ function FreeMap({
     };
     expire();
     return () => clearTimeout(expiration);
-  }, [ready, stops, vehicles, selectedStop, userLocation, route.color, showStops, t, liveData]);
+  }, [
+    ready,
+    stops,
+    paths,
+    vehicles,
+    selectedStop,
+    selectedBusID,
+    userLocation,
+    route.color,
+    showStops,
+    t,
+    liveData,
+  ]);
 
   useEffect(() => {
     if (!ready || !state.current) return;
@@ -366,6 +405,9 @@ function FreeMap({
     else if (focusRequest.mode === 'route') fitRoute(map, stops, paths, animate);
   }, [ready, focusRequest]); // Camera changes only when the user requests them.
 
+  const selectedBus = vehicles.find(
+    (vehicle) => vehicle.id === selectedBusID && validVehicle(vehicle),
+  );
   return (
     <div className="map-surface">
       <div
@@ -410,6 +452,32 @@ function FreeMap({
               {showStops ? t('Hide other stops') : t('Show other stops')}
             </button>
           </div>
+          {selectedBus && (
+            <div className="transit-bus-detail" role="status">
+              <span className="transit-bus-detail-icon" aria-hidden="true">
+                ●
+              </span>
+              <div>
+                <strong>{t('Bus {name}', { name: selectedBus.name || selectedBus.id })}</strong>
+                <small>
+                  {t('Last GPS update')} ·{' '}
+                  {t('{minutes} min ago', {
+                    minutes: Math.max(
+                      0,
+                      Math.floor((Date.now() - Date.parse(selectedBus.lastUpdated)) / 60000),
+                    ),
+                  })}
+                </small>
+              </div>
+              <button
+                type="button"
+                aria-label={t('Close bus details')}
+                onClick={() => setSelectedBusID(null)}
+              >
+                ×
+              </button>
+            </div>
+          )}
           <div className="shuttle-map-legend" aria-label={t('Map legend')}>
             <span>
               <i className="legend-stop" /> {t('Stop')}{' '}
