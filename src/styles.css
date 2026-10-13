@@ -3437,24 +3437,8 @@ select,
 }
 
 @media (prefers-reduced-motion: no-preference) and (max-width: 760px) {
-  .transit-arrival-peek {
-    animation: transit-card-enter 0.3s ease-out both;
-  }
-  .transit-route-picker button:active {
-    transform: scale(0.97);
-  }
   .map-marker-dot.marker-selected:not(.marker-bus) {
     animation: transit-stop-attention 0.55s ease-out both;
-  }
-}
-@keyframes transit-card-enter {
-  from {
-    opacity: 0.65;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
   }
 }
 @keyframes transit-stop-attention {
@@ -3463,5 +3447,122 @@ select,
   }
   to {
     transform: scale(1);
+  }
+}
+
+/* Map actions: desktop shortcuts stay visible; phones use one unobtrusive tool button. */
+.map-tools-toggle {
+  display: none !important;
+}
+.map-tools-actions {
+  display: flex;
+  gap: 9px;
+}
+@media (max-width: 760px) {
+  /* Pinch and double-tap still zoom the real Leaflet map. */
+  .shuttle-map.leaflet-container .leaflet-control-zoom {
+    display: none;
+  }
+  .map-controls {
+    position: absolute;
+    top: 70px;
+    right: 13px;
+    left: auto;
+    z-index: 12;
+    width: 48px;
+    margin: 0;
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+  }
+  .map-controls .btn.map-tools-toggle {
+    display: grid !important;
+    place-items: center;
+    flex: none;
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    min-height: 48px;
+    padding: 11px;
+    border: 1px solid var(--color-base-300);
+    border-radius: 50%;
+    background: var(--color-base-100);
+    color: var(--color-base-content);
+    box-shadow: 0 4px 18px #061f3635;
+    font-size: 14px;
+    line-height: normal;
+  }
+  .map-controls .btn.map-tools-toggle[aria-expanded='true'] {
+    background: var(--color-primary);
+    color: var(--color-primary-content);
+  }
+  .map-controls .map-tools-actions {
+    position: absolute;
+    top: 56px;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    visibility: hidden;
+    pointer-events: none;
+    transform-origin: top right;
+    transition: visibility 0s linear 0.19s;
+    width: max-content;
+    min-width: 173px;
+    max-width: calc(100vw - 45px);
+    padding: 7px;
+    border: 1px solid var(--color-base-300);
+    border-radius: 17px;
+    background: var(--color-base-100);
+    box-shadow: 0 12px 28px #061f363e;
+  }
+  .map-controls.mobile-open .map-tools-actions {
+    visibility: visible;
+    pointer-events: auto;
+    transition-delay: 0s;
+  }
+  .map-controls .map-tools-actions[aria-hidden='true'] .btn {
+    pointer-events: none;
+  }
+  .map-controls .map-tools-actions .btn {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    width: 100%;
+    height: auto;
+    min-width: 0;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 11px;
+    background: transparent;
+    box-shadow: none;
+    color: var(--color-base-content);
+    font-size: 13px;
+    font-weight: 650;
+    line-height: 1.35;
+    white-space: normal;
+    text-align: left;
+  }
+  .map-controls .map-tools-actions .btn:not(:disabled):hover,
+  .map-controls .map-tools-actions .btn:not(:disabled):focus-visible {
+    background: var(--color-base-200);
+  }
+  .map-controls .map-tools-actions .btn svg {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+  }
+}
+/* Framer Motion drives the popover entrance and exit; avoid a second CSS animation. */
+.map-tools-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+@media (prefers-reduced-motion: reduce) {
+  .map-controls .map-tools-actions {
+    transition: none;
   }
 }
