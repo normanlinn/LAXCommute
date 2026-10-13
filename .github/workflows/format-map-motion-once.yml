@@ -1,0 +1,30 @@
+name: Format mobile motion patch
+on:
+  push:
+    branches: [fix/clean-mobile-map-controls-motion]
+    paths:
+      - .github/workflows/format-map-motion-once.yml
+permissions:
+  contents: write
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/clean-mobile-map-controls-motion
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npx prettier --write src/App.tsx src/styles.css
+      - name: Commit formatting
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/App.tsx src/styles.css
+          if ! git diff --cached --quiet; then
+            git commit -m "Format mobile map motion UI"
+            git push origin HEAD:refs/heads/fix/clean-mobile-map-controls-motion
+          fi
