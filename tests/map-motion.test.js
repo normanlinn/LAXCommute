@@ -10,10 +10,10 @@ describe('honest shuttle marker animation', () => {
   it('follows the actual street bend between reported GPS points', () => {
     const path = routeMotionPath(road[0], road[2], [{ id: 1, coordinates: road }]);
     expect(path).not.toBeNull();
-    const mid = positionOnMotionPath(path!, 0.5);
+    const mid = positionOnMotionPath(path, 0.5);
     expect(mid.lon).toBeCloseTo(-118.4, 3);
     expect(mid.lat).toBeGreaterThan(33.9405);
-    expect(positionOnMotionPath(path!, 1)).toEqual(road[2]);
+    expect(positionOnMotionPath(path, 1)).toEqual(road[2]);
   });
   it('does not animate jumps where route geometry is missing', () => {
     expect(routeMotionPath(road[0], road[2], [])).toBeNull();
@@ -29,6 +29,6 @@ describe('honest shuttle marker animation', () => {
   it('supports travel in the reverse direction', () => {
     const path = routeMotionPath(road[2], road[0], [{ id: 1, coordinates: road }]);
     expect(path).not.toBeNull();
-    expect(positionOnMotionPath(path!, 1)).toEqual(road[0]);
+    expect(positionOnMotionPath(path, 1)).toEqual(road[0]);
   });
 });
