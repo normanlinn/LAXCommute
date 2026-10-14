@@ -48,7 +48,7 @@
     "@vitejs/plugin-react": "^6.1.1",
     "daisyui": "^5.7.47",
     "jsdom": "^30.1.1",
-    "prettier": "^3.9.9",
+    "prettier": "^3.9.10",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
     "vite": "^8.3.1",
