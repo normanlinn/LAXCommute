@@ -43,6 +43,16 @@ If you see `styleText` or Rolldown errors on Node 20.11.1, update Node first. If
 - English / မြန်မာ language switching, with the preference saved on the current device.
 - PWA manifest, iPhone/Android icons, install help, offline shell, and an explicit update prompt.
 
+## Arrival data contract and reliability
+
+- **Upstream:** LAX Syncromatics provides arrival predictions and separate GPS reports. Neither feed proves whether a shuttle has opened its doors or is boarding.
+- **Backend:** A Supabase Edge Function validates the feed and caches snapshots; the Cloudflare API gateway exposes only the supported route/stop endpoints. The frontend fetches through `src/services/shuttle.ts` and never calls the provider directly.
+- **Domain:** `src/domain/arrivals.ts` is the shared home for arrival freshness, countdown eligibility, and next-loop GPS context. It keeps a live zero-second ETA visible as _Arriving_ for at most 45 seconds, provided the snapshot itself is fresh.
+- **UI:** An at-stop GPS observation and a 26-minute next-loop prediction are presented as different facts. GPS proximity alone must never override the provider's ETA or claim boarding is confirmed.
+- **Tests:** `tests/arrivals.test.js`, `tests/arrivals-ui.test.jsx`, and `tests/worker.test.js` cover freshness, route isolation, shared boarding stops, and the next-loop scenario.
+
+Use `npm run check` and the repository GitHub checks before deploying feed-handling changes. Avoid duplicating ETA interpretation in components or introducing a second background polling loop.
+
 ## Free maps and phone directions
 
 The default **Simple** map uses Leaflet for shuttle overlays and MapLibre GL for an **OpenFreeMap Positron** background. It shows your selected boarding stop and buses by default; **Show other stops** reveals other boarding points. Its pale colors make the shuttle route, bus icons, and persistent **BOARD HERE** label stand out. No Apple Developer membership, credit card, or Maps API key is needed. OpenFreeMap currently provides free public hosting without map-view/request caps, but does not offer an uptime guarantee.

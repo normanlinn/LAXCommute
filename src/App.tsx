@@ -495,12 +495,16 @@ export default function App() {
                   </span>
                   <span className="transit-peek-eta">
                     {nextMapArrival ? (
-                      <>
-                        <strong>
-                          {Math.max(0, Math.ceil((nextMapArrival.due - Date.now()) / 60000))}
-                        </strong>
-                        <small>{t('min')}</small>
-                      </>
+                      nextMapArrival.due - Date.now() <= 30_000 && !nextMapArrival.scheduled ? (
+                        <span>{t('Arriving')}</span>
+                      ) : (
+                        <>
+                          <strong>
+                            {Math.max(0, Math.ceil((nextMapArrival.due - Date.now()) / 60000))}
+                          </strong>
+                          <small>{t('min')}</small>
+                        </>
+                      )
                     ) : (
                       <span>{t('View arrivals')}</span>
                     )}

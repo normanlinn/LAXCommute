@@ -74,7 +74,7 @@ describe('fixed-path shuttle gateway', () => {
     for (const [url] of fetcher.mock.calls)
       expect(url).toMatch(/^https:\/\/laxbus\.syncromatics\.com\/api\/rtpi\?/);
   });
-  it.each([6883, 6884])(
+  it.each([6883, 6884, 6885])(
     'keeps route %s when requesting arrivals at a shared South stop',
     async (routeID) => {
       const request = new Request(`https://app.test/api/live/${routeID}?stopId=101`);

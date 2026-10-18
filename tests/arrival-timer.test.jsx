@@ -37,13 +37,13 @@ it('does not schedule countdown work while waiting for data or after an error', 
 
 it('expires predictions, stops the timer, and resumes on a fresh snapshot', () => {
   const { rerender } = render(<Arrivals {...props} data={freshData()} />);
-  expect(vi.getTimerCount()).toBe(2);
+  expect(vi.getTimerCount()).toBe(1);
   act(() => vi.advanceTimersByTime(90_000));
   expect(screen.getByText('These times have expired. Checking for a fresh update.')).toBeTruthy();
   expect(vi.getTimerCount()).toBe(1);
   rerender(<Arrivals {...props} data={freshData()} />);
   expect(screen.getByText('Next shuttle')).toBeTruthy();
-  expect(vi.getTimerCount()).toBe(2);
+  expect(vi.getTimerCount()).toBe(1);
 });
 
 it('pauses in the background and checks expiry immediately when visible again', () => {

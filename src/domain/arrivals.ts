@@ -1,6 +1,12 @@
-import type { RawArrival, Vehicle, Prediction } from '../types';
+import type { RawArrival, Vehicle, Prediction, Stop } from '../types';
+import { distanceMeters } from './commute';
 export const ARRIVAL_TTL_MS = 90_000;
 export const GPS_TTL_MS = 180_000;
+// Keep an upstream zero-second prediction visible briefly as 'Arriving'.
+export const ARRIVING_GRACE_MS = 45_000;
+// GPS at the stop is useful context, but cannot prove the shuttle is boarding.
+export const NEAR_STOP_METERS = 75;
+export const NEAR_STOP_GPS_AGE_MS = 45_000;
 
 export function normalizeArrivals(values: RawArrival[], routeID: number, fetchedAt: string | null) {
   const fetched = Date.parse(fetchedAt || '');
@@ -51,12 +57,43 @@ export function validVehicle(vehicle: Partial<Vehicle>, now = Date.now()) {
 export function availableArrivals(arrivals: Prediction[], now: number) {
   return arrivals.filter(
     (a) =>
-      a.due > now &&
+      (a.due > now || (!a.scheduled && a.due >= now - ARRIVING_GRACE_MS)) &&
       (a.scheduled ||
         !Number.isFinite(a.vehicleUpdated) ||
         (now - a.vehicleUpdated < GPS_TTL_MS && now - a.vehicleUpdated >= -30_000)),
   );
 }
+
+/**
+ * A reported bus at a stop may be completing a different pass of its loop.
+ * This is separate from the feed's predicted arrival time. The UI must never
+ * claim boarding is confirmed based on GPS proximity alone.
+ */
+export function nextLoopBusesAtStop(
+  vehicles: Vehicle[],
+  stop: Stop | undefined,
+  predictions: Prediction[],
+  now = Date.now(),
+) {
+  if (!stop || !Number.isFinite(stop.lat) || !Number.isFinite(stop.lon)) return [];
+  return vehicles.flatMap((bus) => {
+    const updated = Date.parse(bus.lastUpdated || '');
+    if (
+      !Number.isSafeInteger(bus.id) ||
+      !validVehicle(bus, now) ||
+      now - updated > NEAR_STOP_GPS_AGE_MS ||
+      distanceMeters(stop, bus) > NEAR_STOP_METERS
+    )
+      return [];
+    // Match immutable vehicle IDs, not visible fleet numbers, which can change.
+    const nextPrediction = predictions.find(
+      (arrival) =>
+        !arrival.scheduled && arrival.vehicleID === bus.id && arrival.due > now + 3 * 60_000,
+    );
+    return nextPrediction ? [{ vehicle: bus, nextPrediction }] : [];
+  });
+}
+
 export function departureAdvice(
   arrivals: Prediction[],
   walkingMinutes: number,
