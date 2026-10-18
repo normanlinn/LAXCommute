@@ -73,7 +73,10 @@ Deno.serve(async (request: Request) => {
         created_at: string;
       }>;
       // Only share aggregate data, never individual reporter information.
-      const byBus = new Map<number, { count: number; recent: string; votes: Map<string, number>; newest: string }>();
+      const byBus = new Map<
+        number,
+        { count: number; recent: string; votes: Map<string, number>; newest: string }
+      >();
       for (const row of rows) {
         if (!Number.isSafeInteger(row.vehicle_id) || !occupancies.has(row.occupancy)) continue;
         const previous = byBus.get(row.vehicle_id) || {
@@ -88,7 +91,8 @@ Deno.serve(async (request: Request) => {
       }
       const reports = Array.from(byBus, ([vehicleId, summary]) => {
         const occupancy = [...summary.votes.entries()].sort(
-          (a, b) => b[1] - a[1] || Number(a[0] !== summary.recent) - Number(b[0] !== summary.recent),
+          (a, b) =>
+            b[1] - a[1] || Number(a[0] !== summary.recent) - Number(b[0] !== summary.recent),
         )[0][0];
         return { vehicleId, occupancy, reports: summary.count, reportedAt: summary.newest };
       });
@@ -113,13 +117,20 @@ Deno.serve(async (request: Request) => {
       const routeId = data.routeId;
       const vehicleId = data.vehicleId;
       const occupancy = data.occupancy;
-      if (!validRoutes.has(routeId as number) || !Number.isSafeInteger(vehicleId) ||
-          Number(vehicleId) <= 0 || Number(vehicleId) >= 1_000_000_000 ||
-          typeof occupancy !== 'string' || !occupancies.has(occupancy)) {
+      if (
+        !validRoutes.has(routeId as number) ||
+        !Number.isSafeInteger(vehicleId) ||
+        Number(vehicleId) <= 0 ||
+        Number(vehicleId) >= 1_000_000_000 ||
+        typeof occupancy !== 'string' ||
+        !occupancies.has(occupancy)
+      ) {
         return reply({ error: 'Choose a valid bus and crowd level.' }, 400);
       }
-      if (!(await rateLimit('crowd-ip:' + identity, 6)) ||
-          !(await rateLimit('crowd-vehicle:' + identity + ':' + routeId + ':' + vehicleId, 1))) {
+      if (
+        !(await rateLimit('crowd-ip:' + identity, 6)) ||
+        !(await rateLimit('crowd-vehicle:' + identity + ':' + routeId + ':' + vehicleId, 1))
+      ) {
         return reply({ error: 'Please wait a minute before reporting again.' }, 429);
       }
       const response = await queryDB('shuttle_crowd_reports', {
@@ -135,9 +146,14 @@ Deno.serve(async (request: Request) => {
       const category = data.category;
       const message = typeof data.message === 'string' ? data.message.trim() : '';
       const email = typeof data.email === 'string' ? data.email.trim() : '';
-      if (typeof category !== 'string' || !categories.has(category) ||
-          message.length < 10 || message.length > 2000 ||
-          email.length > 254 || (email && !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email))) {
+      if (
+        typeof category !== 'string' ||
+        !categories.has(category) ||
+        message.length < 10 ||
+        message.length > 2000 ||
+        email.length > 254 ||
+        (email && !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email))
+      ) {
         return reply({ error: 'Enter a valid message and optional email.' }, 400);
       }
       if (!(await rateLimit('feedback-ip:' + identity, 1))) {
