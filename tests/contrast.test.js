@@ -36,7 +36,7 @@ describe('dark text contrast', () => {
     expect(contrast(get('--color-base-content'), get('--color-base-100'))).toBeGreaterThanOrEqual(
       4.5,
     );
-    expect(contrast('#adc8cf', get('--color-base-100'))).toBeGreaterThanOrEqual(4.5);
+    expect(contrast('#bac7dc', get('--color-base-100'))).toBeGreaterThanOrEqual(4.5);
   });
 });
 
@@ -51,7 +51,7 @@ it.each(['lax', 'lax-dark'])('keeps turquoise button text readable in %s', (name
 
 it.each([
   ['light', ':root', '#ffffff'],
-  ['dark', "[data-theme='lax-dark']", '#102b35'],
+  ['dark', "[data-theme='lax-dark']", '#171e2d'],
 ])(
   'keeps %s control boundaries visible against cards and inset panels',
   (_name, selector, card) => {
@@ -67,3 +67,11 @@ it.each([
     expect(contrast(border, get('--journey-surface'))).toBeGreaterThanOrEqual(3);
   },
 );
+
+it('keeps the Nightfall accent and supporting status colors legible', () => {
+  const darkTheme = css.match(/name: 'lax-dark';[\s\S]*?\n}/)[0];
+  const get = (token) => darkTheme.match(new RegExp(`${token}:\\s*(#[\\da-f]{6});`))[1];
+  for (const name of ['primary', 'secondary', 'accent', 'success', 'warning', 'error']) {
+    expect(contrast(get(`--color-${name}`), get(`--color-${name}-content`))).toBeGreaterThanOrEqual(4.5);
+  }
+});
