@@ -2,7 +2,7 @@ import { useLanguage } from '../i18n/LanguageProvider';
 import Button from './ui/Button';
 import { useEffect, useState } from 'react';
 import { ArrowUpRight, BusFront, Clock3, RefreshCw, Footprints } from 'lucide-react';
-import { availableArrivals, departureAdvice, snapshotFresh } from '../domain/arrivals';
+import { availableArrivals, nextLoopBusesAtStop, departureAdvice, snapshotFresh } from '../domain/arrivals';
 
 export default function Arrivals({
   data,
@@ -26,47 +26,28 @@ export default function Arrivals({
   const { t, language } = useLanguage();
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
-    // Keep the countdown within this small component, away from the map.
-    let timer: ReturnType<typeof setInterval> | undefined;
-    const update = () => {
+    // One visibility-aware clock drives ETAs, the arriving label and freshness.
+    // Avoid two competing timers and stop polling while the app is backgrounded.
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const tick = () => {
+      clearTimeout(timer);
       const current = Date.now();
       setNow(current);
-      if (!snapshotFresh(data?.arrivalFetchedAt, current)) clearInterval(timer);
-    };
-    const start = () => {
-      clearInterval(timer);
-      update();
-      if (
-        !document.hidden &&
+      if (document.hidden) return;
+      const live =
         !error &&
         !data?.cached &&
         !data?.arrivalSourceUnavailable &&
-        snapshotFresh(data?.arrivalFetchedAt)
-      )
-        timer = setInterval(update, 1_000);
+        snapshotFresh(data?.arrivalFetchedAt, current);
+      timer = setTimeout(tick, live ? 5_000 : 60_000);
     };
-    start();
-    document.addEventListener('visibilitychange', start);
+    tick();
+    document.addEventListener('visibilitychange', tick);
     return () => {
-      clearInterval(timer);
-      document.removeEventListener('visibilitychange', start);
+      clearTimeout(timer);
+      document.removeEventListener('visibilitychange', tick);
     };
   }, [data?.arrivalFetchedAt, data?.cached, data?.arrivalSourceUnavailable, error]);
-  useEffect(() => {
-    if (!data?.arrivalFetchedAt) return;
-    let timer: ReturnType<typeof setInterval> | undefined;
-    const update = () => {
-      clearInterval(timer);
-      setNow(Date.now());
-      if (!document.hidden) timer = setInterval(() => setNow(Date.now()), 60_000);
-    };
-    update();
-    document.addEventListener('visibilitychange', update);
-    return () => {
-      clearInterval(timer);
-      document.removeEventListener('visibilitychange', update);
-    };
-  }, [data?.arrivalFetchedAt]);
   const fresh =
     !data?.cached && !data?.arrivalSourceUnavailable && snapshotFresh(data?.arrivalFetchedAt, now);
   const lastKnown = Boolean(data?.cached || data?.arrivalSourceUnavailable || error);
@@ -75,6 +56,10 @@ export default function Arrivals({
       Number.isFinite(arrival.due) && arrival.due >= Date.parse(data?.arrivalFetchedAt || ''),
   );
   const arrivals = fresh && !error ? availableArrivals(data?.predictions || [], now) : [];
+  const nearbyWithNextPass =
+    fresh && !error && !data?.vehicleSourceUnavailable && snapshotFresh(data?.vehicleFetchedAt, now)
+      ? nextLoopBusesAtStop(data?.vehicles || [], stop, arrivals, now).slice(0, 2)
+      : [];
   const advice =
     fresh && direction === 'parking'
       ? departureAdvice(arrivals, profile.walkingMinutes, profile.bufferMinutes, now)
@@ -106,6 +91,17 @@ export default function Arrivals({
           <BusFront size={15} /> {stop.name}
         </p>
       )}
+      {nearbyWithNextPass.map(({ vehicle, nextPrediction }) => (
+        <p className="nearby-gps-notice" role="status" key={vehicle.id}>
+          <BusFront size={17} aria-hidden="true" />
+          <span>
+            {t('Bus {name} is near this stop (GPS). Its {minutes}-min prediction may be for the next loop. Boarding is not confirmed.', {
+              name: vehicle.name || vehicle.id,
+              minutes: Math.ceil((nextPrediction.due - now) / 60_000),
+            })}
+          </span>
+        </p>
+      ))}
       {(error || data?.sourceUnavailable) && (
         <div className="alert alert-soft alert-warning notice" role="status">
           {t('Shuttle source unavailable. Try again or check the official LAX tracker.')}{' '}
@@ -192,9 +188,17 @@ export default function Arrivals({
                 </span>
               </div>
             </div>
-            <div className="arrival-time">
-              <strong>{minutes < 1 ? '<1' : minutes}</strong>
-              <span>{lastKnown ? t('min at last update') : t('min')}</span>
+            <div
+              className={`arrival-time${!lastKnown && !arrival.scheduled && arrival.due - now <= 30_000 ? ' is-arriving' : ''}`}
+            >
+              {!lastKnown && !arrival.scheduled && arrival.due - now <= 30_000 ? (
+                <strong>{t('Arriving')}</strong>
+              ) : (
+                <>
+                  <strong>{minutes < 1 ? '<1' : minutes}</strong>
+                  <span>{lastKnown ? t('min at last update') : t('min')}</span>
+                </>
+              )}
             </div>
           </div>
         );

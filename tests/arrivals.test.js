@@ -3,6 +3,7 @@ import {
   availableArrivals,
   departureAdvice,
   normalizeArrivals,
+  nextLoopBusesAtStop,
   snapshotFresh,
   validVehicle,
 } from '../src/domain/arrivals';
@@ -50,8 +51,9 @@ describe('arrival rules', () => {
       6884,
       at,
     );
-    expect(availableArrivals(result, now)).toHaveLength(1);
-    expect(availableArrivals(result, now)[0].scheduled).toBe(true);
+    expect(availableArrivals(result, now)).toHaveLength(2);
+    expect(availableArrivals(result, now + 46_000)).toHaveLength(1);
+    expect(availableArrivals(result, now + 46_000)[0].scheduled).toBe(true);
   });
   it('expires snapshots and validates fresh GPS coordinates', () => {
     expect(snapshotFresh(at, now + 89_999)).toBe(true);
@@ -75,6 +77,67 @@ describe('arrival rules', () => {
     expect(advice.arrival.due).toBe(now + 600_000);
     expect(advice.leaveAt).toBe(now + 60_000);
     expect(departureAdvice(result, 20, 2, now)).toBeNull();
+  });
+  it.each([
+    ['South', 6885],
+    ['East', 6884],
+    ['West', 6883],
+  ])('keeps a zero-second %s arrival briefly, then expires it', (_lot, routeId) => {
+    const immediately = normalizeArrivals(
+      [arrival({ route: { id: routeId }, secondsToArrival: 0 })],
+      routeId,
+      at,
+    );
+    expect(availableArrivals(immediately, now)).toHaveLength(1);
+    expect(availableArrivals(immediately, now + 44_999)).toHaveLength(1);
+    expect(availableArrivals(immediately, now + 45_001)).toHaveLength(0);
+    const scheduled = normalizeArrivals(
+      [arrival({ route: { id: routeId }, secondsToArrival: 0, schedulePrediction: true })],
+      routeId,
+      at,
+    );
+    expect(availableArrivals(scheduled, now)).toHaveLength(0);
+  });
+  it.each([
+    ['South', 6885],
+    ['East', 6884],
+    ['West', 6883],
+  ])('distinguishes GPS at %s boarding from a next-loop ETA', (_lot, routeId) => {
+    const stop = { id: 11319089, name: 'South Lot Stop #1', lat: 33.95313, lon: -118.393406 };
+    const bus = {
+      id: 11150,
+      name: '8022',
+      lat: 33.95313,
+      lon: -118.393406,
+      lastUpdated: at,
+    };
+    const prediction = normalizeArrivals(
+      [arrival({
+        route: { id: routeId },
+        vehicle: { id: 11150, name: '8022', lastUpdated: at },
+        secondsToArrival: 1560,
+      })],
+      routeId,
+      at,
+    );
+    const onSite = nextLoopBusesAtStop([bus], stop, prediction, now);
+    expect(onSite).toHaveLength(1);
+    expect(onSite[0].vehicle.name).toBe('8022');
+    expect(onSite[0].nextPrediction.due - now).toBe(26 * 60_000);
+    expect(nextLoopBusesAtStop([bus], stop, prediction, now + 46_000)).toEqual([]);
+    expect(nextLoopBusesAtStop([{ ...bus, lat: 33.94 }], stop, prediction, now)).toEqual([]);
+    expect(nextLoopBusesAtStop([bus], stop, [], now)).toEqual([]);
+  });
+  it('does not treat a different bus or scheduled prediction as a boarding confirmation', () => {
+    const stop = { id: 11319089, name: 'South Lot Stop #1', lat: 33.95313, lon: -118.393406 };
+    const vehicles = [{ id: 11150, name: '8022', lat: stop.lat, lon: stop.lon, lastUpdated: at }];
+    for (const options of [
+      { vehicle: { id: 77777, name: '8022', lastUpdated: at } },
+      { schedulePrediction: true },
+    ]) {
+      const prediction = normalizeArrivals([arrival({ ...options, secondsToArrival: 1560 })], 6884, at);
+      expect(nextLoopBusesAtStop(vehicles, stop, prediction, now)).toEqual([]);
+    }
   });
   it('rejects future GPS timestamps when choosing a live departure', () => {
     const future = new Date(now + 60_000).toISOString();

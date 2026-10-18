@@ -337,5 +337,7 @@
   "Last GPS update": "နောက်ဆုံး GPS အချက်အလက်",
   "Close bus details": "ကားအသေးစိတ် ပိတ်မည်",
   "Map tools": "မြေပုံကိရိယာများ",
-  "Close map tools": "မြေပုံကိရိယာများ ပိတ်မည်"
+  "Close map tools": "မြေပုံကိရိယာများ ပိတ်မည်",
+  "Arriving": "ရောက်ရှိနေသည်",
+  "Bus {name} is near this stop (GPS). Its {minutes}-min prediction may be for the next loop. Boarding is not confirmed.": "ကား {name} သည် ဤမှတ်တိုင်အနီးတွင် ရှိနေကြောင်း GPS က ပြသည်။ {minutes} မိနစ်ခန့် ခန့်မှန်းချိန်သည် နောက်တစ်ပတ်အတွက် ဖြစ်နိုင်ပါသည်။ စီးနင်းနိုင်မှုကို အတည်မပြုရသေးပါ။"
 }
