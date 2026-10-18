@@ -93,3 +93,26 @@ export function nextLoopBusesAtStop(
     return nextPrediction ? [{ vehicle: bus, nextPrediction }] : [];
   });
 }
+
+export function departureAdvice(
+  arrivals: Prediction[],
+  walkingMinutes: number,
+  bufferMinutes: number,
+  now = Date.now(),
+) {
+  const walking = walkingMinutes * 60_000;
+  const next = availableArrivals(arrivals, now).find(
+    (a) =>
+      !a.scheduled &&
+      Number.isFinite(a.vehicleUpdated) &&
+      now - a.vehicleUpdated < GPS_TTL_MS &&
+      a.due - now >= walking,
+  );
+  if (!next) return null;
+  return {
+    arrival: next,
+    leaveAt: next.due - walking - bufferMinutes * 60_000,
+    walkingMinutes,
+    bufferMinutes,
+  };
+}
