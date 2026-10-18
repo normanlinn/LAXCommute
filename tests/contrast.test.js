@@ -92,7 +92,7 @@ it('keeps dark live badges, disabled actions, account forms, and active navigati
   const darkLive = css.match(
     /\[data-theme='lax-dark'\] \.arrival-description \.arrival-badge\.is-live \{([^}]*)\}/,
   )?.[1];
-  expect(darkLive).toContain('var(--color-secondary)');
+  expect(darkLive).toContain('var(--color-primary)');
   expect(darkLive).not.toMatch(/#173e36|#a3f2d8/i);
   const darkDisabled = css.match(
     /\[data-theme='lax-dark'\] \.button-primary:disabled \{([^}]*)\}/,
