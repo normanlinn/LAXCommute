@@ -2712,8 +2712,8 @@ select,
   background: #d9f4e9;
 }
 [data-theme='lax-dark'] .arrival-description .arrival-badge.is-live {
-  color: var(--color-secondary-content);
-  background: var(--color-secondary);
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 15%, var(--color-base-100));
 }
 .arrival-badge i {
   width: 5px;
