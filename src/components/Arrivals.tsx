@@ -2,7 +2,12 @@ import { useLanguage } from '../i18n/LanguageProvider';
 import Button from './ui/Button';
 import { useEffect, useState } from 'react';
 import { ArrowUpRight, BusFront, Clock3, RefreshCw, Footprints } from 'lucide-react';
-import { availableArrivals, nextLoopBusesAtStop, departureAdvice, snapshotFresh } from '../domain/arrivals';
+import {
+  availableArrivals,
+  nextLoopBusesAtStop,
+  departureAdvice,
+  snapshotFresh,
+} from '../domain/arrivals';
 
 export default function Arrivals({
   data,
@@ -95,10 +100,13 @@ export default function Arrivals({
         <p className="nearby-gps-notice" role="status" key={vehicle.id}>
           <BusFront size={17} aria-hidden="true" />
           <span>
-            {t('Bus {name} is near this stop (GPS). Its {minutes}-min prediction may be for the next loop. Boarding is not confirmed.', {
-              name: vehicle.name || vehicle.id,
-              minutes: Math.ceil((nextPrediction.due - now) / 60_000),
-            })}
+            {t(
+              'Bus {name} is near this stop (GPS). Its {minutes}-min prediction may be for the next loop. Boarding is not confirmed.',
+              {
+                name: vehicle.name || vehicle.id,
+                minutes: Math.ceil((nextPrediction.due - now) / 60_000),
+              },
+            )}
           </span>
         </p>
       ))}

@@ -112,11 +112,13 @@ describe('arrival rules', () => {
       lastUpdated: at,
     };
     const prediction = normalizeArrivals(
-      [arrival({
-        route: { id: routeId },
-        vehicle: { id: 11150, name: '8022', lastUpdated: at },
-        secondsToArrival: 1560,
-      })],
+      [
+        arrival({
+          route: { id: routeId },
+          vehicle: { id: 11150, name: '8022', lastUpdated: at },
+          secondsToArrival: 1560,
+        }),
+      ],
       routeId,
       at,
     );
@@ -135,7 +137,11 @@ describe('arrival rules', () => {
       { vehicle: { id: 77777, name: '8022', lastUpdated: at } },
       { schedulePrediction: true },
     ]) {
-      const prediction = normalizeArrivals([arrival({ ...options, secondsToArrival: 1560 })], 6884, at);
+      const prediction = normalizeArrivals(
+        [arrival({ ...options, secondsToArrival: 1560 })],
+        6884,
+        at,
+      );
       expect(nextLoopBusesAtStop(vehicles, stop, prediction, now)).toEqual([]);
     }
   });

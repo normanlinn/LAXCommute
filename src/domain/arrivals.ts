@@ -88,9 +88,7 @@ export function nextLoopBusesAtStop(
     // Match immutable vehicle IDs, not visible fleet numbers, which can change.
     const nextPrediction = predictions.find(
       (arrival) =>
-        !arrival.scheduled &&
-        arrival.vehicleID === bus.id &&
-        arrival.due > now + 3 * 60_000,
+        !arrival.scheduled && arrival.vehicleID === bus.id && arrival.due > now + 3 * 60_000,
     );
     return nextPrediction ? [{ vehicle: bus, nextPrediction }] : [];
   });

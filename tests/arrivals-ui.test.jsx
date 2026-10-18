@@ -11,8 +11,11 @@ function setup({ dueInSeconds, atStop = false }) {
   const updated = new Date(now - 3_000).toISOString();
   const stop = { id: 11319089, name: 'South Lot Stop #1', lat: 33.95313, lon: -118.393406 };
   const vehicle = {
-    id: 11150, name: '8022', lastUpdated: updated,
-    lat: atStop ? stop.lat : 33.944, lon: atStop ? stop.lon : -118.404,
+    id: 11150,
+    name: '8022',
+    lastUpdated: updated,
+    lat: atStop ? stop.lat : 33.944,
+    lon: atStop ? stop.lon : -118.404,
   };
   const data = {
     routeID: 6885,
@@ -22,14 +25,16 @@ function setup({ dueInSeconds, atStop = false }) {
     vehicles: [vehicle],
     arrivals: [],
     warnings: [],
-    predictions: [{
-      id: '6885:11150:' + (now + dueInSeconds * 1_000),
-      vehicleID: vehicle.id,
-      busName: vehicle.name,
-      due: now + dueInSeconds * 1_000,
-      scheduled: false,
-      vehicleUpdated: Date.parse(updated),
-    }],
+    predictions: [
+      {
+        id: '6885:11150:' + (now + dueInSeconds * 1_000),
+        vehicleID: vehicle.id,
+        busName: vehicle.name,
+        due: now + dueInSeconds * 1_000,
+        scheduled: false,
+        vehicleUpdated: Date.parse(updated),
+      },
+    ],
   };
   render(
     <Arrivals
