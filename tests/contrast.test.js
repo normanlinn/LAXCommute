@@ -40,7 +40,7 @@ describe('dark text contrast', () => {
   });
 });
 
-it.each(['lax', 'lax-dark'])('keeps turquoise button text readable in %s', (name) => {
+it.each(['lax', 'lax-dark'])('keeps primary button text readable in %s', (name) => {
   const start = css.indexOf(`name: '${name}';`);
   const theme = css.slice(start, css.indexOf('\n}', start));
   const get = (token) => theme.match(new RegExp(`${token}:\\s*(#[\\da-f]{6});`))[1];
@@ -72,6 +72,8 @@ it('keeps the Nightfall accent and supporting status colors legible', () => {
   const darkTheme = css.match(/name: 'lax-dark';[\s\S]*?\n}/)[0];
   const get = (token) => darkTheme.match(new RegExp(`${token}:\\s*(#[\\da-f]{6});`))[1];
   for (const name of ['primary', 'secondary', 'accent', 'success', 'warning', 'error']) {
-    expect(contrast(get(`--color-${name}`), get(`--color-${name}-content`))).toBeGreaterThanOrEqual(4.5);
+    const foreground = get(`--color-${name}`);
+    const background = get(`--color-${name}-content`);
+    expect(contrast(foreground, background)).toBeGreaterThanOrEqual(4.5);
   }
 });
