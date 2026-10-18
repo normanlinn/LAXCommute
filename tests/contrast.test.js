@@ -87,3 +87,25 @@ it('uses a neutral cool-black backdrop behind the native menu in dark mode', () 
   expect(css).toContain('background-color: #0b111b');
   expect(css).not.toContain('background: #0e2b2a70;');
 });
+
+it('keeps dark live badges, disabled actions, account forms, and active navigation on theme tokens', () => {
+  const darkLive = css.match(
+    /\[data-theme='lax-dark'\] \.arrival-description \.arrival-badge\.is-live \{([^}]*)\}/,
+  )?.[1];
+  expect(darkLive).toContain('var(--color-secondary)');
+  expect(darkLive).not.toMatch(/#173e36|#a3f2d8/i);
+  const darkDisabled = css.match(
+    /\[data-theme='lax-dark'\] \.button-primary:disabled \{([^}]*)\}/,
+  )?.[1];
+  expect(darkDisabled).toContain('var(--color-primary)');
+  expect(darkDisabled).not.toMatch(/#123d45|#adc8cf/i);
+  for (const selector of [
+    '.bottom-nav button.active',
+    '.account-card .account-summary',
+    '.account-card .success-message',
+    '.account-card .segmented .tab',
+    '.crowd-form select:focus-visible',
+  ]) {
+    expect(css).toContain(selector);
+  }
+});

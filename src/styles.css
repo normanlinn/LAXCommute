@@ -2196,7 +2196,7 @@ html[data-theme='lax-dark'] {
   background: var(--route-solid-color, var(--route-color));
 }
 
-/* Turquoise actions use navy text in both appearances. */
+/* Primary actions share semantic theme tokens across light and dark appearances. */
 .button-primary,
 .language-switch .btn[aria-pressed='true'] {
   background: var(--color-primary);
@@ -2214,8 +2214,10 @@ html[data-theme='lax-dark'] {
   color: #adc8cf;
 }
 [data-theme='lax-dark'] .button-primary:disabled {
-  background: #123d45;
-  color: #adc8cf;
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-base-100));
+  color: var(--color-base-content);
+  border-color: var(--color-base-300);
+  opacity: 0.65;
 }
 
 /* Separate controls from their surrounding cards in both appearances. */
@@ -2710,8 +2712,8 @@ select,
   background: #d9f4e9;
 }
 [data-theme='lax-dark'] .arrival-description .arrival-badge.is-live {
-  color: #a3f2d8;
-  background: #173e36;
+  color: var(--color-secondary-content);
+  background: var(--color-secondary);
 }
 .arrival-badge i {
   width: 5px;
@@ -3585,6 +3587,53 @@ html[data-theme='lax-dark'] .app-header {
   .map-controls .map-tools-actions {
     transition: none;
   }
+}
+
+/* Dark-mode interaction surfaces: one Midnight Blue system for forms and navigation.
+   Keep route-identity colors untouched; no hard-coded legacy green states. */
+[data-theme='lax-dark'] .bottom-nav button.active {
+  background: color-mix(in srgb, var(--color-primary) 17%, var(--color-base-100));
+  color: var(--color-primary);
+}
+[data-theme='lax-dark'] .bottom-nav button:focus-visible,
+[data-theme='lax-dark'] .account-card .btn:focus-visible,
+[data-theme='lax-dark'] .crowd-form .btn:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+[data-theme='lax-dark'] .account-card .feature-icon,
+[data-theme='lax-dark'] .account-card .account-summary {
+  background: var(--journey-surface);
+  color: var(--color-primary);
+}
+[data-theme='lax-dark'] .account-card .account-summary strong {
+  color: var(--color-base-content);
+}
+[data-theme='lax-dark'] .account-card .field :is(input, select):focus-visible {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--interaction-ring);
+}
+[data-theme='lax-dark'] .account-card .success-message {
+  background: var(--journey-surface);
+  color: var(--color-base-content) !important;
+  border: 1px solid var(--color-base-300);
+}
+[data-theme='lax-dark'] .account-card .notice {
+  background: var(--journey-surface);
+  border-color: var(--color-base-300);
+  color: var(--color-base-content);
+}
+[data-theme='lax-dark'] .account-card .notice button {
+  color: var(--color-primary);
+}
+[data-theme='lax-dark'] .account-card .segmented .tab[aria-pressed='true'] {
+  background: var(--color-primary);
+  color: var(--color-primary-content);
+}
+[data-theme='lax-dark'] .crowd-form select:focus-visible,
+[data-theme='lax-dark'] .feedback-modal :is(input, select, textarea):focus-visible {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--interaction-ring);
 }
 
 /* GPS-near-stop context is deliberately separate from official ETA rows. */
