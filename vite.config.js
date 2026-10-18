@@ -41,7 +41,7 @@ export default defineConfig(({ mode }) => ({
         name: 'LAXCommute',
         short_name: 'LAXCommute',
         description: 'Your LAX employee shuttle, boarding stops, and commute in one place.',
-        theme_color: '#081923',
+        theme_color: '#0b111b',
         background_color: '#f7fbfc',
         display: 'standalone',
         start_url: '/',

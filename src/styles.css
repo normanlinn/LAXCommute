@@ -43,26 +43,26 @@
   default: false;
   prefersdark: false;
   color-scheme: dark;
-  --color-base-100: #171e2d;
-  --color-base-200: #0d111c;
-  --color-base-300: #39475c;
-  --color-base-content: #f3f6ff;
-  --color-primary: #a89bff;
-  --color-primary-content: #0d111c;
-  --color-secondary: #8fc8ff;
-  --color-secondary-content: #0d111c;
-  --color-accent: #c6b8ff;
-  --color-accent-content: #0d111c;
-  --color-neutral: #0d111c;
-  --color-neutral-content: #f3f6ff;
-  --color-info: #8fc8ff;
-  --color-info-content: #0d111c;
-  --color-success: #65dca4;
-  --color-success-content: #0d111c;
-  --color-warning: #f4ce95;
-  --color-warning-content: #0d111c;
-  --color-error: #ff9fa8;
-  --color-error-content: #0d111c;
+  --color-base-100: #172233;
+  --color-base-200: #0b111b;
+  --color-base-300: #455774;
+  --color-base-content: #f0f5ff;
+  --color-primary: #83bdff;
+  --color-primary-content: #09121f;
+  --color-secondary: #8ee0ce;
+  --color-secondary-content: #09121f;
+  --color-accent: #9ad4ff;
+  --color-accent-content: #09121f;
+  --color-neutral: #0b111b;
+  --color-neutral-content: #f0f5ff;
+  --color-info: #83bdff;
+  --color-info-content: #09121f;
+  --color-success: #8ee0ce;
+  --color-success-content: #09121f;
+  --color-warning: #efc98a;
+  --color-warning-content: #09121f;
+  --color-error: #ff9baa;
+  --color-error-content: #09121f;
 }
 
 @font-face {
@@ -1823,7 +1823,7 @@ html:lang(my) .shuttle-map-legend {
   }
 }
 
-/* Turquoise brand palette, paired for both appearances. */
+/* Brand tokens for light mode and a distinct cool-graphite dark mode. */
 :root,
 [data-theme='lax'] {
   --ink-087969: #007981;
@@ -1942,120 +1942,120 @@ html:lang(my) .shuttle-map-legend {
   --surface-ffffffed: #ffffffed;
 }
 [data-theme='lax-dark'] {
-  --ink-087969: #c6b8ff;
-  --ink-122b32: #f3f6ff;
-  --ink-183331: #f3f6ff;
-  --ink-1c795a: #c6b8ff;
-  --ink-23473a: #f3f6ff;
-  --ink-2c4943: #f3f6ff;
-  --ink-2d4941: #f3f6ff;
-  --ink-328268: #c6b8ff;
-  --ink-34714e: #bac7dc;
-  --ink-35775c: #c6b8ff;
-  --ink-38514a: #f3f6ff;
-  --ink-3e7d60: #c6b8ff;
-  --ink-408360: #c6b8ff;
-  --ink-426651: #bac7dc;
-  --ink-447e6b: #c6b8ff;
-  --ink-466258: #f3f6ff;
-  --ink-496754: #bac7dc;
-  --ink-50655f: #bac7dc;
-  --ink-547460: #bac7dc;
-  --ink-577365: #bac7dc;
-  --ink-587167: #bac7dc;
-  --ink-5b7766: #bac7dc;
-  --ink-5e7969: #bac7dc;
-  --ink-607970: #bac7dc;
-  --ink-657870: #bac7dc;
-  --ink-66847a: #bac7dc;
-  --ink-6a8172: #bac7dc;
-  --ink-6a8c76: #bac7dc;
-  --ink-718479: #bac7dc;
-  --ink-765026: #f4ce95;
-  --ink-768d7d: #bac7dc;
-  --ink-778c80: #bac7dc;
-  --ink-7a8982: #bac7dc;
-  --ink-7a8984: #bac7dc;
-  --ink-7a8a85: #bac7dc;
-  --ink-7a8c82: #bac7dc;
-  --ink-7b8d84: #bac7dc;
-  --ink-7c9385: #bac7dc;
-  --ink-7f9084: #bac7dc;
-  --ink-81988c: #bac7dc;
-  --ink-83998b: #bac7dc;
-  --ink-84998b: #bac7dc;
-  --ink-875e31: #f4ce95;
-  --ink-87998e: #bac7dc;
-  --ink-879e8c: #bac7dc;
-  --ink-886840: #f4ce95;
-  --ink-88978f: #bac7dc;
-  --ink-896531: #f4ce95;
-  --ink-8c9d92: #bac7dc;
-  --ink-91a293: #bac7dc;
-  --ink-92a596: #bac7dc;
-  --ink-94a29a: #bac7dc;
-  --ink-94a395: #bac7dc;
-  --ink-96a89b: #bac7dc;
-  --ink-9cb2b4: #bac7dc;
-  --ink-a4c5b0: #bac7dc;
-  --line-122b32: #39475c;
-  --line-365f4d: #39475c;
-  --line-46665b: #39475c;
-  --line-57bc9b: #a89bff;
-  --line-70907f: #39475c;
-  --line-d8e3e1: #39475c;
-  --line-dbe5df: #39475c;
-  --line-dce5df: #39475c;
-  --line-dce6e0: #39475c;
-  --line-dee8df: #39475c;
-  --line-dfede2: #39475c;
-  --line-e0e8e2: #39475c;
-  --line-e1e9e4: #39475c;
-  --line-e2e9e5: #39475c;
-  --line-e3eae6: #39475c;
-  --line-e4ece5: #39475c;
-  --line-e5ebe8: #39475c;
-  --line-e8eee9: #39475c;
-  --line-eaf0eb: #39475c;
-  --line-edf1ee: #39475c;
-  --line-f1e4cc: #39475c;
-  --surface-0e2b2a70: #0d111ca8;
-  --surface-122b32: #0d111c;
-  --surface-163b31: #0d111c;
-  --surface-163e32: #0d111c;
-  --surface-249a76: #263147;
-  --surface-265546: #0d111c;
-  --surface-284149: #0d111c;
-  --surface-365f4d: #0d111c;
-  --surface-46665b: #0d111c;
-  --surface-ccdad0: #263147;
-  --surface-d7eadc: #263147;
-  --surface-e3eceb: #171e2d;
-  --surface-e7eeeb: #171e2d;
-  --surface-e7efe9: #171e2d;
-  --surface-e8f5ec: #171e2d;
-  --surface-eaf6ec: #171e2d;
-  --surface-ebf5ed: #171e2d;
-  --surface-edf2ee: #171e2d;
-  --surface-eef2ef: #171e2d;
-  --surface-eef8f2: #171e2d;
-  --surface-eff5f0: #171e2d;
-  --surface-f0f5f0: #171e2d;
-  --surface-f0f5f2: #171e2d;
-  --surface-f1f5f2: #171e2d;
-  --surface-f2f6f3: #171e2d;
-  --surface-f3f9f2: #171e2d;
-  --surface-f5f7f6: #0d111c;
-  --surface-f5faf7: #171e2d;
-  --surface-f7faf7: #171e2d;
-  --surface-f8faf8: #171e2d;
-  --surface-fafcfb: #171e2d;
-  --surface-fff: #171e2d;
-  --surface-fff3d7: #403226;
-  --surface-fff6e9: #403226;
-  --surface-ffffffb5: #171e2db5;
-  --surface-ffffffeb: #171e2deb;
-  --surface-ffffffed: #171e2ded;
+  --ink-087969: #9ad4ff;
+  --ink-122b32: #f0f5ff;
+  --ink-183331: #f0f5ff;
+  --ink-1c795a: #9ad4ff;
+  --ink-23473a: #f0f5ff;
+  --ink-2c4943: #f0f5ff;
+  --ink-2d4941: #f0f5ff;
+  --ink-328268: #9ad4ff;
+  --ink-34714e: #bccbdf;
+  --ink-35775c: #9ad4ff;
+  --ink-38514a: #f0f5ff;
+  --ink-3e7d60: #9ad4ff;
+  --ink-408360: #9ad4ff;
+  --ink-426651: #bccbdf;
+  --ink-447e6b: #9ad4ff;
+  --ink-466258: #f0f5ff;
+  --ink-496754: #bccbdf;
+  --ink-50655f: #bccbdf;
+  --ink-547460: #bccbdf;
+  --ink-577365: #bccbdf;
+  --ink-587167: #bccbdf;
+  --ink-5b7766: #bccbdf;
+  --ink-5e7969: #bccbdf;
+  --ink-607970: #bccbdf;
+  --ink-657870: #bccbdf;
+  --ink-66847a: #bccbdf;
+  --ink-6a8172: #bccbdf;
+  --ink-6a8c76: #bccbdf;
+  --ink-718479: #bccbdf;
+  --ink-765026: #efc98a;
+  --ink-768d7d: #bccbdf;
+  --ink-778c80: #bccbdf;
+  --ink-7a8982: #bccbdf;
+  --ink-7a8984: #bccbdf;
+  --ink-7a8a85: #bccbdf;
+  --ink-7a8c82: #bccbdf;
+  --ink-7b8d84: #bccbdf;
+  --ink-7c9385: #bccbdf;
+  --ink-7f9084: #bccbdf;
+  --ink-81988c: #bccbdf;
+  --ink-83998b: #bccbdf;
+  --ink-84998b: #bccbdf;
+  --ink-875e31: #efc98a;
+  --ink-87998e: #bccbdf;
+  --ink-879e8c: #bccbdf;
+  --ink-886840: #efc98a;
+  --ink-88978f: #bccbdf;
+  --ink-896531: #efc98a;
+  --ink-8c9d92: #bccbdf;
+  --ink-91a293: #bccbdf;
+  --ink-92a596: #bccbdf;
+  --ink-94a29a: #bccbdf;
+  --ink-94a395: #bccbdf;
+  --ink-96a89b: #bccbdf;
+  --ink-9cb2b4: #bccbdf;
+  --ink-a4c5b0: #bccbdf;
+  --line-122b32: #455774;
+  --line-365f4d: #455774;
+  --line-46665b: #455774;
+  --line-57bc9b: #83bdff;
+  --line-70907f: #455774;
+  --line-d8e3e1: #455774;
+  --line-dbe5df: #455774;
+  --line-dce5df: #455774;
+  --line-dce6e0: #455774;
+  --line-dee8df: #455774;
+  --line-dfede2: #455774;
+  --line-e0e8e2: #455774;
+  --line-e1e9e4: #455774;
+  --line-e2e9e5: #455774;
+  --line-e3eae6: #455774;
+  --line-e4ece5: #455774;
+  --line-e5ebe8: #455774;
+  --line-e8eee9: #455774;
+  --line-eaf0eb: #455774;
+  --line-edf1ee: #455774;
+  --line-f1e4cc: #455774;
+  --surface-0e2b2a70: #050a13bd;
+  --surface-122b32: #0b111b;
+  --surface-163b31: #0b111b;
+  --surface-163e32: #0b111b;
+  --surface-249a76: #202d41;
+  --surface-265546: #0b111b;
+  --surface-284149: #0b111b;
+  --surface-365f4d: #0b111b;
+  --surface-46665b: #0b111b;
+  --surface-ccdad0: #202d41;
+  --surface-d7eadc: #202d41;
+  --surface-e3eceb: #172233;
+  --surface-e7eeeb: #172233;
+  --surface-e7efe9: #172233;
+  --surface-e8f5ec: #172233;
+  --surface-eaf6ec: #172233;
+  --surface-ebf5ed: #172233;
+  --surface-edf2ee: #172233;
+  --surface-eef2ef: #172233;
+  --surface-eef8f2: #172233;
+  --surface-eff5f0: #172233;
+  --surface-f0f5f0: #172233;
+  --surface-f0f5f2: #172233;
+  --surface-f1f5f2: #172233;
+  --surface-f2f6f3: #172233;
+  --surface-f3f9f2: #172233;
+  --surface-f5f7f6: #0b111b;
+  --surface-f5faf7: #172233;
+  --surface-f7faf7: #172233;
+  --surface-f8faf8: #172233;
+  --surface-fafcfb: #172233;
+  --surface-fff: #172233;
+  --surface-fff3d7: #3d3027;
+  --surface-fff6e9: #3d3027;
+  --surface-ffffffb5: #172233b5;
+  --surface-ffffffeb: #172233eb;
+  --surface-ffffffed: #172233ed;
 }
 
 .preferences-menu {
@@ -2167,8 +2167,8 @@ html[data-theme='lax-dark'] {
   caret-color: var(--color-base-content);
 }
 [data-theme='lax-dark'] input::placeholder {
-  color: #bac7dc;
-  -webkit-text-fill-color: #bac7dc;
+  color: #bccbdf;
+  -webkit-text-fill-color: #bccbdf;
   opacity: 1;
 }
 [data-theme='lax-dark'] input:autofill {
@@ -2179,8 +2179,8 @@ html[data-theme='lax-dark'] {
   -webkit-box-shadow: 0 0 0 1000px var(--color-base-100) inset;
 }
 [data-theme='lax-dark'] :is(button, .btn, input, select):disabled {
-  color: #bac7dc;
-  -webkit-text-fill-color: #bac7dc;
+  color: #bccbdf;
+  -webkit-text-fill-color: #bccbdf;
   opacity: 1;
 }
 /* Leaflet supplies its own white tooltip background; pair both colors explicitly. */
@@ -2225,9 +2225,9 @@ html[data-theme='lax-dark'] {
   --journey-surface: #ecfafc;
 }
 [data-theme='lax-dark'] {
-  --control-border: #70809a;
-  --control-tray: #0d111c;
-  --journey-surface: #20293b;
+  --control-border: #7a93b1;
+  --control-tray: #0b111b;
+  --journey-surface: #202d41;
 }
 .segmented.tabs {
   background: var(--control-tray);
@@ -2907,8 +2907,28 @@ select,
 }
 .app-dialog::backdrop {
   display: block;
-  background: #0e2b2a70;
+  background: #07101c70;
   backdrop-filter: none;
+}
+
+/* The native iOS dialog is drawn in the top layer. Its backdrop previously
+   used a hard-coded green tint; keep both it and the underlying page in the
+   same cool graphite palette as the open menu. No blur on iOS. */
+html[data-theme='lax-dark'],
+html[data-theme='lax-dark'] body,
+html[data-theme='lax-dark'] .app {
+  background-color: #0b111b;
+}
+html[data-theme='lax-dark'] .app-dialog::backdrop {
+  background: rgb(3 7 16 / 79%);
+}
+html[data-theme='lax-dark'] .app-dialog-panel {
+  background: #172233;
+  color: #f0f5ff;
+  border: 1px solid #455774;
+}
+html[data-theme='lax-dark'] .app-header {
+  background: #172233;
 }
 .app-dialog > .app-dialog-panel {
   opacity: 1;
