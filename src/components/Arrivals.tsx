@@ -38,7 +38,7 @@ export default function Arrivals({
       clearTimeout(timer);
       const current = Date.now();
       setNow(current);
-      if (document.hidden) return;
+      if (document.hidden || !data?.arrivalFetchedAt) return;
       const live =
         !error &&
         !data?.cached &&
