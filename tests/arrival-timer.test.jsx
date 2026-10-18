@@ -43,7 +43,7 @@ it('expires predictions, stops the timer, and resumes on a fresh snapshot', () =
   expect(vi.getTimerCount()).toBe(1);
   rerender(<Arrivals {...props} data={freshData()} />);
   expect(screen.getByText('Next shuttle')).toBeTruthy();
-  expect(vi.getTimerCount()).toBe(2);
+  expect(vi.getTimerCount()).toBe(1);
 });
 
 it('pauses in the background and checks expiry immediately when visible again', () => {
