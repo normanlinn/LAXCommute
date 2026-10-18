@@ -36,7 +36,7 @@ describe('dark text contrast', () => {
     expect(contrast(get('--color-base-content'), get('--color-base-100'))).toBeGreaterThanOrEqual(
       4.5,
     );
-    expect(contrast('#bac7dc', get('--color-base-100'))).toBeGreaterThanOrEqual(4.5);
+    expect(contrast('#bccbdf', get('--color-base-100'))).toBeGreaterThanOrEqual(4.5);
   });
 });
 
@@ -51,7 +51,7 @@ it.each(['lax', 'lax-dark'])('keeps primary button text readable in %s', (name) 
 
 it.each([
   ['light', ':root', '#ffffff'],
-  ['dark', "[data-theme='lax-dark']", '#171e2d'],
+  ['dark', "[data-theme='lax-dark']", '#172233'],
 ])(
   'keeps %s control boundaries visible against cards and inset panels',
   (_name, selector, card) => {
@@ -68,7 +68,7 @@ it.each([
   },
 );
 
-it('keeps the Nightfall accent and supporting status colors legible', () => {
+it('keeps the Midnight Blue accent and status colors legible', () => {
   const darkTheme = css.match(/name: 'lax-dark';[\s\S]*?\n}/)[0];
   const get = (token) => darkTheme.match(new RegExp(`${token}:\\s*(#[\\da-f]{6});`))[1];
   for (const name of ['primary', 'secondary', 'accent', 'success', 'warning', 'error']) {
@@ -76,4 +76,14 @@ it('keeps the Nightfall accent and supporting status colors legible', () => {
     const background = get(`--color-${name}-content`);
     expect(contrast(foreground, background)).toBeGreaterThanOrEqual(4.5);
   }
+});
+
+it('uses a neutral cool-black backdrop behind the native menu in dark mode', () => {
+  const dialogBackdrop = css.match(
+    /html\[data-theme='lax-dark'\] \.app-dialog::backdrop \{([^}]*)\}/,
+  )?.[1];
+  expect(dialogBackdrop).toContain('rgb(3 7 16 / 79%)');
+  expect(css).toContain("html[data-theme='lax-dark'] .app-dialog-panel");
+  expect(css).toContain("background-color: #0b111b");
+  expect(css).not.toContain('background: #0e2b2a70;');
 });
