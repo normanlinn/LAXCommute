@@ -21,12 +21,16 @@ function sampleMap() {
 }
 
 describe('custom LAX vector map styling', () => {
-  it('styles the dark ground, water, roads, and readable labels without changing icon-only layers', () => {
+  it('styles the dark map while leaving icon layers untouched', () => {
     const map = sampleMap();
     applyLaxMapStyle(map, 'dark');
     expect(map.setPaintProperty).toHaveBeenCalledWith('background', 'background-color', '#171e2a');
     expect(map.setPaintProperty).toHaveBeenCalledWith('water', 'fill-color', '#222e42');
-    expect(map.setPaintProperty).toHaveBeenCalledWith('transportation-motorway', 'line-color', '#596986');
+    expect(map.setPaintProperty).toHaveBeenCalledWith(
+      'transportation-motorway',
+      'line-color',
+      '#596986',
+    );
     expect(map.setPaintProperty).toHaveBeenCalledWith('place-city', 'text-color', '#edf2fb');
     expect(map.setPaintProperty.mock.calls.some(([name]) => name === 'poi-icon')).toBe(false);
   });
@@ -35,6 +39,10 @@ describe('custom LAX vector map styling', () => {
     const map = sampleMap();
     applyLaxMapStyle(map, 'light');
     expect(map.setPaintProperty).toHaveBeenCalledWith('background', 'background-color', '#eef3f6');
-    expect(map.setPaintProperty).toHaveBeenCalledWith('transportation-secondary', 'line-color', '#fcfdfd');
+    expect(map.setPaintProperty).toHaveBeenCalledWith(
+      'transportation-secondary',
+      'line-color',
+      '#fcfdfd',
+    );
   });
 });
