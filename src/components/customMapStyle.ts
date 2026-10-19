@@ -54,27 +54,36 @@ export function applyLaxMapStyle(
     if (layer.type === 'background') {
       paint('background-color', colors.ground);
     } else if (layer.type === 'fill') {
-      if (/water|ocean|lake|reservoir/.test(name)) paint('fill-color', colors.water);
-      else if (/park|green|forest|grass|wood|garden|recreation/.test(name))
+      if (/water|ocean|lake|reservoir/.test(name)) {
+        paint('fill-color', colors.water);
+      } else if (/park|green|forest|grass|wood|garden|recreation/.test(name)) {
         paint('fill-color', colors.park);
-      else if (/airport|aeroway|runway|apron/.test(name))
+      } else if (/airport|aeroway|runway|apron/.test(name)) {
         paint('fill-color', colors.airport);
-      else if (/building/.test(name)) paint('fill-color', colors.building);
-      else if (/landuse|landcover/.test(name)) paint('fill-color', colors.landuse);
+      } else if (/building/.test(name)) {
+        paint('fill-color', colors.building);
+      } else if (/landuse|landcover/.test(name)) {
+        paint('fill-color', colors.landuse);
+      }
     } else if (layer.type === 'line') {
-      if (/rail|subway/.test(name)) paint('line-color', colors.railway);
-      else if (/road|transportation|highway|motorway|trunk|street/.test(name)) {
-        if (/casing|outline|border/.test(name)) paint('line-color', colors.casing);
-        else if (/motorway|trunk|primary|expressway|highway/.test(name))
+      if (/rail|subway/.test(name)) {
+        paint('line-color', colors.railway);
+      } else if (/road|transportation|highway|motorway|trunk|street/.test(name)) {
+        if (/casing|outline|border/.test(name)) {
+          paint('line-color', colors.casing);
+        } else if (/motorway|trunk|primary|expressway|highway/.test(name)) {
           paint('line-color', colors.highway);
-        else if (/secondary|tertiary|arterial/.test(name))
+        } else if (/secondary|tertiary|arterial/.test(name)) {
           paint('line-color', colors.arterialRoad);
-        else paint('line-color', colors.localRoad);
+        } else {
+          paint('line-color', colors.localRoad);
+        }
       } else if (/waterway|river|stream/.test(name)) {
         paint('line-color', colors.water);
       }
     } else if (layer.type === 'symbol' && layer.layout && 'text-field' in layer.layout) {
-      paint('text-color', /place|city|town|airport|settlement/.test(name) ? colors.placeLabel : colors.label);
+      const isPlace = /place|city|town|airport|settlement/.test(name);
+      paint('text-color', isPlace ? colors.placeLabel : colors.label);
       paint('text-halo-color', colors.halo);
       paint('text-halo-width', 1.2);
     }
