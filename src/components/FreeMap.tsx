@@ -6,6 +6,7 @@ import * as L from 'leaflet';
 import { animate } from 'animejs';
 import 'leaflet/dist/leaflet.css';
 import { config } from '../config';
+import { applyLaxMapStyle } from './customMapStyle';
 import { GPS_TTL_MS, snapshotFresh, validVehicle } from '../domain/arrivals';
 import { routeMotionPath, positionOnMotionPath, segmentMeters } from '../domain/map-motion';
 
@@ -164,6 +165,7 @@ function FreeMap({
     let cancelled = false;
     let layer: L.Layer | undefined;
     let gl: import('maplibre-gl').Map | undefined;
+    let onMapReady: (() => void) | undefined;
     let deadline: ReturnType<typeof setTimeout> | undefined;
     setTileError(false);
     const fallback = () => {
@@ -182,7 +184,16 @@ function FreeMap({
           layer = simpleLayer;
           layer.addTo(map);
           gl = simpleLayer.getMaplibreMap();
-          gl.on('load', () => clearTimeout(deadline));
+          let styled = false;
+          onMapReady = () => {
+            clearTimeout(deadline);
+            if (!gl || styled) return;
+            applyLaxMapStyle(gl, appearance);
+            styled = true;
+          };
+          gl.on('style.load', onMapReady);
+          gl.on('load', onMapReady);
+          if (gl.isStyleLoaded?.()) onMapReady();
           gl.on('error', fallback);
         })
         .catch(fallback);
@@ -204,6 +215,10 @@ function FreeMap({
       cancelled = true;
       clearTimeout(deadline);
       gl?.off('error', fallback);
+      if (gl && onMapReady) {
+        gl.off('style.load', onMapReady);
+        gl.off('load', onMapReady);
+      }
       layer?.remove();
     };
   }, [ready, basemap, appearance]);
@@ -487,7 +502,7 @@ function FreeMap({
                 }}
               >
                 {' '}
-                {t('Simple')}{' '}
+                {t('LAX map')}{' '}
               </button>
               <button
                 type="button"

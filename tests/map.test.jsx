@@ -46,6 +46,8 @@ beforeEach(() => {
       attribution: 'OpenFreeMap · © OpenMapTiles · © OpenStreetMap',
     });
     const events = new L.Evented();
+    events.getStyle = () => ({ layers: [{ id: 'background', type: 'background' }] });
+    events.setPaintProperty = vi.fn();
     layer.getMaplibreMap = () => events;
     queueMicrotask(() => events.fire('load'));
     return layer;
@@ -184,7 +186,7 @@ describe('interactive shuttle map', () => {
     expect(container.querySelector('.leaflet-control-attribution').textContent).not.toContain(
       'OpenFreeMap',
     );
-    fireEvent.click(getByRole('button', { name: 'Simple', exact: true }));
+    fireEvent.click(getByRole('button', { name: 'LAX map', exact: true }));
     await act(async () => {});
     expect(container.querySelector('.leaflet-marker-icon')).toBe(marker);
     expect(container.querySelector('.leaflet-control-attribution').textContent).toContain(

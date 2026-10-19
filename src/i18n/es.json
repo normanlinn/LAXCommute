@@ -339,5 +339,6 @@
   "Map tools": "Herramientas del mapa",
   "Close map tools": "Cerrar herramientas del mapa",
   "Arriving": "Llegando",
-  "Bus {name} is near this stop (GPS). Its {minutes}-min prediction may be for the next loop. Boarding is not confirmed.": "El autobús {name} está cerca de esta parada (GPS). La estimación de {minutes} min podría ser para la próxima vuelta. No se ha confirmado el abordaje."
+  "Bus {name} is near this stop (GPS). Its {minutes}-min prediction may be for the next loop. Boarding is not confirmed.": "El autobús {name} está cerca de esta parada (GPS). La estimación de {minutes} min podría ser para la próxima vuelta. No se ha confirmado el abordaje.",
+  "LAX map": "Mapa LAX"
 }
