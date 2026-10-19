@@ -5,6 +5,8 @@ import type { Map as MapLibreMap } from 'maplibre-gl';
  * The underlying tiles, attribution, and feed-supplied GPS data are unchanged.
  * Match semantic layer IDs and source-layers so upstream style updates remain usable.
  */
+type PaintProperty = Parameters<MapLibreMap['setPaintProperty']>[1];
+
 const palettes = {
   dark: {
     ground: '#171e2a',
@@ -48,7 +50,7 @@ export function applyLaxMapStyle(
   for (const layer of map.getStyle()?.layers ?? []) {
     const sourceLayer = 'source-layer' in layer ? layer['source-layer'] || '' : '';
     const name = (layer.id + ' ' + sourceLayer).toLowerCase();
-    const paint = (property: string, color: string | number) =>
+    const paint = (property: PaintProperty, color: string | number) =>
       map.setPaintProperty(layer.id, property, color);
 
     if (layer.type === 'background') {
