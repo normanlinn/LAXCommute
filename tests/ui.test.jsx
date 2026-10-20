@@ -80,6 +80,19 @@ beforeEach(() => {
 });
 afterEach(cleanup);
 describe('commute UI', () => {
+  it('does not initialize the map underneath the first-visit introduction', async () => {
+    render(<App />);
+    expect(screen.queryByLabelText('Shuttle map')).toBeNull();
+    expect(screen.getByText('Opening map…')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Explore first' }));
+    expect(screen.getByLabelText('Shuttle map')).toBeTruthy();
+  });
+  it('starts the map normally when the introduction was already dismissed', () => {
+    localStorage.setItem('laxcommute:welcome-seen', '1');
+    render(<App />);
+    expect(screen.getByLabelText('Shuttle map')).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Explore first' })).toBeNull();
+  });
   it('keeps the East route and a South Lot override when switching languages', () => {
     render(
       <LanguageProvider>
