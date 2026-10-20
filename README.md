@@ -1,5 +1,7 @@
 # LAXCommute
 
+<!-- prettier-ignore-start -->
+
 **Your airport. Your commute.** A free, installable web app for checking LAX employee shuttle arrivals and planning your trip between the terminals and employee parking lots.
 
 **[Open LAXCommute](https://employeeshuttlelax.com)** · [Report an issue](https://github.com/normanlinn/LAXCommute/issues)
@@ -48,3 +50,5 @@ Cloudflare serves the app and its same-origin API; Supabase handles shuttle-data
 For detailed setup, use the maintained guides: [Hosting](docs/HOSTING.md) · [Backend](docs/SUPABASE-BACKEND.md) · [Accounts](docs/AUTH.md) · [Security](docs/SECURITY.md) · [Languages](docs/LANGUAGE.md).
 
 © LAXCommute contributors.
+
+<!-- prettier-ignore-end -->
