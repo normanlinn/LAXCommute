@@ -216,7 +216,10 @@ describe('commute UI', () => {
 
     const expandedHandle = screen.getByRole('button', { name: 'Collapse commute details' });
     fireEvent.pointerDown(expandedHandle, {
-      pointerId: 2, pointerType: 'touch', button: 0, clientY: 200,
+      pointerId: 2,
+      pointerType: 'touch',
+      button: 0,
+      clientY: 200,
     });
     fireEvent.pointerMove(expandedHandle, { pointerId: 2, pointerType: 'touch', clientY: 295 });
     expect(sheet.style.height).not.toBe('');
