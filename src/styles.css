@@ -3577,7 +3577,7 @@ html[data-theme='lax-dark'] .app-header {
     height: 18px;
   }
 }
-/* Framer Motion drives the popover entrance and exit; avoid a second CSS animation. */
+/* CSS handles small control effects without loading an animation runtime at startup. */
 .map-tools-icon {
   display: inline-flex;
   align-items: center;
@@ -3660,4 +3660,47 @@ html[data-theme='lax-dark'] .app-header {
   line-height: 1.25;
   white-space: nowrap;
   color: var(--color-success);
+}
+
+/* Below-the-fold community code waits until users approach the section. */
+.crowd-deferred-placeholder {
+  min-height: 150px;
+}
+
+/* Small map-control transitions are GPU-friendly CSS, not an eager JS animation engine. */
+.map-tools-icon {
+  transition: transform 190ms ease-out;
+}
+.map-tools-toggle[aria-expanded='true'] .map-tools-icon {
+  transform: rotate(90deg);
+}
+@media (max-width: 760px) {
+  .map-controls .map-tools-actions {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.97);
+    transition:
+      opacity 190ms ease-out,
+      transform 190ms ease-out,
+      visibility 0s linear 190ms;
+  }
+  .map-controls.mobile-open .map-tools-actions {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0s;
+  }
+}
+@media (max-width: 760px) and (prefers-reduced-motion: no-preference) {
+  .transit-arrival-peek {
+    animation: transit-peek-enter 320ms ease-out both;
+  }
+}
+@keyframes transit-peek-enter {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
