@@ -141,9 +141,7 @@ export default function App() {
   }, [mapToolsOpen]);
   const tripCardRef = useRef<HTMLElement>(null);
   const [sheetExpanded, setSheetExpanded] = useState(true);
-  const sheetGesture = useRef<{ pointer: number; startY: number; lastY: number } | null>(
-    null,
-  );
+  const sheetGesture = useRef<{ pointer: number; startY: number; lastY: number } | null>(null);
   const ignoreSheetClick = useRef(false);
   function startSheetDrag(event: ReactPointerEvent<HTMLButtonElement>) {
     if (!compactMap || event.button !== 0) return;
@@ -165,10 +163,7 @@ export default function App() {
     // Move only the grip. Keep the panel in normal document flow so it never
     // obstructs the map or the bottom navigation during a swipe.
     panel.classList.add('sheet-dragging');
-    panel.style.setProperty(
-      '--sheet-grip-pull',
-      `${Math.max(-12, Math.min(12, distance / 7))}px`,
-    );
+    panel.style.setProperty('--sheet-grip-pull', `${Math.max(-12, Math.min(12, distance / 7))}px`);
   }
   function finishSheetDrag(event: ReactPointerEvent<HTMLButtonElement>, cancelled = false) {
     const gesture = sheetGesture.current;
