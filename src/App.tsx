@@ -380,24 +380,25 @@ export default function App() {
                     </button>
                   ))}
                 </div>
-                {mapExpanded && ready && !welcomeOpen ? (
-                  <Suspense fallback={<MapLoading />}>
-                    <ShuttleMap
-                      routeLoading={routeQuery.isPending && routeQuery.fetchStatus === 'fetching'}
-                      route={route}
-                      liveData={live.data}
-                      stops={mapStops}
-                      paths={paths}
-                      vehicles={vehicles}
-                      selectedStop={selectedStop}
-                      userLocation={userLocation}
-                      onSelectStop={chooseStop}
-                      focusRequest={focusRequest}
-                    />
-                  </Suspense>
-                ) : (
-                  <MapLoading />
-                )}
+                {mapExpanded &&
+                  (ready && !welcomeOpen ? (
+                    <Suspense fallback={<MapLoading />}>
+                      <ShuttleMap
+                        routeLoading={routeQuery.isPending && routeQuery.fetchStatus === 'fetching'}
+                        route={route}
+                        liveData={live.data}
+                        stops={mapStops}
+                        paths={paths}
+                        vehicles={vehicles}
+                        selectedStop={selectedStop}
+                        userLocation={userLocation}
+                        onSelectStop={chooseStop}
+                        focusRequest={focusRequest}
+                      />
+                    </Suspense>
+                  ) : (
+                    <MapLoading />
+                  ))}
                 <div
                   ref={mapToolsRef}
                   className={`map-controls${mapToolsOpen ? ' mobile-open' : ''}`}
