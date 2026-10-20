@@ -141,40 +141,60 @@ export default function App() {
   }, [mapToolsOpen]);
   const tripCardRef = useRef<HTMLElement>(null);
   const [sheetExpanded, setSheetExpanded] = useState(false);
-  const sheetGesture = useRef<{ pointer: number; startY: number; endY: number } | null>(null);
+  const sheetGesture = useRef<{
+    pointer: number;
+    startY: number;
+    endY: number;
+    startHeight: number;
+    maxHeight: number;
+  } | null>(null);
   const ignoreSheetClick = useRef(false);
+  const sheetMinHeight = 170;
   function startSheetDrag(event: ReactPointerEvent<HTMLButtonElement>) {
-    if (!compactMap || event.button !== 0) return;
+    const panel = tripCardRef.current;
+    if (!compactMap || event.button !== 0 || !panel) return;
     ignoreSheetClick.current = false;
-    sheetGesture.current = { pointer: event.pointerId, startY: event.clientY, endY: event.clientY };
+    const measuredMax = Number.parseFloat(getComputedStyle(panel).maxHeight);
+    const maxHeight = Number.isFinite(measuredMax)
+      ? Math.max(sheetMinHeight, measuredMax)
+      : Math.max(sheetMinHeight, window.innerHeight - 168);
+    sheetGesture.current = {
+      pointer: event.pointerId,
+      startY: event.clientY,
+      endY: event.clientY,
+      startHeight: panel.getBoundingClientRect().height || (sheetExpanded ? maxHeight : sheetMinHeight),
+      maxHeight,
+    };
     event.currentTarget.setPointerCapture?.(event.pointerId);
   }
   function moveSheetDrag(event: ReactPointerEvent<HTMLButtonElement>) {
     const gesture = sheetGesture.current;
-    if (!gesture || gesture.pointer !== event.pointerId) return;
+    const panel = tripCardRef.current;
+    if (!gesture || gesture.pointer !== event.pointerId || !panel) return;
     gesture.endY = event.clientY;
     const delta = event.clientY - gesture.startY;
-    if (Math.abs(delta) < 10) return;
-    tripCardRef.current?.classList.add('sheet-dragging');
-    tripCardRef.current?.style.setProperty(
-      '--sheet-drag-offset',
-      `${Math.max(-120, Math.min(120, delta))}px`,
+    if (Math.abs(delta) < 8 && !panel.classList.contains('sheet-dragging')) return;
+    panel.classList.add('sheet-dragging');
+    const height = Math.max(
+      sheetMinHeight,
+      Math.min(gesture.maxHeight, gesture.startHeight - delta),
     );
+    panel.style.height = `${Math.round(height)}px`;
   }
   function finishSheetDrag(event: ReactPointerEvent<HTMLButtonElement>, cancelled = false) {
     const gesture = sheetGesture.current;
     if (!gesture || gesture.pointer !== event.pointerId) return;
     sheetGesture.current = null;
-    tripCardRef.current?.classList.remove('sheet-dragging');
-    tripCardRef.current?.style.removeProperty('--sheet-drag-offset');
+    const panel = tripCardRef.current;
+    const distance = gesture.endY - gesture.startY;
+    // Prevent a synthetic click after a drag from toggling the panel twice.
+    ignoreSheetClick.current = Math.abs(distance) >= 8;
+    panel?.classList.remove('sheet-dragging');
+    panel?.style.removeProperty('height');
     if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId);
     }
-    const distance = gesture.endY - gesture.startY;
-    if (!cancelled && Math.abs(distance) > 38) {
-      setSheetExpanded(distance < 0);
-      ignoreSheetClick.current = true;
-    }
+    if (!cancelled && Math.abs(distance) > 45) setSheetExpanded(distance < 0);
   }
   const [override, setOverride] = useState<{
     routeID: number;
@@ -603,8 +623,8 @@ export default function App() {
                 onPointerMove={moveSheetDrag}
                 onPointerUp={(event) => finishSheetDrag(event)}
                 onPointerCancel={(event) => finishSheetDrag(event, true)}
-                onClick={() => {
-                  if (ignoreSheetClick.current) {
+                onClick={(event) => {
+                  if (event.detail !== 0 && ignoreSheetClick.current) {
                     ignoreSheetClick.current = false;
                     return;
                   }
