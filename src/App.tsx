@@ -162,7 +162,8 @@ export default function App() {
       pointer: event.pointerId,
       startY: event.clientY,
       endY: event.clientY,
-      startHeight: panel.getBoundingClientRect().height || (sheetExpanded ? maxHeight : sheetMinHeight),
+      startHeight:
+        panel.getBoundingClientRect().height || (sheetExpanded ? maxHeight : sheetMinHeight),
       maxHeight,
     };
     event.currentTarget.setPointerCapture?.(event.pointerId);
