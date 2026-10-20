@@ -11,6 +11,7 @@ import {
   useMemo,
   useState,
   type CSSProperties,
+  type PointerEvent as ReactPointerEvent,
 } from 'react';
 import {
   ArrowDownUp,
@@ -139,6 +140,63 @@ export default function App() {
     };
   }, [mapToolsOpen]);
   const tripCardRef = useRef<HTMLElement>(null);
+  const [sheetExpanded, setSheetExpanded] = useState(false);
+  const sheetGesture = useRef<{
+    pointer: number;
+    startY: number;
+    endY: number;
+    startHeight: number;
+    maxHeight: number;
+  } | null>(null);
+  const ignoreSheetClick = useRef(false);
+  const sheetMinHeight = 170;
+  function startSheetDrag(event: ReactPointerEvent<HTMLButtonElement>) {
+    const panel = tripCardRef.current;
+    if (!compactMap || event.button !== 0 || !panel) return;
+    ignoreSheetClick.current = false;
+    const measuredMax = Number.parseFloat(getComputedStyle(panel).maxHeight);
+    const maxHeight = Number.isFinite(measuredMax)
+      ? Math.max(sheetMinHeight, measuredMax)
+      : Math.max(sheetMinHeight, window.innerHeight - 168);
+    sheetGesture.current = {
+      pointer: event.pointerId,
+      startY: event.clientY,
+      endY: event.clientY,
+      startHeight:
+        panel.getBoundingClientRect().height || (sheetExpanded ? maxHeight : sheetMinHeight),
+      maxHeight,
+    };
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+  }
+  function moveSheetDrag(event: ReactPointerEvent<HTMLButtonElement>) {
+    const gesture = sheetGesture.current;
+    const panel = tripCardRef.current;
+    if (!gesture || gesture.pointer !== event.pointerId || !panel) return;
+    gesture.endY = event.clientY;
+    const delta = event.clientY - gesture.startY;
+    if (Math.abs(delta) < 8 && !panel.classList.contains('sheet-dragging')) return;
+    panel.classList.add('sheet-dragging');
+    const height = Math.max(
+      sheetMinHeight,
+      Math.min(gesture.maxHeight, gesture.startHeight - delta),
+    );
+    panel.style.height = `${Math.round(height)}px`;
+  }
+  function finishSheetDrag(event: ReactPointerEvent<HTMLButtonElement>, cancelled = false) {
+    const gesture = sheetGesture.current;
+    if (!gesture || gesture.pointer !== event.pointerId) return;
+    sheetGesture.current = null;
+    const panel = tripCardRef.current;
+    const distance = gesture.endY - gesture.startY;
+    // Prevent a synthetic click after a drag from toggling the panel twice.
+    ignoreSheetClick.current = Math.abs(distance) >= 8;
+    panel?.classList.remove('sheet-dragging');
+    panel?.style.removeProperty('height');
+    if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+    if (!cancelled && Math.abs(distance) > 45) setSheetExpanded(distance < 0);
+  }
   const [override, setOverride] = useState<{
     routeID: number;
     direction: Direction;
@@ -202,6 +260,7 @@ export default function App() {
     initialNavigation.current = true;
     setWelcome(false);
     setTab(next);
+    setSheetExpanded(false);
     if (next === 'home') {
       setDirection('parking');
       setLot(profile.lot);
@@ -471,14 +530,14 @@ export default function App() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: reduceMotion ? 0 : 0.36, ease: 'easeOut' }}
                   whileTap={reduceMotion ? undefined : { scale: 0.985 }}
-                  onClick={() =>
-                    tripCardRef.current?.scrollIntoView({
-                      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
-                        ? 'auto'
-                        : 'smooth',
-                      block: 'start',
-                    })
-                  }
+                  onClick={() => {
+                    if (compactMap) setSheetExpanded(true);
+                    else
+                      tripCardRef.current?.scrollIntoView({
+                        behavior: reduceMotion ? 'auto' : 'smooth',
+                        block: 'start',
+                      });
+                  }}
                 >
                   <span className="transit-peek-symbol" aria-hidden="true">
                     <BusFront size={23} />
@@ -550,182 +609,232 @@ export default function App() {
                 </a>
               </div>
             </section>
-            <aside ref={tripCardRef} className="card bg-base-100 trip-card">
-              {saveState && hasSaved && (
-                <p className="alert alert-soft alert-success notice" role="status">
-                  {t(saveState)}
-                </p>
-              )}
-              <div className="trip-intro">
-                <span className="eyebrow">
-                  {direction === 'parking' ? t('YOUR RIDE BACK') : t('TO WORK')}
-                </span>
-                <h2>
-                  {direction === 'parking'
-                    ? t('Back to your parking lot.')
-                    : t('Where are you waiting?')}
-                </h2>
-                <p>
-                  {direction === 'parking'
-                    ? t('{terminal} is your usual terminal. Choose any other stop for today.', {
-                        terminal: profile.terminal,
-                      })
-                    : t('Choose your shuttle and the stop you’re waiting at.')}
-                </p>
-              </div>
-              <div
-                className="tabs tabs-box segmented direction-switch"
-                role="group"
-                aria-label={t('Travel direction')}
-              >
-                <Button
-                  className={direction === 'work' ? 'tab tab-active active' : 'tab'}
-                  aria-pressed={direction === 'work'}
-                  onClick={() => changeDirection('work')}
-                >
-                  <BusFront size={16} aria-hidden="true" />
-                  <span className="direction-label">{t('To work')}</span>
-                </Button>
-                <Button
-                  className={direction === 'parking' ? 'tab tab-active active' : 'tab'}
-                  aria-pressed={direction === 'parking'}
-                  onClick={() => changeDirection('parking')}
-                >
-                  <Home size={16} aria-hidden="true" />
-                  <span className="direction-label">{t('To parking')}</span>
-                </Button>
-              </div>
-              <div className="field route-field">
-                <span>{t('Which shuttle do you want?')}</span>
-                <div className="route-options">
-                  {ROUTES.map((r) => (
-                    <Button
-                      key={r.id}
-                      className={r.lot === lot ? 'selected' : ''}
-                      onClick={() => chooseRoute(r.lot)}
-                      style={{
-                        '--option-color': appearance === 'dark' ? darkRouteColor(r.color) : r.color,
-                      }}
-                    >
-                      <span>{r.short}</span>
-                      {r.lot}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-              {direction === 'work' && lot !== 'South' && (
-                <p className="small muted">
-                  {t('Waiting at South Lot? Choose your stop below to see {lot} buses.', { lot })}
-                </p>
-              )}
-              <div className="trip-destination">
-                <div className="journey-line">
-                  <span />
-                  <i />
-                  <span />
-                </div>
-                <div>
-                  <span>{t('FROM')}</span>
-                  <strong>{selectedStop?.name || t('Choose your boarding stop')}</strong>
-                  <span>{t('TO')}</span>
-                  <strong>
-                    {direction === 'parking'
-                      ? t('{lot} employee parking', { lot })
-                      : profile.terminal}
-                  </strong>
-                </div>
-                <ArrowDownUp size={17} />
-              </div>
-              <label className="field">
-                {' '}
-                {t('Where are you boarding?')}{' '}
-                <select
-                  className="select w-full"
-                  value={selectedStop?.id || 0}
-                  onChange={(e) =>
-                    setOverride({
-                      id: Number(e.target.value),
-                      routeID: route.id,
-                      direction,
-                      source: 'manual',
-                    })
+            <aside
+              ref={tripCardRef}
+              className={`card bg-base-100 trip-card ${sheetExpanded ? 'sheet-expanded' : 'sheet-peek'}`}
+            >
+              <Button
+                className="sheet-handle"
+                aria-label={t(
+                  sheetExpanded ? 'Collapse commute details' : 'Expand commute details',
+                )}
+                aria-expanded={sheetExpanded}
+                aria-controls="trip-sheet-content"
+                onPointerDown={startSheetDrag}
+                onPointerMove={moveSheetDrag}
+                onPointerUp={(event) => finishSheetDrag(event)}
+                onPointerCancel={(event) => finishSheetDrag(event, true)}
+                onClick={(event) => {
+                  if (event.detail !== 0 && ignoreSheetClick.current) {
+                    ignoreSheetClick.current = false;
+                    return;
                   }
-                >
-                  <option value={0} disabled>
-                    {routeQuery.isPending ? t('Loading stops…') : t('Choose a boarding stop')}
-                  </option>
-                  {options.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <div className="stop-actions">
-                <Button className={!todayID ? 'active' : ''} onClick={() => setOverride(null)}>
-                  <Bookmark size={14} /> {t('Usual stop')}{' '}
-                </Button>
-                <Button onClick={locate} disabled={locating || options.length === 0}>
-                  <Navigation size={14} />
-                  {locating ? t('Finding you…') : t('Use my location')}
-                </Button>
-              </div>
-              {todayID && (
-                <p className="today-note">
-                  {override?.source === 'nearby' ? t('Nearby stop') : t('Today’s stop')}{' '}
-                  {t('· your saved commute stays the same.')}{' '}
-                </p>
-              )}
-              {locationError && (
-                <p className="alert alert-soft alert-warning notice" role="status">
-                  {t(locationError)}
-                </p>
-              )}
-              {routeQuery.isError && (
-                <p className="alert alert-soft alert-warning notice" role="status">
-                  {' '}
-                  {t('Boarding stops are unavailable.')}{' '}
-                  <Button onClick={() => routeQuery.refetch()}>{t('Retry')}</Button>
-                </p>
-              )}
-              <Arrivals
-                data={live.data}
-                error={live.error}
-                loading={live.isPending && live.fetchStatus === 'fetching'}
-                fetching={live.isFetching}
-                stop={selectedStop}
-                direction={direction}
-                profile={profile}
-                onRefresh={() => {
-                  live.refetch();
-                  if (routeQuery.isError) routeQuery.refetch();
+                  setSheetExpanded((expanded) => !expanded);
                 }}
-              />
-              <CrowdReports routeId={route.id} vehicles={vehicles} />
-              <details className="collapse advanced">
-                <summary className="collapse-title">
-                  <span>{t('Other bus options')}</span>
-                  <ChevronDown size={17} />
-                </summary>
-                <div className="collapse-content advanced-content">
-                  {ROUTES.filter((r) => r.id !== route.id).map((r) => (
-                    <Button key={r.id} onClick={() => chooseRoute(r.lot)}>
-                      <span className="other-route-icon" style={{ background: r.color }}>
-                        {r.short}
-                      </span>
-                      <span>
-                        <strong>{t('{lot} Lot shuttle', { lot: r.lot })}</strong>
-                        <small>{t(r.coverage)}</small>
-                      </span>
-                      <ArrowRight size={17} />
-                    </Button>
-                  ))}
-                  <p>
-                    {t('Select another route to check its actual boarding stops and departures.')}
+                onKeyDown={(event) => {
+                  if (event.key === 'ArrowUp') {
+                    event.preventDefault();
+                    setSheetExpanded(true);
+                  } else if (event.key === 'ArrowDown') {
+                    event.preventDefault();
+                    setSheetExpanded(false);
+                  }
+                }}
+              >
+                <span className="sheet-grip" aria-hidden="true" />
+              </Button>
+              <div id="trip-sheet-content" className="trip-sheet-content">
+                {saveState && hasSaved && (
+                  <p className="alert alert-soft alert-success notice" role="status">
+                    {t(saveState)}
                   </p>
+                )}
+                <div className="trip-intro">
+                  <span className="eyebrow">
+                    {direction === 'parking' ? t('YOUR RIDE BACK') : t('TO WORK')}
+                  </span>
+                  <motion.h2
+                    key={direction}
+                    initial={reduceMotion ? false : { opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.22 }}
+                  >
+                    {direction === 'parking'
+                      ? t('Back to your parking lot.')
+                      : t('Where are you waiting?')}
+                  </motion.h2>
+                  <p>
+                    {direction === 'parking'
+                      ? t('{terminal} is your usual terminal. Choose any other stop for today.', {
+                          terminal: profile.terminal,
+                        })
+                      : t('Choose your shuttle and the stop you’re waiting at.')}
+                  </p>
+                  <span className="sheet-peek-hint">{t('Swipe up for stops and arrivals')}</span>
                 </div>
-              </details>
-              {selectedStop && <DirectionsButton stop={selectedStop} />}
+                <div
+                  className="tabs tabs-box segmented direction-switch"
+                  role="group"
+                  aria-label={t('Travel direction')}
+                >
+                  <Button
+                    className={direction === 'work' ? 'tab tab-active active' : 'tab'}
+                    aria-pressed={direction === 'work'}
+                    onClick={() => changeDirection('work')}
+                  >
+                    <BusFront size={16} aria-hidden="true" />
+                    <span className="direction-label">{t('To work')}</span>
+                  </Button>
+                  <Button
+                    className={direction === 'parking' ? 'tab tab-active active' : 'tab'}
+                    aria-pressed={direction === 'parking'}
+                    onClick={() => changeDirection('parking')}
+                  >
+                    <Home size={16} aria-hidden="true" />
+                    <span className="direction-label">{t('To parking')}</span>
+                  </Button>
+                </div>
+                <div className="field route-field">
+                  <span>{t('Which shuttle do you want?')}</span>
+                  <div className="route-options">
+                    {ROUTES.map((r) => (
+                      <Button
+                        key={r.id}
+                        className={r.lot === lot ? 'selected' : ''}
+                        aria-pressed={r.lot === lot}
+                        onClick={() => chooseRoute(r.lot)}
+                        style={{
+                          '--option-color':
+                            appearance === 'dark' ? darkRouteColor(r.color) : r.color,
+                        }}
+                      >
+                        <span>{r.short}</span>
+                        {r.lot}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+                {direction === 'work' && lot !== 'South' && (
+                  <p className="small muted">
+                    {t('Waiting at South Lot? Choose your stop below to see {lot} buses.', { lot })}
+                  </p>
+                )}
+                <div className="trip-destination">
+                  <div className="journey-line">
+                    <span />
+                    <i />
+                    <span />
+                  </div>
+                  <div>
+                    <span>{t('FROM')}</span>
+                    <motion.strong
+                      key={`${direction}:${lot}:${selectedStop?.id || 0}`}
+                      initial={reduceMotion ? false : { opacity: 0, y: 5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      {selectedStop?.name || t('Choose your boarding stop')}
+                    </motion.strong>
+                    <span>{t('TO')}</span>
+                    <strong>
+                      {direction === 'parking'
+                        ? t('{lot} employee parking', { lot })
+                        : profile.terminal}
+                    </strong>
+                  </div>
+                  <ArrowDownUp size={17} />
+                </div>
+                <label className="field">
+                  {' '}
+                  {t('Where are you boarding?')}{' '}
+                  <select
+                    className="select w-full"
+                    value={selectedStop?.id || 0}
+                    onChange={(e) =>
+                      setOverride({
+                        id: Number(e.target.value),
+                        routeID: route.id,
+                        direction,
+                        source: 'manual',
+                      })
+                    }
+                  >
+                    <option value={0} disabled>
+                      {routeQuery.isPending ? t('Loading stops…') : t('Choose a boarding stop')}
+                    </option>
+                    {options.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <div className="stop-actions">
+                  <Button className={!todayID ? 'active' : ''} onClick={() => setOverride(null)}>
+                    <Bookmark size={14} /> {t('Usual stop')}{' '}
+                  </Button>
+                  <Button onClick={locate} disabled={locating || options.length === 0}>
+                    <Navigation size={14} />
+                    {locating ? t('Finding you…') : t('Use my location')}
+                  </Button>
+                </div>
+                {todayID && (
+                  <p className="today-note">
+                    {override?.source === 'nearby' ? t('Nearby stop') : t('Today’s stop')}{' '}
+                    {t('· your saved commute stays the same.')}{' '}
+                  </p>
+                )}
+                {locationError && (
+                  <p className="alert alert-soft alert-warning notice" role="status">
+                    {t(locationError)}
+                  </p>
+                )}
+                {routeQuery.isError && (
+                  <p className="alert alert-soft alert-warning notice" role="status">
+                    {' '}
+                    {t('Boarding stops are unavailable.')}{' '}
+                    <Button onClick={() => routeQuery.refetch()}>{t('Retry')}</Button>
+                  </p>
+                )}
+                <Arrivals
+                  data={live.data}
+                  error={live.error}
+                  loading={live.isPending && live.fetchStatus === 'fetching'}
+                  fetching={live.isFetching}
+                  stop={selectedStop}
+                  direction={direction}
+                  profile={profile}
+                  onRefresh={() => {
+                    live.refetch();
+                    if (routeQuery.isError) routeQuery.refetch();
+                  }}
+                />
+                <CrowdReports routeId={route.id} vehicles={vehicles} />
+                <details className="collapse advanced">
+                  <summary className="collapse-title">
+                    <span>{t('Other bus options')}</span>
+                    <ChevronDown size={17} />
+                  </summary>
+                  <div className="collapse-content advanced-content">
+                    {ROUTES.filter((r) => r.id !== route.id).map((r) => (
+                      <Button key={r.id} onClick={() => chooseRoute(r.lot)}>
+                        <span className="other-route-icon" style={{ background: r.color }}>
+                          {r.short}
+                        </span>
+                        <span>
+                          <strong>{t('{lot} Lot shuttle', { lot: r.lot })}</strong>
+                          <small>{t(r.coverage)}</small>
+                        </span>
+                        <ArrowRight size={17} />
+                      </Button>
+                    ))}
+                    <p>
+                      {t('Select another route to check its actual boarding stops and departures.')}
+                    </p>
+                  </div>
+                </details>
+                {selectedStop && <DirectionsButton stop={selectedStop} />}
+              </div>
             </aside>
           </>
         ) : (

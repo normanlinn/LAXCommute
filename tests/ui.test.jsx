@@ -187,6 +187,49 @@ describe('commute UI', () => {
     );
   });
 
+  it('expands the mobile commute sheet using the handle, keyboard, and swipe', () => {
+    window.matchMedia = vi.fn(() => ({
+      matches: true,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    }));
+    const { container } = render(<App />);
+    const sheet = container.querySelector('.trip-card');
+    const handle = screen.getByRole('button', { name: 'Expand commute details' });
+    expect(handle.getAttribute('aria-expanded')).toBe('false');
+    fireEvent.click(handle);
+    expect(sheet.classList.contains('sheet-expanded')).toBe(true);
+    const collapse = screen.getByRole('button', { name: 'Collapse commute details' });
+    fireEvent.keyDown(collapse, { key: 'ArrowDown' });
+    expect(sheet.classList.contains('sheet-peek')).toBe(true);
+
+    fireEvent.pointerDown(handle, { pointerId: 1, pointerType: 'touch', button: 0, clientY: 380 });
+    fireEvent.pointerMove(handle, { pointerId: 1, pointerType: 'touch', clientY: 300 });
+    expect(sheet.classList.contains('sheet-dragging')).toBe(true);
+    expect(sheet.style.height).toBe('250px');
+    fireEvent.pointerUp(handle, { pointerId: 1, pointerType: 'touch', clientY: 300 });
+    expect(sheet.style.height).toBe('');
+    expect(sheet.classList.contains('sheet-expanded')).toBe(true);
+    // Touch browsers may dispatch a click after pointerup; don't toggle twice.
+    fireEvent.click(handle, { detail: 1 });
+    expect(sheet.classList.contains('sheet-expanded')).toBe(true);
+
+    const expandedHandle = screen.getByRole('button', { name: 'Collapse commute details' });
+    fireEvent.pointerDown(expandedHandle, {
+      pointerId: 2,
+      pointerType: 'touch',
+      button: 0,
+      clientY: 200,
+    });
+    fireEvent.pointerMove(expandedHandle, { pointerId: 2, pointerType: 'touch', clientY: 295 });
+    expect(sheet.style.height).not.toBe('');
+    fireEvent.pointerUp(expandedHandle, { pointerId: 2, pointerType: 'touch', clientY: 295 });
+    expect(sheet.classList.contains('sheet-peek')).toBe(true);
+    expect(sheet.style.height).toBe('');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Go home' }));
+    expect(sheet.classList.contains('sheet-peek')).toBe(true);
+  });
   it('uses DaisyUI components for buttons, forms, and installation help', async () => {
     render(<App />);
     fireEvent.click(screen.getByRole('button', { name: 'Explore first' }));

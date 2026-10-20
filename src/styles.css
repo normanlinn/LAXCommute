@@ -3661,3 +3661,173 @@ html[data-theme='lax-dark'] .app-header {
   white-space: nowrap;
   color: var(--color-success);
 }
+
+/* Desktop: give the live map most of the viewport without shrinking trip controls. */
+@media (min-width: 1051px) {
+  .trip-layout {
+    width: 100%;
+    max-width: 2000px;
+    grid-template-columns: minmax(0, 1fr) clamp(390px, 30vw, 490px);
+    gap: clamp(24px, 2.4vw, 42px);
+    padding-inline: clamp(28px, 3.7vw, 70px);
+    margin-top: 32px;
+  }
+  .app-header {
+    padding-inline: max(30px, calc((100vw - 1860px) / 2));
+  }
+  .map-surface {
+    height: clamp(540px, 71dvh, 850px);
+    max-height: none;
+  }
+  .map-topbar h1 {
+    max-width: none;
+  }
+  .trip-card {
+    padding: clamp(26px, 2.6vw, 38px);
+  }
+}
+
+/* Draggable bottom sheet. The gesture stays on the handle, leaving map pan,
+   input focus and the sheet's own scrolling undisturbed. */
+.sheet-handle,
+.sheet-peek-hint {
+  display: none !important;
+}
+
+@media (max-width: 760px) {
+  .trip-layout {
+    padding-bottom: 210px;
+  }
+  .trip-layout > .trip-card {
+    position: fixed;
+    z-index: 24;
+    bottom: calc(87px + env(safe-area-inset-bottom));
+    left: max(12px, env(safe-area-inset-left));
+    right: max(12px, env(safe-area-inset-right));
+    width: auto;
+    height: 170px;
+    max-height: calc(100dvh - 168px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 26px;
+    box-shadow: 0 14px 50px #00000046;
+    transition: height 340ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .trip-layout > .trip-card.sheet-expanded {
+    height: calc(100dvh - 168px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  }
+  .trip-layout > .trip-card.sheet-dragging {
+    transition: none;
+  }
+  .trip-layout > .trip-card::before {
+    display: none;
+  }
+  .trip-card .sheet-handle {
+    display: grid !important;
+    place-items: center;
+    flex: none;
+    min-height: 43px;
+    width: 100%;
+    border: 0;
+    border-radius: 25px 25px 0 0;
+    margin: 0;
+    padding: 0;
+    color: var(--color-base-content);
+    background: var(--color-base-100);
+    cursor: grab;
+    touch-action: none;
+  }
+  .trip-card .sheet-handle:active {
+    cursor: grabbing;
+  }
+  .app .trip-card .sheet-handle:not(:disabled):active {
+    transform: none;
+  }
+  .sheet-grip {
+    width: 46px;
+    height: 6px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-base-content) 33%, var(--color-base-300));
+    transition:
+      width 180ms ease,
+      background-color 180ms ease;
+  }
+  .sheet-handle:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: -4px;
+  }
+  .sheet-handle[aria-expanded='true'] .sheet-grip {
+    width: 56px;
+    background: var(--color-primary);
+  }
+  .trip-sheet-content {
+    flex: 1;
+    min-height: 0;
+    padding: 1px 20px 24px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+  .trip-card.sheet-peek .trip-sheet-content,
+  .trip-card.sheet-dragging .trip-sheet-content {
+    overflow: hidden;
+  }
+  .trip-card.sheet-peek:not(.sheet-dragging) .trip-sheet-content > :not(.trip-intro) {
+    display: none !important;
+  }
+  .trip-card.sheet-peek:not(.sheet-dragging) .trip-intro p {
+    display: none;
+  }
+  .trip-card.sheet-peek:not(.sheet-dragging) .trip-intro h2 {
+    font-size: clamp(20px, 5.5vw, 25px);
+    margin: 3px 0 8px;
+  }
+  .trip-card.sheet-peek:not(.sheet-dragging) .sheet-peek-hint {
+    display: block !important;
+    color: var(--color-base-content);
+    opacity: 0.72;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .trip-layout:has(.sheet-expanded) .transit-arrival-peek {
+    pointer-events: none;
+    visibility: hidden;
+  }
+  .bottom-nav {
+    z-index: 30;
+  }
+}
+
+/* Deliberate, reversible state feedback (instead of one-time flashing). */
+.route-options .btn,
+.direction-switch .tab,
+.bottom-nav .btn {
+  transition:
+    color 160ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 130ms ease;
+}
+.route-options .btn[aria-pressed='true'] {
+  box-shadow: inset 0 0 0 1px var(--option-color);
+}
+.direction-switch .tab[aria-pressed='true'],
+.bottom-nav .btn.active {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 28%, transparent);
+}
+.app .btn:not(:disabled):active {
+  transform: scale(0.975);
+}
+@media (prefers-reduced-motion: reduce) {
+  .trip-layout > .trip-card,
+  .sheet-grip,
+  .route-options .btn,
+  .direction-switch .tab,
+  .bottom-nav .btn {
+    transition: none !important;
+  }
+}
