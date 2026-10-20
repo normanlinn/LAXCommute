@@ -187,6 +187,30 @@ describe('commute UI', () => {
     );
   });
 
+  it('expands the mobile commute sheet using the handle, keyboard, and swipe', () => {
+    window.matchMedia = vi.fn(() => ({
+      matches: true,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    }));
+    const { container } = render(<App />);
+    const sheet = container.querySelector('.trip-card');
+    const handle = screen.getByRole('button', { name: 'Expand commute details' });
+    expect(handle.getAttribute('aria-expanded')).toBe('false');
+    fireEvent.click(handle);
+    expect(sheet.classList.contains('sheet-expanded')).toBe(true);
+    const collapse = screen.getByRole('button', { name: 'Collapse commute details' });
+    fireEvent.keyDown(collapse, { key: 'ArrowDown' });
+    expect(sheet.classList.contains('sheet-peek')).toBe(true);
+
+    fireEvent.pointerDown(handle, { pointerId: 1, pointerType: 'touch', button: 0, clientY: 380 });
+    fireEvent.pointerMove(handle, { pointerId: 1, pointerType: 'touch', clientY: 300 });
+    fireEvent.pointerUp(handle, { pointerId: 1, pointerType: 'touch', clientY: 300 });
+    expect(sheet.classList.contains('sheet-expanded')).toBe(true);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Go home' }));
+    expect(sheet.classList.contains('sheet-peek')).toBe(true);
+  });
   it('uses DaisyUI components for buttons, forms, and installation help', async () => {
     render(<App />);
     fireEvent.click(screen.getByRole('button', { name: 'Explore first' }));
