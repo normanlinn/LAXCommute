@@ -1,9 +1,9 @@
-import { useId, useState } from 'react';
+import { lazy, Suspense, useId, useState } from 'react';
 import { Menu, Monitor, Moon, Sun, X } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageProvider';
 import { useTheme, type ThemePreference } from '../theme/ThemeProvider';
 import LanguageSwitch from './LanguageSwitch';
-import DeveloperFeedback from './DeveloperFeedback';
+const DeveloperFeedback = lazy(() => import('./DeveloperFeedback'));
 import Button from './ui/Button';
 import Dialog from './ui/Dialog';
 
@@ -59,7 +59,11 @@ export default function AppMenu() {
             <h3>{t('Language')}</h3>
             <LanguageSwitch />
           </div>
-          <DeveloperFeedback />
+          {open && (
+            <Suspense fallback={null}>
+              <DeveloperFeedback />
+            </Suspense>
+          )}
           <div className="privacy-note">
             <h3>{t('Privacy')}</h3>
             <p>
