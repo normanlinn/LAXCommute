@@ -11,6 +11,7 @@ import {
   useMemo,
   useState,
   type CSSProperties,
+  type PointerEvent as ReactPointerEvent,
 } from 'react';
 import {
   ArrowDownUp,
@@ -139,6 +140,42 @@ export default function App() {
     };
   }, [mapToolsOpen]);
   const tripCardRef = useRef<HTMLElement>(null);
+  const [sheetExpanded, setSheetExpanded] = useState(false);
+  const sheetGesture = useRef<{ pointer: number; startY: number; endY: number } | null>(null);
+  const ignoreSheetClick = useRef(false);
+  function startSheetDrag(event: ReactPointerEvent<HTMLButtonElement>) {
+    if (!compactMap || event.button !== 0) return;
+    ignoreSheetClick.current = false;
+    sheetGesture.current = { pointer: event.pointerId, startY: event.clientY, endY: event.clientY };
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+  }
+  function moveSheetDrag(event: ReactPointerEvent<HTMLButtonElement>) {
+    const gesture = sheetGesture.current;
+    if (!gesture || gesture.pointer !== event.pointerId) return;
+    gesture.endY = event.clientY;
+    const delta = event.clientY - gesture.startY;
+    if (Math.abs(delta) < 10) return;
+    tripCardRef.current?.classList.add('sheet-dragging');
+    tripCardRef.current?.style.setProperty(
+      '--sheet-drag-offset',
+      `${Math.max(-120, Math.min(120, delta))}px`,
+    );
+  }
+  function finishSheetDrag(event: ReactPointerEvent<HTMLButtonElement>, cancelled = false) {
+    const gesture = sheetGesture.current;
+    if (!gesture || gesture.pointer !== event.pointerId) return;
+    sheetGesture.current = null;
+    tripCardRef.current?.classList.remove('sheet-dragging');
+    tripCardRef.current?.style.removeProperty('--sheet-drag-offset');
+    if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+    const distance = gesture.endY - gesture.startY;
+    if (!cancelled && Math.abs(distance) > 38) {
+      setSheetExpanded(distance < 0);
+      ignoreSheetClick.current = true;
+    }
+  }
   const [override, setOverride] = useState<{
     routeID: number;
     direction: Direction;
@@ -202,6 +239,7 @@ export default function App() {
     initialNavigation.current = true;
     setWelcome(false);
     setTab(next);
+    setSheetExpanded(false);
     if (next === 'home') {
       setDirection('parking');
       setLot(profile.lot);
@@ -471,14 +509,14 @@ export default function App() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: reduceMotion ? 0 : 0.36, ease: 'easeOut' }}
                   whileTap={reduceMotion ? undefined : { scale: 0.985 }}
-                  onClick={() =>
-                    tripCardRef.current?.scrollIntoView({
-                      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
-                        ? 'auto'
-                        : 'smooth',
-                      block: 'start',
-                    })
-                  }
+                  onClick={() => {
+                    if (compactMap) setSheetExpanded(true);
+                    else
+                      tripCardRef.current?.scrollIntoView({
+                        behavior: reduceMotion ? 'auto' : 'smooth',
+                        block: 'start',
+                      });
+                  }}
                 >
                   <span className="transit-peek-symbol" aria-hidden="true">
                     <BusFront size={23} />
@@ -550,7 +588,39 @@ export default function App() {
                 </a>
               </div>
             </section>
-            <aside ref={tripCardRef} className="card bg-base-100 trip-card">
+            <aside
+               ref={tripCardRef}
+               className={`card bg-base-100 trip-card ${sheetExpanded ? 'sheet-expanded' : 'sheet-peek'}`}
+             >
+               <Button
+                 className="sheet-handle"
+                 aria-label={t(sheetExpanded ? 'Collapse commute details' : 'Expand commute details')}
+                 aria-expanded={sheetExpanded}
+                 aria-controls="trip-sheet-content"
+                 onPointerDown={startSheetDrag}
+                 onPointerMove={moveSheetDrag}
+                 onPointerUp={(event) => finishSheetDrag(event)}
+                 onPointerCancel={(event) => finishSheetDrag(event, true)}
+                 onClick={() => {
+                   if (ignoreSheetClick.current) {
+                     ignoreSheetClick.current = false;
+                     return;
+                   }
+                   setSheetExpanded((expanded) => !expanded);
+                 }}
+                 onKeyDown={(event) => {
+                   if (event.key === 'ArrowUp') {
+                     event.preventDefault();
+                     setSheetExpanded(true);
+                   } else if (event.key === 'ArrowDown') {
+                     event.preventDefault();
+                     setSheetExpanded(false);
+                   }
+                 }}
+               >
+                 <span className="sheet-grip" aria-hidden="true" />
+               </Button>
+               <div id="trip-sheet-content" className="trip-sheet-content">
               {saveState && hasSaved && (
                 <p className="alert alert-soft alert-success notice" role="status">
                   {t(saveState)}
@@ -560,11 +630,16 @@ export default function App() {
                 <span className="eyebrow">
                   {direction === 'parking' ? t('YOUR RIDE BACK') : t('TO WORK')}
                 </span>
-                <h2>
+                <motion.h2
+                   key={direction}
+                   initial={reduceMotion ? false : { opacity: 0, y: 6 }}
+                   animate={{ opacity: 1, y: 0 }}
+                   transition={{ duration: 0.22 }}
+                 >
                   {direction === 'parking'
                     ? t('Back to your parking lot.')
                     : t('Where are you waiting?')}
-                </h2>
+                </motion.h2>
                 <p>
                   {direction === 'parking'
                     ? t('{terminal} is your usual terminal. Choose any other stop for today.', {
@@ -572,7 +647,8 @@ export default function App() {
                       })
                     : t('Choose your shuttle and the stop you’re waiting at.')}
                 </p>
-              </div>
+              <span className="sheet-peek-hint">{t('Swipe up for stops and arrivals')}</span>
+               </div>
               <div
                 className="tabs tabs-box segmented direction-switch"
                 role="group"
@@ -602,7 +678,8 @@ export default function App() {
                     <Button
                       key={r.id}
                       className={r.lot === lot ? 'selected' : ''}
-                      onClick={() => chooseRoute(r.lot)}
+                       aria-pressed={r.lot === lot}
+                       onClick={() => chooseRoute(r.lot)}
                       style={{
                         '--option-color': appearance === 'dark' ? darkRouteColor(r.color) : r.color,
                       }}
@@ -626,7 +703,14 @@ export default function App() {
                 </div>
                 <div>
                   <span>{t('FROM')}</span>
-                  <strong>{selectedStop?.name || t('Choose your boarding stop')}</strong>
+                  <motion.strong
+                     key={`${direction}:${lot}:${selectedStop?.id || 0}`}
+                     initial={reduceMotion ? false : { opacity: 0, y: 5 }}
+                     animate={{ opacity: 1, y: 0 }}
+                     transition={{ duration: 0.2 }}
+                   >
+                     {selectedStop?.name || t('Choose your boarding stop')}
+                   </motion.strong>
                   <span>{t('TO')}</span>
                   <strong>
                     {direction === 'parking'
@@ -726,7 +810,8 @@ export default function App() {
                 </div>
               </details>
               {selectedStop && <DirectionsButton stop={selectedStop} />}
-            </aside>
+               </div>
+             </aside>
           </>
         ) : (
           <Suspense
