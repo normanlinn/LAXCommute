@@ -1,0 +1,28 @@
+name: Format preview (temporary)
+on:
+  push:
+    branches: [feat/responsive-commute-sheet-20261019]
+permissions:
+  contents: read
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npx prettier --write src/App.tsx src/styles.css
+      - name: Emit formatted files
+        run: |
+          node - <<'NODE'
+          const { readFileSync } = require('node:fs');
+          for (const f of ['src/App.tsx', 'src/styles.css']) {
+            console.log('FORMAT_BEGIN ' + f);
+            const value = readFileSync(f).toString('base64');
+            for (let i = 0; i < value.length; i += 120) console.log(value.slice(i, i + 120));
+            console.log('FORMAT_END ' + f);
+          }
+          NODE
