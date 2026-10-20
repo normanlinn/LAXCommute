@@ -187,7 +187,7 @@ describe('commute UI', () => {
     );
   });
 
-  it('expands the mobile commute sheet using the handle, keyboard, and swipe', () => {
+  it('shows commute controls below the map and supports accessible swipe to collapse or expand', () => {
     window.matchMedia = vi.fn(() => ({
       matches: true,
       addEventListener: vi.fn(),
@@ -195,40 +195,39 @@ describe('commute UI', () => {
     }));
     const { container } = render(<App />);
     const sheet = container.querySelector('.trip-card');
-    const handle = screen.getByRole('button', { name: 'Expand commute details' });
-    expect(handle.getAttribute('aria-expanded')).toBe('false');
-    fireEvent.click(handle);
     expect(sheet.classList.contains('sheet-expanded')).toBe(true);
+    expect(screen.getByRole('combobox', { name: 'Where are you boarding?' })).toBeTruthy();
     const collapse = screen.getByRole('button', { name: 'Collapse commute details' });
     fireEvent.keyDown(collapse, { key: 'ArrowDown' });
     expect(sheet.classList.contains('sheet-peek')).toBe(true);
 
-    fireEvent.pointerDown(handle, { pointerId: 1, pointerType: 'touch', button: 0, clientY: 380 });
-    fireEvent.pointerMove(handle, { pointerId: 1, pointerType: 'touch', clientY: 300 });
+    const expand = screen.getByRole('button', { name: 'Expand commute details' });
+    fireEvent.pointerDown(expand, { pointerId: 1, pointerType: 'touch', button: 0, clientY: 380 });
+    fireEvent.pointerMove(expand, { pointerId: 1, pointerType: 'touch', clientY: 300 });
     expect(sheet.classList.contains('sheet-dragging')).toBe(true);
-    expect(sheet.style.height).toBe('250px');
-    fireEvent.pointerUp(handle, { pointerId: 1, pointerType: 'touch', clientY: 300 });
+    expect(sheet.style.getPropertyValue('--sheet-grip-pull')).toBe('-11.428571428571429px');
     expect(sheet.style.height).toBe('');
+    fireEvent.pointerUp(expand, { pointerId: 1, pointerType: 'touch', clientY: 300 });
     expect(sheet.classList.contains('sheet-expanded')).toBe(true);
-    // Touch browsers may dispatch a click after pointerup; don't toggle twice.
-    fireEvent.click(handle, { detail: 1 });
+    expect(sheet.style.getPropertyValue('--sheet-grip-pull')).toBe('');
+    fireEvent.click(expand, { detail: 1 });
     expect(sheet.classList.contains('sheet-expanded')).toBe(true);
 
-    const expandedHandle = screen.getByRole('button', { name: 'Collapse commute details' });
-    fireEvent.pointerDown(expandedHandle, {
+    const expanded = screen.getByRole('button', { name: 'Collapse commute details' });
+    fireEvent.pointerDown(expanded, {
       pointerId: 2,
       pointerType: 'touch',
       button: 0,
       clientY: 200,
     });
-    fireEvent.pointerMove(expandedHandle, { pointerId: 2, pointerType: 'touch', clientY: 295 });
-    expect(sheet.style.height).not.toBe('');
-    fireEvent.pointerUp(expandedHandle, { pointerId: 2, pointerType: 'touch', clientY: 295 });
+    fireEvent.pointerMove(expanded, { pointerId: 2, pointerType: 'touch', clientY: 295 });
+    fireEvent.pointerUp(expanded, { pointerId: 2, pointerType: 'touch', clientY: 295 });
     expect(sheet.classList.contains('sheet-peek')).toBe(true);
-    expect(sheet.style.height).toBe('');
+    fireEvent.click(screen.getByRole('button', { name: 'Expand commute details' }));
+    expect(sheet.classList.contains('sheet-expanded')).toBe(true);
 
     fireEvent.click(screen.getByRole('button', { name: 'Go home' }));
-    expect(sheet.classList.contains('sheet-peek')).toBe(true);
+    expect(sheet.classList.contains('sheet-expanded')).toBe(true);
   });
   it('uses DaisyUI components for buttons, forms, and installation help', async () => {
     render(<App />);

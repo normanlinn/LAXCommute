@@ -140,31 +140,16 @@ export default function App() {
     };
   }, [mapToolsOpen]);
   const tripCardRef = useRef<HTMLElement>(null);
-  const [sheetExpanded, setSheetExpanded] = useState(false);
-  const sheetGesture = useRef<{
-    pointer: number;
-    startY: number;
-    endY: number;
-    startHeight: number;
-    maxHeight: number;
-  } | null>(null);
+  const [sheetExpanded, setSheetExpanded] = useState(true);
+  const sheetGesture = useRef<{ pointer: number; startY: number; lastY: number } | null>(null);
   const ignoreSheetClick = useRef(false);
-  const sheetMinHeight = 170;
   function startSheetDrag(event: ReactPointerEvent<HTMLButtonElement>) {
-    const panel = tripCardRef.current;
-    if (!compactMap || event.button !== 0 || !panel) return;
+    if (!compactMap || event.button !== 0) return;
     ignoreSheetClick.current = false;
-    const measuredMax = Number.parseFloat(getComputedStyle(panel).maxHeight);
-    const maxHeight = Number.isFinite(measuredMax)
-      ? Math.max(sheetMinHeight, measuredMax)
-      : Math.max(sheetMinHeight, window.innerHeight - 168);
     sheetGesture.current = {
       pointer: event.pointerId,
       startY: event.clientY,
-      endY: event.clientY,
-      startHeight:
-        panel.getBoundingClientRect().height || (sheetExpanded ? maxHeight : sheetMinHeight),
-      maxHeight,
+      lastY: event.clientY,
     };
     event.currentTarget.setPointerCapture?.(event.pointerId);
   }
@@ -172,30 +157,27 @@ export default function App() {
     const gesture = sheetGesture.current;
     const panel = tripCardRef.current;
     if (!gesture || gesture.pointer !== event.pointerId || !panel) return;
-    gesture.endY = event.clientY;
-    const delta = event.clientY - gesture.startY;
-    if (Math.abs(delta) < 8 && !panel.classList.contains('sheet-dragging')) return;
+    gesture.lastY = event.clientY;
+    const distance = gesture.lastY - gesture.startY;
+    if (Math.abs(distance) < 8 && !panel.classList.contains('sheet-dragging')) return;
+    // Move only the grip. Keep the panel in normal document flow so it never
+    // obstructs the map or the bottom navigation during a swipe.
     panel.classList.add('sheet-dragging');
-    const height = Math.max(
-      sheetMinHeight,
-      Math.min(gesture.maxHeight, gesture.startHeight - delta),
-    );
-    panel.style.height = `${Math.round(height)}px`;
+    panel.style.setProperty('--sheet-grip-pull', `${Math.max(-12, Math.min(12, distance / 7))}px`);
   }
   function finishSheetDrag(event: ReactPointerEvent<HTMLButtonElement>, cancelled = false) {
     const gesture = sheetGesture.current;
     if (!gesture || gesture.pointer !== event.pointerId) return;
     sheetGesture.current = null;
     const panel = tripCardRef.current;
-    const distance = gesture.endY - gesture.startY;
-    // Prevent a synthetic click after a drag from toggling the panel twice.
-    ignoreSheetClick.current = Math.abs(distance) >= 8;
     panel?.classList.remove('sheet-dragging');
-    panel?.style.removeProperty('height');
+    panel?.style.removeProperty('--sheet-grip-pull');
     if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId);
     }
-    if (!cancelled && Math.abs(distance) > 45) setSheetExpanded(distance < 0);
+    const distance = gesture.lastY - gesture.startY;
+    ignoreSheetClick.current = Math.abs(distance) >= 8;
+    if (!cancelled && Math.abs(distance) > 40) setSheetExpanded(distance < 0);
   }
   const [override, setOverride] = useState<{
     routeID: number;
@@ -260,7 +242,7 @@ export default function App() {
     initialNavigation.current = true;
     setWelcome(false);
     setTab(next);
-    setSheetExpanded(false);
+    setSheetExpanded(true);
     if (next === 'home') {
       setDirection('parking');
       setLot(profile.lot);
@@ -531,12 +513,11 @@ export default function App() {
                   transition={{ duration: reduceMotion ? 0 : 0.36, ease: 'easeOut' }}
                   whileTap={reduceMotion ? undefined : { scale: 0.985 }}
                   onClick={() => {
-                    if (compactMap) setSheetExpanded(true);
-                    else
-                      tripCardRef.current?.scrollIntoView({
-                        behavior: reduceMotion ? 'auto' : 'smooth',
-                        block: 'start',
-                      });
+                    setSheetExpanded(true);
+                    tripCardRef.current?.scrollIntoView({
+                      behavior: reduceMotion ? 'auto' : 'smooth',
+                      block: 'start',
+                    });
                   }}
                 >
                   <span className="transit-peek-symbol" aria-hidden="true">
