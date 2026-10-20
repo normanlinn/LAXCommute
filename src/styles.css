@@ -3714,10 +3714,7 @@ html[data-theme='lax-dark'] .app-header {
     overflow: hidden;
     border-radius: 26px;
     box-shadow: 0 14px 50px #00000046;
-    transform: translate3d(0, var(--sheet-drag-offset, 0px), 0);
-    transition:
-      height 340ms cubic-bezier(0.2, 0.8, 0.2, 1),
-      transform 180ms ease;
+    transition: height 340ms cubic-bezier(0.2, 0.8, 0.2, 1);
   }
   .trip-layout > .trip-card.sheet-expanded {
     height: calc(100dvh - 168px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
@@ -3745,6 +3742,8 @@ html[data-theme='lax-dark'] .app-header {
   }
   .trip-card .sheet-handle:active {
     cursor: grabbing;
+  }
+  .app .trip-card .sheet-handle:not(:disabled):active {
     transform: none;
   }
   .sheet-grip {
@@ -3772,20 +3771,21 @@ html[data-theme='lax-dark'] .app-header {
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
   }
-  .trip-card.sheet-peek .trip-sheet-content {
+  .trip-card.sheet-peek .trip-sheet-content,
+  .trip-card.sheet-dragging .trip-sheet-content {
     overflow: hidden;
   }
-  .trip-card.sheet-peek .trip-sheet-content > :not(.trip-intro) {
+  .trip-card.sheet-peek:not(.sheet-dragging) .trip-sheet-content > :not(.trip-intro) {
     display: none !important;
   }
-  .trip-card.sheet-peek .trip-intro p {
+  .trip-card.sheet-peek:not(.sheet-dragging) .trip-intro p {
     display: none;
   }
-  .trip-card.sheet-peek .trip-intro h2 {
+  .trip-card.sheet-peek:not(.sheet-dragging) .trip-intro h2 {
     font-size: clamp(20px, 5.5vw, 25px);
     margin: 3px 0 8px;
   }
-  .trip-card.sheet-peek .sheet-peek-hint {
+  .trip-card.sheet-peek:not(.sheet-dragging) .sheet-peek-hint {
     display: block !important;
     color: var(--color-base-content);
     opacity: 0.72;
