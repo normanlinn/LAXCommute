@@ -1,7 +1,6 @@
 import { useLanguage } from './i18n/LanguageProvider';
 import type { Direction, Point, Stop } from './types';
 import Button from './components/ui/Button';
-import { motion, useReducedMotion } from 'motion/react';
 import {
   lazy,
   Suspense,
@@ -44,7 +43,7 @@ import { useLive, useOnline, useRoute, useSnapshotFresh } from './hooks/useShutt
 // The provider stays lazy without a second request for its tiny selector.
 import ShuttleMap from './components/ShuttleMap';
 import Arrivals from './components/Arrivals';
-import CrowdReports from './components/CrowdReports';
+import DeferredCrowdReports from './components/DeferredCrowdReports';
 import InstallApp from './components/InstallApp';
 import ShareApp from './components/ShareApp';
 import DirectionsButton from './components/DirectionsButton';
@@ -67,7 +66,6 @@ const TABS = [
 export default function App() {
   const { appearance } = useTheme();
   const { t, language } = useLanguage();
-  const reduceMotion = useReducedMotion() === true;
   const [compactMap, setCompactMap] = useState(
     () => window.matchMedia('(max-width: 760px)').matches,
   );
@@ -80,7 +78,15 @@ export default function App() {
   const { user, ready, recovering, authReturn } = useAccount();
   const { profile, hasSaved, remember, save, saveState } = useCommute();
   const [tab, setTab] = useState('map');
-  const [welcome, setWelcome] = useState(false);
+  // Know on the first render whether the introduction will block the map.
+  // Mounting WebGL behind a modal wastes the user's startup CPU budget.
+  const [welcome, setWelcome] = useState(() => {
+    try {
+      return localStorage.getItem('laxcommute:welcome-seen') !== '1';
+    } catch {
+      return true;
+    }
+  });
   const initialNavigation = useRef(false);
   useEffect(() => {
     if (!ready || initialNavigation.current) return;
@@ -266,6 +272,7 @@ export default function App() {
     );
   }
   const showTrip = tab === 'map' || tab === 'home';
+  const welcomeOpen = ready && welcome && !hasSaved && !recovering && !authReturn;
   return (
     <div
       className="app"
@@ -361,11 +368,7 @@ export default function App() {
                   aria-label={t('Which shuttle do you want?')}
                 >
                   {ROUTES.map((r) => (
-                    <motion.button
-                      type="button"
-                      key={r.id}
-                      whileTap={reduceMotion ? undefined : { scale: 0.96 }}
-                      transition={{ type: 'spring', stiffness: 460, damping: 32 }}
+                    <button type="button" key={r.id}
                       className="btn transit-route-button"
                       aria-pressed={r.lot === lot}
                       aria-label={t('{lot} Lot shuttle', { lot: r.lot })}
@@ -374,10 +377,10 @@ export default function App() {
                     >
                       <span aria-hidden="true">{r.short}</span>
                       {r.lot}
-                    </motion.button>
+                    </button>
                   ))}
                 </div>
-                {mapExpanded && (
+                {mapExpanded && ready && !welcomeOpen ? (
                   <Suspense fallback={<MapLoading />}>
                     <ShuttleMap
                       routeLoading={routeQuery.isPending && routeQuery.fetchStatus === 'fetching'}
@@ -392,6 +395,8 @@ export default function App() {
                       focusRequest={focusRequest}
                     />
                   </Suspense>
+                ) : (
+                  <MapLoading />
                 )}
                 <div
                   ref={mapToolsRef}
@@ -404,30 +409,14 @@ export default function App() {
                     aria-controls="map-tools-actions"
                     onClick={() => setMapToolsOpen((open) => !open)}
                   >
-                    <motion.span
-                      className="map-tools-icon"
-                      aria-hidden="true"
-                      animate={reduceMotion ? undefined : { rotate: mapToolsOpen ? 90 : 0 }}
-                      transition={{ type: 'spring', stiffness: 400, damping: 29 }}
-                    >
+                    <span className="map-tools-icon" aria-hidden="true">
                       <SlidersHorizontal size={21} />
-                    </motion.span>
+                    </span>
                   </Button>
-                  <motion.div
+                  <div
                     className="map-tools-actions"
                     id="map-tools-actions"
                     aria-hidden={compactMap && !mapToolsOpen}
-                    initial={false}
-                    animate={
-                      reduceMotion || !compactMap
-                        ? { opacity: 1, y: 0, scale: 1 }
-                        : {
-                            opacity: mapToolsOpen ? 1 : 0,
-                            y: mapToolsOpen ? 0 : -6,
-                            scale: mapToolsOpen ? 1 : 0.97,
-                          }
-                    }
-                    transition={{ duration: 0.19, ease: 'easeOut' }}
                   >
                     <Button
                       onClick={() => {
@@ -462,15 +451,9 @@ export default function App() {
                       <LocateFixed size={16} />
                       {locating ? t('Locating…') : t('Near me')}
                     </Button>
-                  </motion.div>
+                  </div>
                 </div>
-                <motion.button
-                  type="button"
-                  className="btn transit-arrival-peek"
-                  initial={reduceMotion ? false : { opacity: 0, y: 14 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: reduceMotion ? 0 : 0.36, ease: 'easeOut' }}
-                  whileTap={reduceMotion ? undefined : { scale: 0.985 }}
+                <button type="button" className="btn transit-arrival-peek"
                   onClick={() =>
                     tripCardRef.current?.scrollIntoView({
                       behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -510,7 +493,7 @@ export default function App() {
                     )}
                     <ChevronDown size={15} aria-hidden="true" />
                   </span>
-                </motion.button>
+                </button>
               </div>
               {routeQuery.data?.warning && (
                 <p className="map-warning">{t(routeQuery.data.warning)}</p>
@@ -701,7 +684,7 @@ export default function App() {
                   if (routeQuery.isError) routeQuery.refetch();
                 }}
               />
-              <CrowdReports routeId={route.id} vehicles={vehicles} />
+              <DeferredCrowdReports routeId={route.id} vehicles={vehicles} />
               <details className="collapse advanced">
                 <summary className="collapse-title">
                   <span>{t('Other bus options')}</span>
@@ -764,7 +747,7 @@ export default function App() {
         )}
       </main>
       <CommuteWelcome
-        open={welcome && !hasSaved && !recovering && !authReturn}
+        open={welcomeOpen}
         onSetup={() => changeTab('saved')}
         onSkip={skipWelcome}
       />
