@@ -2,6 +2,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
 import { ALERT_LEAD_MS, canSetAlert, useBusAlert } from '../src/hooks/useBusAlert';
+import { cancelPushAlert, startPushAlert } from '../src/services/pushAlerts';
+
+vi.mock('../src/services/pushAlerts', () => ({
+  startPushAlert: vi.fn(async () => 'alert-1'),
+  cancelPushAlert: vi.fn(),
+}));
 
 const NOW = Date.parse('2026-10-31T08:00:00Z');
 const live = (minutes, vehicleID = 541) => ({
@@ -72,5 +78,34 @@ describe('bus-close alert', () => {
     expect(result.current.alert).toBeNull();
     act(() => vi.advanceTimersByTime(10 * 60_000));
     expect(result.current.fired).toBeNull();
+  });
+
+  it('asks the server to follow the bus, and cancels it when the alert ends here', async () => {
+    const predictions = [live(6)];
+    const { result } = renderHook(() =>
+      useBusAlert({ routeID: 6885, stopID: 1, predictions, message }),
+    );
+    await act(() => result.current.toggle(predictions[0]));
+    expect(startPushAlert).toHaveBeenCalledWith({
+      routeID: 6885,
+      stopID: 1,
+      vehicleID: 541,
+      busName: '541',
+      title: 'Almost here',
+      body: 'Bus 541',
+    });
+    await act(() => result.current.toggle(predictions[0]));
+    expect(cancelPushAlert).toHaveBeenCalledWith('alert-1');
+  });
+
+  it('drops the server alert once the in-app alert fires, avoiding a duplicate', async () => {
+    const predictions = [live(6)];
+    const { result } = renderHook(() =>
+      useBusAlert({ routeID: 6885, stopID: 1, predictions, message }),
+    );
+    await act(() => result.current.toggle(predictions[0]));
+    await act(async () => vi.advanceTimersByTime(6 * 60_000));
+    expect(result.current.fired).not.toBeNull();
+    expect(cancelPushAlert).toHaveBeenCalledWith('alert-1');
   });
 });

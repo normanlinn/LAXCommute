@@ -1,9 +1,13 @@
 // @vitest-environment jsdom
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { loadMessages } from '../src/i18n/LanguageProvider';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import LanguageSwitch from '../src/components/LanguageSwitch';
 import ShuttleGuide from '../src/components/ShuttleGuide';
 import { LANGUAGE_STORAGE_KEY, LanguageProvider, useLanguage } from '../src/i18n/LanguageProvider';
+
+// main.tsx loads translations before rendering; do the same here.
+beforeAll(() => Promise.all([loadMessages('es'), loadMessages('my')]));
 
 function ArrivalLabel() {
   const { t } = useLanguage();

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Prediction } from '../types';
 import { haptic } from '../domain/haptics';
+import { cancelPushAlert, startPushAlert } from '../services/pushAlerts';
 
 // Alert a little before the live prediction so there is time to reach the curb.
 export const ALERT_LEAD_MS = 2 * 60_000;
@@ -35,13 +36,17 @@ async function notify(title: string, body: string) {
 /**
  * One alert at a time, for one bus at one stop. It fires once when the live
  * prediction for that vehicle comes within ALERT_LEAD_MS, then clears itself.
- * Only works while the app is open or recently backgrounded; no push server.
+ * The in-app timer covers an open app; when Web Push is available the Worker
+ * also follows the bus and notifies a closed app. Leaving this screen keeps the
+ * server alert, since the rider still wants it; cancelling or firing drops it.
  */
 export function useBusAlert({
+  routeID,
   stopID,
   predictions,
   message,
 }: {
+  routeID?: number;
   stopID?: number;
   predictions: Prediction[];
   message: (alert: BusAlert) => { title: string; body: string };
@@ -52,11 +57,19 @@ export function useBusAlert({
   messageRef.current = message;
   const alertRef = useRef(alert);
   alertRef.current = alert;
+  const pushRef = useRef<Promise<string | null> | null>(null);
+  const dropPush = useCallback(() => {
+    void pushRef.current?.then(cancelPushAlert);
+    pushRef.current = null;
+  }, []);
 
   // Changing stops makes the alert meaningless.
   useEffect(() => {
-    setAlert((current) => (current && current.stopID !== stopID ? null : current));
-  }, [stopID]);
+    if (alertRef.current && alertRef.current.stopID !== stopID) {
+      dropPush();
+      setAlert(null);
+    }
+  }, [stopID, dropPush]);
 
   const target = alert
     ? predictions.find((p) => !p.scheduled && p.vehicleID === alert.vehicleID)
@@ -67,12 +80,14 @@ export function useBusAlert({
     const current = alertRef.current;
     if (!current) return;
     alertRef.current = null;
+    // Already shown here; stop the server sending a duplicate.
+    dropPush();
     setAlert(null);
     setFired(current);
     haptic('alert');
     const { title, body } = messageRef.current(current);
     void notify(title, body);
-  }, []);
+  }, [dropPush]);
 
   useEffect(() => {
     if (!alert || due === undefined) return;
@@ -89,13 +104,17 @@ export function useBusAlert({
   const toggle = useCallback(
     async (arrival: Prediction) => {
       if (alert?.vehicleID === arrival.vehicleID) {
+        dropPush();
         setAlert(null);
         haptic('tap');
         return;
       }
       if (stopID === undefined || arrival.vehicleID === undefined) return;
+      dropPush();
       setFired(null);
-      setAlert({ vehicleID: arrival.vehicleID, stopID, busName: arrival.busName });
+      const next = { vehicleID: arrival.vehicleID, stopID, busName: arrival.busName };
+      alertRef.current = next;
+      setAlert(next);
       haptic('select');
       try {
         if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
@@ -104,8 +123,12 @@ export function useBusAlert({
       } catch {
         /* Permission is optional; the in-app banner still works. */
       }
+      // Still the chosen bus after the permission prompt? Then let the server follow it too.
+      if (routeID === undefined || alertRef.current !== next) return;
+      // dropPush() waits on this promise, so a cancel during the request still lands.
+      pushRef.current = startPushAlert({ routeID, ...next, ...messageRef.current(next) });
     },
-    [alert?.vehicleID, stopID],
+    [alert?.vehicleID, stopID, routeID, dropPush],
   );
 
   return { alert, fired, toggle, dismiss: () => setFired(null) };

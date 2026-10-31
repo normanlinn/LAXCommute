@@ -1,13 +1,15 @@
 import { handleAPI as handleFeedAPI } from '../supabase/functions/_shared/handler.ts';
 import { supabaseSnapshot } from './supabase';
 import type { FeedOptions } from './feed';
+import { handleAlerts, type AlertEnv } from './alerts';
+export { BusAlert } from './alerts';
 export async function handleAPI(request: Request, options?: FeedOptions) {
   return handleFeedAPI(request, options, options ? undefined : supabaseSnapshot);
 }
 export default {
   async fetch(
     request: Request,
-    env: {
+    env: AlertEnv & {
       ACCOUNT_RATE_LIMITER?: { limit: (input: { key: string }) => Promise<{ success: boolean }> };
       API_RATE_LIMITER?: { limit: (input: { key: string }) => Promise<{ success: boolean }> };
     },
@@ -27,6 +29,8 @@ export default {
         { error: 'Too many requests. Please wait a minute.' },
         { status: 429, headers: { 'Retry-After': '60', 'Cache-Control': 'no-store' } },
       );
+    const alerts = await handleAlerts(request, env);
+    if (alerts) return alerts;
     if (url.pathname === '/api/account') {
       if (
         ip &&

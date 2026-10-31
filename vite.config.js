@@ -61,6 +61,8 @@ export default defineConfig(({ mode }) => ({
         globPatterns: ['**/*.{js,css,html,png,svg,ico,woff,woff2}'],
         // Precache the primary map engine so routes can render offline.
         globIgnores: ['**/assets/{AppleMap,simpleBasemap,maplibre-gl-worker}-*'],
+        // Push and notification-click handlers for closed-app bus alerts.
+        importScripts: ['push-sw.js'],
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/api\//],
         cleanupOutdatedCaches: true,

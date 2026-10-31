@@ -11,10 +11,12 @@
     "build": "node scripts/public-build-env.mjs && npm run typecheck && node scripts/clean-build.mjs && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "test": "vitest run",
+    "test:e2e": "playwright test",
     "audit": "npm audit --audit-level=high",
     "deploy": "npm run build && wrangler deploy",
     "deploy:check": "npm run build && wrangler deploy --dry-run",
     "setup": "node scripts/setup.mjs",
+    "push-keys": "node scripts/generate-vapid.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit"
@@ -38,6 +40,7 @@
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.62.2",
+    "@playwright/test": "^1.56.1",
     "@tailwindcss/vite": "^4.3.3",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/react": "^16.3.3",

@@ -5,7 +5,7 @@ import { AccountProvider } from './hooks/useAccount';
 import App from './App';
 import { ThemeProvider } from './theme/ThemeProvider';
 import { readAuthReturn } from './domain/auth';
-import { LanguageProvider } from './i18n/LanguageProvider';
+import { LanguageProvider, loadMessages, savedLanguage } from './i18n/LanguageProvider';
 import ShuttleGuide from './components/ShuttleGuide';
 import './styles.css';
 
@@ -27,6 +27,8 @@ if (
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retryDelay: (attempt) => Math.min(1_000 * 2 ** attempt, 10_000) } },
 });
+// Fetch a saved non-English language before the first paint (precached after one visit).
+await loadMessages(savedLanguage());
 // Keep the crawlable HTML guide until the interactive app is ready to render it.
 const guideTarget = document.getElementById('shuttle-guide');
 guideTarget?.replaceChildren();

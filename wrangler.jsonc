@@ -19,5 +19,12 @@
       "simple": { "limit": 120, "period": 60 },
     },
   ],
+  // One Durable Object per "bus is close" alert, so pushes reach a closed app.
+  // Keys: run `node scripts/generate-vapid.mjs`, then the two `wrangler secret put` commands it prints.
+  "durable_objects": {
+    "bindings": [{ "name": "BUS_ALERTS", "class_name": "BusAlert" }],
+  },
+  "migrations": [{ "tag": "v1-bus-alerts", "new_sqlite_classes": ["BusAlert"] }],
+  "vars": { "VAPID_SUBJECT": "https://employeeshuttlelax.com" },
   "observability": { "enabled": true },
 }

@@ -1,11 +1,15 @@
 // @vitest-environment jsdom
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { loadMessages } from '../src/i18n/LanguageProvider';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import App from '../src/App';
 import { ThemeProvider } from '../src/theme/ThemeProvider';
 import AccountPanel from '../src/components/AccountPanel';
 import LanguageSwitch from '../src/components/LanguageSwitch';
 import { LanguageProvider } from '../src/i18n/LanguageProvider';
+
+// main.tsx loads translations before rendering; do the same here.
+beforeAll(() => Promise.all([loadMessages('es'), loadMessages('my')]));
 
 const liveRequests = vi.hoisted(() => vi.fn());
 const auth = vi.hoisted(() => ({ signInWithPassword: vi.fn(), signUp: vi.fn() }));

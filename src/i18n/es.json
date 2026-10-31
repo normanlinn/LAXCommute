@@ -351,5 +351,9 @@
   "Cancel alert for bus {name}": "Cancelar alerta del autobús {name}",
   "Alert me 2 min before bus {name} arrives": "Avísame 2 min antes de que llegue el autobús {name}",
   "Back to my stop": "Volver a mi parada",
-  "Show whole route": "Ver toda la ruta"
+  "Show whole route": "Ver toda la ruta",
+  "Bus {name} is arriving at your stop.": "El autobús {name} está llegando a tu parada.",
+  "Bus {name} is about {minutes} min away.": "El autobús {name} está a unos {minutes} min.",
+  "About {walk} min walk from where you are · based on a live prediction": "Unos {walk} min a pie desde donde estás · según una estimación en tiempo real",
+  "Time to head to your stop": "Es hora de ir a tu parada"
 }

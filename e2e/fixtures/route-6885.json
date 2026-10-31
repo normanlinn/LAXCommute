@@ -1,0 +1,113 @@
+{
+  "stops": [
+    {
+      "id": 11319089,
+      "lat": 33.95313,
+      "lon": -118.393406,
+      "name": "South Lot Stop #1",
+      "stopCode": null,
+      "rtpiNumber": "67"
+    },
+    {
+      "id": 11319091,
+      "lat": 33.942585,
+      "lon": -118.40617,
+      "name": "Terminal 4 - Lower Level",
+      "stopCode": null,
+      "rtpiNumber": "72"
+    },
+    {
+      "id": 11319093,
+      "lat": 33.942976,
+      "lon": -118.40242,
+      "name": "Terminal 6 - Lower Level",
+      "stopCode": null,
+      "rtpiNumber": "73"
+    },
+    {
+      "id": 11319094,
+      "lat": 33.94332,
+      "lon": -118.399168,
+      "name": "Terminal 7 - Lower Level",
+      "stopCode": null,
+      "rtpiNumber": "74"
+    },
+    {
+      "id": 11319515,
+      "lat": 33.945529,
+      "lon": -118.400993,
+      "name": "Terminal 1 - Lower Level",
+      "stopCode": null,
+      "rtpiNumber": "68"
+    },
+    {
+      "id": 11319516,
+      "lat": 33.945203697629495,
+      "lon": -118.40410163558198,
+      "name": "Terminal 2 - Lower Level",
+      "stopCode": null,
+      "rtpiNumber": "69"
+    },
+    {
+      "id": 11319517,
+      "lat": 33.94502969750214,
+      "lon": -118.405951,
+      "name": "Terminal 3 - Lower Level",
+      "stopCode": null,
+      "rtpiNumber": "70"
+    },
+    {
+      "id": 11319518,
+      "lat": 33.943494,
+      "lon": -118.408172,
+      "name": "Terminal B - Lower Level",
+      "stopCode": null,
+      "rtpiNumber": "71"
+    },
+    {
+      "id": 12197090,
+      "lat": 33.952422,
+      "lon": -118.394823,
+      "name": "South Lot Stop #2",
+      "stopCode": null,
+      "rtpiNumber": "77"
+    },
+    {
+      "id": 12197091,
+      "lat": 33.951428,
+      "lon": -118.394946,
+      "name": "South Lot Stop #3",
+      "stopCode": null,
+      "rtpiNumber": "78"
+    },
+    {
+      "id": 12198214,
+      "lat": 33.95199,
+      "lon": -118.391007,
+      "name": "South Premium Stop #1",
+      "stopCode": null,
+      "rtpiNumber": "75"
+    },
+    {
+      "id": 12198215,
+      "lat": 33.951982,
+      "lon": -118.38991,
+      "name": "South Premium Stop #2",
+      "stopCode": null,
+      "rtpiNumber": "76"
+    }
+  ],
+  "patterns": [
+    {
+      "id": 31115,
+      "name": "South Lot",
+      "color": "#E70AFF",
+      "shape": "anfnExurqUBf@FrA@BBBR?\\@^AZ?F?DD@H@b@Af@C\\@N?J@N@FDBH@b@?h@Cb@AT?H?D?D?D?L@@C??????????????????BBHAP?JEDI@a@Ac@?c@A[?MAOIQC[Ce@Em@?k@@c@HYH[@g@Ag@?S@OHU^Kn@Av@?t@?t@Ap@An@?h@?b@?RHF\\Cl@Az@?z@?v@?p@?j@EZYJc@Hi@Z_@h@Qr@Cz@H|@N~@Jx@Jt@Jv@Jv@Jt@Hp@Hr@Ht@H|@HbAH`AL|@Pr@Zh@d@`@l@Rp@Dr@Bl@Dj@Bf@@b@?b@?^?^?^?^?Z?P?J?H?@???@?P?PBLHHN@RAZCZAV?X?ZCp@\\nHb@|H`@pJd@dKb@jAj@Lj@En@Kb@E\\C^GfBIj@Sd@_@Pe@?{@UoFoAmVc@oJ_@yGM}BKy@Oe@WYMUU[[a@_@e@[m@Qs@Kw@Es@Em@Gs@G}@IeAKgAMgAc@_Aa@gAYaAOoACaAC_AAaA@_AAy@Gu@Ei@Ae@?o@?_AAkAAsAAuA?oA?gA?cA@}@Au@Em@Ae@?_@?U?K?o@A[SUc@Eo@By@Aq@?i@@_@?O?KAS?WDO\\?t@B|@?|@?~@?~@?|@?z@Az@A|@?x@?r@A^?L?N?N?F?Z?p@CbAA`A?t@Ad@?R?J?@????@DEP[Dk@A{@AaA?eA?eA@cA@eABaA?_A@aA@{@Fw@Fq@Jg@FW?KKCUBe@@e@@c@@]?S@{@?i@?i@?i@?a@?S?u@?Y?WEUMKSAWLWDW@IBGFCPEfBIbAQdAU~@]z@_@n@[b@MNGFENRXb@Td@LTFHH?RUb@U^K\\CXBb@B`@BR",
+      "direction": "South Lot",
+      "directionType": "Loop"
+    }
+  ],
+  "fetchedAt": "2026-10-31T16:52:22.555Z",
+  "sourceUnavailable": false,
+  "warning": null
+}

@@ -351,5 +351,9 @@
   "Cancel alert for bus {name}": "ကား {name} အတွက် သတိပေးချက် ပယ်ဖျက်မည်",
   "Alert me 2 min before bus {name} arrives": "ကား {name} မရောက်မီ ၂ မိနစ်အလိုတွင် သတိပေးပါ",
   "Back to my stop": "ကျွန်ုပ်၏ မှတ်တိုင်သို့ ပြန်သွားမည်",
-  "Show whole route": "လမ်းကြောင်းတစ်ခုလုံး ပြမည်"
+  "Show whole route": "လမ်းကြောင်းတစ်ခုလုံး ပြမည်",
+  "Bus {name} is arriving at your stop.": "ကား {name} သင့်မှတ်တိုင်သို့ ရောက်ရှိနေပါပြီ။",
+  "Bus {name} is about {minutes} min away.": "ကား {name} ရောက်ရန် {minutes} မိနစ်ခန့် လိုပါသည်။",
+  "About {walk} min walk from where you are · based on a live prediction": "သင်ရှိရာမှ လမ်းလျှောက်ချိန် {walk} မိနစ်ခန့် · လက်ရှိဒေတာအရ ခန့်မှန်းထားသည်",
+  "Time to head to your stop": "မှတ်တိုင်သို့ သွားရန် အချိန်ရောက်ပါပြီ"
 }

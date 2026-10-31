@@ -1,0 +1,246 @@
+{
+  "routeID": 6885,
+  "stopID": 11319089,
+  "vehicles": [
+    {
+      "patternId": 31115,
+      "capacity": 50,
+      "id": 10760,
+      "lat": 33.94736034795993,
+      "lon": -118.38677459945795,
+      "name": "8001",
+      "passengerLoad": 0.08,
+      "lastUpdated": "2026-10-31T17:05:23Z",
+      "heading": "W",
+      "speed": 24,
+      "headingDegrees": 265.55301033779705,
+      "shapeDistanceTraveled": 5371.690586079538
+    },
+    {
+      "patternId": 31115,
+      "capacity": 50,
+      "id": 10761,
+      "lat": 33.956601500000005,
+      "lon": -118.3777865,
+      "name": "8002",
+      "passengerLoad": 0,
+      "lastUpdated": "2026-10-31T17:05:24Z",
+      "heading": "E",
+      "speed": 0,
+      "headingDegrees": 94,
+      "shapeDistanceTraveled": 0
+    },
+    {
+      "patternId": 31115,
+      "capacity": 50,
+      "id": 10765,
+      "lat": 33.9524095,
+      "lon": -118.38920516666667,
+      "name": "8006",
+      "passengerLoad": 0,
+      "lastUpdated": "2026-10-31T17:05:23Z",
+      "heading": "N",
+      "speed": 0,
+      "headingDegrees": 352,
+      "shapeDistanceTraveled": 0
+    },
+    {
+      "patternId": 31115,
+      "capacity": 50,
+      "id": 10769,
+      "lat": 33.94551740469749,
+      "lon": -118.40111763519165,
+      "name": "8010",
+      "passengerLoad": 0.02,
+      "lastUpdated": "2026-10-31T17:05:23Z",
+      "heading": "W",
+      "speed": 8,
+      "headingDegrees": 263.21649409071455,
+      "shapeDistanceTraveled": 2105.2703452151295
+    },
+    {
+      "patternId": 31115,
+      "capacity": 50,
+      "id": 11141,
+      "lat": 33.94323617890858,
+      "lon": -118.39990868781305,
+      "name": "8033",
+      "passengerLoad": 0,
+      "lastUpdated": "2026-10-31T17:05:24Z",
+      "heading": "E",
+      "speed": 3,
+      "headingDegrees": 82.21077027868273,
+      "shapeDistanceTraveled": 3764.8833809858006
+    },
+    {
+      "patternId": 31115,
+      "capacity": 50,
+      "id": 11151,
+      "lat": 33.9430387397376,
+      "lon": -118.4018195767294,
+      "name": "8025",
+      "passengerLoad": 0,
+      "lastUpdated": "2026-10-31T17:05:26Z",
+      "heading": "E",
+      "speed": 17,
+      "headingDegrees": 83.27419069922914,
+      "shapeDistanceTraveled": 3586.5438736638157
+    }
+  ],
+  "vehicleFetchedAt": "2026-10-31T17:05:27.676Z",
+  "arrivals": [
+    {
+      "pattern": {
+        "color": "#E70AFF",
+        "direction": "South Lot",
+        "id": 31115,
+        "name": "South Lot",
+        "directionType": "Loop",
+        "shape": "anfnExurqUBf@FrA@BBBR?\\@^AZ?F?DD@H@b@Af@C\\@N?J@N@FDBH@b@?h@Cb@AT?H?D?D?D?L@@C??????????????????BBHAP?JEDI@a@Ac@?c@A[?MAOIQC[Ce@Em@?k@@c@HYH[@g@Ag@?S@OHU^Kn@Av@?t@?t@Ap@An@?h@?b@?RHF\\Cl@Az@?z@?v@?p@?j@EZYJc@Hi@Z_@h@Qr@Cz@H|@N~@Jx@Jt@Jv@Jv@Jt@Hp@Hr@Ht@H|@HbAH`AL|@Pr@Zh@d@`@l@Rp@Dr@Bl@Dj@Bf@@b@?b@?^?^?^?^?Z?P?J?H?@???@?P?PBLHHN@RAZCZAV?X?ZCp@\\nHb@|H`@pJd@dKb@jAj@Lj@En@Kb@E\\C^GfBIj@Sd@_@Pe@?{@UoFoAmVc@oJ_@yGM}BKy@Oe@WYMUU[[a@_@e@[m@Qs@Kw@Es@Em@Gs@G}@IeAKgAMgAc@_Aa@gAYaAOoACaAC_AAaA@_AAy@Gu@Ei@Ae@?o@?_AAkAAsAAuA?oA?gA?cA@}@Au@Em@Ae@?_@?U?K?o@A[SUc@Eo@By@Aq@?i@@_@?O?KAS?WDO\\?t@B|@?|@?~@?~@?|@?z@Az@A|@?x@?r@A^?L?N?N?F?Z?p@CbAA`A?t@Ad@?R?J?@????@DEP[Dk@A{@AaA?eA?eA@cA@eABaA?_A@aA@{@Fw@Fq@Jg@FW?KKCUBe@@e@@c@@]?S@{@?i@?i@?i@?a@?S?u@?Y?WEUMKSAWLWDW@IBGFCPEfBIbAQdAU~@]z@_@n@[b@MNGFENRXb@Td@LTFHH?RUb@U^K\\CXBb@B`@BR"
+      },
+      "route": {
+        "color": "#E70AFF",
+        "displayOrder": 0,
+        "id": 6885,
+        "name": "South Lot",
+        "customerRouteId": null,
+        "shortName": "South Lot",
+        "description": "South Lot Employee Parking",
+        "routeType": "Bus",
+        "url": null,
+        "textColor": "#FFFFFF"
+      },
+      "schedulePrediction": false,
+      "secondsToArrival": 479,
+      "vehicle": {
+        "capacity": 50,
+        "id": 10760,
+        "lat": 33.94735999963065,
+        "lon": -118.3871513328326,
+        "name": "8001",
+        "passengerLoad": 0.08,
+        "lastUpdated": "2026-10-31T17:05:26Z",
+        "heading": "W",
+        "speed": 26,
+        "headingDegrees": 270.00008938887083,
+        "shapeDistanceTraveled": 0
+      }
+    },
+    {
+      "pattern": {
+        "color": "#E70AFF",
+        "direction": "South Lot",
+        "id": 31115,
+        "name": "South Lot",
+        "directionType": "Loop",
+        "shape": "anfnExurqUBf@FrA@BBBR?\\@^AZ?F?DD@H@b@Af@C\\@N?J@N@FDBH@b@?h@Cb@AT?H?D?D?D?L@@C??????????????????BBHAP?JEDI@a@Ac@?c@A[?MAOIQC[Ce@Em@?k@@c@HYH[@g@Ag@?S@OHU^Kn@Av@?t@?t@Ap@An@?h@?b@?RHF\\Cl@Az@?z@?v@?p@?j@EZYJc@Hi@Z_@h@Qr@Cz@H|@N~@Jx@Jt@Jv@Jv@Jt@Hp@Hr@Ht@H|@HbAH`AL|@Pr@Zh@d@`@l@Rp@Dr@Bl@Dj@Bf@@b@?b@?^?^?^?^?Z?P?J?H?@???@?P?PBLHHN@RAZCZAV?X?ZCp@\\nHb@|H`@pJd@dKb@jAj@Lj@En@Kb@E\\C^GfBIj@Sd@_@Pe@?{@UoFoAmVc@oJ_@yGM}BKy@Oe@WYMUU[[a@_@e@[m@Qs@Kw@Es@Em@Gs@G}@IeAKgAMgAc@_Aa@gAYaAOoACaAC_AAaA@_AAy@Gu@Ei@Ae@?o@?_AAkAAsAAuA?oA?gA?cA@}@Au@Em@Ae@?_@?U?K?o@A[SUc@Eo@By@Aq@?i@@_@?O?KAS?WDO\\?t@B|@?|@?~@?~@?|@?z@Az@A|@?x@?r@A^?L?N?N?F?Z?p@CbAA`A?t@Ad@?R?J?@????@DEP[Dk@A{@AaA?eA?eA@cA@eABaA?_A@aA@{@Fw@Fq@Jg@FW?KKCUBe@@e@@c@@]?S@{@?i@?i@?i@?a@?S?u@?Y?WEUMKSAWLWDW@IBGFCPEfBIbAQdAU~@]z@_@n@[b@MNGFENRXb@Td@LTFHH?RUb@U^K\\CXBb@B`@BR"
+      },
+      "route": {
+        "color": "#E70AFF",
+        "displayOrder": 0,
+        "id": 6885,
+        "name": "South Lot",
+        "customerRouteId": null,
+        "shortName": "South Lot",
+        "description": "South Lot Employee Parking",
+        "routeType": "Bus",
+        "url": null,
+        "textColor": "#FFFFFF"
+      },
+      "schedulePrediction": false,
+      "secondsToArrival": 674,
+      "vehicle": {
+        "capacity": 50,
+        "id": 11141,
+        "lat": 33.94323617890858,
+        "lon": -118.39990868781305,
+        "name": "8033",
+        "passengerLoad": 0,
+        "lastUpdated": "2026-10-31T17:05:24Z",
+        "heading": "E",
+        "speed": 3,
+        "headingDegrees": 82.21077027868273,
+        "shapeDistanceTraveled": 0
+      }
+    },
+    {
+      "pattern": {
+        "color": "#E70AFF",
+        "direction": "South Lot",
+        "id": 31115,
+        "name": "South Lot",
+        "directionType": "Loop",
+        "shape": "anfnExurqUBf@FrA@BBBR?\\@^AZ?F?DD@H@b@Af@C\\@N?J@N@FDBH@b@?h@Cb@AT?H?D?D?D?L@@C??????????????????BBHAP?JEDI@a@Ac@?c@A[?MAOIQC[Ce@Em@?k@@c@HYH[@g@Ag@?S@OHU^Kn@Av@?t@?t@Ap@An@?h@?b@?RHF\\Cl@Az@?z@?v@?p@?j@EZYJc@Hi@Z_@h@Qr@Cz@H|@N~@Jx@Jt@Jv@Jv@Jt@Hp@Hr@Ht@H|@HbAH`AL|@Pr@Zh@d@`@l@Rp@Dr@Bl@Dj@Bf@@b@?b@?^?^?^?^?Z?P?J?H?@???@?P?PBLHHN@RAZCZAV?X?ZCp@\\nHb@|H`@pJd@dKb@jAj@Lj@En@Kb@E\\C^GfBIj@Sd@_@Pe@?{@UoFoAmVc@oJ_@yGM}BKy@Oe@WYMUU[[a@_@e@[m@Qs@Kw@Es@Em@Gs@G}@IeAKgAMgAc@_Aa@gAYaAOoACaAC_AAaA@_AAy@Gu@Ei@Ae@?o@?_AAkAAsAAuA?oA?gA?cA@}@Au@Em@Ae@?_@?U?K?o@A[SUc@Eo@By@Aq@?i@@_@?O?KAS?WDO\\?t@B|@?|@?~@?~@?|@?z@Az@A|@?x@?r@A^?L?N?N?F?Z?p@CbAA`A?t@Ad@?R?J?@????@DEP[Dk@A{@AaA?eA?eA@cA@eABaA?_A@aA@{@Fw@Fq@Jg@FW?KKCUBe@@e@@c@@]?S@{@?i@?i@?i@?a@?S?u@?Y?WEUMKSAWLWDW@IBGFCPEfBIbAQdAU~@]z@_@n@[b@MNGFENRXb@Td@LTFHH?RUb@U^K\\CXBb@B`@BR"
+      },
+      "route": {
+        "color": "#E70AFF",
+        "displayOrder": 0,
+        "id": 6885,
+        "name": "South Lot",
+        "customerRouteId": null,
+        "shortName": "South Lot",
+        "description": "South Lot Employee Parking",
+        "routeType": "Bus",
+        "url": null,
+        "textColor": "#FFFFFF"
+      },
+      "schedulePrediction": false,
+      "secondsToArrival": 715,
+      "vehicle": {
+        "capacity": 50,
+        "id": 11151,
+        "lat": 33.9430387397376,
+        "lon": -118.4018195767294,
+        "name": "8025",
+        "passengerLoad": 0,
+        "lastUpdated": "2026-10-31T17:05:26Z",
+        "heading": "E",
+        "speed": 17,
+        "headingDegrees": 83.27419069922914,
+        "shapeDistanceTraveled": 0
+      }
+    },
+    {
+      "pattern": {
+        "color": "#E70AFF",
+        "direction": "South Lot",
+        "id": 31115,
+        "name": "South Lot",
+        "directionType": "Loop",
+        "shape": "anfnExurqUBf@FrA@BBBR?\\@^AZ?F?DD@H@b@Af@C\\@N?J@N@FDBH@b@?h@Cb@AT?H?D?D?D?L@@C??????????????????BBHAP?JEDI@a@Ac@?c@A[?MAOIQC[Ce@Em@?k@@c@HYH[@g@Ag@?S@OHU^Kn@Av@?t@?t@Ap@An@?h@?b@?RHF\\Cl@Az@?z@?v@?p@?j@EZYJc@Hi@Z_@h@Qr@Cz@H|@N~@Jx@Jt@Jv@Jv@Jt@Hp@Hr@Ht@H|@HbAH`AL|@Pr@Zh@d@`@l@Rp@Dr@Bl@Dj@Bf@@b@?b@?^?^?^?^?Z?P?J?H?@???@?P?PBLHHN@RAZCZAV?X?ZCp@\\nHb@|H`@pJd@dKb@jAj@Lj@En@Kb@E\\C^GfBIj@Sd@_@Pe@?{@UoFoAmVc@oJ_@yGM}BKy@Oe@WYMUU[[a@_@e@[m@Qs@Kw@Es@Em@Gs@G}@IeAKgAMgAc@_Aa@gAYaAOoACaAC_AAaA@_AAy@Gu@Ei@Ae@?o@?_AAkAAsAAuA?oA?gA?cA@}@Au@Em@Ae@?_@?U?K?o@A[SUc@Eo@By@Aq@?i@@_@?O?KAS?WDO\\?t@B|@?|@?~@?~@?|@?z@Az@A|@?x@?r@A^?L?N?N?F?Z?p@CbAA`A?t@Ad@?R?J?@????@DEP[Dk@A{@AaA?eA?eA@cA@eABaA?_A@aA@{@Fw@Fq@Jg@FW?KKCUBe@@e@@c@@]?S@{@?i@?i@?i@?a@?S?u@?Y?WEUMKSAWLWDW@IBGFCPEfBIbAQdAU~@]z@_@n@[b@MNGFENRXb@Td@LTFHH?RUb@U^K\\CXBb@B`@BR"
+      },
+      "route": {
+        "color": "#E70AFF",
+        "displayOrder": 0,
+        "id": 6885,
+        "name": "South Lot",
+        "customerRouteId": null,
+        "shortName": "South Lot",
+        "description": "South Lot Employee Parking",
+        "routeType": "Bus",
+        "url": null,
+        "textColor": "#FFFFFF"
+      },
+      "schedulePrediction": false,
+      "secondsToArrival": 1159,
+      "vehicle": {
+        "capacity": 50,
+        "id": 10769,
+        "lat": 33.94551740469749,
+        "lon": -118.40111763519165,
+        "name": "8010",
+        "passengerLoad": 0.02,
+        "lastUpdated": "2026-10-31T17:05:23Z",
+        "heading": "W",
+        "speed": 8,
+        "headingDegrees": 263.21649409071455,
+        "shapeDistanceTraveled": 0
+      }
+    }
+  ],
+  "arrivalFetchedAt": "2026-10-31T17:05:27.692Z",
+  "sourceUnavailable": false,
+  "arrivalSourceUnavailable": false,
+  "vehicleSourceUnavailable": false,
+  "warnings": []
+}

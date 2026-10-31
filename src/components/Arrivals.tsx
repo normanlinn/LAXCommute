@@ -1,6 +1,6 @@
 import { useLanguage } from '../i18n/LanguageProvider';
 import Button from './ui/Button';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   ArrowUpRight,
   Bell,
@@ -18,9 +18,18 @@ import {
   departureAdvice,
   snapshotFresh,
 } from '../domain/arrivals';
+import { walkingMinutesFrom } from '../domain/commute';
 
 // The approach bar fills over the final ten minutes of a live prediction.
 const APPROACH_WINDOW_MS = 10 * 60_000;
+
+// Screen readers hear a calm update at these points, not every countdown tick.
+function approachStage(msAway: number) {
+  if (msAway <= 30_000) return 'arriving';
+  if (msAway <= 2 * 60_000) return '2';
+  if (msAway <= 5 * 60_000) return '5';
+  return null;
+}
 
 /** Re-keys on change so each new value rolls in instead of snapping. */
 function RollingNumber({ value }: { value: string | number }) {
@@ -39,6 +48,7 @@ export default function Arrivals({
   stop,
   direction,
   profile,
+  userLocation,
   onRefresh,
 }: {
   data?: import('../types').LiveData;
@@ -48,6 +58,7 @@ export default function Arrivals({
   stop?: import('../types').Stop;
   direction: import('../types').Direction;
   profile: import('../types').Commute;
+  userLocation?: (import('../types').Point & { accuracy?: number; at?: number }) | null;
   onRefresh: () => void;
 }) {
   const { t, language } = useLanguage();
@@ -97,11 +108,34 @@ export default function Arrivals({
     fresh && !error && !data?.vehicleSourceUnavailable && snapshotFresh(data?.vehicleFetchedAt, now)
       ? nextLoopBusesAtStop(data?.vehicles || [], stop, arrivals, now).slice(0, 2)
       : [];
-  const advice =
-    fresh && direction === 'parking'
+  // Heading home uses the saved walk time; otherwise a recent GPS fix can estimate it.
+  const gpsWalk = direction === 'parking' ? null : walkingMinutesFrom(userLocation, stop, now);
+  const advice = !fresh
+    ? null
+    : direction === 'parking'
       ? departureAdvice(arrivals, profile.walkingMinutes, profile.bufferMinutes, now)
-      : null;
+      : gpsWalk
+        ? departureAdvice(arrivals, gpsWalk, 1, now)
+        : null;
+  const [announcement, setAnnouncement] = useState('');
+  const announced = useRef('');
+  const nextLive = arrivals.find((a) => !a.scheduled);
+  const stage = nextLive ? approachStage(nextLive.due - now) : null;
+  useEffect(() => {
+    if (!nextLive || !stage) return;
+    const key = `${stop?.id}:${nextLive.vehicleID}:${stage}`;
+    if (announced.current === key) return;
+    announced.current = key;
+    const name = nextLive.busName || '';
+    setAnnouncement(
+      stage === 'arriving'
+        ? t('Bus {name} is arriving at your stop.', { name })
+        : t('Bus {name} is about {minutes} min away.', { name, minutes: stage }),
+    );
+    // Only stage changes matter; the bus object changes on every refresh.
+  }, [stage, nextLive?.vehicleID, stop?.id]);
   const busAlert = useBusAlert({
+    routeID: data?.routeID,
     stopID: stop?.id,
     predictions: arrivals,
     message: ({ busName }) => ({
@@ -134,6 +168,9 @@ export default function Arrivals({
           <RefreshCw size={18} className={fetching ? 'spin' : ''} />
         </Button>
       </div>
+      <p className="sr-only" aria-live="polite" aria-atomic="true">
+        {announcement}
+      </p>
       {stop && (
         <p className="boarding-caption">
           <BusFront size={15} /> {stop.name}
@@ -314,16 +351,22 @@ export default function Arrivals({
           <div>
             <strong>
               {advice.leaveAt <= now
-                ? t('Time to head downstairs')
+                ? gpsWalk
+                  ? t('Time to head to your stop')
+                  : t('Time to head downstairs')
                 : t('Leave in {minutes} min', {
                     minutes: Math.ceil((advice.leaveAt - now) / 60_000),
                   })}
             </strong>
             <span>
-              {t('{walk} min walk + {buffer} min buffer · based on a live prediction', {
-                walk: profile.walkingMinutes,
-                buffer: profile.bufferMinutes,
-              })}
+              {gpsWalk
+                ? t('About {walk} min walk from where you are · based on a live prediction', {
+                    walk: gpsWalk,
+                  })
+                : t('{walk} min walk + {buffer} min buffer · based on a live prediction', {
+                    walk: profile.walkingMinutes,
+                    buffer: profile.bufferMinutes,
+                  })}
             </span>
           </div>
           <ArrowUpRight size={18} />

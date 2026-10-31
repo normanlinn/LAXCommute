@@ -186,7 +186,9 @@ export default function App() {
     id: number;
     source: string;
   } | null>(null);
-  const [userLocation, setUserLocation] = useState<Point | null>(null);
+  const [userLocation, setUserLocation] = useState<
+    (Point & { accuracy?: number; at?: number }) | null
+  >(null);
   const [locationError, setLocationError] = useState('');
   const [locating, setLocating] = useState(false);
   const [focusRequest, setFocusRequest] = useState({ mode: 'route', serial: 0 });
@@ -299,6 +301,7 @@ export default function App() {
           lat: position.coords.latitude,
           lon: position.coords.longitude,
           accuracy: position.coords.accuracy,
+          at: Date.now(),
         };
         setUserLocation(location);
         setLocating(false);
@@ -808,6 +811,7 @@ export default function App() {
                   stop={selectedStop}
                   direction={direction}
                   profile={profile}
+                  userLocation={userLocation}
                   onRefresh={() => {
                     live.refetch();
                     if (routeQuery.isError) routeQuery.refetch();

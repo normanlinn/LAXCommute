@@ -3,3 +3,5 @@ dist
 .wrangler
 package-lock.json
 *.png
+test-results
+playwright-report

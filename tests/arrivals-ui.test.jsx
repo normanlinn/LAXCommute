@@ -6,7 +6,7 @@ import { DEFAULT_COMMUTE } from '../src/domain/commute';
 
 afterEach(cleanup);
 
-function setup({ dueInSeconds, atStop = false }) {
+function setup({ dueInSeconds, atStop = false, userLocation = null }) {
   const now = Date.now();
   const updated = new Date(now - 3_000).toISOString();
   const stop = { id: 11319089, name: 'South Lot Stop #1', lat: 33.95313, lon: -118.393406 };
@@ -45,6 +45,7 @@ function setup({ dueInSeconds, atStop = false }) {
       stop={stop}
       direction="work"
       profile={DEFAULT_COMMUTE}
+      userLocation={userLocation}
       onRefresh={vi.fn()}
     />,
   );
@@ -54,7 +55,7 @@ describe('arrival UI semantics', () => {
   it('shows an official ETA near zero as arriving instead of dropping it', () => {
     setup({ dueInSeconds: 10 });
     expect(screen.getByText('Arriving')).toBeTruthy();
-    expect(screen.getByText('8022', { exact: false })).toBeTruthy();
+    expect(screen.getByText('Bus 8022')).toBeTruthy();
   });
 
   it('separates nearby GPS from the provider next-loop prediction', () => {
@@ -68,5 +69,26 @@ describe('arrival UI semantics', () => {
   it('does not show a proximity warning for a bus that is elsewhere', () => {
     setup({ dueInSeconds: 26 * 60, atStop: false });
     expect(screen.queryByText(/may be for the next loop/)).toBeNull();
+  });
+
+  it('tells screen readers when the next bus is close, without a per-second countdown', () => {
+    setup({ dueInSeconds: 90 });
+    const live = document.querySelector('[aria-live="polite"]');
+    expect(live.textContent).toBe('Bus 8022 is about 2 min away.');
+  });
+
+  it('stays quiet for a bus that is still far away', () => {
+    setup({ dueInSeconds: 20 * 60 });
+    expect(document.querySelector('[aria-live="polite"]').textContent).toBe('');
+  });
+
+  it('advises when to leave from a recent GPS fix', () => {
+    // ~450 m from the stop → about 8 min walk; the bus is 20 min out.
+    setup({
+      dueInSeconds: 20 * 60,
+      userLocation: { lat: 33.949, lon: -118.393406, accuracy: 15, at: Date.now() },
+    });
+    expect(screen.getByText(/Leave in \d+ min/)).toBeTruthy();
+    expect(screen.getByText(/min walk from where you are/)).toBeTruthy();
   });
 });

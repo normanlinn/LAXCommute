@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { StrictMode } from 'react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { loadMessages } from '../src/i18n/LanguageProvider';
 import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import * as L from 'leaflet';
 import FreeMap, { boardingAreaPoints } from '../src/components/FreeMap';
@@ -9,6 +10,9 @@ import { config } from '../src/config';
 import { createSimpleBasemap } from '../src/components/simpleBasemap';
 import LanguageSwitch from '../src/components/LanguageSwitch';
 import { LanguageProvider } from '../src/i18n/LanguageProvider';
+
+// main.tsx loads translations before rendering; do the same here.
+beforeAll(() => Promise.all([loadMessages('es'), loadMessages('my')]));
 
 vi.mock('../src/components/simpleBasemap', () => ({ createSimpleBasemap: vi.fn() }));
 
