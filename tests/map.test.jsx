@@ -87,7 +87,9 @@ describe('interactive shuttle map', () => {
       </StrictMode>,
     );
     await act(async () => {});
-    expect(container.querySelectorAll('.leaflet-marker-icon')).toHaveLength(1);
+    expect(
+      container.querySelectorAll('.leaflet-marker-icon:not(.route-arrow-marker)'),
+    ).toHaveLength(1);
     fireEvent.click(container.querySelector('.map-stops-toggle'));
     const stop = container.querySelector('[title="Terminal B - Lower Level"]');
     fireEvent.click(stop);
@@ -96,7 +98,9 @@ describe('interactive shuttle map', () => {
       'OpenStreetMap',
     );
     expect(container.querySelectorAll('.leaflet-overlay-pane path')).toHaveLength(2);
-    expect(container.querySelectorAll('.leaflet-marker-icon')).toHaveLength(2);
+    expect(
+      container.querySelectorAll('.leaflet-marker-icon:not(.route-arrow-marker)'),
+    ).toHaveLength(2);
     expect(container.querySelector('.boarding-label').textContent).toContain('South Lot Stop #1');
   });
 
@@ -136,7 +140,9 @@ describe('interactive shuttle map', () => {
     expect(container.querySelector('[title="Bus 55 · Reported GPS"]')).toBe(marker);
     expect(marker.style.cssText).not.toBe(before);
     rerender(<FreeMap {...props} route={{ id: 6884, color: '#3262ab' }} stops={[]} paths={[]} />);
-    expect(container.querySelectorAll('.leaflet-marker-icon')).toHaveLength(0);
+    expect(
+      container.querySelectorAll('.leaflet-marker-icon:not(.route-arrow-marker)'),
+    ).toHaveLength(0);
     expect(container.querySelectorAll('.leaflet-overlay-pane path')).toHaveLength(0);
   });
 
@@ -152,7 +158,9 @@ describe('interactive shuttle map', () => {
     expect(container.querySelector('[title="Bus 55 · Reported GPS"]')).toBeTruthy();
     act(() => vi.advanceTimersByTime(100));
     expect(container.querySelector('[title="Bus 55 · Reported GPS"]')).toBeNull();
-    expect(container.querySelectorAll('.leaflet-marker-icon')).toHaveLength(1);
+    expect(
+      container.querySelectorAll('.leaflet-marker-icon:not(.route-arrow-marker)'),
+    ).toHaveLength(1);
   });
 
   it('treats external feed labels as text, not markup', () => {
@@ -202,7 +210,9 @@ describe('interactive shuttle map', () => {
     expect(getByRole('button', { name: 'Street detail' }).getAttribute('aria-pressed')).toBe(
       'true',
     );
-    expect(container.querySelectorAll('.leaflet-marker-icon')).toHaveLength(1);
+    expect(
+      container.querySelectorAll('.leaflet-marker-icon:not(.route-arrow-marker)'),
+    ).toHaveLength(1);
     expect(container.querySelector('.leaflet-control-attribution').textContent).toContain(
       'OpenStreetMap',
     );

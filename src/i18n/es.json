@@ -349,5 +349,7 @@
   "Cancel alert": "Cancelar alerta",
   "Alert me 2 min before": "Avísame 2 min antes",
   "Cancel alert for bus {name}": "Cancelar alerta del autobús {name}",
-  "Alert me 2 min before bus {name} arrives": "Avísame 2 min antes de que llegue el autobús {name}"
+  "Alert me 2 min before bus {name} arrives": "Avísame 2 min antes de que llegue el autobús {name}",
+  "Back to my stop": "Volver a mi parada",
+  "Show whole route": "Ver toda la ruta"
 }

@@ -10,6 +10,9 @@ export interface Vehicle extends Point {
   id: number;
   name?: string;
   lastUpdated: string;
+  /** Reported by the tracker; 0° is north. Only meaningful while the bus is moving. */
+  headingDegrees?: number;
+  speed?: number;
 }
 export interface Route {
   id: number;

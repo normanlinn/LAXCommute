@@ -89,3 +89,37 @@ export function positionOnMotionPath(path: Point[], fraction: number): Point {
   }
   return path[path.length - 1];
 }
+
+/** Compass bearing from a to b in degrees, 0° = north, clockwise. */
+export function bearingDegrees(a: Point, b: Point) {
+  const dx = (b.lon - a.lon) * Math.cos(((a.lat + b.lat) / 2) * rad);
+  const dy = b.lat - a.lat;
+  return ((Math.atan2(dx, dy) * 180) / Math.PI + 360) % 360;
+}
+
+/**
+ * Evenly spaced direction markers along a route shape. Feed shapes are ordered in
+ * the direction buses travel, so each marker points along the real loop.
+ */
+export function routeArrows(shape: Point[], spacing = 260) {
+  const arrows: { point: Point; bearing: number }[] = [];
+  let next = spacing / 2;
+  let travelled = 0;
+  for (let i = 0; i < shape.length - 1; i++) {
+    const a = shape[i];
+    const b = shape[i + 1];
+    if (![a.lat, a.lon, b.lat, b.lon].every(Number.isFinite)) continue;
+    const length = segmentMeters(a, b);
+    if (length < 0.5) continue;
+    while (next <= travelled + length) {
+      const t = (next - travelled) / length;
+      arrows.push({
+        point: { lat: a.lat + (b.lat - a.lat) * t, lon: a.lon + (b.lon - a.lon) * t },
+        bearing: bearingDegrees(a, b),
+      });
+      next += spacing;
+    }
+    travelled += length;
+  }
+  return arrows;
+}

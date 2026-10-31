@@ -4,10 +4,16 @@ import type { MapProps, Point, Stop, RoutePath, Vehicle } from '../types';
 import { memo, useEffect, useRef, useState } from 'react';
 import * as L from 'leaflet';
 import { animate } from 'animejs';
+import { LocateFixed, MapPinned } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 import { config } from '../config';
 import { GPS_TTL_MS, snapshotFresh, validVehicle } from '../domain/arrivals';
-import { routeMotionPath, positionOnMotionPath, segmentMeters } from '../domain/map-motion';
+import {
+  routeArrows,
+  routeMotionPath,
+  positionOnMotionPath,
+  segmentMeters,
+} from '../domain/map-motion';
 import { declutterOffsets } from '../domain/declutter';
 
 const coordinates = (point: Point): L.LatLngTuple => [point.lat, point.lon];
@@ -17,8 +23,27 @@ const validPoint = (point: Point) =>
   Math.abs(point.lat) <= 90 &&
   Math.abs(point.lon) <= 180;
 const reducedMotion = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+// A bus whose last GPS fix is older than this is shown faded: still useful, less certain.
+const STALE_GPS_MS = 75_000;
+// Route arrows clutter the line when zoomed out this far.
+const ARROW_MIN_ZOOM = 14;
+/** The tracker's heading is only reliable while a bus is moving. */
+function busHeading(point: { headingDegrees?: number; speed?: number }) {
+  const heading = point.headingDegrees;
+  return typeof heading === 'number' && Number.isFinite(heading) && (point.speed ?? 0) >= 2
+    ? Math.round(heading / 5) * 5
+    : null;
+}
+const ARROW_SVG =
+  '<svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M2.5 8 6 3.5 9.5 8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
-function markerIcon(kind: string, color: string, selected: boolean, busName = '') {
+function markerIcon(
+  kind: string,
+  color: string,
+  selected: boolean,
+  busName = '',
+  heading: number | null = null,
+) {
   const content = document.createElement('span');
   content.className = `map-marker-dot marker-${kind}${selected ? (kind === 'bus' ? ' bus-focused' : ' marker-selected') : ''}`;
   content.style.setProperty('--marker-color', color);
@@ -30,6 +55,15 @@ function markerIcon(kind: string, color: string, selected: boolean, busName = ''
     badge.className = 'bus-marker-number';
     badge.textContent = busName.slice(0, 8);
     content.append(badge);
+    if (heading !== null) {
+      // A small pointer on the ring shows which way the tracker says the bus is moving.
+      const pointer = document.createElement('span');
+      pointer.className = 'bus-heading';
+      pointer.style.setProperty('--heading', `${heading}deg`);
+      pointer.innerHTML =
+        '<svg viewBox="0 0 16 13" width="16" height="13" aria-hidden="true"><path d="M8 1.5 14.5 11.5h-13Z" fill="currentColor" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg>';
+      content.append(pointer);
+    }
   }
   return L.divIcon({
     html: content,
@@ -101,7 +135,13 @@ function FreeMap({
   const { t } = useLanguage();
   const { appearance } = useTheme();
   const element = useRef<HTMLDivElement>(null);
-  type MarkerPoint = Point & { id?: number; name?: string; lastUpdated?: string };
+  type MarkerPoint = Point & {
+    id?: number;
+    name?: string;
+    lastUpdated?: string;
+    headingDegrees?: number;
+    speed?: number;
+  };
   type Entry = {
     marker: L.Marker;
     point: MarkerPoint;
@@ -143,6 +183,8 @@ function FreeMap({
   // Keeping other stops hidden initially prevents labels from covering buses.
   const [showStops, setShowStops] = useState(false);
   const [selectedBusID, setSelectedBusID] = useState<number | null>(null);
+  // Offer a way back after someone drags the map away from their stop.
+  const [panned, setPanned] = useState(false);
   useEffect(() => setSelectedBusID(null), [route.id]);
   const [basemap, setBasemap] = useState('simple');
   const [simpleUnavailable, setSimpleUnavailable] = useState(false);
@@ -161,11 +203,20 @@ function FreeMap({
       inertia: motion,
     });
     L.control.zoom({ position: 'topright' }).addTo(map);
+    // Direction arrows sit above the route line but below every stop and bus marker.
+    map.createPane('route-arrows').style.zIndex = '450';
     // Avoid recentering the map after someone drags it themselves.
     map.on('dragstart', () => {
       userMovedMap.current = true;
+      setPanned(true);
     });
-    map.on('zoomend', () => declutter.current());
+    const zoomClass = () =>
+      map.getContainer().classList.toggle('map-zoomed-out', map.getZoom() < ARROW_MIN_ZOOM);
+    map.on('zoomend', () => {
+      zoomClass();
+      declutter.current();
+    });
+    zoomClass();
     const overlays = L.layerGroup().addTo(map);
     state.current = { map, overlays, markers: new Map() };
     const observer = new ResizeObserver(() => map.invalidateSize({ pan: false }));
@@ -243,11 +294,12 @@ function FreeMap({
       if (!validPoint(point)) return;
       wanted.add(key);
       const color = kind === 'you' ? '#266beb' : route.color;
-      const appearance = `${kind}:${color}:${selected}:${kind === 'bus' ? point.name || point.id || '' : ''}`;
+      const heading = kind === 'bus' ? busHeading(point) : null;
+      const appearance = `${kind}:${color}:${selected}:${kind === 'bus' ? point.name || point.id || '' : ''}:${heading}`;
       let entry = markers.get(key);
       if (!entry) {
         const marker = L.marker(coordinates(point), {
-          icon: markerIcon(kind, color, selected, String(point.name || point.id || '')),
+          icon: markerIcon(kind, color, selected, String(point.name || point.id || ''), heading),
           title,
           keyboard: kind === 'stop' || kind === 'bus',
           interactive: kind === 'stop' || kind === 'bus',
@@ -300,7 +352,7 @@ function FreeMap({
         }
         if (entry.appearance !== appearance) {
           entry.marker.setIcon(
-            markerIcon(kind, color, selected, String(point.name || point.id || '')),
+            markerIcon(kind, color, selected, String(point.name || point.id || ''), heading),
           );
           entry.marker.setZIndexOffset(kind === 'bus' ? 500 : selected ? 1500 : 1000);
           entry.appearance = appearance;
@@ -354,11 +406,15 @@ function FreeMap({
             prediction.due > Date.now() &&
             prediction.due - Date.now() <= 300_000,
         );
-      markers
+      const dot = markers
         .get(`bus-${bus.id}`)
         ?.marker.getElement()
-        ?.querySelector('.map-marker-dot')
-        ?.classList.toggle('bus-approaching', Boolean(approaching));
+        ?.querySelector('.map-marker-dot');
+      dot?.classList.toggle('bus-approaching', Boolean(approaching));
+      dot?.classList.toggle(
+        'bus-stale',
+        Date.now() - Date.parse(bus.lastUpdated || '') > STALE_GPS_MS,
+      );
     }
     if (userLocation) upsert('you', userLocation, 'you', t('Your location snapshot'));
     for (const [key, entry] of markers)
@@ -422,6 +478,7 @@ function FreeMap({
     overlays.clearLayers();
     framedNearbyKey.current = '';
     userMovedMap.current = false;
+    setPanned(false);
     fitBoardingArea(map, selectedStop, latest.current.vehicles, stops, paths);
     const animations: ReturnType<typeof animate>[] = [];
     for (const path of paths) {
@@ -434,6 +491,18 @@ function FreeMap({
           opacity: 0.9,
           interactive: false,
         }).addTo(overlays);
+        for (const { point, bearing } of routeArrows(path.coordinates)) {
+          const arrow = document.createElement('span');
+          arrow.className = 'route-arrow';
+          arrow.style.setProperty('--bearing', `${bearing.toFixed(0)}deg`);
+          arrow.innerHTML = ARROW_SVG;
+          L.marker(coordinates(point), {
+            icon: L.divIcon({ html: arrow, className: 'route-arrow-marker', iconSize: [14, 14] }),
+            interactive: false,
+            keyboard: false,
+            pane: 'route-arrows',
+          }).addTo(overlays);
+        }
         const svgPath = line.getElement() as SVGPathElement | undefined;
         if (
           svgPath &&
@@ -476,6 +545,7 @@ function FreeMap({
   useEffect(() => {
     if (!ready || !state.current || !focusRequest.serial) return;
     const { map } = state.current;
+    setPanned(false);
     const { stops, paths, selectedStop, userLocation } = latest.current;
     const target =
       focusRequest.mode === 'you'
@@ -530,11 +600,36 @@ function FreeMap({
               type="button"
               className="map-stops-toggle"
               aria-pressed={showStops}
+              title={showStops ? t('Hide other stops') : t('Show other stops')}
               onClick={() => setShowStops((show) => !show)}
             >
-              {showStops ? t('Hide other stops') : t('Show other stops')}
+              <MapPinned size={16} aria-hidden="true" />
+              <span>{showStops ? t('Hide other stops') : t('Show other stops')}</span>
             </button>
           </div>
+          {panned && (
+            <button
+              type="button"
+              className="map-recenter"
+              onClick={() => {
+                const current = state.current;
+                if (!current) return;
+                userMovedMap.current = false;
+                setPanned(false);
+                fitBoardingArea(
+                  current.map,
+                  latest.current.selectedStop,
+                  latest.current.vehicles,
+                  latest.current.stops,
+                  latest.current.paths,
+                  !reducedMotion(),
+                );
+              }}
+            >
+              <LocateFixed size={16} aria-hidden="true" />
+              {selectedStop ? t('Back to my stop') : t('Show whole route')}
+            </button>
+          )}
           {selectedBus && (
             <div className="transit-bus-detail" role="status">
               <span className="transit-bus-detail-icon" aria-hidden="true">

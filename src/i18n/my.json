@@ -349,5 +349,7 @@
   "Cancel alert": "သတိပေးချက် ပယ်ဖျက်မည်",
   "Alert me 2 min before": "၂ မိနစ်အလိုတွင် သတိပေးပါ",
   "Cancel alert for bus {name}": "ကား {name} အတွက် သတိပေးချက် ပယ်ဖျက်မည်",
-  "Alert me 2 min before bus {name} arrives": "ကား {name} မရောက်မီ ၂ မိနစ်အလိုတွင် သတိပေးပါ"
+  "Alert me 2 min before bus {name} arrives": "ကား {name} မရောက်မီ ၂ မိနစ်အလိုတွင် သတိပေးပါ",
+  "Back to my stop": "ကျွန်ုပ်၏ မှတ်တိုင်သို့ ပြန်သွားမည်",
+  "Show whole route": "လမ်းကြောင်းတစ်ခုလုံး ပြမည်"
 }

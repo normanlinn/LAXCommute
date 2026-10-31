@@ -217,6 +217,14 @@ export default function App() {
   );
   const vehicleFresh = useSnapshotFresh(live.data?.vehicleFetchedAt);
   const arrivalFresh = useSnapshotFresh(live.data?.arrivalFetchedAt);
+  // Re-render periodically so the map card's minutes count down between feed refreshes.
+  const [, setPeekClock] = useState(0);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (!document.hidden) setPeekClock((tick) => tick + 1);
+    }, 15_000);
+    return () => clearInterval(timer);
+  }, []);
   const nextMapArrival =
     arrivalFresh &&
     !live.data?.cached &&
@@ -401,15 +409,15 @@ export default function App() {
                     </span>
                   </div>
                 </div>
+                <Button
+                  className="map-toggle"
+                  aria-expanded={mapExpanded}
+                  aria-controls="shuttle-map-panel"
+                  onClick={() => setMapExpanded((value) => !value)}
+                >
+                  <Map size={17} /> <span>{mapExpanded ? t('Hide map') : t('Show map')}</span>
+                </Button>
               </div>
-              <Button
-                className="map-toggle"
-                aria-expanded={mapExpanded}
-                aria-controls="shuttle-map-panel"
-                onClick={() => setMapExpanded((value) => !value)}
-              >
-                <Map size={18} /> {mapExpanded ? t('Hide map') : t('Show map')}
-              </Button>
               <div id="shuttle-map-panel" hidden={!mapExpanded}>
                 <div
                   className="transit-route-picker"
@@ -607,7 +615,7 @@ export default function App() {
             </section>
             <aside
               ref={tripCardRef}
-              className={`card bg-base-100 trip-card ${sheetExpanded ? 'sheet-expanded' : 'sheet-peek'}`}
+              className={`card bg-base-100 trip-card ${sheetExpanded ? 'sheet-expanded' : 'sheet-peek'}${mapExpanded ? ' has-map-picker' : ''}`}
             >
               <Button
                 className="sheet-handle"
