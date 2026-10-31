@@ -342,5 +342,12 @@
   "Bus {name} is near this stop (GPS). Its {minutes}-min prediction may be for the next loop. Boarding is not confirmed.": "El autobús {name} está cerca de esta parada (GPS). La estimación de {minutes} min podría ser para la próxima vuelta. No se ha confirmado el abordaje.",
   "Expand commute details": "Expandir detalles del viaje",
   "Collapse commute details": "Contraer detalles del viaje",
-  "Swipe up for stops and arrivals": "Desliza hacia arriba para ver paradas y llegadas"
+  "Swipe up for stops and arrivals": "Desliza hacia arriba para ver paradas y llegadas",
+  "Your shuttle is almost here": "Tu transporte ya casi llega",
+  "Bus {name} is about 2 min from {stop}.": "El autobús {name} está a unos 2 min de {stop}.",
+  "Dismiss": "Cerrar",
+  "Cancel alert": "Cancelar alerta",
+  "Alert me 2 min before": "Avísame 2 min antes",
+  "Cancel alert for bus {name}": "Cancelar alerta del autobús {name}",
+  "Alert me 2 min before bus {name} arrives": "Avísame 2 min antes de que llegue el autobús {name}"
 }

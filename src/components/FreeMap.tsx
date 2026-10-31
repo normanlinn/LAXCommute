@@ -8,6 +8,7 @@ import 'leaflet/dist/leaflet.css';
 import { config } from '../config';
 import { GPS_TTL_MS, snapshotFresh, validVehicle } from '../domain/arrivals';
 import { routeMotionPath, positionOnMotionPath, segmentMeters } from '../domain/map-motion';
+import { declutterOffsets } from '../domain/declutter';
 
 const coordinates = (point: Point): L.LatLngTuple => [point.lat, point.lon];
 const validPoint = (point: Point) =>
@@ -77,9 +78,9 @@ function fitBoardingArea(
     return;
   }
   map.fitBounds(L.latLngBounds(points.map(coordinates)), {
-    // The map contains controls on the right and an arrival card at the bottom.
-    // Keep the boarding area visibly centered in the unobstructed space.
-    paddingTopLeft: mobile ? [46, 100] : [58, 64],
+    // The map contains controls at the top and an arrival card at the bottom.
+    // Mobile top padding also leaves room for the stop's "Board here" label.
+    paddingTopLeft: mobile ? [46, 180] : [58, 96],
     paddingBottomRight: mobile ? [83, 165] : [58, 64],
     maxZoom: mobile ? 15.5 : 16,
     animate,
@@ -116,6 +117,25 @@ function FreeMap({
   selectionHandler.current = onSelectStop;
   const latest = useRef({ stops, paths, selectedStop, userLocation, vehicles });
   latest.current = { stops, paths, selectedStop, userLocation, vehicles };
+  // Fan out overlapping bus icons at the current zoom without moving their GPS position.
+  const declutter = useRef(() => {});
+  declutter.current = () => {
+    const current = state.current;
+    if (!current) return;
+    const buses = [...current.markers].filter(([key]) => key.startsWith('bus-'));
+    const stop = latest.current.selectedStop;
+    const anchor =
+      stop && validPoint(stop) ? current.map.latLngToContainerPoint(coordinates(stop)) : null;
+    const offsets = declutterOffsets(
+      buses.map(([, entry]) => current.map.latLngToContainerPoint(entry.marker.getLatLng())),
+      anchor,
+    );
+    buses.forEach(([, entry], index) => {
+      const dot = entry.marker.getElement()?.querySelector<HTMLElement>('.map-marker-dot');
+      const { x, y } = offsets[index];
+      dot?.style.setProperty('translate', x || y ? `${x.toFixed(1)}px ${y.toFixed(1)}px` : '');
+    });
+  };
   const framedNearbyKey = useRef('');
   const userMovedMap = useRef(false);
   const [ready, setReady] = useState(false);
@@ -145,6 +165,7 @@ function FreeMap({
     map.on('dragstart', () => {
       userMovedMap.current = true;
     });
+    map.on('zoomend', () => declutter.current());
     const overlays = L.layerGroup().addTo(map);
     state.current = { map, overlays, markers: new Map() };
     const observer = new ResizeObserver(() => map.invalidateSize({ pan: false }));
@@ -269,7 +290,10 @@ function FreeMap({
                 ease: 'inOutSine',
                 onUpdate: () =>
                   marker.setLatLng(coordinates(positionOnMotionPath(motionPath, motion.progress))),
-                onComplete: () => marker.setLatLng(coordinates(point)),
+                onComplete: () => {
+                  marker.setLatLng(coordinates(point));
+                  declutter.current();
+                },
               });
             } else entry.marker.setLatLng(coordinates(point));
           } else entry.marker.setLatLng(coordinates(point));
@@ -343,6 +367,7 @@ function FreeMap({
         entry.marker.remove();
         markers.delete(key);
       }
+    declutter.current();
 
     // Remove each bus as its reported GPS expires, even if refresh is failing.
     let expiration: ReturnType<typeof setTimeout> | undefined;

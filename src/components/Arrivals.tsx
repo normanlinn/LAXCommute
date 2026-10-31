@@ -1,13 +1,35 @@
 import { useLanguage } from '../i18n/LanguageProvider';
 import Button from './ui/Button';
 import { useEffect, useState } from 'react';
-import { ArrowUpRight, BusFront, Clock3, RefreshCw, Footprints } from 'lucide-react';
+import {
+  ArrowUpRight,
+  Bell,
+  BellRing,
+  BusFront,
+  Clock3,
+  RefreshCw,
+  Footprints,
+  X,
+} from 'lucide-react';
+import { canSetAlert, useBusAlert } from '../hooks/useBusAlert';
 import {
   availableArrivals,
   nextLoopBusesAtStop,
   departureAdvice,
   snapshotFresh,
 } from '../domain/arrivals';
+
+// The approach bar fills over the final ten minutes of a live prediction.
+const APPROACH_WINDOW_MS = 10 * 60_000;
+
+/** Re-keys on change so each new value rolls in instead of snapping. */
+function RollingNumber({ value }: { value: string | number }) {
+  return (
+    <span className="rolling-number">
+      <span key={value}>{value}</span>
+    </span>
+  );
+}
 
 export default function Arrivals({
   data,
@@ -44,7 +66,11 @@ export default function Arrivals({
         !data?.cached &&
         !data?.arrivalSourceUnavailable &&
         snapshotFresh(data?.arrivalFetchedAt, current);
-      timer = setTimeout(tick, live ? 5_000 : 60_000);
+      // Tick every second while a live bus is close so the approach bar moves smoothly.
+      const soon = (data?.predictions || []).some(
+        (p) => !p.scheduled && p.due > current - 45_000 && p.due - current < APPROACH_WINDOW_MS,
+      );
+      timer = setTimeout(tick, live ? (soon ? 1_000 : 5_000) : 60_000);
     };
     tick();
     document.addEventListener('visibilitychange', tick);
@@ -52,7 +78,13 @@ export default function Arrivals({
       clearTimeout(timer);
       document.removeEventListener('visibilitychange', tick);
     };
-  }, [data?.arrivalFetchedAt, data?.cached, data?.arrivalSourceUnavailable, error]);
+  }, [
+    data?.arrivalFetchedAt,
+    data?.cached,
+    data?.arrivalSourceUnavailable,
+    data?.predictions,
+    error,
+  ]);
   const fresh =
     !data?.cached && !data?.arrivalSourceUnavailable && snapshotFresh(data?.arrivalFetchedAt, now);
   const lastKnown = Boolean(data?.cached || data?.arrivalSourceUnavailable || error);
@@ -69,6 +101,17 @@ export default function Arrivals({
     fresh && direction === 'parking'
       ? departureAdvice(arrivals, profile.walkingMinutes, profile.bufferMinutes, now)
       : null;
+  const busAlert = useBusAlert({
+    stopID: stop?.id,
+    predictions: arrivals,
+    message: ({ busName }) => ({
+      title: t('Your shuttle is almost here'),
+      body: t('Bus {name} is about 2 min from {stop}.', {
+        name: busName || '',
+        stop: stop?.name || '',
+      }),
+    }),
+  });
   const warnings = data?.warnings || [];
   const ageSeconds = data?.arrivalFetchedAt
     ? Math.max(0, Math.floor((now - Date.parse(data?.arrivalFetchedAt)) / 1_000))
@@ -110,6 +153,28 @@ export default function Arrivals({
           </span>
         </p>
       ))}
+      {busAlert.fired && (
+        <div className="bus-alert-banner" role="alert">
+          <BellRing size={20} aria-hidden="true" />
+          <div>
+            <strong>{t('Your shuttle is almost here')}</strong>
+            <span>
+              {t('Bus {name} is about 2 min from {stop}.', {
+                name: busAlert.fired.busName,
+                stop: stop?.name || '',
+              })}
+            </span>
+          </div>
+          <Button
+            type="button"
+            className="icon-button"
+            aria-label={t('Dismiss')}
+            onClick={busAlert.dismiss}
+          >
+            <X size={17} />
+          </Button>
+        </div>
+      )}
       {(error || data?.sourceUnavailable) && (
         <div className="alert alert-soft alert-warning notice" role="status">
           {t('Shuttle source unavailable. Try again or check the official LAX tracker.')}{' '}
@@ -177,8 +242,19 @@ export default function Arrivals({
       {(lastKnown ? reportedPredictions : arrivals).slice(0, 4).map((arrival, index) => {
         const reportedAt = lastKnown ? Date.parse(data?.arrivalFetchedAt || '') : now;
         const minutes = Math.max(0, Math.ceil((arrival.due - reportedAt) / 60_000));
+        const isLive = !lastKnown && !arrival.scheduled;
+        const arriving = isLive && arrival.due - now <= 30_000;
+        const approach =
+          isLive && index === 0
+            ? Math.min(1, Math.max(0, 1 - (arrival.due - now) / APPROACH_WINDOW_MS))
+            : 0;
+        const alertOn = busAlert.alert?.vehicleID === arrival.vehicleID && isLive;
+        const showBell = alertOn || (isLive && canSetAlert(arrival, now));
         return (
-          <div key={arrival.id} className={`arrival-row ${index === 0 ? 'arrival-next' : ''}`}>
+          <div
+            key={arrival.id}
+            className={`arrival-row ${index === 0 ? 'arrival-next' : ''}${arriving ? ' is-arriving' : ''}`}
+          >
             <div className="bus-symbol">
               <BusFront size={22} />
             </div>
@@ -196,18 +272,39 @@ export default function Arrivals({
                 </span>
               </div>
             </div>
-            <div
-              className={`arrival-time${!lastKnown && !arrival.scheduled && arrival.due - now <= 30_000 ? ' is-arriving' : ''}`}
-            >
-              {!lastKnown && !arrival.scheduled && arrival.due - now <= 30_000 ? (
+            {showBell && (
+              <Button
+                type="button"
+                className={`icon-button bus-alert-toggle${alertOn ? ' is-on' : ''}`}
+                aria-pressed={alertOn}
+                title={alertOn ? t('Cancel alert') : t('Alert me 2 min before')}
+                aria-label={
+                  alertOn
+                    ? t('Cancel alert for bus {name}', { name: arrival.busName })
+                    : t('Alert me 2 min before bus {name} arrives', { name: arrival.busName })
+                }
+                onClick={() => void busAlert.toggle(arrival)}
+              >
+                {alertOn ? <BellRing size={18} /> : <Bell size={18} />}
+              </Button>
+            )}
+            <div className={`arrival-time${arriving ? ' is-arriving' : ''}`}>
+              {arriving ? (
                 <strong>{t('Arriving')}</strong>
               ) : (
                 <>
-                  <strong>{minutes < 1 ? '<1' : minutes}</strong>
+                  <strong>
+                    <RollingNumber value={minutes < 1 ? '<1' : minutes} />
+                  </strong>
                   <span>{lastKnown ? t('min at last update') : t('min')}</span>
                 </>
               )}
             </div>
+            {isLive && index === 0 && (
+              <div className="approach-track" aria-hidden="true">
+                <i style={{ transform: `scaleX(${approach})` }} />
+              </div>
+            )}
           </div>
         );
       })}

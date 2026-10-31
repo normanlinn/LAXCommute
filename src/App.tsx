@@ -53,6 +53,7 @@ import AppMenu from './components/AppMenu';
 import MapLoading from './components/MapLoading';
 import CommuteWelcome from './components/CommuteWelcome';
 import { useTheme } from './theme/ThemeProvider';
+import { haptic } from './domain/haptics';
 const darkRouteColor = (color: string) =>
   color === '#3262ab' ? '#88b7ff' : color === '#b76328' ? '#e4bb82' : '#58dce3';
 const AccountPanel = lazy(() => import('./components/AccountPanel'));
@@ -239,6 +240,12 @@ export default function App() {
     if (recovering || authReturn) setTab('account');
   }, [recovering, authReturn]);
   function changeTab(next: string) {
+    if (next !== tab) {
+      haptic('tap');
+      // A new page should open at its top, not at the previous page's scroll position.
+      const sameLayout = (next === 'map' || next === 'home') && (tab === 'map' || tab === 'home');
+      if (!sameLayout) window.scrollTo({ top: 0, behavior: 'instant' });
+    }
     initialNavigation.current = true;
     setWelcome(false);
     setTab(next);
@@ -254,6 +261,7 @@ export default function App() {
     setOverride(null);
   }
   function chooseRoute(next: string) {
+    if (next !== lot) haptic('select');
     setLot(next);
     setOverride(null);
   }
@@ -356,7 +364,14 @@ export default function App() {
           )}{' '}
         </div>
       )}
-      <main className={showTrip ? 'trip-layout' : 'settings-layout'}>
+      <motion.main
+        // Map and Go home share one layout; keeping its key stable avoids remounting the map.
+        key={showTrip ? 'trip' : tab}
+        className={showTrip ? 'trip-layout' : 'settings-layout'}
+        initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.28, ease: [0.2, 0.8, 0.2, 1] }}
+      >
         {showTrip ? (
           <>
             <section className="map-column">
@@ -852,7 +867,7 @@ export default function App() {
             )}
           </Suspense>
         )}
-      </main>
+      </motion.main>
       <CommuteWelcome
         open={welcome && !hasSaved && !recovering && !authReturn}
         onSetup={() => changeTab('saved')}
@@ -866,7 +881,25 @@ export default function App() {
             aria-current={tab === id ? 'page' : undefined}
             onClick={() => changeTab(id)}
           >
-            <Icon size={21} strokeWidth={tab === id ? 2.3 : 1.8} />
+            {tab === id && (
+              <motion.span
+                layoutId="nav-pill"
+                className="nav-pill"
+                aria-hidden="true"
+                transition={
+                  reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 520, damping: 38 }
+                }
+              />
+            )}
+            <motion.span
+              key={tab === id ? 'on' : 'off'}
+              className="nav-icon"
+              initial={reduceMotion || tab !== id ? false : { scale: 0.7, y: 2 }}
+              animate={{ scale: 1, y: 0 }}
+              transition={{ type: 'spring', stiffness: 600, damping: 18 }}
+            >
+              <Icon size={21} strokeWidth={tab === id ? 2.3 : 1.8} />
+            </motion.span>
             <span>{t(label)}</span>
           </Button>
         ))}
