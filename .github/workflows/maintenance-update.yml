@@ -31,12 +31,10 @@ jobs:
           npm run typecheck
           npm run test
           npm run build
-          npx --no-install prettier --write .github/workflows/repository-health.yml .github/workflows/maintenance-update.yml
           npm audit --audit-level=high || echo 'Security audit still requires follow-up; see the separate audit check.'
           git config user.name 'Zaw Lin Naing'
           git config user.email 'mrzawlinnaing1001@gmail.com'
           git add package.json package-lock.json
-          git add .github/workflows/repository-health.yml .github/workflows/maintenance-update.yml
           if ! git diff --cached --quiet; then
             git commit -m "Update compatible dependencies after validation"
             git push origin HEAD:maintenance/repository-health
