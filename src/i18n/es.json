@@ -374,5 +374,11 @@
   "Fix": "Corrección",
   "Security": "Seguridad",
   "Show all {count} release days": "Mostrar los {count} días de lanzamiento",
-  "Build {commit}": "Compilación {commit}"
+  "Build {commit}": "Compilación {commit}",
+  "Service announcement": "Aviso de servicio",
+  "Live bus times are temporarily unavailable": "Los horarios de autobús en vivo no están disponibles temporalmente",
+  "Until then, please use the official LAX tracker for live bus times.": "Mientras tanto, usa el seguimiento oficial de LAX para ver los horarios en vivo.",
+  "Open official tracker": "Abrir seguimiento oficial",
+  "Dismiss announcement": "Cerrar aviso",
+  "Since November 4, the company that runs LAX’s shuttle tracking (Syncromatics) no longer shares live bus data with outside apps like LAXCommute. The developer is contacting LAX and Syncromatics to ask for access so live times can return.": "Desde el 4 de noviembre, la empresa que opera el seguimiento de los transportes de LAX (Syncromatics) ya no comparte datos de autobuses en vivo con aplicaciones externas como LAXCommute. El desarrollador se está comunicando con LAX y Syncromatics para solicitar acceso y que los horarios en vivo vuelvan."
 }

@@ -98,3 +98,26 @@ test('the menu shows version history with an update count', async ({ page }) => 
   await expect(page.getByText(/\d+ updates since/)).toBeVisible();
   await expect(page.locator('.release-timeline > li').first()).toContainText('Latest');
 });
+
+test('an outage announcement explains why live times are missing and can be dismissed', async ({
+  page,
+}) => {
+  await mockFeed(page);
+  await page.route(/\/api\/live\/\d+/, (r) =>
+    r.fulfill({ status: 502, json: { error: 'Shuttle data is temporarily unavailable.' } }),
+  );
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Explore first' }).click();
+  const notice = page.locator('.outage-notice');
+  await expect(notice).toContainText('Live bus times are temporarily unavailable');
+  await expect(notice).toContainText('Syncromatics');
+  await notice.getByRole('button', { name: 'Dismiss announcement' }).click();
+  await expect(notice).toBeHidden();
+  await page.reload();
+  await expect(page.locator('.outage-notice')).toBeHidden();
+});
+
+test('no outage announcement while live times are working', async ({ page }) => {
+  await open(page);
+  await expect(page.locator('.outage-notice')).toHaveCount(0);
+});

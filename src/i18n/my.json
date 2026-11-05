@@ -374,5 +374,11 @@
   "Fix": "ပြင်ဆင်ချက်",
   "Security": "လုံခြုံရေး",
   "Show all {count} release days": "ထုတ်ဝေသည့်ရက် {count} ရက်လုံး ပြပါ",
-  "Build {commit}": "Build {commit}"
+  "Build {commit}": "Build {commit}",
+  "Service announcement": "ဝန်ဆောင်မှု ကြေညာချက်",
+  "Live bus times are temporarily unavailable": "တိုက်ရိုက်ကားအချိန်များ ယာယီ မရရှိနိုင်ပါ",
+  "Until then, please use the official LAX tracker for live bus times.": "ထိုအချိန်အထိ တိုက်ရိုက်ကားအချိန်များအတွက် LAX တရားဝင် ခြေရာခံစနစ်ကို အသုံးပြုပါ။",
+  "Open official tracker": "တရားဝင် ခြေရာခံစနစ် ဖွင့်ပါ",
+  "Dismiss announcement": "ကြေညာချက် ပိတ်ပါ",
+  "Since November 4, the company that runs LAX’s shuttle tracking (Syncromatics) no longer shares live bus data with outside apps like LAXCommute. The developer is contacting LAX and Syncromatics to ask for access so live times can return.": "နိုဝင်ဘာ ၄ ရက်နေ့မှစ၍ LAX ကားခြေရာခံစနစ်ကို လုပ်ဆောင်သော ကုမ္ပဏီ (Syncromatics) သည် LAXCommute ကဲ့သို့ ပြင်ပ app များကို တိုက်ရိုက်ကားဒေတာ မမျှဝေတော့ပါ။ တိုက်ရိုက်အချိန်များ ပြန်ရရှိနိုင်ရန် developer က LAX နှင့် Syncromatics ထံ ခွင့်ပြုချက် တောင်းခံနေပါသည်။"
 }

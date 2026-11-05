@@ -46,6 +46,7 @@ import { useLive, useOnline, useRoute, useSnapshotFresh } from './hooks/useShutt
 import ShuttleMap from './components/ShuttleMap';
 import Arrivals from './components/Arrivals';
 import { officialTrackerURL } from './components/OfficialTracker';
+import OutageNotice from './components/OutageNotice';
 import CrowdReports from './components/CrowdReports';
 import InstallApp from './components/InstallApp';
 import ShareApp from './components/ShareApp';
@@ -222,6 +223,12 @@ export default function App() {
   const arrivalFresh = useSnapshotFresh(live.data?.arrivalFetchedAt);
   // The feed answered but has nothing current to show (or did not answer at all).
   const liveDown = Boolean(live.isError || live.data?.sourceUnavailable) && !arrivalFresh;
+  // Keep the announcement up on every tab until fresh live data actually returns.
+  const [feedOutage, setFeedOutage] = useState(false);
+  useEffect(() => {
+    if (liveDown) setFeedOutage(true);
+    else if (arrivalFresh) setFeedOutage(false);
+  }, [liveDown, arrivalFresh]);
   // Re-render periodically so the map card's minutes count down between feed refreshes.
   const [, setPeekClock] = useState(0);
   useEffect(() => {
@@ -378,6 +385,7 @@ export default function App() {
           )}{' '}
         </div>
       )}
+      {online && feedOutage && <OutageNotice routeID={route.id} />}
       <motion.main
         // Map and Go home share one layout; keeping its key stable avoids remounting the map.
         key={showTrip ? 'trip' : tab}
