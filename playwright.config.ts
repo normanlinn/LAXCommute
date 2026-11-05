@@ -5,6 +5,8 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: 'e2e',
   fullyParallel: true,
+  // A cold dev server optimizes dependencies on first load, which can take ~30 s.
+  timeout: 60_000,
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? 'github' : 'list',
   use: { baseURL: 'http://localhost:5173', trace: 'retain-on-failure' },
