@@ -2,24 +2,31 @@ import { ExternalLink, RefreshCw } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageProvider';
 import Button from './ui/Button';
 
-// LAX's own live-times pages, one per lot. They cannot be embedded (SAMEORIGIN).
-const LOT_PAGES: Record<number, string> = {
-  6883: 'westlot',
-  6884: 'eastlot',
-  6885: 'southlot',
+// The operator's public tracker opens straight to one stop's live arrivals.
+// It cannot be embedded, so riders are sent there in a new tab.
+const DIRECTIONS: Record<number, string> = {
+  6883: 'west-lot',
+  6884: 'east-lot',
+  6885: 'south-lot',
 };
-export function officialTrackerURL(routeID?: number) {
-  const lot = routeID ? LOT_PAGES[routeID] : undefined;
-  return `https://shuttles.flylax.com/employeeparking${lot ? `/${lot}` : ''}`;
+export function officialTrackerURL(routeID?: number, stopID?: number) {
+  const direction = routeID ? DIRECTIONS[routeID] : undefined;
+  if (!direction) return 'https://shuttles.flylax.com/employeeparking';
+  const route = `https://laxbus.syncromatics.com/route/${routeID}/direction/${direction}`;
+  return stopID ? `${route}/stop/${stopID}/arrivals` : route;
 }
 
 /** Shown while LAXCommute's own feed is down, so riders are never left without times. */
 export default function OfficialTracker({
   routeID,
+  stopID,
+  stopName,
   retrying,
   onRetry,
 }: {
   routeID?: number;
+  stopID?: number;
+  stopName?: string;
   retrying: boolean;
   onRetry: () => void;
 }) {
@@ -49,11 +56,12 @@ export default function OfficialTracker({
       </div>
       <a
         className="official-tracker-open"
-        href={officialTrackerURL(routeID)}
+        href={officialTrackerURL(routeID, stopID)}
         target="_blank"
         rel="noreferrer"
       >
-        {t('Open official live times')} <ExternalLink size={16} aria-hidden="true" />
+        {stopName ? t('Live times for {stop}', { stop: stopName }) : t('Open official live times')}{' '}
+        <ExternalLink size={16} aria-hidden="true" />
       </a>
     </section>
   );

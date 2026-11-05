@@ -85,9 +85,11 @@ test('when the live feed is down, riders get a link to the official times for th
   await page.goto('/');
   await page.getByRole('button', { name: 'Explore first' }).click();
   await expect(page.getByText('Live times are reconnecting')).toBeVisible();
-  await expect(page.getByRole('link', { name: /Open official live times/ })).toHaveAttribute(
+  await expect(
+    page.getByRole('link', { name: /Live times for South Lot Stop #1/ }),
+  ).toHaveAttribute(
     'href',
-    'https://shuttles.flylax.com/employeeparking/southlot',
+    'https://laxbus.syncromatics.com/route/6885/direction/south-lot/stop/11319089/arrivals',
   );
 });
 

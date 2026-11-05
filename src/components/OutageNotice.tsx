@@ -16,7 +16,7 @@ function dismissedRecently() {
 }
 
 /** Explains the live-data outage to riders while it lasts. */
-export default function OutageNotice({ routeID }: { routeID?: number }) {
+export default function OutageNotice({ routeID, stopID }: { routeID?: number; stopID?: number }) {
   const { t } = useLanguage();
   const [hidden, setHidden] = useState(dismissedRecently);
   if (hidden) return null;
@@ -32,7 +32,7 @@ export default function OutageNotice({ routeID }: { routeID?: number }) {
         </p>
         <p>
           {t('Until then, please use the official LAX tracker for live bus times.')}{' '}
-          <a href={officialTrackerURL(routeID)} target="_blank" rel="noreferrer">
+          <a href={officialTrackerURL(routeID, stopID)} target="_blank" rel="noreferrer">
             {t('Open official tracker')} <ExternalLink size={13} aria-hidden="true" />
           </a>
         </p>

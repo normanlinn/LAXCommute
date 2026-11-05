@@ -385,7 +385,7 @@ export default function App() {
           )}{' '}
         </div>
       )}
-      {online && feedOutage && <OutageNotice routeID={route.id} />}
+      {online && feedOutage && <OutageNotice routeID={route.id} stopID={selectedStop?.id} />}
       <motion.main
         // Map and Go home share one layout; keeping its key stable avoids remounting the map.
         key={showTrip ? 'trip' : tab}
@@ -601,7 +601,11 @@ export default function App() {
                         ? t('Showing the last saved update')
                         : t('Live data from the LAX tracker')}
                 </span>
-                <a href={officialTrackerURL(route.id)} target="_blank" rel="noreferrer">
+                <a
+                  href={officialTrackerURL(route.id, selectedStop?.id)}
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   {' '}
                   {t('LAX tracker')} <ExternalLink size={13} />
                 </a>

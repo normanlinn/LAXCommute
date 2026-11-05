@@ -223,6 +223,8 @@ export default function Arrivals({
       {stop && (lastKnown || data?.sourceUnavailable) && reportedPredictions.length === 0 && (
         <OfficialTracker
           routeID={routeID ?? data?.routeID}
+          stopID={stop.id}
+          stopName={stop.name}
           retrying={fetching}
           onRetry={onRefresh}
         />
