@@ -23,6 +23,8 @@ import OfficialTracker from './OfficialTracker';
 
 // The approach bar fills over the final ten minutes of a live prediction.
 const APPROACH_WINDOW_MS = 10 * 60_000;
+// Saved times older than this are no help for catching a bus, so they are hidden.
+const LAST_KNOWN_MAX_MS = 10 * 60_000;
 
 // Screen readers hear a calm update at these points, not every countdown tick.
 function approachStage(msAway: number) {
@@ -102,10 +104,13 @@ export default function Arrivals({
   const fresh =
     !data?.cached && !data?.arrivalSourceUnavailable && snapshotFresh(data?.arrivalFetchedAt, now);
   const lastKnown = Boolean(data?.cached || data?.arrivalSourceUnavailable || error);
-  const reportedPredictions = (data?.predictions || []).filter(
-    (arrival) =>
-      Number.isFinite(arrival.due) && arrival.due >= Date.parse(data?.arrivalFetchedAt || ''),
-  );
+  const lastKnownUsable = now - Date.parse(data?.arrivalFetchedAt || '') <= LAST_KNOWN_MAX_MS;
+  const reportedPredictions = lastKnownUsable
+    ? (data?.predictions || []).filter(
+        (arrival) =>
+          Number.isFinite(arrival.due) && arrival.due >= Date.parse(data?.arrivalFetchedAt || ''),
+      )
+    : [];
   const arrivals = fresh && !error ? availableArrivals(data?.predictions || [], now) : [];
   const nearbyWithNextPass =
     fresh && !error && !data?.vehicleSourceUnavailable && snapshotFresh(data?.vehicleFetchedAt, now)
@@ -215,7 +220,7 @@ export default function Arrivals({
           </Button>
         </div>
       )}
-      {(error || data?.sourceUnavailable) && arrivals.length === 0 && (
+      {stop && (lastKnown || data?.sourceUnavailable) && reportedPredictions.length === 0 && (
         <OfficialTracker
           routeID={routeID ?? data?.routeID}
           retrying={fetching}
@@ -255,8 +260,8 @@ export default function Arrivals({
         </p>
       )}
       {!loading &&
-        !error &&
-        !data?.arrivalSourceUnavailable &&
+        !lastKnown &&
+        !data?.sourceUnavailable &&
         stop &&
         arrivals.length === 0 &&
         (!lastKnown || reportedPredictions.length === 0) && (
@@ -288,7 +293,8 @@ export default function Arrivals({
         return (
           <div
             key={arrival.id}
-            className={`arrival-row ${index === 0 ? 'arrival-next' : ''}${arriving ? ' is-arriving' : ''}`}
+            className={`arrival-row ${index === 0 ? 'arrival-next' : ''}${arriving ? ' is-arriving' : ''}${lastKnown ? ' is-last-known' : ''}`}
+            style={{ '--i': index }}
           >
             <div className="bus-symbol">
               <BusFront size={22} />

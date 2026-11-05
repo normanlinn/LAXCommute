@@ -361,5 +361,18 @@
   "Live times are reconnecting": "တိုက်ရိုက်အချိန်များ ပြန်လည်ချိတ်ဆက်နေသည်",
   "We keep retrying automatically. Until then, the official LAX tracker has the same buses.": "ကျွန်ုပ်တို့ အလိုအလျောက် ထပ်ကြိုးစားနေပါသည်။ ထိုအတောအတွင်း LAX တရားဝင် ခြေရာခံစနစ်တွင် တူညီသောကားများကို ကြည့်နိုင်ပါသည်။",
   "Open official live times": "တရားဝင် တိုက်ရိုက်အချိန်များ ဖွင့်ပါ",
-  "Live times paused · route map only": "တိုက်ရိုက်အချိန်များ ခေတ္တရပ်ထားသည် · လမ်းကြောင်းမြေပုံသာ"
+  "Live times paused · route map only": "တိုက်ရိုက်အချိန်များ ခေတ္တရပ်ထားသည် · လမ်းကြောင်းမြေပုံသာ",
+  "What's new": "အသစ်များ",
+  "{count} updates since {date}": "{date} မှစ၍ အပ်ဒိတ် {count} ခု",
+  "Updates": "အပ်ဒိတ်များ",
+  "Release days": "ထုတ်ဝေသည့်ရက်များ",
+  "Last update": "နောက်ဆုံးအပ်ဒိတ်",
+  "Latest": "နောက်ဆုံး",
+  "New": "အသစ်",
+  "Improved": "ပိုကောင်းအောင်ပြင်ဆင်",
+  "Design": "ဒီဇိုင်း",
+  "Fix": "ပြင်ဆင်ချက်",
+  "Security": "လုံခြုံရေး",
+  "Show all {count} release days": "ထုတ်ဝေသည့်ရက် {count} ရက်လုံး ပြပါ",
+  "Build {commit}": "Build {commit}"
 }

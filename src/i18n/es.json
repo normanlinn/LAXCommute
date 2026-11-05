@@ -361,5 +361,18 @@
   "Live times are reconnecting": "Reconectando los horarios en vivo",
   "We keep retrying automatically. Until then, the official LAX tracker has the same buses.": "Seguimos reintentando automáticamente. Mientras tanto, el seguimiento oficial de LAX muestra los mismos autobuses.",
   "Open official live times": "Abrir horarios oficiales en vivo",
-  "Live times paused · route map only": "Horarios en vivo en pausa · solo mapa de la ruta"
+  "Live times paused · route map only": "Horarios en vivo en pausa · solo mapa de la ruta",
+  "What's new": "Novedades",
+  "{count} updates since {date}": "{count} actualizaciones desde {date}",
+  "Updates": "Actualizaciones",
+  "Release days": "Días de lanzamiento",
+  "Last update": "Última actualización",
+  "Latest": "Más reciente",
+  "New": "Nuevo",
+  "Improved": "Mejorado",
+  "Design": "Diseño",
+  "Fix": "Corrección",
+  "Security": "Seguridad",
+  "Show all {count} release days": "Mostrar los {count} días de lanzamiento",
+  "Build {commit}": "Compilación {commit}"
 }

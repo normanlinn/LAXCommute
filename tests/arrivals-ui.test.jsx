@@ -6,9 +6,11 @@ import { DEFAULT_COMMUTE } from '../src/domain/commute';
 
 afterEach(cleanup);
 
-function setup({ dueInSeconds, atStop = false, userLocation = null }) {
+function setup({ dueInSeconds, atStop = false, userLocation = null, savedMinutesAgo = null }) {
   const now = Date.now();
-  const updated = new Date(now - 3_000).toISOString();
+  const updated = new Date(
+    now - (savedMinutesAgo === null ? 3_000 : savedMinutesAgo * 60_000),
+  ).toISOString();
   const stop = { id: 11319089, name: 'South Lot Stop #1', lat: 33.95313, lon: -118.393406 };
   const vehicle = {
     id: 11150,
@@ -25,6 +27,7 @@ function setup({ dueInSeconds, atStop = false, userLocation = null }) {
     vehicles: [vehicle],
     arrivals: [],
     warnings: [],
+    cached: savedMinutesAgo !== null,
     predictions: [
       {
         id: '6885:11150:' + (now + dueInSeconds * 1_000),
@@ -90,5 +93,14 @@ describe('arrival UI semantics', () => {
     });
     expect(screen.getByText(/Leave in \d+ min/)).toBeTruthy();
     expect(screen.getByText(/min walk from where you are/)).toBeTruthy();
+  });
+
+  it('shows recent saved times as history, but hides hours-old ones', () => {
+    setup({ dueInSeconds: 20 * 60, savedMinutesAgo: 3 });
+    expect(screen.getByText('Last reported')).toBeTruthy();
+    cleanup();
+    setup({ dueInSeconds: 20 * 60, savedMinutesAgo: 665 });
+    expect(screen.queryByText('Last reported')).toBeNull();
+    expect(screen.getByText('Live times are reconnecting')).toBeTruthy();
   });
 });

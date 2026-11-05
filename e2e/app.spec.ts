@@ -90,3 +90,11 @@ test('when the live feed is down, riders get a link to the official times for th
     'https://shuttles.flylax.com/employeeparking/southlot',
   );
 });
+
+test('the menu shows version history with an update count', async ({ page }) => {
+  await open(page);
+  await page.getByRole('button', { name: 'Open menu' }).click();
+  await page.getByText("What's new").click();
+  await expect(page.getByText(/\d+ updates since/)).toBeVisible();
+  await expect(page.locator('.release-timeline > li').first()).toContainText('Latest');
+});

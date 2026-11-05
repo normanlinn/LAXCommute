@@ -4303,41 +4303,37 @@ html[data-theme='lax-dark'] .app-header {
   position: relative;
   overflow: hidden;
   gap: 14px;
-  margin-bottom: 10px;
-  padding: 20px 18px 24px;
-  border-radius: 24px;
-  border: 1px solid color-mix(in oklab, var(--route-color) 42%, transparent);
-  background:
-    radial-gradient(
-      120% 140% at 100% 0%,
-      color-mix(in oklab, var(--route-color) 30%, transparent),
-      transparent 62%
-    ),
-    linear-gradient(
-      165deg,
-      color-mix(in oklab, var(--color-base-200) 88%, var(--route-color) 12%),
-      var(--color-base-100)
-    );
-  box-shadow: 0 20px 44px -26px color-mix(in oklab, var(--route-color) 80%, transparent);
+  margin-bottom: 8px;
+  padding: 18px 18px 22px 22px;
+  border-radius: 20px;
+  border: 1px solid color-mix(in oklab, var(--color-base-content) 10%, transparent);
+  background: var(--color-base-200);
+  box-shadow: 0 1px 2px color-mix(in oklab, #000 18%, transparent);
+}
+/* A route-colored edge marks the bus to catch, like a boarding pass. */
+.arrivals .arrival-row.arrival-next::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: var(--route-color);
 }
 .arrivals .arrival-next .arrival-description strong {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
   white-space: nowrap;
-  opacity: 0.75;
+  opacity: 0.7;
 }
 .arrivals .arrival-next .arrival-time strong {
-  font-size: clamp(52px, 15vw, 72px);
+  font-size: clamp(48px, 14vw, 64px);
   line-height: 0.9;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.04em;
 }
 .arrivals .arrival-next .bus-symbol {
   width: 48px;
   height: 48px;
-  border-radius: 16px;
-  background: color-mix(in oklab, var(--route-color) 20%, transparent);
+  border-radius: 14px;
+  background: color-mix(in oklab, var(--route-color) 16%, transparent);
 }
 .arrivals .arrival-next .approach-track {
   left: 18px;
@@ -4354,7 +4350,7 @@ html[data-theme='lax-dark'] .app-header {
   min-height: 0;
   padding: 12px 8px;
   border: 0;
-  border-radius: 16px;
+  border-radius: 0;
   transition: background 0.2s ease;
 }
 .arrivals .arrival-row:not(.arrival-next) + .arrival-row:not(.arrival-next) {
@@ -4480,4 +4476,332 @@ html[data-theme='lax-dark'] .app-header {
   background: var(--color-warning, #e0a43a);
   box-shadow: none;
   animation: none;
+}
+
+/* What's new: version history generated from git at build time */
+.release-notes {
+  margin: 18px 0;
+  border-radius: 18px;
+  border: 1px solid color-mix(in oklab, var(--color-base-content) 12%, transparent);
+  background: color-mix(in oklab, var(--color-base-content) 3%, transparent);
+  overflow: hidden;
+}
+.release-notes summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  list-style: none;
+}
+.release-notes summary::-webkit-details-marker {
+  display: none;
+}
+.release-badge {
+  flex: none;
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-primary-content, #fff);
+  background: var(--color-primary);
+}
+.release-summary {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+.release-summary span {
+  font-size: 13px;
+  opacity: 0.7;
+}
+.release-chevron {
+  flex: none;
+  transition: transform 0.2s ease;
+}
+.release-notes[open] .release-chevron {
+  transform: rotate(180deg);
+}
+.release-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 0;
+  padding: 0 16px 14px;
+}
+.release-stats div {
+  padding: 10px;
+  border-radius: 12px;
+  text-align: center;
+  background: color-mix(in oklab, var(--color-base-content) 5%, transparent);
+}
+.release-stats dt {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  opacity: 0.7;
+}
+.release-stats dd {
+  margin: 2px 0 0;
+  font-size: 18px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.release-timeline {
+  margin: 0;
+  padding: 0 16px;
+  list-style: none;
+}
+.release-timeline > li {
+  position: relative;
+  padding: 0 0 14px 18px;
+  border-left: 2px solid color-mix(in oklab, var(--color-primary) 35%, transparent);
+}
+.release-timeline > li::before {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: 3px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-primary);
+}
+.release-timeline h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 6px;
+  font-size: 14px;
+}
+.release-latest {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-success, #2fbf71);
+  background: color-mix(in oklab, var(--color-success, #2fbf71) 15%, transparent);
+}
+.release-timeline ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.release-item {
+  display: grid;
+  gap: 2px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.release-kind {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+}
+.release-item.kind-fix .release-kind {
+  color: var(--color-warning, #c58a1c);
+}
+.release-item.kind-security .release-kind {
+  color: var(--color-success, #2fbf71);
+}
+.release-more {
+  display: block;
+  width: calc(100% - 32px);
+  margin: 0 16px 12px;
+  padding: 10px;
+  border-radius: 12px;
+  font-weight: 600;
+  color: inherit;
+  background: color-mix(in oklab, var(--color-base-content) 6%, transparent);
+}
+.release-build {
+  margin: 0;
+  padding: 0 16px 14px;
+  font-size: 12px;
+  opacity: 0.55;
+}
+
+/* ── Polish: real-app controls and quick motion (both themes) ── */
+.arrival-badge {
+  white-space: nowrap;
+}
+/* Saved times read as history, not as a live countdown. */
+.arrivals .arrival-row.is-last-known .arrival-time strong {
+  color: color-mix(in oklab, var(--color-base-content) 70%, transparent);
+}
+.arrivals .arrival-row.arrival-next.is-last-known::before {
+  background: color-mix(in oklab, var(--color-base-content) 30%, transparent);
+}
+
+/* Buttons: solid, readable when disabled, and a quick press response. */
+.btn {
+  transition:
+    transform 0.12s ease,
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+.crowd-form .btn-primary,
+.feedback-modal form .btn-primary {
+  min-height: 50px;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 600;
+}
+.btn-primary:disabled,
+.btn-primary[disabled],
+[data-theme='lax-dark'] .button-primary:disabled {
+  opacity: 1;
+  color: color-mix(in oklab, var(--color-base-content) 48%, transparent);
+  background: color-mix(in oklab, var(--color-base-content) 7%, var(--color-base-100));
+  border: 1px solid color-mix(in oklab, var(--color-base-content) 12%, transparent);
+  box-shadow: none;
+}
+.crowd-form select,
+.feedback-modal select,
+.feedback-modal textarea,
+.feedback-modal input {
+  min-height: 50px;
+  border-radius: 14px;
+  border-color: color-mix(in oklab, var(--color-base-content) 16%, transparent);
+  background-color: var(--color-base-100);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.crowd-form select:focus-visible,
+.feedback-modal select:focus-visible,
+.feedback-modal textarea:focus-visible,
+.feedback-modal input:focus-visible {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 25%, transparent);
+}
+/* Menu: visible edges on the close and feedback buttons. */
+.preferences-heading .btn {
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  border-radius: 12px;
+  border: 1px solid color-mix(in oklab, var(--color-base-content) 16%, transparent);
+  background: color-mix(in oklab, var(--color-base-content) 5%, transparent);
+}
+.preferences-heading .btn:hover {
+  background: color-mix(in oklab, var(--color-base-content) 10%, transparent);
+}
+.btn.feedback-menu-button {
+  justify-content: flex-start;
+  text-align: left;
+  white-space: normal;
+  line-height: 1.3;
+}
+.feedback-menu-button {
+  min-height: 54px;
+  padding: 0 16px;
+  border-radius: 14px;
+  border: 1px solid color-mix(in oklab, var(--color-base-content) 14%, transparent);
+  background: color-mix(in oklab, var(--color-base-content) 4%, transparent);
+  font-weight: 600;
+}
+.feedback-menu-button::after {
+  content: '›';
+  margin-left: auto;
+  font-size: 22px;
+  line-height: 1;
+  opacity: 0.5;
+}
+.feedback-menu-button:hover {
+  background: color-mix(in oklab, var(--color-base-content) 8%, transparent);
+}
+
+/* Motion: short, transform/opacity only, so it stays smooth on older phones. */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+.arrivals .arrival-row {
+  animation: rise-in 0.26s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+.official-tracker,
+.bus-alert-banner,
+.leave-card,
+.nearby-gps-notice,
+.last-known-notice,
+.crowd-summary,
+.release-timeline > li {
+  animation: rise-in 0.28s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.release-badge,
+.release-latest {
+  animation: pop-in 0.22s ease-out both;
+}
+.bus-alert-toggle.is-on svg {
+  animation: bell-ring 0.5s ease-in-out;
+  transform-origin: 50% 0;
+}
+@keyframes bell-ring {
+  20% {
+    transform: rotate(14deg);
+  }
+  40% {
+    transform: rotate(-12deg);
+  }
+  60% {
+    transform: rotate(8deg);
+  }
+  80% {
+    transform: rotate(-4deg);
+  }
+}
+.feedback-menu-button,
+.appearance-options label,
+.transit-route-picker button {
+  transition:
+    transform 0.12s ease,
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+.feedback-menu-button:active,
+.appearance-options label:active {
+  transform: scale(0.98);
+}
+@media (prefers-reduced-motion: reduce) {
+  .arrivals .arrival-row,
+  .official-tracker,
+  .bus-alert-banner,
+  .leave-card,
+  .nearby-gps-notice,
+  .last-known-notice,
+  .crowd-summary,
+  .release-timeline > li,
+  .release-badge,
+  .release-latest,
+  .bus-alert-toggle.is-on svg {
+    animation: none;
+  }
+  .btn:active:not(:disabled),
+  .feedback-menu-button:active,
+  .appearance-options label:active {
+    transform: none;
+  }
 }
