@@ -360,5 +360,6 @@
   "Try our live feed again": "Reintentar nuestra conexión en vivo",
   "Live times are reconnecting": "Reconectando los horarios en vivo",
   "We keep retrying automatically. Until then, the official LAX tracker has the same buses.": "Seguimos reintentando automáticamente. Mientras tanto, el seguimiento oficial de LAX muestra los mismos autobuses.",
-  "Open official live times": "Abrir horarios oficiales en vivo"
+  "Open official live times": "Abrir horarios oficiales en vivo",
+  "Live times paused · route map only": "Horarios en vivo en pausa · solo mapa de la ruta"
 }

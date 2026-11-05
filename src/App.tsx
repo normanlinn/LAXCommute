@@ -45,6 +45,7 @@ import { useLive, useOnline, useRoute, useSnapshotFresh } from './hooks/useShutt
 // The provider stays lazy without a second request for its tiny selector.
 import ShuttleMap from './components/ShuttleMap';
 import Arrivals from './components/Arrivals';
+import { officialTrackerURL } from './components/OfficialTracker';
 import CrowdReports from './components/CrowdReports';
 import InstallApp from './components/InstallApp';
 import ShareApp from './components/ShareApp';
@@ -219,6 +220,8 @@ export default function App() {
   );
   const vehicleFresh = useSnapshotFresh(live.data?.vehicleFetchedAt);
   const arrivalFresh = useSnapshotFresh(live.data?.arrivalFetchedAt);
+  // The feed answered but has nothing current to show (or did not answer at all).
+  const liveDown = Boolean(live.isError || live.data?.sourceUnavailable) && !arrivalFresh;
   // Re-render periodically so the map card's minutes count down between feed refreshes.
   const [, setPeekClock] = useState(0);
   useEffect(() => {
@@ -578,39 +581,19 @@ export default function App() {
                   </span>
                 </motion.button>
               </div>
-              {routeQuery.data?.warning && (
-                <p className="map-warning">{t(routeQuery.data.warning)}</p>
-              )}
-              {(live.isError ||
-                routeQuery.isError ||
-                live.data?.cached ||
-                routeQuery.data?.cached ||
-                Boolean(live.data?.warnings?.length)) && (
-                <p className="alert alert-soft alert-warning notice" role="status">
-                  {t('Shuttle source unavailable. Try again or check the official LAX tracker.')}{' '}
-                  <a
-                    href="https://shuttles.flylax.com/employeeparking"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    {t('LAX tracker')}
-                  </a>
-                </p>
-              )}
-              <div className="map-footer">
+              {/* One status line; the arrivals card explains outages and links to official times. */}
+              <div className={`map-footer${liveDown ? ' is-paused' : ''}`}>
                 <span>
                   <span className="dot" />
-                  {live.data?.cached || live.data?.sourceUnavailable
-                    ? t('Showing the last saved update')
-                    : online
-                      ? t('Live data from the LAX tracker')
-                      : t('Waiting for connection')}
+                  {!online
+                    ? t('Waiting for connection')
+                    : liveDown
+                      ? t('Live times paused · route map only')
+                      : live.data?.cached
+                        ? t('Showing the last saved update')
+                        : t('Live data from the LAX tracker')}
                 </span>
-                <a
-                  href="https://shuttles.flylax.com/employeeparking"
-                  target="_blank"
-                  rel="noreferrer"
-                >
+                <a href={officialTrackerURL(route.id)} target="_blank" rel="noreferrer">
                   {' '}
                   {t('LAX tracker')} <ExternalLink size={13} />
                 </a>

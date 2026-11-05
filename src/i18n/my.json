@@ -360,5 +360,6 @@
   "Try our live feed again": "တိုက်ရိုက်ဒေတာကို ထပ်စမ်းပါ",
   "Live times are reconnecting": "တိုက်ရိုက်အချိန်များ ပြန်လည်ချိတ်ဆက်နေသည်",
   "We keep retrying automatically. Until then, the official LAX tracker has the same buses.": "ကျွန်ုပ်တို့ အလိုအလျောက် ထပ်ကြိုးစားနေပါသည်။ ထိုအတောအတွင်း LAX တရားဝင် ခြေရာခံစနစ်တွင် တူညီသောကားများကို ကြည့်နိုင်ပါသည်။",
-  "Open official live times": "တရားဝင် တိုက်ရိုက်အချိန်များ ဖွင့်ပါ"
+  "Open official live times": "တရားဝင် တိုက်ရိုက်အချိန်များ ဖွင့်ပါ",
+  "Live times paused · route map only": "တိုက်ရိုက်အချိန်များ ခေတ္တရပ်ထားသည် · လမ်းကြောင်းမြေပုံသာ"
 }

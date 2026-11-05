@@ -4476,3 +4476,8 @@ html[data-theme='lax-dark'] .app-header {
     animation: none;
   }
 }
+.map-footer.is-paused .dot {
+  background: var(--color-warning, #e0a43a);
+  box-shadow: none;
+  animation: none;
+}
