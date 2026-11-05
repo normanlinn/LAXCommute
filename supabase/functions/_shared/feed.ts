@@ -4,9 +4,27 @@ export interface FeedOptions {
   fetcher?: typeof fetch;
   origin?: string;
   claim?: (path: string) => Promise<boolean>;
+  /** Syncromatics portal API key issued for LAXCommute. Without it the public
+   * rtpi proxy is used, which now only answers Syncromatics' own pages. */
+  apiKey?: string;
 }
 type Envelope<T = unknown> = { data: T[]; fetchedAt: string; sourceUnavailable?: boolean };
 const BASE = 'https://laxbus.syncromatics.com/api/rtpi';
+const PORTAL = 'https://api.syncromatics.com/portal/';
+// The portal takes the same paths as the rtpi proxy's `path` parameter.
+export function feedRequest(
+  path: string,
+  apiKey?: string,
+): { url: string; headers: Record<string, string> } {
+  if (!apiKey) {
+    const url = new URL(BASE);
+    url.searchParams.set('path', path);
+    return { url: url.toString(), headers: { Accept: 'application/json' } };
+  }
+  const url = new URL(path, PORTAL);
+  url.searchParams.set('api_key', apiKey);
+  return { url: url.toString(), headers: { Accept: 'application/json', 'Api-Key': apiKey } };
+}
 export const ROUTE_IDS = new Set([6883, 6884, 6885]);
 const inFlight = new Map<string, Promise<Envelope>>();
 export class FeedError extends Error {
@@ -73,6 +91,7 @@ export async function cachedFeed<T = unknown>(
     fetcher = globalThis.fetch,
     origin = 'https://laxcommute-cache.invalid',
     claim,
+    apiKey,
   }: FeedOptions = {},
 ): Promise<Envelope<T>> {
   const key = new Request(`${origin}/feed/${encodeURIComponent(path)}`);
@@ -103,17 +122,23 @@ export async function cachedFeed<T = unknown>(
         }
         throw new FeedError('The shuttle feed is refreshing. Please retry.', 503);
       }
-      const url = new URL(BASE);
-      url.searchParams.set('path', path);
+      const request = feedRequest(path, apiKey);
       let lastError: unknown;
       for (let attempt = 0; attempt < 2; attempt++) {
         try {
           const fetchedAt = new Date().toISOString();
-          const response = await fetcher(url.toString(), {
-            headers: { Accept: 'application/json' },
+          const response = await fetcher(request.url, {
+            headers: request.headers,
             signal: AbortSignal.timeout(3500),
           });
-          if (!response.ok) throw new FeedError('The shuttle feed is temporarily unavailable.');
+          if (!response.ok) {
+            // 401/403: the provider refused this server. Retrying cannot help.
+            if (response.status === 401 || response.status === 403) {
+              console.warn(`Shuttle source refused access (${response.status})`);
+              attempt = 1;
+            }
+            throw new FeedError('The shuttle feed is temporarily unavailable.');
+          }
           const data: unknown = await response.json();
           if (!validFeed(path, data))
             throw new FeedError('The shuttle feed returned an unexpected response.');

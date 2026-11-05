@@ -74,3 +74,19 @@ test('a GPS fix turns into a leave-by time for the next bus', async ({ page, con
   await expect(card).toContainText(/Leave in \d+ min|Time to head to your stop/);
   await expect(card).toContainText('min walk from where you are');
 });
+
+test('when the live feed is down, riders get a link to the official times for their lot', async ({
+  page,
+}) => {
+  await mockFeed(page);
+  await page.route(/\/api\/live\/\d+/, (r) =>
+    r.fulfill({ status: 502, json: { error: 'Shuttle data is temporarily unavailable.' } }),
+  );
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Explore first' }).click();
+  await expect(page.getByText('Live times are reconnecting')).toBeVisible();
+  await expect(page.getByRole('link', { name: /Open official live times/ })).toHaveAttribute(
+    'href',
+    'https://shuttles.flylax.com/employeeparking/southlot',
+  );
+});

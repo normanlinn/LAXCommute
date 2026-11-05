@@ -355,5 +355,10 @@
   "Bus {name} is arriving at your stop.": "El autobús {name} está llegando a tu parada.",
   "Bus {name} is about {minutes} min away.": "El autobús {name} está a unos {minutes} min.",
   "About {walk} min walk from where you are · based on a live prediction": "Unos {walk} min a pie desde donde estás · según una estimación en tiempo real",
-  "Time to head to your stop": "Es hora de ir a tu parada"
+  "Time to head to your stop": "Es hora de ir a tu parada",
+  "Official LAX live tracker": "Seguimiento oficial de LAX en vivo",
+  "Try our live feed again": "Reintentar nuestra conexión en vivo",
+  "Live times are reconnecting": "Reconectando los horarios en vivo",
+  "We keep retrying automatically. Until then, the official LAX tracker has the same buses.": "Seguimos reintentando automáticamente. Mientras tanto, el seguimiento oficial de LAX muestra los mismos autobuses.",
+  "Open official live times": "Abrir horarios oficiales en vivo"
 }

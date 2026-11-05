@@ -1,5 +1,5 @@
 import { afterEach, expect, it, vi } from 'vitest';
-import { cachedFeed, validFeed } from '../supabase/functions/_shared/feed.ts';
+import { cachedFeed, feedRequest, validFeed } from '../supabase/functions/_shared/feed.ts';
 import { createEdgeHandler } from '../supabase/functions/_shared/edge-handler.ts';
 import { createDeleteAccountHandler } from '../supabase/functions/_shared/delete-account.ts';
 import worker from '../worker/index.ts';
@@ -164,4 +164,29 @@ it('Supabase also rejects direct requests when its shared limiter blocks them', 
   );
   expect(result.status).toBe(429);
   expect(fetcher).not.toHaveBeenCalled();
+});
+
+it("uses the Syncromatics portal with LAXCommute's own key when one is configured", () => {
+  expect(feedRequest('routes/6884/vehicles').url).toBe(
+    'https://laxbus.syncromatics.com/api/rtpi?path=routes%2F6884%2Fvehicles',
+  );
+  const keyed = feedRequest('stops/11319518/arrivals?routeId=6884', 'k123');
+  expect(keyed.url).toBe(
+    'https://api.syncromatics.com/portal/stops/11319518/arrivals?routeId=6884&api_key=k123',
+  );
+  expect(keyed.headers['Api-Key']).toBe('k123');
+});
+
+it('does not hammer the source after it refuses access', async () => {
+  const fetcher = vi.fn(async () =>
+    Response.json({ error: 'Origin does not match' }, { status: 403 }),
+  );
+  await expect(
+    cachedFeed('routes/6884/vehicles', 15, {
+      cache: memory(),
+      fetcher,
+      origin: 'https://refused.test',
+    }),
+  ).rejects.toThrow();
+  expect(fetcher).toHaveBeenCalledTimes(1);
 });

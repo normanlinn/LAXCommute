@@ -19,6 +19,7 @@ import {
   snapshotFresh,
 } from '../domain/arrivals';
 import { walkingMinutesFrom } from '../domain/commute';
+import OfficialTracker from './OfficialTracker';
 
 // The approach bar fills over the final ten minutes of a live prediction.
 const APPROACH_WINDOW_MS = 10 * 60_000;
@@ -49,6 +50,7 @@ export default function Arrivals({
   direction,
   profile,
   userLocation,
+  routeID,
   onRefresh,
 }: {
   data?: import('../types').LiveData;
@@ -59,6 +61,7 @@ export default function Arrivals({
   direction: import('../types').Direction;
   profile: import('../types').Commute;
   userLocation?: (import('../types').Point & { accuracy?: number; at?: number }) | null;
+  routeID?: number;
   onRefresh: () => void;
 }) {
   const { t, language } = useLanguage();
@@ -212,17 +215,12 @@ export default function Arrivals({
           </Button>
         </div>
       )}
-      {(error || data?.sourceUnavailable) && (
-        <div className="alert alert-soft alert-warning notice" role="status">
-          {t('Shuttle source unavailable. Try again or check the official LAX tracker.')}{' '}
-          <a href="https://shuttles.flylax.com/employeeparking" target="_blank" rel="noreferrer">
-            {t('LAX tracker')}
-          </a>{' '}
-          <Button type="button" onClick={onRefresh}>
-            {' '}
-            {t('Try again')}{' '}
-          </Button>
-        </div>
+      {(error || data?.sourceUnavailable) && arrivals.length === 0 && (
+        <OfficialTracker
+          routeID={routeID ?? data?.routeID}
+          retrying={fetching}
+          onRetry={onRefresh}
+        />
       )}
       {!error && stop && warnings.some((w) => w.includes('Arrival')) && (
         <p className="alert alert-soft alert-warning notice">

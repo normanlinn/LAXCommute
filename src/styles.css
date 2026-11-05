@@ -4282,3 +4282,197 @@ html[data-theme='lax-dark'] .app-header {
     animation: banner-in 260ms cubic-bezier(0.2, 0.9, 0.25, 1.1);
   }
 }
+
+/* ── Refresh: arrivals hero, compact follow-ups, live status, official fallback ── */
+.arrivals .section-heading h3 {
+  font-size: clamp(22px, 5.6vw, 28px);
+  letter-spacing: -0.02em;
+}
+.arrivals .boarding-caption {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0 14px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 14px;
+  background: color-mix(in oklab, var(--route-color) 12%, transparent);
+  border: 1px solid color-mix(in oklab, var(--route-color) 28%, transparent);
+}
+.arrivals .arrival-row.arrival-next {
+  position: relative;
+  overflow: hidden;
+  gap: 14px;
+  margin-bottom: 10px;
+  padding: 20px 18px 24px;
+  border-radius: 24px;
+  border: 1px solid color-mix(in oklab, var(--route-color) 42%, transparent);
+  background:
+    radial-gradient(
+      120% 140% at 100% 0%,
+      color-mix(in oklab, var(--route-color) 30%, transparent),
+      transparent 62%
+    ),
+    linear-gradient(
+      165deg,
+      color-mix(in oklab, var(--color-base-200) 88%, var(--route-color) 12%),
+      var(--color-base-100)
+    );
+  box-shadow: 0 20px 44px -26px color-mix(in oklab, var(--route-color) 80%, transparent);
+}
+.arrivals .arrival-next .arrival-description strong {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0.75;
+}
+.arrivals .arrival-next .arrival-time strong {
+  font-size: clamp(52px, 15vw, 72px);
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+}
+.arrivals .arrival-next .bus-symbol {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: color-mix(in oklab, var(--route-color) 20%, transparent);
+}
+.arrivals .arrival-next .approach-track {
+  left: 18px;
+  right: 18px;
+  bottom: 12px;
+  height: 5px;
+  border-radius: 999px;
+}
+.arrivals .arrival-next .approach-track i {
+  border-radius: inherit;
+}
+.arrivals .arrival-row:not(.arrival-next) {
+  gap: 12px;
+  min-height: 0;
+  padding: 12px 8px;
+  border: 0;
+  border-radius: 16px;
+  transition: background 0.2s ease;
+}
+.arrivals .arrival-row:not(.arrival-next) + .arrival-row:not(.arrival-next) {
+  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--color-base-content) 8%, transparent);
+}
+.arrivals .arrival-row:not(.arrival-next):hover {
+  background: color-mix(in oklab, var(--color-base-content) 4%, transparent);
+}
+.arrivals .arrival-row:not(.arrival-next) .bus-symbol {
+  width: 36px;
+  height: 36px;
+  opacity: 0.8;
+}
+.arrivals .arrival-row:not(.arrival-next) .bus-symbol svg {
+  width: 18px;
+  height: 18px;
+}
+.arrivals .arrival-row:not(.arrival-next) .arrival-description strong {
+  font-size: 15px;
+  font-weight: 500;
+  opacity: 0.8;
+}
+.arrivals .arrival-row:not(.arrival-next) .arrival-time strong {
+  font-size: 28px;
+  letter-spacing: -0.03em;
+}
+.arrivals .arrival-row:not(.arrival-next) .bus-alert-toggle {
+  width: 38px;
+  height: 38px;
+}
+.arrivals .updated {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  background: color-mix(in oklab, var(--color-base-content) 6%, transparent);
+}
+.arrivals .updated::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--color-warning, #e0a43a);
+}
+.arrivals .updated.freshness-fresh::before {
+  background: var(--color-success, #2fbf71);
+  box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-success, #2fbf71) 60%, transparent);
+  animation: live-pulse 2s ease-out infinite;
+}
+@keyframes live-pulse {
+  70% {
+    box-shadow: 0 0 0 8px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+.official-tracker {
+  margin: 4px 0 8px;
+  padding: 14px;
+  border-radius: 22px;
+  border: 1px solid color-mix(in oklab, var(--color-warning, #e0a43a) 35%, transparent);
+  background: linear-gradient(
+    170deg,
+    color-mix(in oklab, var(--color-warning, #e0a43a) 10%, var(--color-base-200)),
+    var(--color-base-100)
+  );
+}
+.official-tracker-status {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: start;
+  gap: 12px;
+}
+.official-tracker-status strong {
+  display: block;
+  font-size: 15px;
+}
+.official-tracker-status span:not(.status-dot) {
+  display: block;
+  margin-top: 2px;
+  font-size: 13px;
+  line-height: 1.45;
+  opacity: 0.75;
+}
+.official-tracker .status-dot {
+  width: 10px;
+  height: 10px;
+  margin-top: 6px;
+  border-radius: 50%;
+  background: var(--color-warning, #e0a43a);
+  animation: live-pulse 2s ease-out infinite;
+}
+.official-tracker-open {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 16px;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--color-base-100);
+  background: var(--route-color);
+  box-shadow: 0 12px 28px -16px var(--route-color);
+}
+.official-tracker-open:active {
+  transform: scale(0.98);
+}
+@media (prefers-reduced-motion: reduce) {
+  .arrivals .updated.freshness-fresh::before,
+  .official-tracker .status-dot {
+    animation: none;
+  }
+}
