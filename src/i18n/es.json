@@ -400,5 +400,13 @@
   "Just departed": "Acaba de salir",
   "Crowd report": "Reporte de ocupación",
   "Thanks! Your stop report was submitted.": "¡Gracias! Se envió tu reporte de la parada.",
-  "Choose a valid stop and passenger report.": "Elige una parada y un reporte válidos."
+  "Choose a valid stop and passenger report.": "Elige una parada y un reporte válidos.",
+  "{lot} shuttle arrived": "Llegó el autobús de {lot}",
+  "{lot} shuttle departed": "Salió el autobús de {lot}",
+  "{lot} shuttle crowd report": "Ocupación del autobús de {lot}",
+  "Match the bus destination sign before reporting. These buttons report only the {lot} shuttle at this stop.": "Comprueba el letrero del autobús antes de reportar. Estos botones son solo para el autobús de {lot} en esta parada.",
+  "Report sent": "Reporte enviado",
+  "I see this shuttle at the stop": "Veo este autobús en la parada",
+  "I saw this shuttle leave": "Vi salir este autobús",
+  "Report {lot} shuttle crowding": "Reportar ocupación del autobús de {lot}"
 }

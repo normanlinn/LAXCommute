@@ -400,5 +400,13 @@
   "Just departed": "ကားအခုလေးတင် ထွက်သွားပြီ",
   "Crowd report": "လူဦးရေတင်ပြချက်",
   "Thanks! Your stop report was submitted.": "ကျေးဇူးတင်ပါသည်။ မှတ်တိုင်တင်ပြချက်ကို ပို့ပြီးပါပြီ။",
-  "Choose a valid stop and passenger report.": "မှန်ကန်သော မှတ်တိုင်နှင့် တင်ပြချက် ရွေးပါ။"
+  "Choose a valid stop and passenger report.": "မှန်ကန်သော မှတ်တိုင်နှင့် တင်ပြချက် ရွေးပါ။",
+  "{lot} shuttle arrived": "{lot} ကြိုပို့ကား ရောက်လာပြီ",
+  "{lot} shuttle departed": "{lot} ကြိုပို့ကား ထွက်သွားပြီ",
+  "{lot} shuttle crowd report": "{lot} ကြိုပို့ကား လူဦးရေတင်ပြချက်",
+  "Match the bus destination sign before reporting. These buttons report only the {lot} shuttle at this stop.": "မတင်ပြမီ ကားပေါ်ရှိ ခရီးဆုံးဆိုင်းဘုတ်ကို စစ်ပါ။ ဤခလုတ်များသည် ဤမှတ်တိုင်ရှိ {lot} ကြိုပို့ကားအတွက်သာ ဖြစ်သည်။",
+  "Report sent": "တင်ပြချက်ပို့ပြီးပါပြီ",
+  "I see this shuttle at the stop": "ဤကား မှတ်တိုင်တွင် ရှိနေသည်",
+  "I saw this shuttle leave": "ဤကား ထွက်သွားသည်ကို မြင်ခဲ့သည်",
+  "Report {lot} shuttle crowding": "{lot} ကြိုပို့ကား လူဦးရေအခြေအနေ တင်ပြရန်"
 }

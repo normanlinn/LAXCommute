@@ -95,10 +95,10 @@ it('submits a stop observation without GPS or a live vehicle and prevents rapid 
       stop={{ id: 11319519, name: 'East Lot Stop #1', lat: 33.95, lon: -118.38 }}
     />,
   );
-  fireEvent.click(screen.getByRole('button', { name: 'Bus arrived' }));
+  fireEvent.click(screen.getByRole('button', { name: /East shuttle arrived/ }));
   await waitFor(() => expect(send).toHaveBeenCalledWith(6884, 11319519, 'arrived', undefined));
   await screen.findByText('Thanks! Your stop report was submitted.');
-  expect(screen.getByRole('button', { name: 'Bus arrived' }).disabled).toBe(true);
+  expect(screen.getByRole('button', { name: /East shuttle arrived/ }).disabled).toBe(true);
 });
 it('opens official arrivals at the selected stop with general service guidance', () => {
   wrap(<OfficialTracker routeID={6884} stopID={11319519} retrying={false} onRetry={() => {}} />);
@@ -106,4 +106,20 @@ it('opens official arrivals at the selected stop with general service guidance',
     'https://laxbus.syncromatics.com/route/6884/direction/east-lot/stop/11319519/arrivals',
   );
   expect(screen.getByText(/not an arrival prediction/)).toBeTruthy();
+});
+it.each([
+  [6885, 'South'],
+  [6884, 'East'],
+  [6883, 'West'],
+])('names the selected shuttle on both actions for route %s', (routeId, lot) => {
+  wrap(
+    <StopReports
+      routeId={routeId}
+      stop={{ id: 11319089, name: 'South Lot Stop #1', lat: 33.95, lon: -118.39 }}
+    />,
+  );
+  expect(screen.getByRole('button', { name: new RegExp(`${lot} shuttle arrived`) })).toBeTruthy();
+  expect(screen.getByRole('button', { name: new RegExp(`${lot} shuttle departed`) })).toBeTruthy();
+  expect(screen.getByRole('button', { name: `Report ${lot} shuttle crowding` })).toBeTruthy();
+  expect(screen.getByText(`${lot} Lot shuttle`)).toBeTruthy();
 });
