@@ -22,7 +22,6 @@ export function feedRequest(
     return { url: url.toString(), headers: { Accept: 'application/json' } };
   }
   const url = new URL(path, PORTAL);
-  url.searchParams.set('api_key', apiKey);
   return { url: url.toString(), headers: { Accept: 'application/json', 'Api-Key': apiKey } };
 }
 export const ROUTE_IDS = new Set([6883, 6884, 6885]);
@@ -129,6 +128,7 @@ export async function cachedFeed<T = unknown>(
           const fetchedAt = new Date().toISOString();
           const response = await fetcher(request.url, {
             headers: request.headers,
+            redirect: 'error',
             signal: AbortSignal.timeout(3500),
           });
           if (!response.ok) {

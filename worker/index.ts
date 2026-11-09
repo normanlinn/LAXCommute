@@ -6,12 +6,13 @@ export { BusAlert } from './alerts';
 export async function handleAPI(request: Request, options?: FeedOptions) {
   return handleFeedAPI(request, options, options ? undefined : supabaseSnapshot);
 }
-export default {
+const app = {
   async fetch(
     request: Request,
     env: AlertEnv & {
       ACCOUNT_RATE_LIMITER?: { limit: (input: { key: string }) => Promise<{ success: boolean }> };
       API_RATE_LIMITER?: { limit: (input: { key: string }) => Promise<{ success: boolean }> };
+      ALERT_RATE_LIMITER?: { limit: (input: { key: string }) => Promise<{ success: boolean }> };
     },
   ) {
     const url = new URL(request.url);
@@ -29,6 +30,17 @@ export default {
         { error: 'Too many requests. Please wait a minute.' },
         { status: 429, headers: { 'Retry-After': '60', 'Cache-Control': 'no-store' } },
       );
+    if (
+      url.pathname === '/api/alerts' &&
+      request.method === 'POST' &&
+      ip &&
+      env.ALERT_RATE_LIMITER &&
+      !(await env.ALERT_RATE_LIMITER.limit({ key: ip })).success
+    )
+      return Response.json(
+        { error: 'Too many alert requests. Please wait a minute.' },
+        { status: 429, headers: { 'Retry-After': '60' } },
+      );
     const alerts = await handleAlerts(request, env);
     if (alerts) return alerts;
     if (url.pathname === '/api/account') {
@@ -44,7 +56,7 @@ export default {
       if (request.method !== 'DELETE')
         return Response.json({ error: 'Method not allowed.' }, { status: 405 });
       const auth = request.headers.get('Authorization');
-      if (!auth?.startsWith('Bearer '))
+      if (!auth?.startsWith('Bearer ') || auth.length > 8192)
         return Response.json({ error: 'Sign in to delete your account.' }, { status: 401 });
       try {
         const result = await fetch(
@@ -74,5 +86,18 @@ export default {
       }
     }
     return handleAPI(request);
+  },
+};
+export default {
+  async fetch(request: Request, env: Parameters<typeof app.fetch>[1]) {
+    const response = await app.fetch(request, env);
+    const headers = new Headers(response.headers);
+    headers.set('X-Content-Type-Options', 'nosniff');
+    headers.set('X-Frame-Options', 'DENY');
+    headers.set('Referrer-Policy', 'no-referrer');
+    headers.set('Strict-Transport-Security', 'max-age=31536000');
+    headers.set('Content-Security-Policy', "default-src 'none'; frame-ancestors 'none'; sandbox");
+    if (!headers.has('Cache-Control')) headers.set('Cache-Control', 'no-store');
+    return new Response(response.body, { status: response.status, headers });
   },
 };

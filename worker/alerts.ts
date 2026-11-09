@@ -1,6 +1,7 @@
 import { normalizeArrivals, snapshotFresh } from '../src/domain/arrivals';
 import { supabaseSnapshot } from './supabase';
 import { sendPush, validSubscription, type PushSubscriptionJSON, type VapidKeys } from './push';
+import { readLimitedText, RequestBodyError } from '../supabase/functions/_shared/request-body';
 
 // Same lead as the in-app alert (src/hooks/useBusAlert.ts).
 export const ALERT_LEAD_MS = 2 * 60_000;
@@ -61,7 +62,8 @@ export function parseAlertRequest(value: unknown, now = Date.now()): AlertRecord
   const vehicleID = id(input.vehicleID);
   const title = text(input.title, 80);
   const body = text(input.body, 200);
-  if (!routeID || !stopID || !vehicleID || !title || !body) return null;
+  if (!routeID || ![6883, 6884, 6885].includes(routeID) || !stopID || !vehicleID || !title || !body)
+    return null;
   const { endpoint, keys } = input.subscription as PushSubscriptionJSON;
   return {
     subscription: { endpoint, keys: { p256dh: keys.p256dh, auth: keys.auth } },
@@ -180,9 +182,15 @@ export async function handleAlerts(request: Request, env: AlertEnv) {
       { headers: { 'Cache-Control': 'public, max-age=3600' } },
     );
   if (pathname === '/api/alerts' && request.method === 'POST') {
-    const raw = await request.text();
-    if (raw.length > 4096)
-      return Response.json({ error: 'Alert is too large.' }, { status: 413, headers: noStore });
+    let raw: string;
+    try {
+      raw = await readLimitedText(request);
+    } catch (error) {
+      return Response.json(
+        { error: error instanceof RequestBodyError ? error.message : 'Invalid alert.' },
+        { status: error instanceof RequestBodyError ? error.status : 400, headers: noStore },
+      );
+    }
     let parsed: unknown;
     try {
       parsed = JSON.parse(raw);

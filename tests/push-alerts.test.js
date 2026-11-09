@@ -4,6 +4,7 @@ import {
   encryptPayload,
   fromBase64url,
   validSubscription,
+  sendPush,
   vapidAuthorization,
 } from '../worker/push';
 import { ALERT_LEAD_MS, BusAlert, CHECK_MS, LOST_MS, handleAlerts } from '../worker/alerts';
@@ -80,6 +81,13 @@ async function vapidKeys() {
 }
 
 describe('web push encoding', () => {
+  it('never follows a redirect away from an approved push endpoint', async () => {
+    const ua = await browser();
+    const { keys } = await vapidKeys();
+    const fetcher = vi.fn(async () => new Response(null, { status: 302 }));
+    await sendPush(ua.subscription, { title: 'Bus close' }, keys, fetcher);
+    expect(fetcher.mock.calls[0][1].redirect).toBe('error');
+  });
   it('encrypts a payload a browser can decrypt (RFC 8291)', async () => {
     const ua = await browser();
     const body = await encryptPayload(ua.subscription, enc.encode('{"title":"Bus close"}'));

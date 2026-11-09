@@ -58,7 +58,14 @@ export function validSubscription(value: unknown): value is PushSubscriptionJSON
   } catch {
     return false;
   }
-  if (url.protocol !== 'https:' || !PUSH_HOSTS.some((host) => host.test(url.hostname)))
+  if (
+    url.protocol !== 'https:' ||
+    url.username ||
+    url.password ||
+    url.port ||
+    url.hash ||
+    !PUSH_HOSTS.some((host) => host.test(url.hostname))
+  )
     return false;
   try {
     return (
@@ -162,6 +169,7 @@ export async function sendPush(
     },
     body,
     signal: AbortSignal.timeout(10_000),
+    redirect: 'error',
   });
   return response.status;
 }

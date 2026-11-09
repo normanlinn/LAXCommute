@@ -1,5 +1,6 @@
 import { backendLimiter, connectingIP } from '../_shared/request-limit.ts';
-import { communityCorsHeaders } from '../_shared/community-cors.ts';
+import { communityCorsHeaders, allowedCommunityOrigin } from '../_shared/community-cors.ts';
+import { readLimitedText, RequestBodyError } from '../_shared/request-body.ts';
 import { validReportStop, validStopReport } from '../_shared/stop-report.ts';
 
 const baseURL = Deno.env.get('SUPABASE_URL')!;
@@ -41,6 +42,7 @@ async function queryDB(path: string, options: RequestInit = {}) {
 }
 
 Deno.serve(async (request: Request) => {
+  if (!allowedCommunityOrigin(request)) return reply({ error: 'Origin not allowed.' }, 403);
   // Browser CORS preflight has no API key; never count it as a report.
   if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers });
   const url = new URL(request.url);
@@ -138,11 +140,7 @@ Deno.serve(async (request: Request) => {
     }
 
     if ([...url.searchParams.keys()].length) return reply({ error: 'Invalid parameters.' }, 400);
-    if (Number(request.headers.get('content-length') || 0) > 4096) {
-      return reply({ error: 'Message is too long.' }, 413);
-    }
-    const raw = await request.text();
-    if (raw.length > 4096) return reply({ error: 'Message is too long.' }, 413);
+    const raw = await readLimitedText(request);
     let data: Record<string, unknown>;
     try {
       const parsed = JSON.parse(raw);
@@ -216,7 +214,7 @@ Deno.serve(async (request: Request) => {
         message.length < 10 ||
         message.length > 2000 ||
         email.length > 254 ||
-        (email && !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email))
+        (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
       ) {
         return reply({ error: 'Enter a valid message and optional email.' }, 400);
       }
@@ -233,7 +231,8 @@ Deno.serve(async (request: Request) => {
         : reply({ error: 'Could not send feedback. Please retry.' }, 503);
     }
     return reply({ error: 'Unknown request type.' }, 400);
-  } catch {
+  } catch (error) {
+    if (error instanceof RequestBodyError) return reply({ error: error.message }, error.status);
     return reply({ error: 'Community service temporarily unavailable.' }, 503);
   }
 });

@@ -8,18 +8,19 @@
   },
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "node scripts/public-build-env.mjs && npm run typecheck && node scripts/clean-build.mjs && vite build",
+    "build": "node scripts/public-build-env.mjs && npm run typecheck && node scripts/clean-build.mjs && vite build && node scripts/check-public-secrets.mjs",
     "preview": "vite preview --host 0.0.0.0",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "audit": "npm audit --audit-level=high",
+    "audit": "npm audit --audit-level=moderate && npm audit --omit=dev --audit-level=low",
     "deploy": "npm run build && wrangler deploy",
     "deploy:check": "npm run build && wrangler deploy --dry-run",
     "setup": "node scripts/setup.mjs",
     "push-keys": "node scripts/generate-vapid.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "security:check": "npm run audit && npm test && npm run build"
   },
   "dependencies": {
     "@apple/mapkit-loader": "^1.0.0",
@@ -39,7 +40,9 @@
     "source-map-js": "1.2.2",
     "jsdom": {
       "undici": "^8.12.3"
-    }
+    },
+    "glob": "14.0.4",
+    "minimatch": "11.0.5"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.62.2",

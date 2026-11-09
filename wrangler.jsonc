@@ -9,6 +9,11 @@
   },
   "ratelimits": [
     {
+      "name": "ALERT_RATE_LIMITER",
+      "namespace_id": "6884003",
+      "simple": { "limit": 6, "period": 60 },
+    },
+    {
       "name": "ACCOUNT_RATE_LIMITER",
       "namespace_id": "6884002",
       "simple": { "limit": 3, "period": 60 },

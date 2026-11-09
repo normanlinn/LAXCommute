@@ -172,7 +172,7 @@ it("uses the Syncromatics portal with LAXCommute's own key when one is configure
   );
   const keyed = feedRequest('stops/11319518/arrivals?routeId=6884', 'k123');
   expect(keyed.url).toBe(
-    'https://api.syncromatics.com/portal/stops/11319518/arrivals?routeId=6884&api_key=k123',
+    'https://api.syncromatics.com/portal/stops/11319518/arrivals?routeId=6884',
   );
   expect(keyed.headers['Api-Key']).toBe('k123');
 });
