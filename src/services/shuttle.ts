@@ -1,6 +1,18 @@
 import type { Stop, LiveData } from '../types';
 import { decodePolyline } from '../domain/commute';
 import { normalizeArrivals } from '../domain/arrivals';
+import { routeSnapshots } from '../domain/route-snapshots';
+
+export function getFallbackRoute(routeID: number) {
+  const snapshot = routeSnapshots[routeID];
+  if (!snapshot) return undefined;
+  return {
+    stops: snapshot.stops,
+    paths: snapshot.patterns.map((p) => ({ id: p.id, coordinates: decodePolyline(p.shape) })),
+    warning: 'Using saved stop locations and route paths. Check signs for changes.',
+    cached: true,
+  };
+}
 
 export const SHUTTLE_REQUEST_TIMEOUT_MS = 20_000;
 async function get(path: string, signal?: AbortSignal) {

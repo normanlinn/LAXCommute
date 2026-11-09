@@ -36,10 +36,10 @@ export default function OfficialTracker({
       <div className="official-tracker-status" role="status">
         <span className="status-dot" aria-hidden="true" />
         <div>
-          <strong>{t('Live times are reconnecting')}</strong>
+          <strong>{t('Plan your trip while live tracking is paused')}</strong>
           <span>
             {t(
-              'We keep retrying automatically. Until then, the official LAX tracker has the same buses.',
+              'Your selected route and stop open directly in the official tracker. Live arrivals are shown there.',
             )}
           </span>
         </div>
@@ -60,9 +60,21 @@ export default function OfficialTracker({
         target="_blank"
         rel="noreferrer"
       >
-        {stopName ? t('Live times for {stop}', { stop: stopName }) : t('Open official live times')}{' '}
-        <ExternalLink size={16} aria-hidden="true" />
+        {t('View official live arrivals')} <ExternalLink size={16} aria-hidden="true" />
       </a>
+      {stopName && <p className="crowd-note">{stopName}</p>}
+      <p className="crowd-note">
+        {t(
+          'Typical service: every 7–15 minutes. This is general service guidance, not an arrival prediction.',
+        )}{' '}
+        <a
+          href="https://www.flylax.com/sites/lax/files/2026-06/Employee%20Lots%20Rules%20and%20Regulations%202026.pdf"
+          target="_blank"
+          rel="noreferrer"
+        >
+          {t('LAX service information')}
+        </a>
+      </p>
     </section>
   );
 }

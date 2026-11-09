@@ -1,5 +1,6 @@
 import { backendLimiter, connectingIP } from '../_shared/request-limit.ts';
 import { communityCorsHeaders } from '../_shared/community-cors.ts';
+import { validReportStop, validStopReport } from '../_shared/stop-report.ts';
 
 const baseURL = Deno.env.get('SUPABASE_URL')!;
 const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -28,6 +29,9 @@ function serviceHeaders() {
     Accept: 'application/json',
   };
 }
+function sinceCutoff() {
+  return new Date(Date.now() - 15 * 60_000).toISOString();
+}
 async function queryDB(path: string, options: RequestInit = {}) {
   return fetch(baseURL + '/rest/v1/' + path, {
     ...options,
@@ -49,7 +53,11 @@ Deno.serve(async (request: Request) => {
   const identity = connectingIP(request);
   try {
     if (request.method === 'GET') {
-      if ([...url.searchParams.keys()].some((key) => key !== 'routeId')) {
+      if (
+        [...url.searchParams.keys()].some((key) => key !== 'routeId' && key !== 'stopId') ||
+        url.searchParams.getAll('routeId').length !== 1 ||
+        url.searchParams.getAll('stopId').length > 1
+      ) {
         return reply({ error: 'Invalid request parameters.' }, 400);
       }
       const routeId = Number(url.searchParams.get('routeId'));
@@ -58,6 +66,36 @@ Deno.serve(async (request: Request) => {
         return reply({ error: 'Please wait before refreshing.' }, 429);
       }
       const since = new Date(Date.now() - 15 * 60_000).toISOString();
+      if (url.searchParams.has('stopId')) {
+        const stopId = Number(url.searchParams.get('stopId'));
+        if (!validReportStop(routeId, stopId))
+          return reply({ error: 'Choose a boarding stop on this route.' }, 400);
+        const params = new URLSearchParams({
+          route_id: 'eq.' + routeId,
+          stop_id: 'eq.' + stopId,
+          created_at: 'gte.' + since,
+          select: 'activity,occupancy,created_at',
+          order: 'created_at.desc',
+          limit: '20',
+        });
+        const response = await queryDB('shuttle_stop_reports?' + params);
+        if (!response.ok) return reply({ error: 'Community reports unavailable.' }, 503);
+        const rows = (await response.json()) as Array<{
+          activity: string;
+          occupancy: string | null;
+          created_at: string;
+        }>;
+        return reply({
+          routeId,
+          stopId,
+          stopReports: rows.map((row) => ({
+            activity: row.activity,
+            occupancy: row.occupancy,
+            reportedAt: row.created_at,
+          })),
+          windowMinutes: 15,
+        });
+      }
       const params = new URLSearchParams({
         route_id: 'eq.' + routeId,
         created_at: 'gte.' + since,
@@ -112,6 +150,32 @@ Deno.serve(async (request: Request) => {
       data = parsed as Record<string, unknown>;
     } catch {
       return reply({ error: 'Invalid request.' }, 400);
+    }
+    if (data.type === 'stop') {
+      if (!validStopReport(data))
+        return reply({ error: 'Choose a valid stop and passenger report.' }, 400);
+      if (!(await rateLimit('stop-report-ip:' + identity, 1))) {
+        return reply({ error: 'Please wait a minute before reporting again.' }, 429);
+      }
+      // Remove expired observations on writes. Never retain reporter identity or GPS.
+      const cleanup = await queryDB(
+        'shuttle_stop_reports?created_at=lt.' + encodeURIComponent(sinceCutoff()),
+        { method: 'DELETE' },
+      );
+      if (!cleanup.ok) return reply({ error: 'Community reports unavailable.' }, 503);
+      const response = await queryDB('shuttle_stop_reports', {
+        method: 'POST',
+        headers: { Prefer: 'return=minimal' },
+        body: JSON.stringify({
+          route_id: data.routeId,
+          stop_id: data.stopId,
+          activity: data.activity,
+          occupancy: data.occupancy || null,
+        }),
+      });
+      return response.ok
+        ? reply({ ok: true }, 201)
+        : reply({ error: 'Could not save the report. Please retry.' }, 503);
     }
     if (data.type === 'crowd') {
       const routeId = data.routeId;

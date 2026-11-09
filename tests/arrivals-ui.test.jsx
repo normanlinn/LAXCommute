@@ -101,6 +101,6 @@ describe('arrival UI semantics', () => {
     cleanup();
     setup({ dueInSeconds: 20 * 60, savedMinutesAgo: 665 });
     expect(screen.queryByText('Last reported')).toBeNull();
-    expect(screen.getByText('Live times are reconnecting')).toBeTruthy();
+    expect(screen.getByText('Plan your trip while live tracking is paused')).toBeTruthy();
   });
 });

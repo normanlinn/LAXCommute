@@ -48,6 +48,7 @@ import Arrivals from './components/Arrivals';
 import { officialTrackerURL } from './components/OfficialTracker';
 import OutageNotice from './components/OutageNotice';
 import CrowdReports from './components/CrowdReports';
+import StopReports from './components/StopReports';
 import InstallApp from './components/InstallApp';
 import ShareApp from './components/ShareApp';
 import DirectionsButton from './components/DirectionsButton';
@@ -224,7 +225,7 @@ export default function App() {
   // The feed answered but has nothing current to show (or did not answer at all).
   const liveDown = Boolean(live.isError || live.data?.sourceUnavailable) && !arrivalFresh;
   // Keep the announcement up on every tab until fresh live data actually returns.
-  const [feedOutage, setFeedOutage] = useState(false);
+  const [feedOutage, setFeedOutage] = useState(true);
   useEffect(() => {
     if (liveDown) setFeedOutage(true);
     else if (arrivalFresh) setFeedOutage(false);
@@ -798,6 +799,11 @@ export default function App() {
                     <Button onClick={() => routeQuery.refetch()}>{t('Retry')}</Button>
                   </p>
                 )}
+                {routeQuery.data?.warning && (
+                  <p className="crowd-note" role="status">
+                    {t(routeQuery.data.warning)}
+                  </p>
+                )}
                 <Arrivals
                   data={live.data}
                   error={live.error}
@@ -813,7 +819,12 @@ export default function App() {
                     if (routeQuery.isError) routeQuery.refetch();
                   }}
                 />
-                <CrowdReports routeId={route.id} vehicles={vehicles} />
+                <StopReports
+                  key={`${route.id}:${selectedStop?.id || 0}`}
+                  routeId={route.id}
+                  stop={selectedStop}
+                />
+                {vehicles.length > 0 && <CrowdReports routeId={route.id} vehicles={vehicles} />}
                 <details className="collapse advanced">
                   <summary className="collapse-title">
                     <span>{t('Other bus options')}</span>

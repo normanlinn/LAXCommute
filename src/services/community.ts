@@ -1,4 +1,5 @@
 import { config } from '../config';
+import type { StopActivity, StopReport } from '../domain/stop-reports';
 export type CrowdLevel = 'empty' | 'seats' | 'standing' | 'full';
 export interface CrowdSummary {
   vehicleId: number;
@@ -33,5 +34,20 @@ export async function sendDeveloperFeedback(category: string, message: string, e
   await community('', {
     method: 'POST',
     body: JSON.stringify({ type: 'feedback', category, message, email }),
+  });
+}
+export async function getStopReports(routeId: number, stopId: number): Promise<StopReport[]> {
+  const result = await community(`?routeId=${routeId}&stopId=${stopId}`);
+  return Array.isArray(result.stopReports) ? result.stopReports : [];
+}
+export async function sendStopReport(
+  routeId: number,
+  stopId: number,
+  activity: StopActivity,
+  occupancy?: CrowdLevel,
+) {
+  await community('', {
+    method: 'POST',
+    body: JSON.stringify({ type: 'stop', routeId, stopId, activity, occupancy }),
   });
 }

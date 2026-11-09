@@ -7,6 +7,7 @@ import { ThemeProvider } from '../src/theme/ThemeProvider';
 import AccountPanel from '../src/components/AccountPanel';
 import LanguageSwitch from '../src/components/LanguageSwitch';
 import { LanguageProvider } from '../src/i18n/LanguageProvider';
+vi.mock('../src/components/StopReports', () => ({ default: () => null }));
 
 // main.tsx loads translations before rendering; do the same here.
 beforeAll(() => Promise.all([loadMessages('es'), loadMessages('my')]));

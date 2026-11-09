@@ -220,11 +220,11 @@ export default function Arrivals({
           </Button>
         </div>
       )}
-      {stop && (lastKnown || data?.sourceUnavailable) && reportedPredictions.length === 0 && (
+      {!fresh && (
         <OfficialTracker
           routeID={routeID ?? data?.routeID}
-          stopID={stop.id}
-          stopName={stop.name}
+          stopID={stop?.id}
+          stopName={stop?.name}
           retrying={fetching}
           onRetry={onRefresh}
         />

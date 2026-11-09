@@ -27,11 +27,13 @@ export default function OutageNotice({ routeID, stopID }: { routeID?: number; st
         <strong>{t('Live bus times are temporarily unavailable')}</strong>
         <p>
           {t(
-            'Since November 4, the company that runs LAX’s shuttle tracking (Syncromatics) no longer shares live bus data with outside apps like LAXCommute. The developer is contacting LAX and Syncromatics to ask for access so live times can return.',
+            'The developer is still contacting LAX and Syncromatics for authorized API access so LAXCommute can become fully functional again, including live bus locations and arrival times.',
           )}
         </p>
         <p>
-          {t('Until then, please use the official LAX tracker for live bus times.')}{' '}
+          {t(
+            'Saved trips, stop maps and passenger reports remain available. Use the official tracker for live arrivals.',
+          )}{' '}
           <a href={officialTrackerURL(routeID, stopID)} target="_blank" rel="noreferrer">
             {t('Open official tracker')} <ExternalLink size={13} aria-hidden="true" />
           </a>
@@ -39,7 +41,7 @@ export default function OutageNotice({ routeID, stopID }: { routeID?: number; st
       </div>
       <button
         type="button"
-        className="outage-dismiss"
+        className="btn btn-ghost outage-dismiss"
         aria-label={t('Dismiss announcement')}
         onClick={() => {
           setHidden(true);

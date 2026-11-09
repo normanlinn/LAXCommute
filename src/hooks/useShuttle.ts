@@ -2,14 +2,25 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { config } from '../config';
 import { ARRIVAL_TTL_MS } from '../domain/arrivals';
-import { getRoute, getLive } from '../services/shuttle';
+import { getRoute, getLive, getFallbackRoute } from '../services/shuttle';
 
 export function useRoute(routeID: number) {
   return useQuery({
     // Let the service worker serve a cached response when the device is offline.
     networkMode: 'always',
     queryKey: ['route', routeID],
-    queryFn: ({ signal }) => getRoute(routeID, signal),
+    queryFn: async ({ signal }) => {
+      try {
+        return await getRoute(routeID, signal);
+      } catch (error) {
+        if (signal.aborted) throw error;
+        const fallback = getFallbackRoute(routeID);
+        if (!fallback) throw error;
+        return fallback;
+      }
+    },
+    initialData: () => getFallbackRoute(routeID),
+    initialDataUpdatedAt: 0,
     staleTime: 5 * 60_000,
     gcTime: 60 * 60_000,
     retry: false,
