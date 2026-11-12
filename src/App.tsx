@@ -61,6 +61,7 @@ const darkRouteColor = (color: string) =>
   color === '#3262ab' ? '#88b7ff' : color === '#b76328' ? '#e4bb82' : '#58dce3';
 const AccountPanel = lazy(() => import('./components/AccountPanel'));
 const SavedCommute = lazy(() => import('./components/SavedCommute'));
+const MetroTrains = lazy(() => import('./components/MetroTrains'));
 const EMPTY: never[] = [];
 const TABS = [
   { id: 'map', label: 'Explore', Icon: Map },
@@ -825,6 +826,9 @@ export default function App() {
                   stop={selectedStop}
                 />
                 {vehicles.length > 0 && <CrowdReports routeId={route.id} vehicles={vehicles} />}
+                <Suspense fallback={null}>
+                  <MetroTrains />
+                </Suspense>
                 <details className="collapse advanced">
                   <summary className="collapse-title">
                     <span>{t('Other bus options')}</span>

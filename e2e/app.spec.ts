@@ -84,10 +84,8 @@ test('when the live feed is down, riders get a link to the official times for th
   );
   await page.goto('/');
   await page.getByRole('button', { name: 'Explore first' }).click();
-  await expect(page.getByText('Live times are reconnecting')).toBeVisible();
-  await expect(
-    page.getByRole('link', { name: /Live times for South Lot Stop #1/ }),
-  ).toHaveAttribute(
+  await expect(page.getByText('Plan your trip while live tracking is paused')).toBeVisible();
+  await expect(page.getByRole('link', { name: /View official live arrivals/ })).toHaveAttribute(
     'href',
     'https://laxbus.syncromatics.com/route/6885/direction/south-lot/stop/11319089/arrivals',
   );
@@ -96,7 +94,7 @@ test('when the live feed is down, riders get a link to the official times for th
 test('the menu shows version history with an update count', async ({ page }) => {
   await open(page);
   await page.getByRole('button', { name: 'Open menu' }).click();
-  await page.getByText("What's new").click();
+  await page.getByText("What's new", { exact: true }).click();
   await expect(page.getByText(/\d+ updates since/)).toBeVisible();
   await expect(page.locator('.release-timeline > li').first()).toContainText('Latest');
 });
@@ -122,4 +120,34 @@ test('an outage announcement explains why live times are missing and can be dism
 test('no outage announcement while live times are working', async ({ page }) => {
   await open(page);
   await expect(page.locator('.outage-notice')).toHaveCount(0);
+});
+
+test('Metro section shows live C and K Line trains near LAX', async ({ page }) => {
+  await page.routeWebSocket(/api\.metro\.net\/ws\//, (ws) => {
+    const now = Math.floor(Date.now() / 1000);
+    const send = (id: string, route: string, direction: number, stop: string, status: string) =>
+      ws.send(
+        JSON.stringify({
+          id,
+          route_code: route,
+          vehicle: {
+            trip: { routeId: route, directionId: direction },
+            currentStatus: status,
+            stopId: stop,
+            timestamp: String(now),
+          },
+        }),
+      );
+    send('k1', '807', 1, '80704', 'STOPPED_AT');
+    send('c1', '803', 1, '80702', 'STOPPED_AT');
+  });
+  await open(page);
+  await page.getByText('Metro trains at LAX').click();
+  const board = page.locator('.metro-board');
+  await expect(board).toContainText('To Redondo Beach');
+  await expect(board).toContainText('2 stops away · at Downtown Inglewood');
+  await expect(board).toContainText('To Norwalk');
+  await expect(board).toContainText('At the platform now');
+  await page.getByRole('button', { name: 'Aviation/Century' }).click();
+  await expect(board).toContainText('3 stops away');
 });
