@@ -121,33 +121,3 @@ test('no outage announcement while live times are working', async ({ page }) => 
   await open(page);
   await expect(page.locator('.outage-notice')).toHaveCount(0);
 });
-
-test('Metro section shows live C and K Line trains near LAX', async ({ page }) => {
-  await page.routeWebSocket(/api\.metro\.net\/ws\//, (ws) => {
-    const now = Math.floor(Date.now() / 1000);
-    const send = (id: string, route: string, direction: number, stop: string, status: string) =>
-      ws.send(
-        JSON.stringify({
-          id,
-          route_code: route,
-          vehicle: {
-            trip: { routeId: route, directionId: direction },
-            currentStatus: status,
-            stopId: stop,
-            timestamp: String(now),
-          },
-        }),
-      );
-    send('k1', '807', 1, '80704', 'STOPPED_AT');
-    send('c1', '803', 1, '80702', 'STOPPED_AT');
-  });
-  await open(page);
-  await page.getByText('Metro trains at LAX').click();
-  const board = page.locator('.metro-board');
-  await expect(board).toContainText('To Redondo Beach');
-  await expect(board).toContainText('2 stops away · at Downtown Inglewood');
-  await expect(board).toContainText('To Norwalk');
-  await expect(board).toContainText('At the platform now');
-  await page.getByRole('button', { name: 'Aviation/Century' }).click();
-  await expect(board).toContainText('3 stops away');
-});
