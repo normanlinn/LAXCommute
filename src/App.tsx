@@ -60,6 +60,7 @@ const darkRouteColor = (color: string) =>
   color === '#3262ab' ? '#88b7ff' : color === '#b76328' ? '#e4bb82' : '#58dce3';
 const AccountPanel = lazy(() => import('./components/AccountPanel'));
 const SavedCommute = lazy(() => import('./components/SavedCommute'));
+const MetroTrains = lazy(() => import('./components/MetroTrains'));
 const EMPTY: never[] = [];
 const TABS = [
   { id: 'map', label: 'Explore', Icon: Map },
@@ -813,6 +814,9 @@ export default function App() {
                     if (routeQuery.isError) routeQuery.refetch();
                   }}
                 />
+                <Suspense fallback={null}>
+                  <MetroTrains />
+                </Suspense>
                 <CrowdReports routeId={route.id} vehicles={vehicles} />
                 <details className="collapse advanced">
                   <summary className="collapse-title">
