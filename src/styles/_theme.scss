@@ -1,0 +1,529 @@
+// Light and dark brand tokens and shared interaction states.
+/* Brand tokens for light mode and a distinct cool-graphite dark mode. */
+:root,
+[data-theme='lax'] {
+  --ink-087969: #007981;
+  --ink-122b32: #14263d;
+  --ink-183331: #14263d;
+  --ink-1c795a: #007981;
+  --ink-23473a: #14263d;
+  --ink-2c4943: #14263d;
+  --ink-2d4941: #14263d;
+  --ink-328268: #007981;
+  --ink-34714e: #536d78;
+  --ink-35775c: #007981;
+  --ink-38514a: #14263d;
+  --ink-3e7d60: #007981;
+  --ink-408360: #007981;
+  --ink-426651: #536d78;
+  --ink-447e6b: #007981;
+  --ink-466258: #14263d;
+  --ink-496754: #536d78;
+  --ink-50655f: #536d78;
+  --ink-547460: #536d78;
+  --ink-577365: #536d78;
+  --ink-587167: #536d78;
+  --ink-5b7766: #536d78;
+  --ink-5e7969: #536d78;
+  --ink-607970: #536d78;
+  --ink-657870: #536d78;
+  --ink-66847a: #536d78;
+  --ink-6a8172: #536d78;
+  --ink-6a8c76: #536d78;
+  --ink-718479: #536d78;
+  --ink-765026: #795214;
+  --ink-768d7d: #536d78;
+  --ink-778c80: #536d78;
+  --ink-7a8982: #536d78;
+  --ink-7a8984: #536d78;
+  --ink-7a8a85: #536d78;
+  --ink-7a8c82: #536d78;
+  --ink-7b8d84: #536d78;
+  --ink-7c9385: #536d78;
+  --ink-7f9084: #536d78;
+  --ink-81988c: #536d78;
+  --ink-83998b: #536d78;
+  --ink-84998b: #536d78;
+  --ink-875e31: #795214;
+  --ink-87998e: #536d78;
+  --ink-879e8c: #536d78;
+  --ink-886840: #795214;
+  --ink-88978f: #536d78;
+  --ink-896531: #795214;
+  --ink-8c9d92: #536d78;
+  --ink-91a293: #536d78;
+  --ink-92a596: #536d78;
+  --ink-94a29a: #536d78;
+  --ink-94a395: #536d78;
+  --ink-96a89b: #536d78;
+  --ink-9cb2b4: #536d78;
+  --ink-a4c5b0: #536d78;
+  --line-122b32: #d6e6ea;
+  --line-365f4d: #d6e6ea;
+  --line-46665b: #d6e6ea;
+  --line-57bc9b: #d6e6ea;
+  --line-70907f: #d6e6ea;
+  --line-d8e3e1: #d6e6ea;
+  --line-dbe5df: #d6e6ea;
+  --line-dce5df: #d6e6ea;
+  --line-dce6e0: #d6e6ea;
+  --line-dee8df: #d6e6ea;
+  --line-dfede2: #d6e6ea;
+  --line-e0e8e2: #d6e6ea;
+  --line-e1e9e4: #d6e6ea;
+  --line-e2e9e5: #d6e6ea;
+  --line-e3eae6: #d6e6ea;
+  --line-e4ece5: #d6e6ea;
+  --line-e5ebe8: #d6e6ea;
+  --line-e8eee9: #d6e6ea;
+  --line-eaf0eb: #d6e6ea;
+  --line-edf1ee: #d6e6ea;
+  --line-f1e4cc: #d6e6ea;
+  --surface-0e2b2a70: #0b233270;
+  --surface-122b32: #0b2332;
+  --surface-163b31: #0b2332;
+  --surface-163e32: #0b2332;
+  --surface-249a76: #d9f2f5;
+  --surface-265546: #0b2332;
+  --surface-284149: #0b2332;
+  --surface-365f4d: #0b2332;
+  --surface-46665b: #0b2332;
+  --surface-ccdad0: #ecfafc;
+  --surface-d7eadc: #ecfafc;
+  --surface-e3eceb: #ffffff;
+  --surface-e7eeeb: #ffffff;
+  --surface-e7efe9: #ffffff;
+  --surface-e8f5ec: #ffffff;
+  --surface-eaf6ec: #ffffff;
+  --surface-ebf5ed: #ffffff;
+  --surface-edf2ee: #ffffff;
+  --surface-eef2ef: #ffffff;
+  --surface-eef8f2: #ffffff;
+  --surface-eff5f0: #ffffff;
+  --surface-f0f5f0: #ffffff;
+  --surface-f0f5f2: #ffffff;
+  --surface-f1f5f2: #ffffff;
+  --surface-f2f6f3: #ffffff;
+  --surface-f3f9f2: #ffffff;
+  --surface-f5f7f6: #f7fbfc;
+  --surface-f5faf7: #ffffff;
+  --surface-f7faf7: #ffffff;
+  --surface-f8faf8: #ffffff;
+  --surface-fafcfb: #ffffff;
+  --surface-fff: #ffffff;
+  --surface-fff3d7: #fff6e9;
+  --surface-fff6e9: #fff6e9;
+  --surface-ffffffb5: #ffffffb5;
+  --surface-ffffffeb: #ffffffeb;
+  --surface-ffffffed: #ffffffed;
+}
+[data-theme='lax-dark'] {
+  --ink-087969: #9ad4ff;
+  --ink-122b32: #f0f5ff;
+  --ink-183331: #f0f5ff;
+  --ink-1c795a: #9ad4ff;
+  --ink-23473a: #f0f5ff;
+  --ink-2c4943: #f0f5ff;
+  --ink-2d4941: #f0f5ff;
+  --ink-328268: #9ad4ff;
+  --ink-34714e: #bccbdf;
+  --ink-35775c: #9ad4ff;
+  --ink-38514a: #f0f5ff;
+  --ink-3e7d60: #9ad4ff;
+  --ink-408360: #9ad4ff;
+  --ink-426651: #bccbdf;
+  --ink-447e6b: #9ad4ff;
+  --ink-466258: #f0f5ff;
+  --ink-496754: #bccbdf;
+  --ink-50655f: #bccbdf;
+  --ink-547460: #bccbdf;
+  --ink-577365: #bccbdf;
+  --ink-587167: #bccbdf;
+  --ink-5b7766: #bccbdf;
+  --ink-5e7969: #bccbdf;
+  --ink-607970: #bccbdf;
+  --ink-657870: #bccbdf;
+  --ink-66847a: #bccbdf;
+  --ink-6a8172: #bccbdf;
+  --ink-6a8c76: #bccbdf;
+  --ink-718479: #bccbdf;
+  --ink-765026: #efc98a;
+  --ink-768d7d: #bccbdf;
+  --ink-778c80: #bccbdf;
+  --ink-7a8982: #bccbdf;
+  --ink-7a8984: #bccbdf;
+  --ink-7a8a85: #bccbdf;
+  --ink-7a8c82: #bccbdf;
+  --ink-7b8d84: #bccbdf;
+  --ink-7c9385: #bccbdf;
+  --ink-7f9084: #bccbdf;
+  --ink-81988c: #bccbdf;
+  --ink-83998b: #bccbdf;
+  --ink-84998b: #bccbdf;
+  --ink-875e31: #efc98a;
+  --ink-87998e: #bccbdf;
+  --ink-879e8c: #bccbdf;
+  --ink-886840: #efc98a;
+  --ink-88978f: #bccbdf;
+  --ink-896531: #efc98a;
+  --ink-8c9d92: #bccbdf;
+  --ink-91a293: #bccbdf;
+  --ink-92a596: #bccbdf;
+  --ink-94a29a: #bccbdf;
+  --ink-94a395: #bccbdf;
+  --ink-96a89b: #bccbdf;
+  --ink-9cb2b4: #bccbdf;
+  --ink-a4c5b0: #bccbdf;
+  --line-122b32: #455774;
+  --line-365f4d: #455774;
+  --line-46665b: #455774;
+  --line-57bc9b: #83bdff;
+  --line-70907f: #455774;
+  --line-d8e3e1: #455774;
+  --line-dbe5df: #455774;
+  --line-dce5df: #455774;
+  --line-dce6e0: #455774;
+  --line-dee8df: #455774;
+  --line-dfede2: #455774;
+  --line-e0e8e2: #455774;
+  --line-e1e9e4: #455774;
+  --line-e2e9e5: #455774;
+  --line-e3eae6: #455774;
+  --line-e4ece5: #455774;
+  --line-e5ebe8: #455774;
+  --line-e8eee9: #455774;
+  --line-eaf0eb: #455774;
+  --line-edf1ee: #455774;
+  --line-f1e4cc: #455774;
+  --surface-0e2b2a70: #050a13bd;
+  --surface-122b32: #0b111b;
+  --surface-163b31: #0b111b;
+  --surface-163e32: #0b111b;
+  --surface-249a76: #202d41;
+  --surface-265546: #0b111b;
+  --surface-284149: #0b111b;
+  --surface-365f4d: #0b111b;
+  --surface-46665b: #0b111b;
+  --surface-ccdad0: #202d41;
+  --surface-d7eadc: #202d41;
+  --surface-e3eceb: #172233;
+  --surface-e7eeeb: #172233;
+  --surface-e7efe9: #172233;
+  --surface-e8f5ec: #172233;
+  --surface-eaf6ec: #172233;
+  --surface-ebf5ed: #172233;
+  --surface-edf2ee: #172233;
+  --surface-eef2ef: #172233;
+  --surface-eef8f2: #172233;
+  --surface-eff5f0: #172233;
+  --surface-f0f5f0: #172233;
+  --surface-f0f5f2: #172233;
+  --surface-f1f5f2: #172233;
+  --surface-f2f6f3: #172233;
+  --surface-f3f9f2: #172233;
+  --surface-f5f7f6: #0b111b;
+  --surface-f5faf7: #172233;
+  --surface-f7faf7: #172233;
+  --surface-f8faf8: #172233;
+  --surface-fafcfb: #172233;
+  --surface-fff: #172233;
+  --surface-fff3d7: #3d3027;
+  --surface-fff6e9: #3d3027;
+  --surface-ffffffb5: #172233b5;
+  --surface-ffffffeb: #172233eb;
+  --surface-ffffffed: #172233ed;
+}
+
+.preferences-menu {
+  display: grid;
+  gap: 28px;
+}
+.preferences-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.preferences-heading h2 {
+  margin: 0;
+  font-size: 26px;
+}
+.menu-button {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 10px;
+}
+.appearance-settings {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.appearance-settings legend,
+.menu-language h3 {
+  font-size: 16px;
+  font-weight: 650;
+  margin: 0 0 10px;
+}
+.appearance-settings p {
+  margin: 0 0 16px;
+  color: var(--color-base-content);
+  opacity: 0.8;
+  font-size: 14px;
+}
+.appearance-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.appearance-options label {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 90px;
+  padding: 12px 6px;
+  border: 1px solid var(--color-base-300);
+  border-radius: 14px;
+  cursor: pointer;
+  background: var(--color-base-100);
+  font-size: 14px;
+  text-align: center;
+}
+.appearance-options input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.appearance-options label:has(input:checked) {
+  border-color: var(--color-accent);
+  background: var(--color-base-200);
+  box-shadow: inset 0 0 0 1px var(--color-accent);
+}
+.appearance-options label:has(input:focus-visible) {
+  outline: 3px solid var(--color-secondary);
+  outline-offset: 3px;
+}
+.menu-language .language-switch {
+  display: flex;
+  width: 100%;
+}
+.menu-language .language-switch .btn {
+  flex: 1;
+}
+.shuttle-map .leaflet-control-zoom a {
+  background: var(--color-base-100);
+  color: var(--color-base-content);
+  border-color: var(--color-base-300);
+}
+.shuttle-map .leaflet-control-attribution {
+  background: var(--color-base-100);
+  color: var(--color-base-content);
+}
+.shuttle-map .leaflet-control-attribution a {
+  color: var(--color-secondary);
+}
+
+/* Keep native form text and component defaults readable on dark surfaces. */
+html[data-theme='lax-dark'] {
+  color: var(--color-base-content);
+}
+[data-theme='lax-dark'] :is(.app, .modal-box, .initial-app-summary, .shuttle-guide) {
+  color: var(--color-base-content);
+}
+[data-theme='lax-dark'] :is(h1, h2, h3, legend, .brand strong, .field > span) {
+  color: var(--color-base-content);
+}
+[data-theme='lax-dark'] :is(input, select, textarea, option) {
+  color: var(--color-base-content);
+  -webkit-text-fill-color: var(--color-base-content);
+  caret-color: var(--color-base-content);
+}
+[data-theme='lax-dark'] input::placeholder {
+  color: #bccbdf;
+  -webkit-text-fill-color: #bccbdf;
+  opacity: 1;
+}
+[data-theme='lax-dark'] input:autofill {
+  box-shadow: 0 0 0 1000px var(--color-base-100) inset;
+}
+[data-theme='lax-dark'] input:-webkit-autofill {
+  -webkit-text-fill-color: var(--color-base-content);
+  -webkit-box-shadow: 0 0 0 1000px var(--color-base-100) inset;
+}
+[data-theme='lax-dark'] :is(button, .btn, input, select):disabled {
+  color: #bccbdf;
+  -webkit-text-fill-color: #bccbdf;
+  opacity: 1;
+}
+/* Leaflet supplies its own white tooltip background; pair both colors explicitly. */
+[data-theme='lax-dark'] .shuttle-map .leaflet-tooltip {
+  background: var(--color-base-100);
+  color: var(--color-base-content);
+}
+[data-theme='lax-dark'] .shuttle-map .boarding-label {
+  background: var(--color-neutral);
+  color: var(--color-neutral-content);
+}
+.route-square {
+  background: var(--route-solid-color, var(--route-color));
+}
+
+/* Primary actions share semantic theme tokens across light and dark appearances. */
+.button-primary,
+.language-switch .btn[aria-pressed='true'] {
+  background: var(--color-primary);
+  color: var(--color-primary-content);
+}
+.button-primary:hover {
+  background: color-mix(in srgb, var(--color-primary) 85%, var(--color-primary-content));
+}
+.text-button,
+.shuttle-guide a,
+.initial-app-summary a {
+  color: var(--ink-087969, #007981);
+}
+.leave-card span {
+  color: #adc8cf;
+}
+[data-theme='lax-dark'] .button-primary:disabled {
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-base-100));
+  color: var(--color-base-content);
+  border-color: var(--color-base-300);
+  opacity: 0.65;
+}
+
+/* Separate controls from their surrounding cards in both appearances. */
+:root {
+  --control-border: #66818c;
+  --control-tray: #ecfafc;
+  --journey-surface: #ecfafc;
+}
+[data-theme='lax-dark'] {
+  --control-border: #7a93b1;
+  --control-tray: #0b111b;
+  --journey-surface: #202d41;
+}
+.segmented.tabs {
+  background: var(--control-tray);
+  border: 1px solid var(--control-border);
+}
+.segmented .tab.active {
+  background: var(--color-primary);
+  color: var(--color-primary-content);
+  box-shadow: none;
+}
+.segmented .tab:not(.active) {
+  color: var(--color-base-content);
+}
+.trip-destination {
+  background: var(--journey-surface);
+  border: 1px solid var(--control-border);
+}
+.journey-line span,
+.journey-line span:last-child {
+  border-color: var(--control-border);
+}
+.journey-line span:last-child,
+.journey-line i {
+  background: var(--control-border);
+}
+.route-options button:not(.selected),
+input,
+select,
+.map-controls .btn {
+  border-color: var(--control-border);
+}
+.appearance-options label {
+  border-color: var(--control-border);
+}
+
+/* Shared interaction treatment: short, finite motion and visible boundaries. */
+:root {
+  --interaction-ring: color-mix(in srgb, var(--color-primary) 20%, transparent);
+  --interaction-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.app .btn,
+.appearance-options label {
+  transition:
+    transform 180ms var(--interaction-ease),
+    border-color 180ms ease,
+    background-color 180ms ease,
+    box-shadow 180ms ease;
+}
+.trip-card,
+.page-card {
+  border-color: color-mix(in srgb, var(--control-border) 65%, var(--color-base-100));
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+.trip-card:focus-within,
+.page-card:focus-within {
+  border-color: var(--control-border);
+  box-shadow: 0 0 0 3px var(--interaction-ring);
+}
+.route-options .selected {
+  box-shadow: inset 0 0 0 1px var(--option-color);
+}
+.app input,
+.app select {
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+.app input:focus-visible,
+.app select:focus-visible {
+  border-color: var(--control-border);
+  box-shadow: 0 0 0 4px var(--interaction-ring);
+}
+/* Touch devices get press feedback without a hover state sticking after a tap. */
+.app .btn:not(:disabled):active,
+.appearance-options label:active {
+  transform: scale(0.97);
+}
+.app .btn:disabled {
+  transform: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .app .btn:not(:disabled):hover,
+  .appearance-options label:hover {
+    transform: translateY(-2px);
+  }
+  .route-options .btn:not(:disabled):hover {
+    border-color: var(--option-color);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--option-color) 15%, transparent);
+  }
+  .map-controls .btn:not(:disabled):hover,
+  .button-light:not(:disabled):hover,
+  .appearance-options label:hover {
+    border-color: var(--control-border);
+    box-shadow: 0 0 0 3px var(--interaction-ring);
+  }
+  .trip-card:hover,
+  .page-card:hover {
+    border-color: var(--control-border);
+  }
+  .bottom-nav .btn:not(:disabled):hover svg {
+    transform: translateY(-2px);
+  }
+}
+.bottom-nav svg {
+  transition: transform 180ms var(--interaction-ease);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .trip-card,
+  .modal[open] .modal-box {
+    animation: enter 240ms var(--interaction-ease);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app .btn,
+  .appearance-options label,
+  .bottom-nav svg {
+    transform: none !important;
+  }
+}

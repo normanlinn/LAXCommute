@@ -1,7 +1,11 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
-const css = readFileSync('src/styles.css', 'utf8');
+// The Tailwind setup plus every SCSS partial, in the order src/styles/main.scss loads them.
+const partials = [...readFileSync('src/styles/main.scss', 'utf8').matchAll(/@use '([^']+)'/g)].map(
+  ([, name]) => readFileSync(`src/styles/_${name}.scss`, 'utf8'),
+);
+const css = [readFileSync('src/styles.css', 'utf8'), ...partials].join('\n');
 function luminance(hex) {
   const normalized = hex.length === 4 ? '#' + [...hex.slice(1)].map((c) => c + c).join('') : hex;
   const channels = [1, 3, 5].map((start) => {

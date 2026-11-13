@@ -1,0 +1,163 @@
+// Small-screen departures and native dialogs.
+/* Keep departures within reach on small screens; mount the heavy map on demand. */
+.map-toggle {
+  margin-bottom: 12px;
+  min-height: 44px;
+}
+#shuttle-map-panel[hidden] {
+  display: none;
+}
+.updated.freshness-fresh {
+  color: var(--color-primary);
+}
+.updated.freshness-aging,
+.updated.freshness-stale {
+  font-weight: 650;
+}
+.last-known-notice {
+  border-left: 3px solid var(--color-warning);
+}
+.arrival-time span {
+  max-width: 110px;
+  text-align: right;
+}
+@media (max-width: 760px) {
+  .trip-card {
+    order: -1;
+  }
+  .direction-switch .tab,
+  .stop-actions button,
+  .route-options button {
+    min-height: 44px;
+  }
+}
+/* Native dialog owns the top layer; only its panel animates. In particular,
+   avoid DaisyUI's discrete transitions and a blurred map backdrop on iOS. */
+.app-dialog {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 20px;
+  border: 0;
+  background: transparent;
+  color: var(--color-base-content);
+  overflow: hidden;
+  overscroll-behavior: contain;
+  transition: none;
+}
+.app-dialog:not([open]) {
+  display: none;
+}
+.app-dialog[open] {
+  display: grid;
+  place-items: center;
+}
+.app-dialog::backdrop {
+  display: block;
+  background: #07101c70;
+  backdrop-filter: none;
+}
+
+/* The native iOS dialog is drawn in the top layer. Its backdrop previously
+   used a hard-coded green tint; keep both it and the underlying page in the
+   same cool graphite palette as the open menu. No blur on iOS. */
+html[data-theme='lax-dark'],
+html[data-theme='lax-dark'] body,
+html[data-theme='lax-dark'] .app {
+  background-color: #0b111b;
+}
+html[data-theme='lax-dark'] .app-dialog::backdrop {
+  background: rgb(3 7 16 / 79%);
+}
+html[data-theme='lax-dark'] .app-dialog-panel {
+  background: #172233;
+  color: #f0f5ff;
+  border: 1px solid #455774;
+}
+html[data-theme='lax-dark'] .app-header {
+  background: #172233;
+}
+.app-dialog > .app-dialog-panel {
+  opacity: 1;
+  scale: 1;
+  translate: none;
+  transition: none;
+  animation: none;
+  max-height: calc(100dvh - 40px);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+.share-button {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 11px 12px;
+  border-radius: 30px;
+  color: var(--color-base-content);
+}
+.share-link-field {
+  display: grid;
+  gap: 8px;
+  margin: 20px 0;
+}
+.share-link-field input {
+  width: 100%;
+  min-width: 0;
+  font-size: 14px;
+}
+.menu-language .language-switch {
+  flex-wrap: wrap;
+}
+.menu-language .language-switch .btn {
+  min-width: 0;
+  padding-inline: 8px;
+}
+@media (max-width: 700px) {
+  .share-button {
+    padding: 9px;
+  }
+  .share-button span {
+    display: none;
+  }
+  .header-actions {
+    gap: 4px;
+  }
+  .header-actions .btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+@media (max-width: 380px) {
+  .app-header .brand > img,
+  .app-header .brand small {
+    display: none;
+  }
+  .app-header .brand strong {
+    font-size: 16px;
+  }
+}
+
+.developer-credit {
+  margin: 20px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-base-300);
+  font-size: 13px;
+  text-align: center;
+}
+.developer-credit a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--color-base-content);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.developer-credit a:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+  border-radius: 4px;
+}

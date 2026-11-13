@@ -1,0 +1,184 @@
+// GPS context, desktop and phone layouts, state feedback.
+/* GPS-near-stop context is deliberately separate from official ETA rows. */
+.nearby-gps-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 12px 0 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-base-300);
+  border-radius: 13px;
+  background: var(--color-base-200);
+  color: var(--color-base-content);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.nearby-gps-notice svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--color-secondary);
+}
+.arrival-time.is-arriving strong {
+  font-size: clamp(13px, 2.6vw, 20px);
+  line-height: 1.25;
+  white-space: nowrap;
+  color: var(--color-success);
+}
+
+/* Desktop: give the live map most of the viewport without shrinking trip controls. */
+@media (min-width: 1051px) {
+  .trip-layout {
+    width: 100%;
+    max-width: 2000px;
+    grid-template-columns: minmax(0, 1fr) clamp(390px, 30vw, 490px);
+    gap: clamp(24px, 2.4vw, 42px);
+    padding-inline: clamp(28px, 3.7vw, 70px);
+    margin-top: 32px;
+  }
+  .app-header {
+    padding-inline: max(30px, calc((100vw - 1860px) / 2));
+  }
+  .map-surface {
+    height: clamp(540px, 71dvh, 850px);
+    max-height: none;
+  }
+  .map-topbar h1 {
+    max-width: none;
+  }
+  .trip-card {
+    padding: clamp(26px, 2.6vw, 38px);
+  }
+}
+
+/* On phones, keep the map first and the commute form in document flow.
+   Only the grab handle responds to drag; no floating sheet obscures the map. */
+.sheet-handle,
+.sheet-peek-hint {
+  display: none !important;
+}
+
+@media (max-width: 760px) {
+  .trip-layout {
+    padding-bottom: calc(116px + env(safe-area-inset-bottom));
+  }
+  .trip-layout > .trip-card {
+    position: relative;
+    z-index: 2;
+    inset: auto;
+    width: 100%;
+    height: auto;
+    max-height: none;
+    margin: 12px 0 28px;
+    padding: 0;
+    display: block;
+    overflow: visible;
+    border: 1px solid var(--color-base-300);
+    border-radius: 26px;
+    box-shadow: 0 12px 36px #091e3620;
+    transform: none;
+    transition: none;
+  }
+  .trip-layout > .trip-card::before {
+    display: none;
+  }
+  .trip-card .sheet-handle {
+    display: grid !important;
+    place-items: center;
+    width: 100%;
+    min-height: 48px;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    border-radius: 26px 26px 0 0;
+    background: transparent;
+    color: var(--color-base-content);
+    touch-action: none;
+    cursor: grab;
+  }
+  .trip-card .sheet-handle:active {
+    cursor: grabbing;
+  }
+  .app .trip-card .sheet-handle:not(:disabled):active {
+    transform: none;
+  }
+  .sheet-handle:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: -4px;
+  }
+  .sheet-grip {
+    width: 46px;
+    height: 6px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-base-content) 33%, var(--color-base-300));
+    transform: translateY(var(--sheet-grip-pull, 0px));
+    transition:
+      width 180ms ease,
+      background-color 180ms ease,
+      transform 140ms ease-out;
+  }
+  .sheet-handle[aria-expanded='true'] .sheet-grip,
+  .sheet-dragging .sheet-grip {
+    width: 54px;
+    background: var(--color-primary);
+  }
+  .sheet-dragging .sheet-grip {
+    transition: none;
+  }
+  .trip-sheet-content {
+    padding: 0 20px 24px;
+    min-height: 0;
+    overflow: visible;
+    overscroll-behavior: auto;
+  }
+  .trip-card.sheet-peek .trip-sheet-content > :not(.trip-intro) {
+    display: none !important;
+  }
+  .trip-card.sheet-peek .trip-intro p {
+    display: none;
+  }
+  .trip-card.sheet-peek .trip-intro h2 {
+    font-size: clamp(20px, 5.5vw, 25px);
+    margin: 3px 0 8px;
+  }
+  .trip-card.sheet-peek .sheet-peek-hint {
+    display: block !important;
+    color: var(--color-base-content);
+    opacity: 0.72;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .bottom-nav {
+    z-index: 30;
+  }
+}
+
+/* Deliberate, reversible state feedback (instead of one-time flashing). */
+.route-options .btn,
+.direction-switch .tab,
+.bottom-nav .btn {
+  transition:
+    color 160ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 130ms ease;
+}
+.route-options .btn[aria-pressed='true'] {
+  box-shadow: inset 0 0 0 1px var(--option-color);
+}
+.direction-switch .tab[aria-pressed='true'],
+.bottom-nav .btn.active {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 28%, transparent);
+}
+.app .btn:not(:disabled):active {
+  transform: scale(0.975);
+}
+@media (prefers-reduced-motion: reduce) {
+  .trip-layout > .trip-card,
+  .sheet-grip,
+  .route-options .btn,
+  .direction-switch .tab,
+  .bottom-nav .btn {
+    transition: none !important;
+  }
+}

@@ -1,0 +1,153 @@
+// Crawlable shuttle guide.
+/* The collapsible guide stays in the initial HTML for readers and search engines. */
+.initial-app-summary,
+.shuttle-guide {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+.shuttle-guide {
+  color: var(--ink-38514a, #38514a);
+  padding-bottom: calc(110px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--line-d8e3e1, #d8e3e1);
+}
+.shuttle-guide h2 {
+  font-size: clamp(22px, 3vw, 30px);
+  color: var(--ink-122b32, #122b32);
+  margin: 0 0 16px;
+}
+.shuttle-guide h3 {
+  color: var(--ink-122b32, #122b32);
+  font-size: 18px;
+  margin: 24px 0 8px;
+}
+.shuttle-guide p {
+  line-height: 1.7;
+  margin: 0 0 16px;
+}
+.shuttle-guide a,
+.initial-app-summary a {
+  color: var(--ink-087969, #087969);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.shuttle-guide-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+.shuttle-guide-note {
+  font-size: 13px;
+}
+@media (max-width: 700px) {
+  .shuttle-guide-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+
+.language-switch {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px;
+  background: var(--surface-f1f5f2, #f1f5f2);
+  border: 1px solid var(--line-dbe5df, #dbe5df);
+  border-radius: 13px;
+}
+.language-switch .btn {
+  min-width: 72px;
+  min-height: 44px;
+  padding: 7px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.language-switch .btn[aria-pressed='true'] {
+  background: var(--surface-163e32, #163e32);
+  color: #fff;
+}
+:lang(my) {
+  font-family: 'Walone', 'Inter', system-ui, sans-serif;
+  letter-spacing: normal;
+}
+html:lang(my) {
+  line-height: 1.8;
+}
+html:lang(my) h1,
+html:lang(my) h2,
+html:lang(my) h3 {
+  font-family: 'Walone', system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: normal;
+  line-height: 1.65;
+}
+html:lang(my) .eyebrow {
+  letter-spacing: normal;
+  font-size: 12px;
+  line-height: 1.8;
+}
+html:lang(my) .btn {
+  height: auto;
+  min-height: 44px;
+  line-height: 1.8;
+  white-space: normal;
+}
+html:lang(my) .segmented .tab {
+  height: auto;
+  padding: 9px 8px;
+}
+html:lang(my) .page-card h1 {
+  font-size: clamp(24px, 4vw, 30px);
+}
+html:lang(my) .bottom-nav button span {
+  font-size: 11px;
+  line-height: 1.8;
+}
+html:lang(my) .brand small {
+  font-size: 10px;
+  letter-spacing: normal;
+  line-height: 1.9;
+}
+html:lang(my) .map-route-label strong,
+html:lang(my) .map-route-label div > span {
+  white-space: normal;
+}
+html:lang(my) p {
+  line-height: 1.85;
+}
+html:lang(my) .basemap-switch button {
+  white-space: normal;
+}
+html:lang(my) .basemap-switch button,
+html:lang(my) .boarding-label small,
+html:lang(my) .shuttle-map-legend {
+  font-size: 12px;
+  letter-spacing: normal;
+  line-height: 1.8;
+}
+@media (max-width: 1050px) {
+  .app-header {
+    height: auto;
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding: 12px 18px;
+    gap: 8px;
+  }
+  .app-header .brand {
+    min-width: 0;
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .app-header .brand > div {
+    min-width: 0;
+  }
+  .header-actions {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .language-switch {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: center;
+  }
+}

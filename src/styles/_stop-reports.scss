@@ -1,0 +1,214 @@
+// Passenger stop reports.
+/* Stop reports always name the observed line, including at shared stops. */
+.stop-reports .report-context {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+}
+.report-route-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 11px;
+  border-radius: 999px;
+  background: var(--report-color);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 750;
+}
+.report-context > strong,
+.passenger-observation > strong {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.report-context svg,
+.passenger-observation svg {
+  flex-shrink: 0;
+}
+.stop-reports .report-action {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 12px;
+  height: auto;
+  min-height: 108px;
+  padding: 18px 15px;
+  border: 1.5px solid var(--report-color);
+  border-radius: 17px;
+  text-align: left;
+  overflow: hidden;
+  white-space: normal;
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--report-color) 13%, transparent);
+  transition:
+    transform 160ms ease,
+    box-shadow 180ms ease,
+    background-color 180ms ease,
+    opacity 180ms ease;
+}
+.stop-reports .report-arrived {
+  background: var(--report-color);
+  color: #fff;
+}
+.stop-reports .report-departed {
+  background: color-mix(in srgb, var(--report-color) 10%, var(--color-base-100));
+  color: var(--color-base-content);
+}
+.report-action > span:last-child {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+.report-action strong {
+  font-size: 0.98rem;
+  font-weight: 750;
+  line-height: 1.35;
+}
+.report-action small {
+  font-size: 0.76rem;
+  font-weight: 450;
+  line-height: 1.45;
+}
+.report-action-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 37px;
+  height: 37px;
+  border-radius: 11px;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+.stop-reports .report-action:disabled {
+  opacity: 0.62;
+  cursor: not-allowed;
+  border-style: dashed;
+  box-shadow: none;
+}
+.stop-reports .report-action.report-sent {
+  opacity: 1;
+  border-style: solid;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--report-color) 18%, transparent);
+}
+.stop-reports .report-crowd-submit {
+  width: 100%;
+  min-height: 50px;
+  border-radius: 14px;
+}
+.stop-reports .report-crowd-submit.report-sent {
+  color: var(--color-base-content);
+  border-color: var(--report-color);
+}
+.stop-reports .passenger-observation {
+  margin-top: 8px;
+  border-inline-start: 4px solid var(--report-color);
+  background: color-mix(in srgb, var(--report-color) 5%, var(--color-base-100));
+}
+.stop-reports .passenger-observation strong {
+  color: var(--color-base-content);
+  font-size: 0.9rem;
+}
+.passenger-observation time {
+  font-size: 0.83rem;
+  font-variant-numeric: tabular-nums;
+}
+.report-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--color-base-200);
+}
+.report-notice-success {
+  border: 1px solid var(--report-color);
+}
+.stop-reports .report-action:focus-visible,
+.stop-reports .report-crowd-submit:focus-visible {
+  outline: 3px solid var(--report-color);
+  outline-offset: 4px;
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .stop-reports .report-action:hover:not(:disabled),
+  .stop-reports .report-crowd-submit:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px color-mix(in srgb, var(--report-color) 22%, transparent);
+  }
+  .report-arrived:hover:not(:disabled) .report-action-icon svg {
+    animation: report-arrive 420ms ease both;
+  }
+  .report-departed:hover:not(:disabled) .report-action-icon svg {
+    animation: report-depart 420ms ease both;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .stop-reports .report-action:active:not(:disabled),
+  .stop-reports .report-crowd-submit:active:not(:disabled) {
+    transform: translateY(1px) scale(0.96);
+    box-shadow: 0 1px 4px color-mix(in srgb, var(--report-color) 20%, transparent);
+  }
+  .report-action.report-sent .report-action-icon,
+  .report-crowd-submit.report-sent svg {
+    animation: report-confirm 360ms cubic-bezier(0.2, 1.6, 0.5, 1) both;
+  }
+  .passenger-observation,
+  .report-notice {
+    animation: report-reveal 220ms ease-out both;
+  }
+}
+@keyframes report-arrive {
+  0% {
+    transform: translateY(-5px);
+    opacity: 0.4;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes report-depart {
+  40% {
+    transform: translate(4px, -4px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+@keyframes report-confirm {
+  0% {
+    transform: scale(0.65);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes report-reveal {
+  from {
+    transform: translateY(5px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@media (max-width: 440px) {
+  .stop-reports .stop-report-actions {
+    grid-template-columns: 1fr;
+  }
+  .stop-reports .report-action {
+    min-height: 88px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stop-reports *,
+  .stop-reports *::before,
+  .stop-reports *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .stop-reports .btn:active:not(:disabled) {
+    transform: none;
+  }
+}

@@ -8,6 +8,7 @@ import { readAuthReturn } from './domain/auth';
 import { LanguageProvider, loadMessages, savedLanguage } from './i18n/LanguageProvider';
 import ShuttleGuide from './components/ShuttleGuide';
 import './styles.css';
+import './styles/main.scss';
 
 // Optional, cookie-free page analytics. The beacon token is public, not an API secret.
 // The poster uses /employee-shuttles so its visits can be filtered by Path.

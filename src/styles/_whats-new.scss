@@ -1,0 +1,150 @@
+// Version history in the menu.
+/* What's new: version history generated from git at build time */
+.release-notes {
+  margin: 18px 0;
+  border-radius: 18px;
+  border: 1px solid color-mix(in oklab, var(--color-base-content) 12%, transparent);
+  background: color-mix(in oklab, var(--color-base-content) 3%, transparent);
+  overflow: hidden;
+}
+.release-notes summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  list-style: none;
+}
+.release-notes summary::-webkit-details-marker {
+  display: none;
+}
+.release-badge {
+  flex: none;
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-primary-content, #fff);
+  background: var(--color-primary);
+}
+.release-summary {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+.release-summary span {
+  font-size: 13px;
+  opacity: 0.7;
+}
+.release-chevron {
+  flex: none;
+  transition: transform 0.2s ease;
+}
+.release-notes[open] .release-chevron {
+  transform: rotate(180deg);
+}
+.release-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 0;
+  padding: 0 16px 14px;
+}
+.release-stats div {
+  padding: 10px;
+  border-radius: 12px;
+  text-align: center;
+  background: color-mix(in oklab, var(--color-base-content) 5%, transparent);
+}
+.release-stats dt {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  opacity: 0.7;
+}
+.release-stats dd {
+  margin: 2px 0 0;
+  font-size: 18px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.release-timeline {
+  margin: 0;
+  padding: 0 16px;
+  list-style: none;
+}
+.release-timeline > li {
+  position: relative;
+  padding: 0 0 14px 18px;
+  border-left: 2px solid color-mix(in oklab, var(--color-primary) 35%, transparent);
+}
+.release-timeline > li::before {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: 3px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-primary);
+}
+.release-timeline h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 6px;
+  font-size: 14px;
+}
+.release-latest {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-success, #2fbf71);
+  background: color-mix(in oklab, var(--color-success, #2fbf71) 15%, transparent);
+}
+.release-timeline ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.release-item {
+  display: grid;
+  gap: 2px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.release-kind {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+}
+.release-item.kind-fix .release-kind {
+  color: var(--color-warning, #c58a1c);
+}
+.release-item.kind-security .release-kind {
+  color: var(--color-success, #2fbf71);
+}
+.release-more {
+  display: block;
+  width: calc(100% - 32px);
+  margin: 0 16px 12px;
+  padding: 10px;
+  border-radius: 12px;
+  font-weight: 600;
+  color: inherit;
+  background: color-mix(in oklab, var(--color-base-content) 6%, transparent);
+}
+.release-build {
+  margin: 0;
+  padding: 0 16px 14px;
+  font-size: 12px;
+  opacity: 0.55;
+}

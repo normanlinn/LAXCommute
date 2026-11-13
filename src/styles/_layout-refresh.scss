@@ -1,0 +1,226 @@
+// Header, navigation and map placement per breakpoint.
+/* Layout refresh: less chrome above the map, one navigation, a glanceable next bus. */
+.header-actions .profile-button {
+  /* Account is already in the main navigation. */
+  display: none;
+}
+.map-topbar {
+  align-items: center;
+  gap: 12px;
+}
+.map-topbar > div:first-child {
+  flex: 1;
+  min-width: 0;
+}
+.map-topbar .map-toggle {
+  flex: none;
+  gap: 6px;
+  margin: 0;
+  min-height: 40px;
+  padding: 8px 14px;
+  border: 1px solid var(--color-base-300);
+  border-radius: 999px;
+  font-size: 13px;
+}
+.map-stops-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.map-stops-toggle svg {
+  flex: none;
+}
+@media (min-width: 761px) and (max-width: 1050px) {
+  .map-topbar {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+}
+@media (max-width: 760px) {
+  .app-header {
+    height: auto;
+    min-height: 60px;
+    padding-block: 8px;
+  }
+  .map-topbar {
+    padding: 4px 4px 12px;
+  }
+  .map-topbar .map-route-label {
+    display: none;
+  }
+  .map-topbar .map-toggle {
+    min-height: 38px;
+    padding: 7px 12px;
+    font-size: 12px;
+  }
+  .map-display-controls {
+    flex-direction: row;
+    align-items: center;
+  }
+  .map-display-controls .map-stops-toggle {
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    min-height: 40px;
+    padding: 0;
+  }
+  .map-display-controls .map-stops-toggle[aria-pressed='true'] {
+    color: var(--route-color, var(--color-primary));
+    border-color: currentColor;
+  }
+  .map-stops-toggle span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+@media (min-width: 1051px) {
+  /* The tab bar sits in the header on wide screens instead of covering the map. */
+  .app {
+    position: relative;
+    padding-bottom: 40px;
+  }
+  .bottom-nav {
+    position: absolute;
+    top: 46px;
+    bottom: auto;
+    width: auto;
+    max-width: none;
+    transform: translate(-50%, -50%);
+    grid-template-columns: repeat(4, auto);
+    gap: 4px;
+    padding: 5px;
+    border-radius: 16px;
+    box-shadow: none;
+    background: var(--color-base-200);
+  }
+  .bottom-nav button {
+    flex-direction: row;
+    gap: 7px;
+    min-height: 40px;
+    padding: 8px 14px;
+    border-radius: 12px;
+  }
+  .bottom-nav button span,
+  html:lang(my) .bottom-nav button span {
+    font-size: 13px;
+    line-height: 1.2;
+  }
+  .bottom-nav .nav-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+@media (min-width: 761px) {
+  /* Glanceable next shuttle over the map, matching the phone layout. */
+  #shuttle-map-panel {
+    position: relative;
+  }
+  .transit-arrival-peek {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: absolute;
+    left: 16px;
+    bottom: 16px;
+    z-index: 750;
+    width: min(400px, calc(100% - 32px));
+    min-height: 80px;
+    margin: 0;
+    padding: 12px 15px;
+    border: 1px solid var(--color-base-300);
+    border-radius: 20px;
+    background: var(--color-base-100);
+    color: var(--color-base-content);
+    box-shadow: 0 12px 35px #061f3650;
+    text-align: left;
+  }
+  .shuttle-map-legend {
+    left: auto;
+    right: 16px;
+  }
+  /* Camera shortcuts sit beside the zoom buttons, clear of the next-shuttle card. */
+  .map-controls {
+    position: absolute;
+    top: 12px;
+    right: 62px;
+    z-index: 740;
+    margin: 0;
+  }
+  .map-controls .btn {
+    min-height: 38px;
+    padding: 8px 13px;
+    font-size: 12px;
+  }
+}
+@media (min-width: 1051px) and (max-width: 1399px) {
+  .share-button span,
+  .install-button span {
+    display: none;
+  }
+  .bottom-nav button {
+    padding: 8px 11px;
+  }
+}
+@media (min-width: 1051px) and (max-width: 1279px) {
+  /* Icon-only camera shortcuts keep the map's top row from colliding. */
+  .map-controls .btn {
+    width: 38px;
+    min-width: 38px;
+    padding: 0;
+    gap: 0;
+    font-size: 0;
+  }
+}
+@media (max-width: 420px) {
+  /* Icon-only map toggle so the page title stays on one line. */
+  .map-topbar .map-toggle {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    min-height: 40px;
+    padding: 0;
+  }
+  .map-topbar .map-toggle span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+@media (max-width: 760px) {
+  /* Phones already show the shuttle picker above the map; don't repeat it below. */
+  .trip-card.has-map-picker .route-field {
+    display: none;
+  }
+  .header-actions .install-button {
+    border-color: transparent;
+  }
+}
+@media (min-width: 761px) and (max-width: 1050px) {
+  /* Tablets: stack the map above the commute panel instead of squeezing both. */
+  .trip-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .trip-layout > .trip-card {
+    width: 100%;
+    max-width: 720px;
+    margin-inline: auto;
+  }
+  .map-surface {
+    height: clamp(420px, 58vh, 640px);
+  }
+  .map-controls .btn {
+    width: 38px;
+    min-width: 38px;
+    padding: 0;
+    gap: 0;
+    font-size: 0;
+  }
+}

@@ -1,0 +1,16 @@
+// Burmese typeface (Walone) faces.
+@font-face {
+  font-family: 'Walone';
+  src: url('/fonts/Walone-Regular.woff') format('woff');
+  font-weight: 100 599;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Walone';
+  src: url('/fonts/Walone-Bold.woff') format('woff');
+  font-weight: 600 900;
+  font-style: normal;
+  font-display: swap;
+}

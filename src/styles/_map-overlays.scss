@@ -1,0 +1,70 @@
+// Direction arrows, bus heading, stale GPS, recenter.
+/* Map: travel-direction arrows, bus heading, stale GPS and recenter. */
+.route-arrow-marker {
+  background: none;
+  border: 0;
+  pointer-events: none;
+}
+.route-arrow {
+  display: grid;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+  color: #fff;
+  transform: rotate(var(--bearing));
+  filter: drop-shadow(0 0 1px #0008);
+}
+.map-zoomed-out .route-arrow-marker {
+  visibility: hidden;
+}
+.map-marker-dot.marker-bus .bus-heading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  width: 16px;
+  height: 13px;
+  line-height: 0;
+  color: var(--marker-color);
+  transform: translate(-50%, -50%) rotate(var(--heading)) translateY(-34px);
+  filter: drop-shadow(0 1px 2px #061f3660);
+  pointer-events: none;
+}
+.map-marker-dot.marker-bus.bus-stale {
+  filter: grayscale(0.7);
+  opacity: 0.6;
+}
+.map-recenter {
+  position: absolute;
+  right: 12px;
+  bottom: 72px;
+  z-index: 760;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 8px 14px;
+  border: 1px solid var(--color-base-300);
+  border-radius: 999px;
+  background: var(--color-base-100);
+  color: var(--color-base-content);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  box-shadow: 0 6px 20px #061f3630;
+  cursor: pointer;
+}
+.map-recenter:focus-visible {
+  outline: 3px solid #266beb;
+  outline-offset: 2px;
+}
+@media (max-width: 760px) {
+  .map-recenter {
+    bottom: 122px;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .map-recenter {
+    animation: banner-in 260ms cubic-bezier(0.2, 0.9, 0.25, 1.1);
+  }
+}
