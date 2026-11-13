@@ -1,5 +1,5 @@
 import { describe as group, expect, it } from 'vitest';
-import { describe, releaseHistory } from '../scripts/release-history.mjs';
+import { describe, nextVersion, releaseHistory } from '../scripts/release-history.mjs';
 
 const line = (hash, date, subject) => [hash, date, subject].join('\u001f');
 
@@ -32,5 +32,13 @@ group('release history', () => {
 
   it('still builds without git history', () => {
     expect(releaseHistory('', '3.0.0').totalUpdates).toBe(0);
+  });
+
+  it('raises the version automatically from the commits since it was set', () => {
+    expect(nextVersion('4.0.0', [])).toBe('4.0.0');
+    expect(nextVersion('4.0.0', ['fix: tidy map labels'])).toBe('4.0.1');
+    expect(nextVersion('4.0.0', ['fix: one', 'feat: themes', 'fix(ui): two', 'docs: readme'])).toBe(
+      '4.1.1',
+    );
   });
 });

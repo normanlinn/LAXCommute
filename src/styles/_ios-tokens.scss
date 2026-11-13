@@ -1,35 +1,38 @@
-// iOS system colors: one palette every partial reads, so light and dark stay consistent.
-// Values follow Apple's grouped-background, label, separator and tint colors.
-// System blue (--ios-tint) is for controls and icons. Small text and white-label
-// buttons use Apple's higher-contrast blues so they meet WCAG AA (4.5:1).
+// Theme tokens: 8 palettes, each with a light and a dark set (see _palettes.scss).
+// The page picks a palette with data-palette and a mode with data-theme; Cobalt and
+// sand is the default. Every partial reads these variables, never raw colors.
+@use 'sass:map';
+@use 'palettes' as *;
+
+@mixin tokens($set) {
+  @each $name, $value in $set {
+    --ios-#{$name}: #{$value};
+  }
+  --ios-separator: #{map.get($set, 'line')};
+  // DaisyUI components follow the same palette.
+  --color-base-100: #{map.get($set, 'card')};
+  --color-base-200: #{map.get($set, 'bg')};
+  --color-base-300: #{map.get($set, 'line')};
+  --color-base-content: #{map.get($set, 'label')};
+  --color-primary: #{map.get($set, 'tint-fill')};
+  --color-primary-content: #{map.get($set, 'on-tint')};
+  --color-accent: #{map.get($set, 'tint-fill')};
+  --color-accent-content: #{map.get($set, 'on-tint')};
+}
+
+$default: map.get($palettes, 'cobalt');
 :root,
 [data-theme='lax'] {
-  --ios-bg: #f2f2f7;
-  --ios-card: #ffffff;
-  --ios-fill: #e9e9ee;
-  --ios-label: #000000;
-  --ios-secondary: #6c6c70;
-  --ios-separator: #d1d1d6;
-  --ios-tint: #007aff;
-  --ios-tint-fill: #0071e3;
-  --ios-tint-text: #0066cc;
-  --ios-on-tint: #ffffff;
-  --ios-green: #1f7a33;
-  --ios-orange: #c96a00;
-  --ios-red: #d70015;
+  @include tokens(map.get($default, 'light'));
 }
 [data-theme='lax-dark'] {
-  --ios-bg: #000000;
-  --ios-card: #1c1c1e;
-  --ios-fill: #2c2c2e;
-  --ios-label: #ffffff;
-  --ios-secondary: #98989f;
-  --ios-separator: #38383a;
-  --ios-tint: #0a84ff;
-  --ios-tint-fill: #0071e3;
-  --ios-tint-text: #0a84ff;
-  --ios-on-tint: #ffffff;
-  --ios-green: #30d158;
-  --ios-orange: #ff9f0a;
-  --ios-red: #ff453a;
+  @include tokens(map.get($default, 'dark'));
+}
+@each $id, $modes in $palettes {
+  [data-palette='#{$id}'][data-theme='lax'] {
+    @include tokens(map.get($modes, 'light'));
+  }
+  [data-palette='#{$id}'][data-theme='lax-dark'] {
+    @include tokens(map.get($modes, 'dark'));
+  }
 }

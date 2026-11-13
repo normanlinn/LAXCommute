@@ -49,6 +49,7 @@ import { officialTrackerURL } from './components/OfficialTracker';
 import OutageNotice from './components/OutageNotice';
 import Avatar from './components/Avatar';
 import { useAvatar } from './hooks/useAvatar';
+import { usePaletteSync } from './hooks/usePaletteSync';
 import CrowdReports from './components/CrowdReports';
 import StopReports from './components/StopReports';
 import InstallApp from './components/InstallApp';
@@ -199,6 +200,7 @@ export default function App() {
   const [focusRequest, setFocusRequest] = useState({ mode: 'route', serial: 0 });
   const online = useOnline();
   const { avatar } = useAvatar();
+  usePaletteSync();
   const route = routeForLot(lot);
   const routeQuery = useRoute(route.id);
   const stops = routeQuery.data?.stops || EMPTY;

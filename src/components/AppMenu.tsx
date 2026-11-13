@@ -5,6 +5,7 @@ import { useTheme, type ThemePreference } from '../theme/ThemeProvider';
 import LanguageSwitch from './LanguageSwitch';
 import DeveloperFeedback from './DeveloperFeedback';
 import ReleaseNotes from './ReleaseNotes';
+import ThemePicker from './ThemePicker';
 import Button from './ui/Button';
 import Dialog from './ui/Dialog';
 
@@ -56,6 +57,7 @@ export default function AppMenu() {
               ))}
             </div>
           </fieldset>
+          <ThemePicker />
           <div className="menu-language">
             <h3>{t('Language')}</h3>
             <LanguageSwitch />

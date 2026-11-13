@@ -135,3 +135,14 @@ test('riders can choose an avatar, and it shows in the header after reload', asy
     'rgb(88, 86, 214)',
   );
 });
+
+test('riders can pick one of eight themes, and it stays after reload', async ({ page }) => {
+  await open(page);
+  await expect(page.locator('html')).toHaveAttribute('data-palette', 'cobalt');
+  await page.getByRole('button', { name: 'Open menu' }).click();
+  await expect(page.locator('.theme-tile')).toHaveCount(8);
+  await page.locator('.theme-tile', { hasText: 'Royal navy and gold' }).click();
+  await expect(page.locator('html')).toHaveAttribute('data-palette', 'royal');
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-palette', 'royal');
+});

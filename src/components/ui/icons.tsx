@@ -1,6 +1,4 @@
-// The app's icon set (Phosphor), exported under the names the components use.
-// Components pass `size` and an optional `strokeWidth`; heavier strokes map to
-// Phosphor's bold weight and lighter ones to its light weight.
+// The app's icon set (Phosphor, bold outline), exported under the names the components use.
 import type { ComponentType, CSSProperties } from 'react';
 import {
   ArrowLineDown,
@@ -63,10 +61,10 @@ export interface IconProps {
 }
 export type IconComponent = ComponentType<IconProps>;
 
-function weight(strokeWidth?: number | string): PhosphorProps['weight'] {
-  const width = Number(strokeWidth);
-  if (!Number.isFinite(width)) return 'regular';
-  return width >= 2.2 ? 'bold' : width <= 1.5 ? 'light' : 'regular';
+// LAXCommute uses Phosphor's bold outline everywhere; strokeWidth is accepted for
+// call-site compatibility but no longer changes the weight.
+function weight(_strokeWidth?: number | string): PhosphorProps['weight'] {
+  return 'bold';
 }
 function icon(Phosphor: ComponentType<PhosphorProps>): IconComponent {
   function Icon({ strokeWidth, ...props }: IconProps) {

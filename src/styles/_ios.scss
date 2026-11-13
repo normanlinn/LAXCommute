@@ -1,13 +1,13 @@
 // iOS-style layer, loaded last: system type, grouped cards, segmented controls,
 // a floating tab bar and one tint color for everything you can tap.
 
-$card-radius: 16px;
-$list-radius: 12px;
-$control-radius: 12px;
+$card-radius: 22px;
+$list-radius: 18px;
+$control-radius: 14px;
 $ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 
 @mixin card {
-  border: 0;
+  border: 1px solid var(--ios-separator);
   border-radius: $card-radius;
   background: var(--ios-card);
   box-shadow: none;
@@ -175,7 +175,7 @@ a {
     .map-display-controls button[aria-pressed='true']
   ),
 [data-theme='lax-dark'] .appearance-options > label:has(input:checked) {
-  background: #636366;
+  background: color-mix(in srgb, var(--ios-label) 16%, var(--ios-card));
 }
 // Route letters become small colored dots beside the lot name.
 :is(.route-options, .transit-route-picker) > .btn > span {
@@ -463,7 +463,7 @@ a {
   background: color-mix(in srgb, var(--ios-tint) 12%, transparent);
 }
 [data-theme='lax-dark'] .segmented .tab.active {
-  background: #636366;
+  background: color-mix(in srgb, var(--ios-label) 16%, var(--ios-card));
 }
 
 // Map callout for the boarding stop: a card-colored bubble with label text.
@@ -490,11 +490,262 @@ a {
     0 1px 1px rgb(0 0 0 / 0.04);
 }
 [data-theme='lax-dark'] .segmented.tabs-box .tab.tab-active {
-  background: #636366;
+  background: color-mix(in srgb, var(--ios-label) 16%, var(--ios-card));
 }
 
 .page-card {
   border: 0;
   border-radius: 20px;
   box-shadow: none;
+}
+
+// ── Borders, rounding and motion ─────────────────────────────────────────────
+$line: 1px solid var(--ios-separator);
+$spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+
+// Every surface gets a fine outline in its theme's line color.
+.page-card,
+.bottom-nav,
+.feedback-menu-button,
+.release-notes,
+.avatar-picker,
+.app :is(input, select, textarea),
+.modal-box :is(input, select, textarea),
+.stop-reports .report-departed,
+.arrivals .boarding-caption,
+.arrivals .updated,
+.official-tracker,
+.outage-notice {
+  border: $line;
+}
+.page-card {
+  border-radius: 26px;
+}
+.app :is(input, select, textarea) {
+  border-radius: $control-radius;
+}
+.direction-switch,
+.language-switch,
+.segmented.tabs,
+.route-options,
+.appearance-options,
+.transit-route-picker,
+.map-display-controls {
+  border: $line;
+  border-radius: 16px;
+  padding: 3px;
+}
+:is(
+  .direction-switch .tab,
+  .language-switch .btn,
+  .segmented .tab,
+  .route-options > .btn,
+  .transit-route-picker > .btn
+),
+.appearance-options > label,
+.map-display-controls button {
+  border-radius: 13px;
+}
+.bottom-nav {
+  border-radius: 30px;
+}
+
+// Following buses: the grouped list gets one continuous outline.
+.arrival-list .arrival-row:not(.arrival-next) {
+  border-left: $line;
+  border-right: $line;
+}
+.arrival-list .arrival-next + .arrival-row {
+  border-top: $line;
+}
+.arrival-list .arrival-row:not(.arrival-next):last-child {
+  border-bottom: $line;
+}
+
+// Icons sit on soft, rounded tiles in the theme's accent.
+.arrivals .bus-symbol,
+.arrivals .arrival-next .bus-symbol,
+.feature-icon {
+  border-radius: 14px;
+  color: var(--ios-tint-text);
+  background: var(--ios-soft);
+}
+.bus-alert-toggle,
+.icon-button,
+.preferences-heading .btn {
+  border: $line;
+  color: var(--ios-tint-text);
+  background: var(--ios-card);
+}
+.bus-alert-toggle.is-on {
+  border-color: var(--ios-tint-fill);
+  color: var(--ios-on-tint);
+  background: var(--ios-tint-fill);
+}
+.btn-primary,
+.button-primary,
+.official-tracker-open,
+.release-badge {
+  color: var(--ios-on-tint);
+  background: var(--ios-tint-fill);
+}
+.arrivals .arrival-next .arrival-time strong,
+.arrivals .arrival-next .approach-track i {
+  color: var(--ios-tint-text);
+}
+.arrivals .arrival-next .approach-track i {
+  background: var(--ios-tint);
+}
+.bottom-nav .btn.active {
+  color: var(--ios-tint-text);
+}
+.bottom-nav .nav-pill {
+  background: var(--ios-soft);
+}
+
+// Motion: every control eases between states, lifts on hover and presses in.
+.btn,
+.icon-button,
+.bus-alert-toggle,
+.feedback-menu-button,
+.theme-tile,
+.avatar-grid label,
+.appearance-options > label,
+.map-display-controls button,
+.official-tracker-open,
+.release-notes summary {
+  transition:
+    transform 0.18s $spring,
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover:not(:disabled),
+  .icon-button:hover,
+  .bus-alert-toggle:hover,
+  .feedback-menu-button:hover,
+  .official-tracker-open:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--ios-label) 10%, transparent);
+  }
+  .theme-tile:hover,
+  .avatar-grid label:hover {
+    transform: translateY(-2px);
+  }
+  .arrival-list .arrival-row:not(.arrival-next):hover {
+    background-color: var(--ios-fill);
+  }
+}
+.btn:active:not(:disabled),
+.icon-button:active,
+.bus-alert-toggle:active,
+.feedback-menu-button:active,
+.official-tracker-open:active,
+.theme-tile:active,
+.appearance-options > label:active {
+  transform: scale(0.95);
+  transition-duration: 0.08s;
+}
+.bus-alert-toggle.is-on svg {
+  animation: bell-ring 0.5s ease-in-out;
+}
+
+// Theme switches crossfade instead of snapping.
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.35s;
+  animation-timing-function: ease;
+}
+
+// Theme picker: eight tiles, each previewing light, dark and the accent.
+.theme-picker {
+  margin: 18px 0 0;
+  padding: 0;
+  border: 0;
+}
+.theme-picker legend {
+  margin-bottom: 10px;
+  font-size: 15px;
+  font-weight: 700;
+}
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+.theme-tile {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 8px 4px 10px;
+  border: $line;
+  border-radius: 18px;
+  background: var(--ios-card);
+  cursor: pointer;
+}
+.theme-tile input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.theme-tile:has(input:checked) {
+  border-color: var(--ios-tint);
+  box-shadow: 0 0 0 2px var(--ios-tint);
+}
+.theme-tile:has(input:focus-visible) {
+  outline: 3px solid var(--ios-tint);
+  outline-offset: 3px;
+}
+.theme-swatch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 54px;
+  height: 54px;
+  overflow: hidden;
+  border: $line;
+  border-radius: 50%;
+}
+.theme-swatch > span {
+  display: grid;
+  place-items: center;
+}
+.theme-swatch i {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+}
+.theme-name {
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+}
+@media (max-width: 360px) {
+  .theme-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .icon-button,
+  .bus-alert-toggle,
+  .feedback-menu-button,
+  .theme-tile,
+  .avatar-grid label {
+    transition: none;
+  }
+  .btn:active:not(:disabled),
+  .theme-tile:active,
+  .theme-tile:hover,
+  .avatar-grid label:hover {
+    transform: none;
+  }
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
 }

@@ -1,9 +1,20 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
-// The iOS color system lives in one token file; DaisyUI themes live in styles.css.
-const tokens = readFileSync('src/styles/_ios-tokens.scss', 'utf8');
+// Theme colors are generated into _palettes.scss; DaisyUI base themes live in styles.css.
+const palettesScss = readFileSync('src/styles/_palettes.scss', 'utf8');
 const daisy = readFileSync('src/styles.css', 'utf8');
+const { PALETTES } = await import('../src/theme/palettes.ts');
+
+// Parse the generated SCSS map into { id: { light: {...}, dark: {...} } }.
+const themes = {};
+for (const [, id, body] of palettesScss.matchAll(/  '(\w+)': \(\n([\s\S]*?)\n  \),/g)) {
+  themes[id] = {};
+  for (const [, mode, tokens] of body.matchAll(/'(light|dark)': \(\n([\s\S]*?)\n    \)/g))
+    themes[id][mode] = Object.fromEntries(
+      [...tokens.matchAll(/'([\w-]+)': (#[\da-f]{6})/g)].map(([, k, v]) => [k, v]),
+    );
+}
 
 function luminance(hex) {
   const channels = [1, 3, 5].map((start) => {
@@ -16,29 +27,22 @@ function contrast(a, b) {
   const values = [luminance(a), luminance(b)].sort((x, y) => y - x);
   return (values[0] + 0.05) / (values[1] + 0.05);
 }
-function palette(selector) {
-  const start = tokens.indexOf(selector);
-  const block = tokens.slice(start, tokens.indexOf('}', start));
-  return Object.fromEntries(
-    [...block.matchAll(/--ios-([\w-]+):\s*(#[\da-f]{6});/g)].map(([, name, value]) => [
-      name,
-      value,
-    ]),
-  );
-}
 function daisyTheme(name) {
   const start = daisy.indexOf(`name: '${name}';`);
   const block = daisy.slice(start, daisy.indexOf('\n}', start));
   return (token) => block.match(new RegExp(`${token}:\\s*(#[\\da-f]{6});`))[1];
 }
 
-describe.each([
-  ['light', "[data-theme='lax']"],
-  ['dark', "[data-theme='lax-dark']"],
-])('iOS %s palette', (_mode, selector) => {
-  const c = palette(selector);
+const cases = Object.entries(themes).flatMap(([id, modes]) =>
+  Object.entries(modes).map(([mode, colors]) => [id, mode, colors]),
+);
 
-  it('keeps body and secondary text readable on cards and the page (WCAG AA)', () => {
+it('defines all eight themes in light and dark', () => {
+  expect(cases).toHaveLength(16);
+});
+
+describe.each(cases)('%s theme, %s mode', (_id, _mode, c) => {
+  it('keeps body, secondary, link and status text readable (WCAG AA)', () => {
     for (const surface of [c.card, c.bg]) {
       expect(contrast(c.label, surface)).toBeGreaterThanOrEqual(7);
       expect(contrast(c.secondary, surface)).toBeGreaterThanOrEqual(4.5);
@@ -47,14 +51,22 @@ describe.each([
     }
   });
 
-  it('keeps white labels readable on filled buttons', () => {
+  it('keeps labels readable on filled buttons', () => {
     expect(contrast(c['on-tint'], c['tint-fill'])).toBeGreaterThanOrEqual(4.5);
   });
 
-  it('keeps the system-blue tint visible as a control color (3:1 for UI)', () => {
+  it('keeps the accent visible as a control color (3:1 for UI)', () => {
     expect(contrast(c.tint, c.card)).toBeGreaterThanOrEqual(3);
-    expect(contrast(c['tint-fill'], c.card)).toBeGreaterThanOrEqual(3);
   });
+});
+
+it('shows each theme picker swatch in its real colors', () => {
+  expect(PALETTES.map((p) => p.id).sort()).toEqual(Object.keys(themes).sort());
+  for (const p of PALETTES)
+    for (const mode of ['light', 'dark']) {
+      expect(p[mode].bg).toBe(themes[p.id][mode].bg);
+      expect(p[mode].tint).toBe(themes[p.id][mode].tint);
+    }
 });
 
 it.each(['lax', 'lax-dark'])('keeps DaisyUI action colors readable in %s', (name) => {

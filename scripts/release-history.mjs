@@ -34,6 +34,22 @@ export function describe(subject) {
   return { kind, text };
 }
 
+/**
+ * The released version: package.json's version plus the commits since it was last set.
+ * Each feature raises the minor number; each other user-facing change raises the patch.
+ */
+export function nextVersion(base, subjectsSince) {
+  let [major, minor, patch] = base.split('.').map((n) => Number(n) || 0);
+  for (const subject of subjectsSince) {
+    if (HIDDEN.test(subject)) continue;
+    if (/^feat(\(.*\))?!?:/i.test(subject)) {
+      minor += 1;
+      patch = 0;
+    } else patch += 1;
+  }
+  return `${major}.${minor}.${patch}`;
+}
+
 export function releaseHistory(log, version, builtAt = new Date().toISOString()) {
   const entries = log
     .split('\n')
@@ -62,9 +78,24 @@ export function releaseHistoryPlugin() {
     resolveId: (id) => (id === ID ? `\0${ID}` : null),
     load(id) {
       if (id !== `\0${ID}`) return null;
-      const { version } = JSON.parse(readFileSync('package.json', 'utf8'));
+      const { version: base } = JSON.parse(readFileSync('package.json', 'utf8'));
       const log = git(['log', '--date=short', '--pretty=%h%x1f%ad%x1f%s']);
-      return `export default ${JSON.stringify(releaseHistory(log, version))};`;
+      // Commits since the one that last set package.json's version.
+      const since = git([
+        'log',
+        '-1',
+        '--format=%H',
+        '-G',
+        '"version":',
+        '--',
+        'package.json',
+      ]).trim();
+      const subjects = since
+        ? git(['log', '--reverse', '--format=%s', `${since}..HEAD`])
+            .split('\n')
+            .filter(Boolean)
+        : [];
+      return `export default ${JSON.stringify(releaseHistory(log, nextVersion(base, subjects)))};`;
     },
   };
 }
