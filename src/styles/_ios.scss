@@ -628,7 +628,37 @@ $spring: cubic-bezier(0.34, 1.4, 0.64, 1);
   .feedback-menu-button:hover,
   .official-tracker-open:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 14px color-mix(in srgb, var(--ios-label) 10%, transparent);
+  }
+  // Hover never adds a glow or a white box: ghost buttons get a soft tint of the
+  // text color, which is dark on light themes and light on dark themes.
+  .btn:hover:not(:disabled),
+  .icon-button:hover,
+  .feedback-menu-button:hover,
+  .official-tracker-open:hover {
+    box-shadow: none;
+  }
+  :is(
+      .share-button,
+      .install-button,
+      .menu-button,
+      .map-toggle,
+      .directions-link,
+      .text-button,
+      .bottom-nav .btn:not(.active),
+      .map-controls .btn,
+      .icon-button:not(.bus-alert-toggle)
+    ):hover:not(:disabled) {
+    border-color: var(--ios-separator);
+    background-color: color-mix(in srgb, var(--ios-label) 8%, var(--ios-card));
+  }
+  :is(
+      .direction-switch .tab,
+      .language-switch .btn,
+      .segmented .tab,
+      .route-options > .btn
+    ):hover:not([aria-pressed='true'], .active, :disabled) {
+    background-color: color-mix(in srgb, var(--ios-label) 6%, transparent);
+    box-shadow: none;
   }
   .theme-tile:hover,
   .avatar-grid label:hover {
