@@ -1,6 +1,6 @@
-// Theme tokens: 8 palettes, each with a light and a dark set (see _palettes.scss).
+// Theme tokens: palettes, each with a light and a dark set (see _palettes.scss).
 // The page picks a palette with data-palette and a mode with data-theme; Electric
-// mono is the default. Every partial reads these variables, never raw colors.
+// Quiet transit is the default. Every partial reads these variables, never raw colors.
 @use 'sass:map';
 @use 'palettes' as *;
 
@@ -20,7 +20,7 @@
   --color-accent-content: #{map.get($set, 'on-tint')};
 }
 
-$default: map.get($palettes, 'mono');
+$default: map.get($palettes, 'transit');
 :root,
 [data-theme='lax'] {
   @include tokens(map.get($default, 'light'));

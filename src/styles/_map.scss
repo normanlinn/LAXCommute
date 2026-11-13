@@ -15,7 +15,9 @@
   height: 50px;
   border: 3px solid #fff;
   border-radius: 50%;
-  box-shadow: 0 5px 16px color-mix(in srgb, var(--ios-label) 27%, transparent);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.05),
+    0 4px 14px rgb(0 0 0 / 0.07);
   color: #fff;
 }
 .map-marker-dot.marker-bus svg {
@@ -45,7 +47,9 @@
 .map-marker-dot.marker-bus.bus-focused {
   outline: 3px solid var(--marker-color);
   outline-offset: 3px;
-  box-shadow: 0 7px 24px color-mix(in srgb, var(--ios-label) 40%, transparent);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.05),
+    0 4px 14px rgb(0 0 0 / 0.07);
 }
 .transit-bus-detail {
   position: absolute;
@@ -60,10 +64,12 @@
   min-width: 0;
   padding: 11px 12px;
   border: 1px solid var(--color-base-300);
-  border-radius: 17px;
+  border-radius: 10px;
   background: var(--color-base-100);
   color: var(--color-base-content);
-  box-shadow: 0 10px 30px color-mix(in srgb, var(--ios-label) 20%, transparent);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.05),
+    0 4px 14px rgb(0 0 0 / 0.07);
 }
 .transit-bus-detail-icon {
   color: var(--route-color);
@@ -113,8 +119,10 @@
     margin: 8px 0 24px;
     padding: 30px 20px 24px;
     border: 1px solid var(--color-base-300);
-    border-radius: 28px;
-    box-shadow: 0 12px 36px color-mix(in srgb, var(--ios-label) 13%, transparent);
+    border-radius: 14px;
+    box-shadow:
+      0 1px 2px rgb(0 0 0 / 0.05),
+      0 4px 14px rgb(0 0 0 / 0.07);
     scroll-margin-top: 16px;
   }
   .trip-layout > .trip-card::before {
@@ -124,7 +132,7 @@
     left: calc(50% - 22px);
     width: 44px;
     height: 5px;
-    border-radius: 20px;
+    border-radius: 12px;
     background: var(--color-base-300);
   }
   .map-topbar {
@@ -175,13 +183,15 @@
     min-height: 48px;
     padding: 7px 5px;
     border: 1px solid var(--color-base-300);
-    border-radius: 15px;
+    border-radius: 8px;
     background: var(--color-base-100);
     color: var(--color-base-content);
     font: inherit;
     font-size: 13px;
     font-weight: 750;
-    box-shadow: 0 2px 8px color-mix(in srgb, var(--ios-label) 6%, transparent);
+    box-shadow:
+      0 1px 2px rgb(0 0 0 / 0.05),
+      0 4px 14px rgb(0 0 0 / 0.07);
     transition:
       background-color 0.18s ease,
       transform 0.18s ease,
@@ -234,7 +244,7 @@
     white-space: nowrap;
     font-size: 0;
     line-height: 0;
-    border-radius: 14px;
+    border-radius: 8px;
   }
   .map-controls .btn svg {
     width: 18px;
@@ -251,10 +261,12 @@
     margin: -100px 12px 15px;
     padding: 13px 15px;
     border: 1px solid var(--color-base-300);
-    border-radius: 22px;
+    border-radius: 12px;
     background: var(--color-base-100);
     color: var(--color-base-content);
-    box-shadow: 0 12px 35px color-mix(in srgb, var(--ios-label) 31%, transparent);
+    box-shadow:
+      0 1px 2px rgb(0 0 0 / 0.05),
+      0 4px 14px rgb(0 0 0 / 0.07);
     text-align: left;
   }
   .map-footer {
@@ -354,7 +366,9 @@
     border-radius: 50%;
     background: var(--color-base-100);
     color: var(--color-base-content);
-    box-shadow: 0 4px 18px color-mix(in srgb, var(--ios-label) 21%, transparent);
+    box-shadow:
+      0 1px 2px rgb(0 0 0 / 0.05),
+      0 4px 14px rgb(0 0 0 / 0.07);
     font-size: 14px;
     line-height: normal;
   }
@@ -378,9 +392,11 @@
     max-width: calc(100vw - 45px);
     padding: 7px;
     border: 1px solid var(--color-base-300);
-    border-radius: 17px;
+    border-radius: 10px;
     background: var(--color-base-100);
-    box-shadow: 0 12px 28px color-mix(in srgb, var(--ios-label) 24%, transparent);
+    box-shadow:
+      0 1px 2px rgb(0 0 0 / 0.05),
+      0 4px 14px rgb(0 0 0 / 0.07);
   }
   .map-controls.mobile-open .map-tools-actions {
     visibility: visible;

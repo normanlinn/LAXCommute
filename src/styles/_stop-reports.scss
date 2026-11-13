@@ -37,11 +37,11 @@
   min-height: 108px;
   padding: 18px 15px;
   border: 1.5px solid var(--report-color);
-  border-radius: 17px;
+  border-radius: 10px;
   text-align: left;
   overflow: hidden;
   white-space: normal;
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--report-color) 13%, transparent);
+  box-shadow: none;
   transition:
     transform 160ms ease,
     box-shadow 180ms ease,
@@ -94,7 +94,7 @@
 .stop-reports .report-crowd-submit {
   width: 100%;
   min-height: 50px;
-  border-radius: 14px;
+  border-radius: 8px;
 }
 .stop-reports .report-crowd-submit.report-sent {
   color: var(--color-base-content);
@@ -133,7 +133,7 @@
   .stop-reports .report-action:hover:not(:disabled),
   .stop-reports .report-crowd-submit:hover:not(:disabled) {
     transform: translateY(-3px);
-    box-shadow: 0 8px 20px color-mix(in srgb, var(--report-color) 22%, transparent);
+    box-shadow: none;
   }
   .report-arrived:hover:not(:disabled) .report-action-icon svg {
     animation: report-arrive 420ms ease both;
@@ -146,7 +146,7 @@
   .stop-reports .report-action:active:not(:disabled),
   .stop-reports .report-crowd-submit:active:not(:disabled) {
     transform: translateY(1px) scale(0.96);
-    box-shadow: 0 1px 4px color-mix(in srgb, var(--report-color) 20%, transparent);
+    box-shadow: none;
   }
   .report-action.report-sent .report-action-icon,
   .report-crowd-submit.report-sent svg {

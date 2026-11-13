@@ -139,7 +139,7 @@ test('riders can choose an avatar, and it shows in the header after reload', asy
 test('theme choice is paused: everyone gets the default theme', async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem('laxcommute:palette', 'royal'));
   await open(page);
-  await expect(page.locator('html')).toHaveAttribute('data-palette', 'mono');
+  await expect(page.locator('html')).toHaveAttribute('data-palette', 'transit');
   await page.getByRole('button', { name: 'Open menu' }).click();
   await expect(page.getByText('Appearance')).toBeVisible();
   await expect(page.locator('.theme-picker')).toHaveCount(0);

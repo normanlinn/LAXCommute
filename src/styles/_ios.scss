@@ -1,9 +1,9 @@
 // iOS-style layer, loaded last: system type, grouped cards, segmented controls,
 // a floating tab bar and one tint color for everything you can tap.
 
-$card-radius: 22px;
-$list-radius: 18px;
-$control-radius: 14px;
+$card-radius: 12px;
+$list-radius: 10px;
+$control-radius: 8px;
 $ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 
 @mixin card {
@@ -297,14 +297,16 @@ a {
 // Floating tab bar: tinted icon and label for the current tab.
 .bottom-nav {
   border: 0;
-  border-radius: 26px;
+  border-radius: 14px;
   background: color-mix(in srgb, var(--ios-card) 92%, transparent);
   backdrop-filter: saturate(180%) blur(20px);
-  box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.05),
+    0 4px 14px rgb(0 0 0 / 0.07);
 }
 .bottom-nav .nav-pill {
   background: color-mix(in srgb, var(--ios-tint) 12%, transparent);
-  border-radius: 20px;
+  border-radius: 12px;
 }
 .bottom-nav .btn {
   color: var(--ios-secondary);
@@ -358,7 +360,7 @@ a {
 // Stop reports: a solid route-colored action and a quiet filled one.
 .stop-reports .report-action {
   border: 0;
-  border-radius: 14px;
+  border-radius: 8px;
   box-shadow: none;
 }
 .stop-reports .report-departed {
@@ -471,7 +473,9 @@ a {
   border-radius: 12px;
   background: var(--ios-card);
   color: var(--ios-label);
-  box-shadow: 0 4px 14px rgb(0 0 0 / 0.16);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.05),
+    0 4px 14px rgb(0 0 0 / 0.07);
 }
 .shuttle-map .boarding-label::before {
   border-top-color: var(--ios-card);
@@ -493,7 +497,7 @@ a {
 
 .page-card {
   border: 0;
-  border-radius: 20px;
+  border-radius: 12px;
   box-shadow: none;
 }
 
@@ -518,7 +522,7 @@ $spring: cubic-bezier(0.2, 0.8, 0.2, 1);
   border: $line;
 }
 .page-card {
-  border-radius: 26px;
+  border-radius: 14px;
 }
 .app :is(input, select, textarea) {
   border-radius: $control-radius;
@@ -531,7 +535,7 @@ $spring: cubic-bezier(0.2, 0.8, 0.2, 1);
 .transit-route-picker,
 .map-display-controls {
   border: $line;
-  border-radius: 16px;
+  border-radius: 10px;
   padding: 3px;
 }
 :is(
@@ -546,7 +550,7 @@ $spring: cubic-bezier(0.2, 0.8, 0.2, 1);
   border-radius: 13px;
 }
 .bottom-nav {
-  border-radius: 30px;
+  border-radius: 16px;
 }
 
 // Following buses: the grouped list gets one continuous outline.
@@ -565,7 +569,7 @@ $spring: cubic-bezier(0.2, 0.8, 0.2, 1);
 .arrivals .bus-symbol,
 .arrivals .arrival-next .bus-symbol,
 .feature-icon {
-  border-radius: 14px;
+  border-radius: 8px;
   color: var(--ios-tint-text);
   background: var(--ios-soft);
 }
@@ -807,12 +811,14 @@ html {
   padding: 10px 10px 10px 16px;
   gap: 10px;
   border: $line;
-  border-radius: 20px;
+  border-radius: 12px;
   background: var(--ios-card);
   color: var(--ios-label);
   font-size: 14px;
   font-weight: 600;
-  box-shadow: 0 12px 32px -12px color-mix(in srgb, var(--ios-label) 35%, transparent);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.05),
+    0 4px 14px rgb(0 0 0 / 0.07);
   animation: toast-in 0.3s $spring both;
 }
 .update-toast .btn {
@@ -1063,7 +1069,7 @@ details[open] > :not(summary) {
   min-height: 52px;
   padding: 0 46px 0 16px;
   border: 1px solid var(--ios-separator);
-  border-radius: 14px;
+  border-radius: 8px;
   background-color: var(--ios-fill);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
   background-position: right 18px center;
@@ -1129,10 +1135,12 @@ details[open] > :not(summary) {
     margin-top: 6px;
     padding: 6px;
     border: 1px solid var(--ios-separator);
-    border-radius: 18px;
+    border-radius: 10px;
     background: var(--ios-card);
     color: var(--ios-label);
-    box-shadow: 0 18px 40px -16px color-mix(in srgb, var(--ios-label) 40%, transparent);
+    box-shadow:
+      0 1px 2px rgb(0 0 0 / 0.05),
+      0 4px 14px rgb(0 0 0 / 0.07);
     opacity: 0;
     translate: 0 -6px;
     transition:
@@ -1216,11 +1224,13 @@ details[open] > :not(summary) {
   width: min(460px, calc(100vw - 24px));
   padding: 12px 12px 12px 14px;
   border: $line;
-  border-radius: 22px;
+  border-radius: 12px;
   background: var(--ios-card);
   color: var(--ios-label);
   font-size: 14px;
-  box-shadow: 0 18px 40px -18px color-mix(in srgb, var(--ios-label) 45%, transparent);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.05),
+    0 4px 14px rgb(0 0 0 / 0.07);
   transform: translateX(-50%);
   animation: toast-in 0.3s $spring both;
 }
@@ -1356,11 +1366,13 @@ details[open] > :not(summary) {
   width: min(340px, 100%);
   padding: 30px 26px 26px;
   border: $line;
-  border-radius: 28px;
+  border-radius: 14px;
   background: var(--ios-card);
   color: var(--ios-label);
   text-align: center;
-  box-shadow: 0 24px 60px -24px color-mix(in srgb, var(--ios-label) 45%, transparent);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.05),
+    0 4px 14px rgb(0 0 0 / 0.07);
   animation: soft-pop 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 .update-screen-card strong {

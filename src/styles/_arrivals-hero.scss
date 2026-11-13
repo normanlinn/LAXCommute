@@ -21,10 +21,12 @@
   gap: 14px;
   margin-bottom: 8px;
   padding: 18px 18px 22px 22px;
-  border-radius: 20px;
+  border-radius: 12px;
   border: 1px solid color-mix(in oklab, var(--color-base-content) 10%, transparent);
   background: var(--color-base-200);
-  box-shadow: 0 1px 2px color-mix(in oklab, #000 18%, transparent);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.05),
+    0 4px 14px rgb(0 0 0 / 0.07);
 }
 /* A route-colored edge marks the bus to catch, like a boarding pass. */
 .arrivals .arrival-row.arrival-next::before {
@@ -48,7 +50,7 @@
 .arrivals .arrival-next .bus-symbol {
   width: 48px;
   height: 48px;
-  border-radius: 14px;
+  border-radius: 8px;
   background: color-mix(in oklab, var(--route-color) 16%, transparent);
 }
 .arrivals .arrival-next .approach-track {
@@ -132,7 +134,7 @@
 .official-tracker {
   margin: 4px 0 8px;
   padding: 14px;
-  border-radius: 22px;
+  border-radius: 12px;
   border: 1px solid color-mix(in oklab, var(--color-warning, var(--ios-orange)) 35%, transparent);
   background: linear-gradient(
     170deg,
@@ -172,12 +174,12 @@
   gap: 8px;
   margin-top: 14px;
   padding: 14px;
-  border-radius: 16px;
+  border-radius: 10px;
   font-weight: 700;
   text-decoration: none;
   color: var(--color-base-100);
   background: var(--route-color);
-  box-shadow: 0 12px 28px -16px var(--route-color);
+  box-shadow: none;
 }
 .official-tracker-open:active {
   transform: scale(0.98);

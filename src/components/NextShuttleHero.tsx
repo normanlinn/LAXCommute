@@ -1,6 +1,6 @@
 import { motion, useReducedMotion } from 'motion/react';
 import { useLanguage } from '../i18n/LanguageProvider';
-import { BusFront, Clock3 } from './ui/icons';
+import { Clock3 } from './ui/icons';
 
 type Props = {
   routeShort: string;
@@ -40,31 +40,31 @@ export default function NextShuttleHero({
       : liveDown
         ? t('Typical service')
         : t('Waiting for the tracker');
+  // A departure row, like a station board: route, where from, and how soon.
   return (
     <section className="next-hero" aria-live="polite" aria-label={t('Your next shuttle')}>
-      <div className="next-hero-top">
+      <div className="next-hero-row">
         <span className="next-hero-route" aria-hidden="true">
           {routeShort}
         </span>
-        <span className="next-hero-label">{lotLabel}</span>
-        <span className={`next-hero-badge${liveDown ? ' is-paused' : ''}`}>
-          {liveDown ? <Clock3 size={12} aria-hidden="true" /> : <i aria-hidden="true" />}
-          {note}
+        <span className="next-hero-where">
+          <strong>{lotLabel}</strong>
+          <span>{stopName || t('Choose a boarding stop')}</span>
         </span>
+        <motion.strong
+          key={answer}
+          className="next-hero-time"
+          initial={reduce ? false : { opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.22, ease: [0.2, 0.8, 0.2, 1] }}
+        >
+          {answer}
+        </motion.strong>
       </div>
-      <motion.strong
-        key={answer}
-        className="next-hero-time"
-        initial={reduce ? false : { opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.26, ease: [0.2, 0.8, 0.2, 1] }}
-      >
-        {answer}
-      </motion.strong>
-      <span className="next-hero-stop">
-        <BusFront size={15} aria-hidden="true" />
-        {stopName || t('Choose a boarding stop')}
-      </span>
+      <div className={`next-hero-status${liveDown ? ' is-paused' : ''}`}>
+        {liveDown ? <Clock3 size={13} aria-hidden="true" /> : <i aria-hidden="true" />}
+        {note}
+      </div>
     </section>
   );
 }

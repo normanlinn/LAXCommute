@@ -1,9 +1,37 @@
-// Builds the 8 LAXCommute themes from their base colors, adjusting text shades until
+// Builds the LAXCommute themes from their base colors, adjusting text shades until
 // every text pairing meets WCAG AA (4.5:1). Writes the SCSS token map and the TS list.
 //   node scripts/palettes.mjs
 import { writeFileSync } from 'node:fs';
 
 const BASE = [
+  [
+    'transit',
+    'Quiet transit',
+    {
+      bg: '#f6f7f6',
+      card: '#ffffff',
+      line: '#e2e4e2',
+      fill: '#eef0ee',
+      label: '#141714',
+      secondary: '#5f665f',
+      tint: '#141714',
+      soft: '#e8ebe8',
+      green: '#14803a',
+      orange: '#a55400',
+    },
+    {
+      bg: '#0e100f',
+      card: '#181b19',
+      line: '#2b302d',
+      fill: '#222624',
+      label: '#eef1ee',
+      secondary: '#9aa39c',
+      tint: '#eef1ee',
+      soft: '#2a2f2c',
+      green: '#4ade80',
+      orange: '#f5a524',
+    },
+  ],
   [
     'mono',
     'Electric mono',
@@ -323,7 +351,7 @@ export const PALETTES = ${JSON.stringify(
     2,
   )} as const;
 export type PaletteID = (typeof PALETTES)[number]['id'];
-export const DEFAULT_PALETTE: PaletteID = 'mono';
+export const DEFAULT_PALETTE: PaletteID = 'transit';
 export const PALETTE_STORAGE_KEY = 'laxcommute:palette';
 export function isPaletteID(value: unknown): value is PaletteID {
   return PALETTES.some((p) => p.id === value);

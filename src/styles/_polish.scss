@@ -25,7 +25,7 @@
 .crowd-form .btn-primary,
 .feedback-modal form .btn-primary {
   min-height: 50px;
-  border-radius: 14px;
+  border-radius: 8px;
   font-size: 16px;
   font-weight: 600;
 }
@@ -43,7 +43,7 @@
 .feedback-modal textarea,
 .feedback-modal input {
   min-height: 50px;
-  border-radius: 14px;
+  border-radius: 8px;
   border-color: color-mix(in oklab, var(--color-base-content) 16%, transparent);
   background-color: var(--color-base-100);
   transition:
@@ -80,7 +80,7 @@
 .feedback-menu-button {
   min-height: 54px;
   padding: 0 16px;
-  border-radius: 14px;
+  border-radius: 8px;
   border: 1px solid color-mix(in oklab, var(--color-base-content) 14%, transparent);
   background: color-mix(in oklab, var(--color-base-content) 4%, transparent);
   font-weight: 600;

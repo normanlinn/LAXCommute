@@ -137,7 +137,7 @@ h3,
   display: flex;
   align-items: center;
   gap: 8px;
-  border-radius: 30px;
+  border-radius: 16px;
   padding: 11px 16px;
   background: var(--surface-f0f5f2, #f0f5f2);
   font-size: 14px;
@@ -222,7 +222,7 @@ h3,
   height: min(61vh, 630px);
   min-height: 430px;
   background: var(--surface-e7eeeb, var(--ios-fill));
-  border-radius: 24px;
+  border-radius: 12px;
   overflow: hidden;
   position: relative;
   isolation: isolate;
@@ -239,9 +239,11 @@ h3,
 }
 .shuttle-map.leaflet-container .leaflet-bar {
   border: 1px solid var(--line-dce6e0, var(--ios-separator));
-  border-radius: 14px;
+  border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 3px 12px #163a2c12;
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.05),
+    0 4px 14px rgb(0 0 0 / 0.07);
 }
 .shuttle-map.leaflet-container .leaflet-bar a {
   width: 44px;
@@ -279,7 +281,9 @@ h3,
   border: 3px solid var(--marker-color);
   border-radius: 50%;
   background: var(--surface-fff, #fff);
-  box-shadow: 0 1px 5px color-mix(in srgb, var(--ios-label) 15%, transparent);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.05),
+    0 4px 14px rgb(0 0 0 / 0.07);
 }
 .map-marker-dot.marker-selected {
   width: 26px;
@@ -296,7 +300,9 @@ h3,
   background: var(--marker-color);
   border: 3px solid #fff;
   border-radius: 12px;
-  box-shadow: 0 3px 9px color-mix(in srgb, var(--ios-label) 25%, transparent);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.05),
+    0 4px 14px rgb(0 0 0 / 0.07);
   font-size: 13px;
   font-weight: 800;
   color: #fff;
@@ -316,7 +322,9 @@ h3,
   width: max-content;
   max-width: 190px;
   white-space: normal;
-  box-shadow: 0 3px 12px color-mix(in srgb, var(--ios-label) 13%, transparent);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.05),
+    0 4px 14px rgb(0 0 0 / 0.07);
 }
 .shuttle-map .boarding-label::before {
   border-top-color: var(--line-122b32, var(--ios-label));
@@ -338,7 +346,9 @@ h3,
   background: var(--surface-fff, #fff);
   border: 1px solid var(--line-dce6e0, var(--ios-separator));
   border-radius: 12px;
-  box-shadow: 0 2px 10px color-mix(in srgb, var(--ios-label) 6%, transparent);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.05),
+    0 4px 14px rgb(0 0 0 / 0.07);
 }
 .basemap-switch button {
   min-height: 36px;
@@ -422,9 +432,11 @@ h3,
 .map-symbol {
   width: 84px;
   height: 84px;
-  border-radius: 25px;
+  border-radius: 14px;
   background: var(--surface-ffffffb5, #ffffffb5);
-  box-shadow: 0 10px 28px #1e51430a;
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.05),
+    0 4px 14px rgb(0 0 0 / 0.07);
   display: grid;
   place-items: center;
   margin-bottom: 25px;
@@ -452,7 +464,7 @@ h3,
   left: 16px;
   top: 16px;
   background: var(--surface-ffffffeb, #ffffffeb);
-  border-radius: 20px;
+  border-radius: 12px;
   padding: 9px 13px;
   display: flex;
   gap: 7px;
@@ -479,11 +491,13 @@ h3,
 .map-controls button {
   background: var(--surface-fff, #fff);
   border: 1px solid var(--line-e2e9e5, #e2e9e5);
-  box-shadow: 0 4px 15px #18382b09;
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.05),
+    0 4px 14px rgb(0 0 0 / 0.07);
   display: flex;
   gap: 7px;
   align-items: center;
-  border-radius: 28px;
+  border-radius: 14px;
   padding: 12px 16px;
   font-size: 13px;
   color: var(--ink-466258, var(--ios-label));
@@ -514,9 +528,11 @@ h3,
 }
 .trip-card {
   background: var(--surface-fff, #fff);
-  border-radius: 24px;
+  border-radius: 12px;
   padding: 25px;
-  box-shadow: 0 6px 40px #14332b07;
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.05),
+    0 4px 14px rgb(0 0 0 / 0.07);
   border: 1px solid var(--line-e1e9e4, #e1e9e4);
 }
 .trip-intro h2 {
@@ -555,7 +571,9 @@ h3,
 .segmented .active {
   background: var(--surface-fff, #fff);
   color: var(--ink-23473a, var(--ios-label));
-  box-shadow: 0 2px 6px #143b2610;
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.05),
+    0 4px 14px rgb(0 0 0 / 0.07);
 }
 .field {
   display: flex;
@@ -954,7 +972,9 @@ input::placeholder {
   grid-template-columns: repeat(4, 1fr);
   padding: 8px;
   border: 1px solid var(--control-border);
-  box-shadow: 0 7px 35px color-mix(in srgb, var(--color-base-content) 16%, transparent);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.05),
+    0 4px 14px rgb(0 0 0 / 0.07);
 }
 .bottom-nav button {
   display: flex;
@@ -963,7 +983,7 @@ input::placeholder {
   gap: 5px;
   color: var(--ink-607970, var(--ios-secondary));
   background: transparent;
-  border-radius: 16px;
+  border-radius: 10px;
   padding: 9px 4px;
 }
 .bottom-nav button span {
@@ -981,7 +1001,7 @@ input::placeholder {
   margin: 0 auto;
   background: var(--surface-fff, #fff);
   border: 1px solid var(--line-e0e8e2, #e0e8e2);
-  border-radius: 26px;
+  border-radius: 14px;
   padding: 38px;
   animation: enter 0.2s ease-out;
 }
@@ -1000,7 +1020,7 @@ input::placeholder {
 .feature-icon {
   width: 56px;
   height: 56px;
-  border-radius: 16px;
+  border-radius: 10px;
   background: var(--surface-e8f5ec, #e8f5ec);
   color: var(--ink-328268, #328268);
   display: grid;
@@ -1150,7 +1170,7 @@ input::placeholder {
 .install-dialog {
   position: relative;
   background: var(--surface-fff, #fff);
-  border-radius: 24px;
+  border-radius: 12px;
   padding: 32px;
   width: min(440px, 100%);
   max-height: 90dvh;
@@ -1189,7 +1209,7 @@ input::placeholder {
   top: 15px;
   left: 50%;
   transform: translateX(-50%);
-  border-radius: 14px;
+  border-radius: 8px;
   background: var(--surface-122b32, var(--ios-label));
   color: var(--ios-fill);
   padding: 14px;
@@ -1198,7 +1218,9 @@ input::placeholder {
   gap: 15px;
   font-size: 13px;
   z-index: 40;
-  box-shadow: 0 8px 32px #183a2940;
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.05),
+    0 4px 14px rgb(0 0 0 / 0.07);
 }
 .update-toast button {
   background: transparent;
@@ -1356,7 +1378,7 @@ input::placeholder {
     min-height: 290px;
     height: 40dvh;
     max-height: 420px;
-    border-radius: 20px;
+    border-radius: 12px;
   }
   .map-placeholder {
     padding: 23px;
@@ -1364,7 +1386,7 @@ input::placeholder {
   .map-symbol {
     width: 54px;
     height: 54px;
-    border-radius: 17px;
+    border-radius: 10px;
     margin-bottom: 14px;
   }
   .map-symbol svg {
@@ -1399,7 +1421,7 @@ input::placeholder {
   .trip-card {
     width: 100%;
     padding: 23px;
-    border-radius: 22px;
+    border-radius: 12px;
   }
   .trip-intro h2 {
     font-size: 25px;
@@ -1429,7 +1451,7 @@ input::placeholder {
     width: calc(100% - 28px);
     max-width: 430px;
     bottom: calc(12px + env(safe-area-inset-bottom));
-    border-radius: 20px;
+    border-radius: 12px;
     padding: 7px;
   }
   .bottom-nav button span {
@@ -1438,14 +1460,14 @@ input::placeholder {
   .bottom-nav button {
     gap: 4px;
     padding: 9px 3px;
-    border-radius: 14px;
+    border-radius: 8px;
   }
   .settings-layout {
     padding: 22px 16px;
   }
   .page-card {
     padding: 26px;
-    border-radius: 22px;
+    border-radius: 12px;
   }
   .page-card h1 {
     font-size: 29px;
@@ -1585,7 +1607,9 @@ input::placeholder {
   font: inherit;
   font-size: 12px;
   cursor: pointer;
-  box-shadow: 0 2px 8px color-mix(in srgb, var(--ios-label) 7%, transparent);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.05),
+    0 4px 14px rgb(0 0 0 / 0.07);
 }
 .map-stops-toggle:focus-visible {
   outline: 3px solid var(--ios-tint);

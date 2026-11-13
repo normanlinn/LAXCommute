@@ -11,7 +11,7 @@
   width: fit-content;
   border: 1px solid var(--control-border);
   background: var(--control-tray);
-  border-radius: 15px;
+  border-radius: 8px;
 }
 .map-view-switch .btn {
   min-height: 40px;
@@ -149,7 +149,7 @@
   margin: 20px 0 8px;
   background: var(--control-tray);
   border: 1px solid var(--control-border);
-  border-radius: 14px;
+  border-radius: 8px;
   cursor: pointer;
 }
 .remember-commute input {
@@ -193,7 +193,7 @@
   border: 1px solid var(--control-border);
   background: var(--control-tray);
   padding: 18px;
-  border-radius: 15px;
+  border-radius: 8px;
   margin: 20px 0;
 }
 .welcome-tip svg {
