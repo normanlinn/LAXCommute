@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ExternalLink, Megaphone, X } from 'lucide-react';
+import { ExternalLink, Megaphone, X } from './ui/icons';
 import { useLanguage } from '../i18n/LanguageProvider';
 import { officialTrackerURL } from './OfficialTracker';
 

@@ -4,7 +4,7 @@ import type { MapProps, Point, Stop, RoutePath, Vehicle } from '../types';
 import { memo, useEffect, useRef, useState } from 'react';
 import * as L from 'leaflet';
 import { animate } from 'animejs';
-import { LocateFixed, MapPinned } from 'lucide-react';
+import { LocateFixed, MapPinned } from './ui/icons';
 import 'leaflet/dist/leaflet.css';
 import { config } from '../config';
 import { GPS_TTL_MS, snapshotFresh, validVehicle } from '../domain/arrivals';

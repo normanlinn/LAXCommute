@@ -66,7 +66,7 @@ export default defineConfig(({ mode }) => ({
         // Push and notification-click handlers for closed-app bus alerts.
         importScripts: ['push-sw.js'],
         navigateFallback: '/index.html',
-        navigateFallbackDenylist: [/^\/api\//],
+        navigateFallbackDenylist: [/^\/api\//, /^\/legal\//],
         cleanupOutdatedCaches: true,
         // Cache public feed snapshots only. Auth and third-party map tiles are never cached here.
         runtimeCaching: [

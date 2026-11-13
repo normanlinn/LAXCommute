@@ -1,6 +1,6 @@
 import { useLanguage } from '../i18n/LanguageProvider';
 import { useId, useState } from 'react';
-import { ExternalLink, Navigation, X } from 'lucide-react';
+import { ExternalLink, Navigation, X } from './ui/icons';
 import { directionsLinks } from '../domain/commute';
 import Button from './ui/Button';
 import Dialog from './ui/Dialog';

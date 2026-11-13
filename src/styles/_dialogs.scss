@@ -68,18 +68,18 @@
 html[data-theme='lax-dark'],
 html[data-theme='lax-dark'] body,
 html[data-theme='lax-dark'] .app {
-  background-color: #0b111b;
+  background-color: #111416;
 }
 html[data-theme='lax-dark'] .app-dialog::backdrop {
   background: rgb(3 7 16 / 79%);
 }
 html[data-theme='lax-dark'] .app-dialog-panel {
-  background: #172233;
-  color: #f0f5ff;
-  border: 1px solid #455774;
+  background: #1c2124;
+  color: #ece7dc;
+  border: 1px solid #3a4247;
 }
 html[data-theme='lax-dark'] .app-header {
-  background: #172233;
+  background: #1c2124;
 }
 .app-dialog > .app-dialog-panel {
   opacity: 1;

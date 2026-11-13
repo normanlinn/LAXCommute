@@ -10,7 +10,7 @@ import {
   RefreshCw,
   Footprints,
   X,
-} from 'lucide-react';
+} from './ui/icons';
 import { canSetAlert, useBusAlert } from '../hooks/useBusAlert';
 import {
   availableArrivals,

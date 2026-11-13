@@ -2,7 +2,7 @@ import { useLanguage } from '../i18n/LanguageProvider';
 import Dialog from './ui/Dialog';
 import Button from './ui/Button';
 import { useEffect, useState } from 'react';
-import { Download, Share, X, Smartphone } from 'lucide-react';
+import { Download, Share, X, Smartphone } from './ui/icons';
 import { useRegisterSW } from 'virtual:pwa-register/react';
 
 export default function InstallApp() {

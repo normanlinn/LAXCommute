@@ -1,7 +1,7 @@
 // Page shell, header, trip card, forms and core components.
 :root {
   font-family:
-    'Inter',
+    'Overpass',
     'Walone',
     system-ui,
     -apple-system,
@@ -64,7 +64,7 @@ h1,
 h2,
 h3,
 .brand {
-  font-family: 'Inter', 'Walone', system-ui, sans-serif;
+  font-family: 'Overpass', 'Walone', system-ui, sans-serif;
 }
 .shuttle-map.leaflet-container,
 .shuttle-map.leaflet-container .leaflet-control-attribution {
@@ -106,7 +106,7 @@ h3,
 .brand small {
   display: block;
   font:
-    600 9px/1.8 'Inter',
+    600 9px/1.8 'Overpass',
     sans-serif;
   letter-spacing: 2px;
   color: var(--ink-7a8a85, #7a8a85);
@@ -761,7 +761,7 @@ input::placeholder {
 .arrival-time strong {
   font-size: 27px;
   letter-spacing: -1px;
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Overpass', system-ui, sans-serif;
   font-weight: 800;
   line-height: 1;
 }

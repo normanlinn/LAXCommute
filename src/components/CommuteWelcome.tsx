@@ -1,5 +1,5 @@
 import { useId } from 'react';
-import { Bookmark, ArrowRight, X } from 'lucide-react';
+import { Bookmark, ArrowRight, X } from './ui/icons';
 import { useLanguage } from '../i18n/LanguageProvider';
 import Button from './ui/Button';
 import Dialog from './ui/Dialog';

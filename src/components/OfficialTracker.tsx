@@ -1,4 +1,4 @@
-import { ExternalLink, RefreshCw } from 'lucide-react';
+import { ExternalLink, RefreshCw } from './ui/icons';
 import { useLanguage } from '../i18n/LanguageProvider';
 import Button from './ui/Button';
 

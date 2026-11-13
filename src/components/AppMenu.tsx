@@ -1,5 +1,5 @@
 import { useId, useState } from 'react';
-import { Menu, Monitor, Moon, Sun, X } from 'lucide-react';
+import { Menu, Monitor, Moon, Sun, X } from './ui/icons';
 import { useLanguage } from '../i18n/LanguageProvider';
 import { useTheme, type ThemePreference } from '../theme/ThemeProvider';
 import LanguageSwitch from './LanguageSwitch';
@@ -82,6 +82,10 @@ export default function AppMenu() {
               </p>
             )}
           </div>
+          <p className="legal-links">
+            <a href="/legal/privacy.html">{t('Privacy policy')}</a>
+            <a href="/legal/terms.html">{t('Terms of use')}</a>
+          </p>
           <p className="developer-credit">
             <a
               href="https://normanlinn.github.io/portfolio"

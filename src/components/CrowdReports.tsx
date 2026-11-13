@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Users, RefreshCw } from 'lucide-react';
+import { Users, RefreshCw } from './ui/icons';
 import { useQuery } from '@tanstack/react-query';
 import { useLanguage } from '../i18n/LanguageProvider';
 import { getCrowdReports, sendCrowdReport, type CrowdLevel } from '../services/community';

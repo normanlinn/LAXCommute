@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { Bug, ChevronDown, Paintbrush, ShieldCheck, Sparkles, Wrench } from 'lucide-react';
+import { Bug, ChevronDown, Paintbrush, ShieldCheck, CirclePlus, Wrench } from './ui/icons';
 import history from 'virtual:release-history';
 import { useLanguage } from '../i18n/LanguageProvider';
 
 const KINDS = {
-  new: { label: 'New', Icon: Sparkles },
+  new: { label: 'New', Icon: CirclePlus },
   improved: { label: 'Improved', Icon: Wrench },
   design: { label: 'Design', Icon: Paintbrush },
   fix: { label: 'Fix', Icon: Bug },

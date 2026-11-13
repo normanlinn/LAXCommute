@@ -1,7 +1,7 @@
 import { useLanguage } from '../i18n/LanguageProvider';
 import type { MapProps } from '../types';
 import { memo, useEffect, useRef, useState } from 'react';
-import { ExternalLink, Map as MapIcon } from 'lucide-react';
+import { ExternalLink, Map as MapIcon } from './ui/icons';
 import { config } from '../config';
 import { useTheme } from '../theme/ThemeProvider';
 import { animate } from 'animejs';

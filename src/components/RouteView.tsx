@@ -1,7 +1,7 @@
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { animate } from 'animejs';
 import { LazyMotion, domAnimation, m, useReducedMotion } from 'motion/react';
-import { BusFront, MapPin } from 'lucide-react';
+import { BusFront, MapPin } from './ui/icons';
 import { ARRIVAL_TTL_MS, GPS_TTL_MS, snapshotFresh, validVehicle } from '../domain/arrivals';
 import { createRouteProjection, routePathData, validRoutePoint } from '../domain/route-view';
 import { config } from '../config';
@@ -83,7 +83,7 @@ function BusMarker({
       )}
       <circle r="19" />
       <g transform="translate(-11 -11)">
-        <BusFront width={22} height={22} />
+        <BusFront size={22} />
       </g>
       <text y="32" textAnchor="middle">
         {bus.name || bus.id}

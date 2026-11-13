@@ -2,7 +2,7 @@ import { useLanguage } from '../i18n/LanguageProvider';
 import { errorMessage } from '../domain/errors';
 import Button from './ui/Button';
 import { useMemo, useState } from 'react';
-import { Bookmark, ArrowRight, Check, Footprints } from 'lucide-react';
+import { Bookmark, ArrowRight, Check, Footprints } from './ui/icons';
 import { boardingStops, ROUTES, TERMINALS, routeForLot, terminalKey } from '../domain/commute';
 import { useRoute } from '../hooks/useShuttle';
 import { useAccount } from '../hooks/useAccount';

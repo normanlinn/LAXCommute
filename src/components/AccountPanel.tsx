@@ -2,7 +2,7 @@ import { useLanguage } from '../i18n/LanguageProvider';
 import { authErrorMessage, authReturnUrl } from '../domain/auth';
 import Button from './ui/Button';
 import { useEffect, useState } from 'react';
-import { Check, Mail, LogOut, ArrowRight, LockKeyhole, UserRound } from 'lucide-react';
+import { Check, Mail, LogOut, ArrowRight, LockKeyhole, UserRound } from './ui/icons';
 import { useAccount } from '../hooks/useAccount';
 import { getAuthClient } from '../services/auth';
 

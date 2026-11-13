@@ -29,7 +29,7 @@ import {
   WifiOff,
   ChevronDown,
   SlidersHorizontal,
-} from 'lucide-react';
+} from './components/ui/icons';
 import {
   ROUTES,
   boardingStops,

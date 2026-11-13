@@ -408,5 +408,7 @@
   "Report sent": "Reporte enviado",
   "I see this shuttle at the stop": "Veo este autobús en la parada",
   "I saw this shuttle leave": "Vi salir este autobús",
-  "Report {lot} shuttle crowding": "Reportar ocupación del autobús de {lot}"
+  "Report {lot} shuttle crowding": "Reportar ocupación del autobús de {lot}",
+  "Privacy policy": "Política de privacidad",
+  "Terms of use": "Términos de uso"
 }

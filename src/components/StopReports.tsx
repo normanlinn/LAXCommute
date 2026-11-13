@@ -9,7 +9,7 @@ import {
   LoaderCircle,
   MapPin,
   Send,
-} from 'lucide-react';
+} from './ui/icons';
 import { useQuery } from '@tanstack/react-query';
 import { useLanguage } from '../i18n/LanguageProvider';
 import { useOnline } from '../hooks/useShuttle';

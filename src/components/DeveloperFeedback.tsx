@@ -1,5 +1,5 @@
 import { useId, useState } from 'react';
-import { MessageSquare, X } from 'lucide-react';
+import { MessageSquare, X } from './ui/icons';
 import { useLanguage } from '../i18n/LanguageProvider';
 import { sendDeveloperFeedback } from '../services/community';
 import Button from './ui/Button';

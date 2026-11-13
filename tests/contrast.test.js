@@ -88,7 +88,7 @@ it('uses a neutral cool-black backdrop behind the native menu in dark mode', () 
   )?.[1];
   expect(dialogBackdrop).toContain('rgb(3 7 16 / 79%)');
   expect(css).toContain("html[data-theme='lax-dark'] .app-dialog-panel");
-  expect(css).toContain('background-color: #0b111b');
+  expect(css).toContain('background-color: #111416');
   expect(css).not.toContain('background: #0e2b2a70;');
 });
 

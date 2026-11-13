@@ -1,5 +1,5 @@
 import { useEffect, useId, useState } from 'react';
-import { Copy, Share2, X } from 'lucide-react';
+import { Copy, Share2, X } from './ui/icons';
 import { useLanguage } from '../i18n/LanguageProvider';
 import Button from './ui/Button';
 import Dialog from './ui/Dialog';

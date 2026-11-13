@@ -1,4 +1,4 @@
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown } from './ui/icons';
 import { createPortal } from 'react-dom';
 import { useLanguage } from '../i18n/LanguageProvider';
 import { guides } from '../i18n/guide';
