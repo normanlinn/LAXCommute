@@ -440,5 +440,9 @@
   "Nickname": "အမည်ပြောင်",
   "Saved": "သိမ်းပြီး",
   "Used to greet you. Saved to your account.": "သင့်ကို နှုတ်ဆက်ရန် အသုံးပြုသည်။ သင့်အကောင့်တွင် သိမ်းထားသည်။",
-  "Used to greet you. Saved on this device.": "သင့်ကို နှုတ်ဆက်ရန် အသုံးပြုသည်။ ဤစက်ပေါ်တွင် သိမ်းထားသည်။"
+  "Used to greet you. Saved on this device.": "သင့်ကို နှုတ်ဆက်ရန် အသုံးပြုသည်။ ဤစက်ပေါ်တွင် သိမ်းထားသည်။",
+  "New version ready": "ဗားရှင်းအသစ် အဆင်သင့်ဖြစ်ပြီ",
+  "Updating…": "အပ်ဒိတ်လုပ်နေသည်…",
+  "Update to get the latest features and fixes.": "နောက်ဆုံး လုပ်ဆောင်ချက်များနှင့် ပြင်ဆင်ချက်များ ရရှိရန် အပ်ဒိတ်လုပ်ပါ။",
+  "Updated to v{version}": "v{version} သို့ အပ်ဒိတ်လုပ်ပြီး"
 }

@@ -440,5 +440,9 @@
   "Nickname": "Apodo",
   "Saved": "Guardado",
   "Used to greet you. Saved to your account.": "Lo usamos para saludarte. Guardado en tu cuenta.",
-  "Used to greet you. Saved on this device.": "Lo usamos para saludarte. Guardado en este dispositivo."
+  "Used to greet you. Saved on this device.": "Lo usamos para saludarte. Guardado en este dispositivo.",
+  "New version ready": "Nueva versión lista",
+  "Updating…": "Actualizando…",
+  "Update to get the latest features and fixes.": "Actualiza para obtener las últimas funciones y correcciones.",
+  "Updated to v{version}": "Actualizado a v{version}"
 }

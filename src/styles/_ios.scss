@@ -1078,3 +1078,261 @@ details[open] > :not(summary) {
 .btn:active:not(:disabled) {
   transform: scale(0.97);
 }
+
+// ── Dropdowns ────────────────────────────────────────────────────────────────
+// One style for every select: a soft field with a chevron and a quiet accent ring.
+// Where the browser supports styleable selects (Chrome, Edge), the open menu is a
+// themed card that fades in, highlights on hover and marks the choice in the accent.
+.app select,
+.modal-box select {
+  appearance: none;
+  min-height: 52px;
+  padding: 0 46px 0 16px;
+  border: 1px solid var(--ios-separator);
+  border-radius: 14px;
+  background-color: var(--ios-fill);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-position: right 18px center;
+  background-repeat: no-repeat;
+  background-size: 14px;
+  color: var(--ios-label);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: none;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .app select:hover,
+  .modal-box select:hover {
+    border-color: color-mix(in srgb, var(--ios-label) 22%, var(--ios-separator));
+  }
+}
+.app select:focus,
+.app select:focus-visible,
+.modal-box select:focus,
+.modal-box select:focus-visible {
+  outline: none;
+  border-color: var(--ios-tint);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ios-tint) 22%, transparent);
+}
+
+@supports (appearance: base-select) {
+  .app select,
+  .app select::picker(select),
+  .modal-box select,
+  .modal-box select::picker(select) {
+    appearance: base-select;
+  }
+  .app select,
+  .modal-box select {
+    display: flex;
+    align-items: center;
+    padding-right: 16px;
+    background-image: none;
+  }
+  .app select::picker-icon,
+  .modal-box select::picker-icon {
+    margin-left: auto;
+    color: var(--ios-secondary);
+    content: '';
+    width: 14px;
+    height: 14px;
+    background: currentColor;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")
+      center / contain no-repeat;
+    transition: rotate 0.2s $spring;
+  }
+  .app select:open::picker-icon,
+  .modal-box select:open::picker-icon {
+    rotate: 180deg;
+  }
+  .app select::picker(select),
+  .modal-box select::picker(select) {
+    margin-top: 6px;
+    padding: 6px;
+    border: 1px solid var(--ios-separator);
+    border-radius: 18px;
+    background: var(--ios-card);
+    color: var(--ios-label);
+    box-shadow: 0 18px 40px -16px color-mix(in srgb, var(--ios-label) 40%, transparent);
+    opacity: 0;
+    translate: 0 -6px;
+    transition:
+      opacity 0.16s ease,
+      translate 0.18s $spring,
+      overlay 0.18s allow-discrete,
+      display 0.18s allow-discrete;
+  }
+  .app select:open::picker(select),
+  .modal-box select:open::picker(select) {
+    opacity: 1;
+    translate: 0 0;
+  }
+  @starting-style {
+    .app select:open::picker(select),
+    .modal-box select:open::picker(select) {
+      opacity: 0;
+      translate: 0 -6px;
+    }
+  }
+  .app select option,
+  .modal-box select option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 46px;
+    padding: 0 12px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.12s ease;
+  }
+  .app select option:hover,
+  .app select option:focus-visible,
+  .modal-box select option:hover,
+  .modal-box select option:focus-visible {
+    outline: none;
+    background: var(--ios-fill);
+  }
+  .app select option:checked,
+  .modal-box select option:checked {
+    color: var(--ios-tint-text);
+    font-weight: 700;
+    background: color-mix(in srgb, var(--ios-tint) 10%, transparent);
+  }
+  .app select option::checkmark,
+  .modal-box select option::checkmark {
+    order: 1;
+    margin-left: auto;
+    color: var(--ios-tint-text);
+  }
+  .app select option:disabled,
+  .modal-box select option:disabled {
+    min-height: 34px;
+    color: var(--ios-secondary);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: default;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app select::picker(select),
+  .app select::picker-icon {
+    transition: none;
+  }
+}
+
+// Update and "What's new" banners: a card at the top with an icon, a title and a
+// short explanation, sliding in from above.
+.update-toast,
+.whats-new-toast {
+  position: fixed;
+  top: max(14px, env(safe-area-inset-top));
+  left: 50%;
+  z-index: 60;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 12px;
+  width: min(460px, calc(100vw - 24px));
+  padding: 12px 12px 12px 14px;
+  border: $line;
+  border-radius: 22px;
+  background: var(--ios-card);
+  color: var(--ios-label);
+  font-size: 14px;
+  box-shadow: 0 18px 40px -18px color-mix(in srgb, var(--ios-label) 45%, transparent);
+  transform: translateX(-50%);
+  animation: toast-in 0.3s $spring both;
+}
+.whats-new-toast {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+}
+.update-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 13px;
+  color: var(--ios-tint-text);
+  background: var(--ios-soft);
+}
+.update-icon.is-done {
+  color: var(--ios-on-tint);
+  background: var(--ios-tint-fill);
+}
+.update-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.update-copy strong {
+  font-size: 15px;
+  font-weight: 700;
+}
+.update-copy > span,
+.update-copy li {
+  color: var(--ios-secondary);
+  font-size: 13px;
+  line-height: 1.35;
+}
+.update-copy ul {
+  display: grid;
+  gap: 3px;
+  margin: 4px 0 0;
+  padding-left: 16px;
+}
+.update-toast .btn.update-now {
+  min-height: 40px;
+  height: 40px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  color: var(--ios-on-tint);
+  background: var(--ios-tint-fill);
+  font-size: 14px;
+  font-weight: 700;
+}
+:is(.update-toast, .whats-new-toast) .btn.update-dismiss {
+  width: 36px;
+  min-height: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: var(--ios-secondary);
+  background: var(--ios-fill);
+}
+@media (max-width: 420px) {
+  .update-copy > span {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .update-toast,
+  .whats-new-toast {
+    animation: none;
+  }
+}
+
+// DaisyUI's .select hides the chevron and draws a text-colored ring on focus and
+// while open; these win over it so every dropdown matches.
+.app select.select:is(:focus, :focus-visible, :focus-within, :open),
+.app select:is(:focus, :focus-visible, :open),
+.modal-box select.select:is(:focus, :focus-visible, :focus-within, :open) {
+  outline: none;
+  border-color: var(--ios-tint);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ios-tint) 22%, transparent);
+}
+@supports (appearance: base-select) {
+  .app select.select::picker-icon,
+  .modal-box select.select::picker-icon {
+    display: block;
+  }
+}

@@ -157,3 +157,17 @@ test('riders can set a nickname and are greeted by it', async ({ page }) => {
   await page.reload();
   await expect(page.locator('.greeting')).toContainText('Norman');
 });
+
+test('after an update, returning riders see what changed once', async ({ page }) => {
+  await page.addInitScript(() => {
+    if (!sessionStorage.getItem('seeded')) {
+      localStorage.setItem('laxcommute:seen-version', '1.0.0');
+      sessionStorage.setItem('seeded', '1');
+    }
+  });
+  await mockFeed(page);
+  await page.goto('/');
+  await expect(page.locator('.whats-new-toast')).toContainText(/Updated to v\d+\.\d+\.\d+/);
+  await page.reload();
+  await expect(page.locator('.whats-new-toast')).toHaveCount(0);
+});

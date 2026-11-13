@@ -47,6 +47,7 @@ import ShuttleMap from './components/ShuttleMap';
 import Arrivals from './components/Arrivals';
 import { officialTrackerURL } from './components/OfficialTracker';
 import OutageNotice from './components/OutageNotice';
+import WhatsNew from './components/WhatsNew';
 import Avatar from './components/Avatar';
 import { useAvatar } from './hooks/useAvatar';
 import { usePaletteSync } from './hooks/usePaletteSync';
@@ -404,6 +405,7 @@ export default function App() {
           )}{' '}
         </div>
       )}
+      <WhatsNew />
       {online && feedOutage && <OutageNotice routeID={route.id} stopID={selectedStop?.id} />}
       <motion.main
         // Map and Go home share one layout; keeping its key stable avoids remounting the map.
