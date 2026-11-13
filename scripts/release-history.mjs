@@ -73,6 +73,10 @@ export function releaseHistory(log, version, builtAt = new Date().toISOString())
 }
 
 function currentHistory() {
+  // Hosted builds clone only the latest commit; the version is counted from history,
+  // so fetch the rest first (a no-op locally).
+  if (git(['rev-parse', '--is-shallow-repository']).trim() === 'true')
+    git(['fetch', '--unshallow', '--quiet']);
   const { version: base } = JSON.parse(readFileSync('package.json', 'utf8'));
   const log = git(['log', '--date=short', '--pretty=%h%x1f%ad%x1f%s']);
   // Commits since the one that last set package.json's version.
