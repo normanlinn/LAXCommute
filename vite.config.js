@@ -5,7 +5,6 @@ import react from '@vitejs/plugin-react';
 import { cloudflare } from '@cloudflare/vite-plugin';
 import { VitePWA } from 'vite-plugin-pwa';
 import tailwindcss from '@tailwindcss/vite';
-import './scripts/materialize-brand-v5.mjs';
 
 export default defineConfig(({ mode }) => ({
   plugins: [
@@ -31,28 +30,28 @@ export default defineConfig(({ mode }) => ({
     VitePWA({
       registerType: 'prompt',
       includeAssets: [
-        'icons/apple-touch-v5.png',
-        'icons/commute-v5-192.png',
-        'icons/commute-v5-512.png',
-        'icons/favicon-v5.png',
-        'icons/maskable-v5-512.png',
-        'social-preview-v5.png',
+        'icons/apple-touch-v6.png',
+        'icons/commute-v6-192.png',
+        'icons/commute-v6-512.png',
+        'icons/favicon-v6.png',
+        'icons/maskable-v6-512.png',
+        'social-preview-v6.png',
       ],
       manifest: {
         id: '/',
         name: 'LAXCommute',
         short_name: 'LAXCommute',
         description: 'Your LAX employee shuttle, boarding stops, and commute in one place.',
-        theme_color: '#0b111b',
-        background_color: '#f7fbfc',
+        theme_color: '#0e100f',
+        background_color: '#f6f7f6',
         display: 'standalone',
         start_url: '/',
         scope: '/',
         icons: [
-          { src: '/icons/commute-v5-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
-          { src: '/icons/commute-v5-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+          { src: '/icons/commute-v6-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: '/icons/commute-v6-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
           {
-            src: '/icons/maskable-v5-512.png',
+            src: '/icons/maskable-v6-512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable',

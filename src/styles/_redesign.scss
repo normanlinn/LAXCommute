@@ -187,3 +187,99 @@ $spring: cubic-bezier(0.2, 0.8, 0.2, 1);
 .app .transit-route-button > span {
   color: var(--ios-on-tint);
 }
+
+// The app mark is near-black; a hairline keeps its edge visible on dark backgrounds.
+.app .brand img {
+  border-radius: 10px;
+  box-shadow: 0 0 0 1px var(--ios-separator);
+}
+
+// ── Calmer, crisper surfaces ────────────────────────────────────────────────
+// Segmented controls: a flat gray track, and the choice as a solid ink pill,
+// so the selected option reads at a glance instead of looking disabled.
+:root:root
+  :is(
+    .direction-switch,
+    .language-switch,
+    .segmented.tabs,
+    .route-options,
+    .appearance-options,
+    .transit-route-picker
+  ) {
+  border: 0;
+  background: var(--ios-fill);
+  box-shadow: none;
+}
+:root:root:root:root
+  :is(
+    .direction-switch .tab[aria-pressed='true'],
+    .language-switch .btn[aria-pressed='true'],
+    .segmented .tab.active,
+    .segmented .tab.tab-active,
+    .route-options > .btn[aria-pressed='true'],
+    .route-options button.selected,
+    .transit-route-picker > .btn[aria-pressed='true'],
+    .map-display-controls button[aria-pressed='true'],
+    .appearance-options > label:has(input:checked)
+  ) {
+  border: 0;
+  background: var(--ios-tint-fill);
+  color: var(--ios-on-tint);
+  box-shadow: none;
+}
+// Lot letters inside a selected pill flip to the pill's colors.
+:root:root :is(.route-options, .transit-route-picker) > .btn[aria-pressed='true'] > span {
+  background: var(--ios-on-tint);
+  color: var(--ios-tint-fill);
+}
+
+// One box deep: the next-shuttle row and the From/To summary sit flat in the planner.
+.app .trip-card .next-hero {
+  border: 0;
+  border-radius: 10px;
+  background: var(--ios-fill);
+}
+.app .trip-card .next-hero-status {
+  border-top-color: color-mix(in srgb, var(--ios-label) 8%, transparent);
+}
+.app .trip-destination {
+  border: 1px solid var(--ios-separator);
+  background: transparent;
+  box-shadow: none;
+}
+
+// Fewer labels: one title per screen, no repeated small-caps eyebrows.
+.app .trip-intro .eyebrow,
+.app .map-topbar .eyebrow,
+.app .brand small {
+  display: none;
+}
+.app .trip-intro p {
+  color: var(--ios-secondary);
+}
+
+// The outage line is neutral; only its icon carries the warning color.
+.app .outage-notice {
+  border: 1px solid var(--ios-separator);
+  background: var(--ios-card);
+}
+
+// Desktop tabs: flat, no floating shadow.
+@media (min-width: 761px) {
+  .app .bottom-nav {
+    border: 1px solid var(--ios-separator);
+    box-shadow: none;
+    background: var(--ios-card);
+  }
+}
+.app .map-controls .btn,
+.app .map-display-controls,
+.app .map-toggle {
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+}
+:root:root .bottom-nav .nav-pill {
+  background: var(--ios-tint-fill);
+}
+:root:root .bottom-nav .btn.active {
+  color: var(--ios-on-tint);
+}
