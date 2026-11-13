@@ -1,15 +1,13 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
-// The Tailwind setup plus every SCSS partial, in the order src/styles/main.scss loads them.
-const partials = [...readFileSync('src/styles/main.scss', 'utf8').matchAll(/@use '([^']+)'/g)].map(
-  ([, name]) => readFileSync(`src/styles/_${name}.scss`, 'utf8'),
-);
-const css = [readFileSync('src/styles.css', 'utf8'), ...partials].join('\n');
+// The iOS color system lives in one token file; DaisyUI themes live in styles.css.
+const tokens = readFileSync('src/styles/_ios-tokens.scss', 'utf8');
+const daisy = readFileSync('src/styles.css', 'utf8');
+
 function luminance(hex) {
-  const normalized = hex.length === 4 ? '#' + [...hex.slice(1)].map((c) => c + c).join('') : hex;
   const channels = [1, 3, 5].map((start) => {
-    const value = parseInt(normalized.slice(start, start + 2), 16) / 255;
+    const value = parseInt(hex.slice(start, start + 2), 16) / 255;
     return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
   });
   return channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722;
@@ -18,98 +16,66 @@ function contrast(a, b) {
   const values = [luminance(a), luminance(b)].sort((x, y) => y - x);
   return (values[0] + 0.05) / (values[1] + 0.05);
 }
-describe('dark text contrast', () => {
-  it('keeps every dark ink color readable on the app’s dark surfaces', () => {
-    const darkPalette = css.match(/\[data-theme='lax-dark'\] \{([\s\S]*?)\n}/)[1];
-    const ink = [...darkPalette.matchAll(/--ink-[\da-f]+:\s*(#[\da-f]{6});/g)];
-    const surfaces = [...darkPalette.matchAll(/--surface-[\da-f]+:\s*(#[\da-f]{6});/g)];
-    expect(ink.length).toBeGreaterThan(30);
-    expect(surfaces.length).toBeGreaterThan(20);
-    for (const [declaration, foreground] of ink) {
-      for (const [, background] of surfaces) {
-        expect(
-          contrast(foreground, background),
-          `${declaration} on ${background}`,
-        ).toBeGreaterThanOrEqual(4.5);
-      }
+function palette(selector) {
+  const start = tokens.indexOf(selector);
+  const block = tokens.slice(start, tokens.indexOf('}', start));
+  return Object.fromEntries(
+    [...block.matchAll(/--ios-([\w-]+):\s*(#[\da-f]{6});/g)].map(([, name, value]) => [
+      name,
+      value,
+    ]),
+  );
+}
+function daisyTheme(name) {
+  const start = daisy.indexOf(`name: '${name}';`);
+  const block = daisy.slice(start, daisy.indexOf('\n}', start));
+  return (token) => block.match(new RegExp(`${token}:\\s*(#[\\da-f]{6});`))[1];
+}
+
+describe.each([
+  ['light', "[data-theme='lax']"],
+  ['dark', "[data-theme='lax-dark']"],
+])('iOS %s palette', (_mode, selector) => {
+  const c = palette(selector);
+
+  it('keeps body and secondary text readable on cards and the page (WCAG AA)', () => {
+    for (const surface of [c.card, c.bg]) {
+      expect(contrast(c.label, surface)).toBeGreaterThanOrEqual(7);
+      expect(contrast(c.secondary, surface)).toBeGreaterThanOrEqual(4.5);
+      expect(contrast(c['tint-text'], surface)).toBeGreaterThanOrEqual(4.5);
+      expect(contrast(c.green, surface)).toBeGreaterThanOrEqual(4.5);
     }
   });
-  it('pairs form and tooltip text with the dark theme’s actual surface colors', () => {
-    const theme = css.match(/name: 'lax-dark';[\s\S]*?\n}/)[0];
-    const get = (name) => theme.match(new RegExp(`${name}:\\s*(#[\\da-f]{6});`))[1];
-    expect(contrast(get('--color-base-content'), get('--color-base-100'))).toBeGreaterThanOrEqual(
-      4.5,
-    );
-    expect(contrast('#bccbdf', get('--color-base-100'))).toBeGreaterThanOrEqual(4.5);
+
+  it('keeps white labels readable on filled buttons', () => {
+    expect(contrast(c['on-tint'], c['tint-fill'])).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it('keeps the system-blue tint visible as a control color (3:1 for UI)', () => {
+    expect(contrast(c.tint, c.card)).toBeGreaterThanOrEqual(3);
+    expect(contrast(c['tint-fill'], c.card)).toBeGreaterThanOrEqual(3);
   });
 });
 
-it.each(['lax', 'lax-dark'])('keeps primary button text readable in %s', (name) => {
-  const start = css.indexOf(`name: '${name}';`);
-  const theme = css.slice(start, css.indexOf('\n}', start));
-  const get = (token) => theme.match(new RegExp(`${token}:\\s*(#[\\da-f]{6});`))[1];
-  expect(contrast(get('--color-primary'), get('--color-primary-content'))).toBeGreaterThanOrEqual(
-    4.5,
-  );
-});
-
-it.each([
-  ['light', ':root', '#ffffff'],
-  ['dark', "[data-theme='lax-dark']", '#172233'],
-])(
-  'keeps %s control boundaries visible against cards and inset panels',
-  (_name, selector, card) => {
-    const rule = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)].find(
-      ([, name, body]) =>
-        name.replace(/\/\*[\s\S]*?\*\//g, '').trim() === selector &&
-        body.includes('--control-border:'),
-    );
-    const get = (token) => rule[2].match(new RegExp(`${token}:\\s*(#[\\da-f]{6});`))[1];
-    const border = get('--control-border');
-    expect(contrast(border, card)).toBeGreaterThanOrEqual(3);
-    expect(contrast(border, get('--control-tray'))).toBeGreaterThanOrEqual(3);
-    expect(contrast(border, get('--journey-surface'))).toBeGreaterThanOrEqual(3);
-  },
-);
-
-it('keeps the Midnight Blue accent and status colors legible', () => {
-  const darkTheme = css.match(/name: 'lax-dark';[\s\S]*?\n}/)[0];
-  const get = (token) => darkTheme.match(new RegExp(`${token}:\\s*(#[\\da-f]{6});`))[1];
-  for (const name of ['primary', 'secondary', 'accent', 'success', 'warning', 'error']) {
-    const foreground = get(`--color-${name}`);
-    const background = get(`--color-${name}-content`);
-    expect(contrast(foreground, background)).toBeGreaterThanOrEqual(4.5);
+it.each(['lax', 'lax-dark'])('keeps DaisyUI action colors readable in %s', (name) => {
+  const get = daisyTheme(name);
+  for (const role of ['primary', 'success', 'warning', 'error']) {
+    expect(
+      contrast(get(`--color-${role}`), get(`--color-${role}-content`)),
+      role,
+    ).toBeGreaterThanOrEqual(4.5);
   }
+  expect(contrast(get('--color-base-content'), get('--color-base-100'))).toBeGreaterThanOrEqual(7);
 });
 
-it('uses a neutral cool-black backdrop behind the native menu in dark mode', () => {
-  const dialogBackdrop = css.match(
-    /html\[data-theme='lax-dark'\] \.app-dialog::backdrop \{([^}]*)\}/,
-  )?.[1];
-  expect(dialogBackdrop).toContain('rgb(3 7 16 / 79%)');
-  expect(css).toContain("html[data-theme='lax-dark'] .app-dialog-panel");
-  expect(css).toContain('background-color: #111416');
-  expect(css).not.toContain('background: #0e2b2a70;');
-});
-
-it('keeps dark live badges, disabled actions, account forms, and active navigation on theme tokens', () => {
-  const darkLive = css.match(
-    /\[data-theme='lax-dark'\] \.arrival-description \.arrival-badge\.is-live \{([^}]*)\}/,
-  )?.[1];
-  expect(darkLive).toContain('var(--color-primary)');
-  expect(darkLive).not.toMatch(/#173e36|#a3f2d8/i);
-  const darkDisabled = css.match(
-    /\[data-theme='lax-dark'\] \.button-primary:disabled \{([^}]*)\}/,
-  )?.[1];
-  expect(darkDisabled).toContain('var(--color-primary)');
-  expect(darkDisabled).not.toMatch(/#123d45|#adc8cf/i);
-  for (const selector of [
-    '.bottom-nav button.active',
-    '.account-card .account-summary',
-    '.account-card .success-message',
-    '.account-card .segmented .tab',
-    '.crowd-form select:focus-visible',
-  ]) {
-    expect(css).toContain(selector);
+it('routes every partial through the shared iOS tokens instead of one-off colors', () => {
+  const partials = [
+    ...readFileSync('src/styles/main.scss', 'utf8').matchAll(/@use '([^']+)'/g),
+  ].map(([, name]) => readFileSync(`src/styles/_${name}.scss`, 'utf8'));
+  const css = partials.join('\n');
+  // The old Midnight Blue, teal and graphite surfaces must not come back.
+  for (const legacy of ['#172233', '#0b111b', '#18bdc7', '#83bdff', '#111416', '#16212b']) {
+    expect(css.toLowerCase()).not.toContain(legacy);
   }
+  expect((css.match(/var\(--ios-/g) || []).length).toBeGreaterThan(250);
 });

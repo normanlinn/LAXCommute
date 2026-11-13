@@ -47,6 +47,8 @@ import ShuttleMap from './components/ShuttleMap';
 import Arrivals from './components/Arrivals';
 import { officialTrackerURL } from './components/OfficialTracker';
 import OutageNotice from './components/OutageNotice';
+import Avatar from './components/Avatar';
+import { useAvatar } from './hooks/useAvatar';
 import CrowdReports from './components/CrowdReports';
 import StopReports from './components/StopReports';
 import InstallApp from './components/InstallApp';
@@ -196,6 +198,7 @@ export default function App() {
   const [locating, setLocating] = useState(false);
   const [focusRequest, setFocusRequest] = useState({ mode: 'route', serial: 0 });
   const online = useOnline();
+  const { avatar } = useAvatar();
   const route = routeForLot(lot);
   const routeQuery = useRoute(route.id);
   const stops = routeQuery.data?.stops || EMPTY;
@@ -373,7 +376,7 @@ export default function App() {
             onClick={() => changeTab('account')}
             aria-label={user ? t('Open your account') : t('Sign in')}
           >
-            <UserRound size={20} />
+            <Avatar id={avatar} size={34} />
             <span>{user ? t('My account') : t('Sign in')}</span>
           </Button>
         </div>

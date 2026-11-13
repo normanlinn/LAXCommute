@@ -100,8 +100,8 @@
   border-radius: 999px;
   font-size: 11px;
   font-weight: 600;
-  color: var(--color-success, #2fbf71);
-  background: color-mix(in oklab, var(--color-success, #2fbf71) 15%, transparent);
+  color: var(--color-success, var(--ios-green));
+  background: color-mix(in oklab, var(--color-success, var(--ios-green)) 15%, transparent);
 }
 .release-timeline ul {
   display: grid;
@@ -130,7 +130,7 @@
   color: var(--color-warning, #c58a1c);
 }
 .release-item.kind-security .release-kind {
-  color: var(--color-success, #2fbf71);
+  color: var(--color-success, var(--ios-green));
 }
 .release-more {
   display: block;

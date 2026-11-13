@@ -2,9 +2,12 @@ import { useLanguage } from '../i18n/LanguageProvider';
 import { authErrorMessage, authReturnUrl } from '../domain/auth';
 import Button from './ui/Button';
 import { useEffect, useState } from 'react';
-import { Check, Mail, LogOut, ArrowRight, LockKeyhole, UserRound } from './ui/icons';
+import { Check, Mail, LogOut, ArrowRight, LockKeyhole } from './ui/icons';
 import { useAccount } from '../hooks/useAccount';
 import { getAuthClient } from '../services/auth';
+import Avatar from './Avatar';
+import AvatarPicker from './AvatarPicker';
+import { useAvatar } from '../hooks/useAvatar';
 
 export default function AccountPanel({
   profile,
@@ -16,6 +19,7 @@ export default function AccountPanel({
   onGuest?: () => void;
 }) {
   const { t } = useLanguage();
+  const { avatar } = useAvatar();
   const { user, ready, authError, authMessage, clearAuthError, recovering, setRecovering } =
     useAccount();
   const [mode, setMode] = useState<'signin' | 'signup' | 'reset' | 'confirm' | 'reset-code'>(
@@ -264,15 +268,14 @@ export default function AccountPanel({
   if (user && !recovering)
     return (
       <section className="card bg-base-100 page-card account-card">
-        <div className="feature-icon">
-          <UserRound size={27} />
-        </div>
+        <Avatar id={avatar} size={72} />
         <span className="eyebrow">{t('YOUR ACCOUNT')}</span>
         <h1>{t('You’re ready to go.')}</h1>
         <p className="email-display">
           <Mail size={17} />
           {user.email}
         </p>
+        <AvatarPicker />
         <div className="account-summary">
           <Check size={19} />
           <div>
@@ -507,6 +510,7 @@ export default function AccountPanel({
           {t(message || authMessage)}
         </p>
       )}
+      <AvatarPicker />
     </section>
   );
 }

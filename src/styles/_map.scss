@@ -15,7 +15,7 @@
   height: 50px;
   border: 3px solid #fff;
   border-radius: 50%;
-  box-shadow: 0 5px 16px #061f3645;
+  box-shadow: 0 5px 16px color-mix(in srgb, var(--ios-label) 27%, transparent);
   color: #fff;
 }
 .map-marker-dot.marker-bus svg {
@@ -45,7 +45,7 @@
 .map-marker-dot.marker-bus.bus-focused {
   outline: 3px solid var(--marker-color);
   outline-offset: 3px;
-  box-shadow: 0 7px 24px #061f3666;
+  box-shadow: 0 7px 24px color-mix(in srgb, var(--ios-label) 40%, transparent);
 }
 .transit-bus-detail {
   position: absolute;
@@ -63,7 +63,7 @@
   border-radius: 17px;
   background: var(--color-base-100);
   color: var(--color-base-content);
-  box-shadow: 0 10px 30px #061f3634;
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--ios-label) 20%, transparent);
 }
 .transit-bus-detail-icon {
   color: var(--route-color);
@@ -114,7 +114,7 @@
     padding: 30px 20px 24px;
     border: 1px solid var(--color-base-300);
     border-radius: 28px;
-    box-shadow: 0 12px 36px #091e3620;
+    box-shadow: 0 12px 36px color-mix(in srgb, var(--ios-label) 13%, transparent);
     scroll-margin-top: 16px;
   }
   .trip-layout > .trip-card::before {
@@ -181,7 +181,7 @@
     font: inherit;
     font-size: 13px;
     font-weight: 750;
-    box-shadow: 0 2px 8px #122b3210;
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--ios-label) 6%, transparent);
     transition:
       background-color 0.18s ease,
       transform 0.18s ease,
@@ -254,7 +254,7 @@
     border-radius: 22px;
     background: var(--color-base-100);
     color: var(--color-base-content);
-    box-shadow: 0 12px 35px #061f3650;
+    box-shadow: 0 12px 35px color-mix(in srgb, var(--ios-label) 31%, transparent);
     text-align: left;
   }
   .map-footer {
@@ -354,7 +354,7 @@
     border-radius: 50%;
     background: var(--color-base-100);
     color: var(--color-base-content);
-    box-shadow: 0 4px 18px #061f3635;
+    box-shadow: 0 4px 18px color-mix(in srgb, var(--ios-label) 21%, transparent);
     font-size: 14px;
     line-height: normal;
   }
@@ -380,7 +380,7 @@
     border: 1px solid var(--color-base-300);
     border-radius: 17px;
     background: var(--color-base-100);
-    box-shadow: 0 12px 28px #061f363e;
+    box-shadow: 0 12px 28px color-mix(in srgb, var(--ios-label) 24%, transparent);
   }
   .map-controls.mobile-open .map-tools-actions {
     visibility: visible;

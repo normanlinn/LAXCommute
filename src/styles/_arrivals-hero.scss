@@ -113,11 +113,11 @@
   height: 8px;
   flex: none;
   border-radius: 50%;
-  background: var(--color-warning, #e0a43a);
+  background: var(--color-warning, var(--ios-orange));
 }
 .arrivals .updated.freshness-fresh::before {
-  background: var(--color-success, #2fbf71);
-  box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-success, #2fbf71) 60%, transparent);
+  background: var(--color-success, var(--ios-green));
+  box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-success, var(--ios-green)) 60%, transparent);
   animation: live-pulse 2s ease-out infinite;
 }
 @keyframes live-pulse {
@@ -133,10 +133,10 @@
   margin: 4px 0 8px;
   padding: 14px;
   border-radius: 22px;
-  border: 1px solid color-mix(in oklab, var(--color-warning, #e0a43a) 35%, transparent);
+  border: 1px solid color-mix(in oklab, var(--color-warning, var(--ios-orange)) 35%, transparent);
   background: linear-gradient(
     170deg,
-    color-mix(in oklab, var(--color-warning, #e0a43a) 10%, var(--color-base-200)),
+    color-mix(in oklab, var(--color-warning, var(--ios-orange)) 10%, var(--color-base-200)),
     var(--color-base-100)
   );
 }
@@ -162,7 +162,7 @@
   height: 10px;
   margin-top: 6px;
   border-radius: 50%;
-  background: var(--color-warning, #e0a43a);
+  background: var(--color-warning, var(--ios-orange));
   animation: live-pulse 2s ease-out infinite;
 }
 .official-tracker-open {
@@ -194,7 +194,7 @@
   }
 }
 .map-footer.is-paused .dot {
-  background: var(--color-warning, #e0a43a);
+  background: var(--color-warning, var(--ios-orange));
   box-shadow: none;
   animation: none;
 }

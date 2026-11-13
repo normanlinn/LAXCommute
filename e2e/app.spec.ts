@@ -121,3 +121,17 @@ test('no outage announcement while live times are working', async ({ page }) => 
   await open(page);
   await expect(page.locator('.outage-notice')).toHaveCount(0);
 });
+
+test('riders can choose an avatar, and it shows in the header after reload', async ({ page }) => {
+  await open(page);
+  await page.getByRole('navigation').getByRole('button', { name: 'Account' }).click();
+  await page.getByRole('radio', { name: 'Moon' }).check({ force: true });
+  const header = page.locator('.header-actions .profile-button .avatar-circle');
+  await expect(header).toBeVisible();
+  await expect(header).toHaveCSS('background-color', 'rgb(88, 86, 214)');
+  await page.reload();
+  await expect(page.locator('.header-actions .profile-button .avatar-circle')).toHaveCSS(
+    'background-color',
+    'rgb(88, 86, 214)',
+  );
+});

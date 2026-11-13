@@ -1,0 +1,35 @@
+// iOS system colors: one palette every partial reads, so light and dark stay consistent.
+// Values follow Apple's grouped-background, label, separator and tint colors.
+// System blue (--ios-tint) is for controls and icons. Small text and white-label
+// buttons use Apple's higher-contrast blues so they meet WCAG AA (4.5:1).
+:root,
+[data-theme='lax'] {
+  --ios-bg: #f2f2f7;
+  --ios-card: #ffffff;
+  --ios-fill: #e9e9ee;
+  --ios-label: #000000;
+  --ios-secondary: #6c6c70;
+  --ios-separator: #d1d1d6;
+  --ios-tint: #007aff;
+  --ios-tint-fill: #0071e3;
+  --ios-tint-text: #0066cc;
+  --ios-on-tint: #ffffff;
+  --ios-green: #1f7a33;
+  --ios-orange: #c96a00;
+  --ios-red: #d70015;
+}
+[data-theme='lax-dark'] {
+  --ios-bg: #000000;
+  --ios-card: #1c1c1e;
+  --ios-fill: #2c2c2e;
+  --ios-label: #ffffff;
+  --ios-secondary: #98989f;
+  --ios-separator: #38383a;
+  --ios-tint: #0a84ff;
+  --ios-tint-fill: #0071e3;
+  --ios-tint-text: #0a84ff;
+  --ios-on-tint: #ffffff;
+  --ios-green: #30d158;
+  --ios-orange: #ff9f0a;
+  --ios-red: #ff453a;
+}

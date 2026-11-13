@@ -136,7 +136,7 @@
     border-radius: 20px;
     background: var(--color-base-100);
     color: var(--color-base-content);
-    box-shadow: 0 12px 35px #061f3650;
+    box-shadow: 0 12px 35px color-mix(in srgb, var(--ios-label) 31%, transparent);
     text-align: left;
   }
   .shuttle-map-legend {

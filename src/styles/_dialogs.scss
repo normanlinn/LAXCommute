@@ -68,18 +68,18 @@
 html[data-theme='lax-dark'],
 html[data-theme='lax-dark'] body,
 html[data-theme='lax-dark'] .app {
-  background-color: #111416;
+  background-color: var(--ios-bg);
 }
 html[data-theme='lax-dark'] .app-dialog::backdrop {
   background: rgb(3 7 16 / 79%);
 }
 html[data-theme='lax-dark'] .app-dialog-panel {
-  background: #1c2124;
-  color: #ece7dc;
-  border: 1px solid #3a4247;
+  background: var(--ios-card);
+  color: var(--ios-label);
+  border: 1px solid var(--ios-separator);
 }
 html[data-theme='lax-dark'] .app-header {
-  background: #1c2124;
+  background: var(--ios-card);
 }
 .app-dialog > .app-dialog-panel {
   opacity: 1;

@@ -10,14 +10,22 @@
   margin: 12px auto 0;
   padding: 14px 14px 14px 16px;
   border-radius: 16px;
-  border: 1px solid color-mix(in oklab, var(--color-warning, #e0a43a) 45%, transparent);
-  background: color-mix(in oklab, var(--color-warning, #e0a43a) 12%, var(--color-base-100));
+  border: 1px solid color-mix(in oklab, var(--color-warning, var(--ios-orange)) 45%, transparent);
+  background: color-mix(
+    in oklab,
+    var(--color-warning, var(--ios-orange)) 12%,
+    var(--color-base-100)
+  );
   color: var(--color-base-content);
   animation: rise-in 0.28s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 .outage-icon {
   margin-top: 2px;
-  color: color-mix(in oklab, var(--color-warning, #e0a43a) 80%, var(--color-base-content));
+  color: color-mix(
+    in oklab,
+    var(--color-warning, var(--ios-orange)) 80%,
+    var(--color-base-content)
+  );
 }
 .outage-copy strong {
   display: block;

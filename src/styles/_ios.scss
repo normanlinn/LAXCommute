@@ -1,0 +1,500 @@
+// iOS-style layer, loaded last: system type, grouped cards, segmented controls,
+// a floating tab bar and one tint color for everything you can tap.
+
+$card-radius: 16px;
+$list-radius: 12px;
+$control-radius: 12px;
+$ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+@mixin card {
+  border: 0;
+  border-radius: $card-radius;
+  background: var(--ios-card);
+  box-shadow: none;
+}
+
+body,
+.app {
+  background: var(--ios-bg);
+  color: var(--ios-label);
+  -webkit-font-smoothing: antialiased;
+}
+a {
+  color: var(--ios-tint-text);
+}
+
+// Large titles and iOS section headers.
+.app h2,
+.app .section-heading h3,
+.trip-card h2 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.eyebrow,
+.app .section-heading .eyebrow {
+  color: var(--ios-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+// Grouped cards: no borders or drop shadows, generous continuous corners.
+.trip-card,
+.map-surface,
+.official-tracker,
+.outage-notice,
+.release-notes,
+.leave-card,
+.bus-alert-banner,
+.empty-arrivals,
+.stop-reports,
+.crowd-panel,
+.metro-trains {
+  @include card;
+}
+.crowd-panel,
+.stop-reports {
+  margin-top: 16px;
+  padding: 16px;
+}
+.outage-notice {
+  border-radius: $card-radius;
+}
+.outage-icon {
+  color: var(--ios-orange);
+}
+.official-tracker .status-dot {
+  background: var(--ios-orange);
+}
+.official-tracker-open,
+.release-badge {
+  border-radius: $control-radius;
+  color: var(--ios-on-tint);
+  background: var(--ios-tint-fill);
+}
+
+// Buttons: tint-filled primary actions; disabled reads as a quiet fill.
+.btn {
+  border-radius: $control-radius;
+  transition:
+    transform 0.12s $ease,
+    background-color 0.18s ease,
+    color 0.18s ease;
+}
+.btn-primary,
+.button-primary {
+  min-height: 50px;
+  border: 0;
+  background: var(--ios-tint-fill);
+  color: var(--ios-on-tint);
+  font-weight: 600;
+  box-shadow: none;
+}
+.btn-primary:disabled,
+.btn-primary[disabled],
+[data-theme='lax-dark'] .button-primary:disabled {
+  opacity: 1;
+  border: 0;
+  background: var(--ios-fill);
+  color: var(--ios-secondary);
+}
+
+// Fields sit on a soft fill, like iOS text fields.
+.app :is(input, select, textarea),
+.modal-box :is(input, select, textarea) {
+  border: 0;
+  border-radius: 10px;
+  background-color: var(--ios-fill);
+  color: var(--ios-label);
+}
+
+// Segmented controls: a soft tray with a raised thumb for the current choice.
+.direction-switch,
+.language-switch,
+.segmented.tabs,
+.route-options,
+.appearance-options,
+.transit-route-picker,
+.map-display-controls {
+  gap: 2px;
+  padding: 2px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--ios-fill);
+}
+.route-options,
+.appearance-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.transit-route-picker {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+:is(
+  .direction-switch .tab,
+  .language-switch .btn,
+  .route-options > .btn,
+  .transit-route-picker > .btn
+),
+.appearance-options > label,
+.map-display-controls button {
+  min-height: 36px;
+  margin: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ios-label);
+  font-weight: 600;
+  box-shadow: none;
+  transition:
+    background-color 0.2s $ease,
+    box-shadow 0.2s $ease;
+}
+:is(
+  .direction-switch .tab[aria-pressed='true'],
+  .language-switch .btn[aria-pressed='true'],
+  .route-options > .btn[aria-pressed='true'],
+  .transit-route-picker > .btn[aria-pressed='true'],
+  .map-display-controls button[aria-pressed='true']
+),
+.appearance-options > label:has(input:checked),
+[data-theme='lax-dark'] .direction-switch .tab[aria-pressed='true'] {
+  background: var(--ios-card);
+  color: var(--ios-label);
+  box-shadow:
+    0 1px 3px rgb(0 0 0 / 0.12),
+    0 1px 1px rgb(0 0 0 / 0.04);
+}
+[data-theme='lax-dark']
+  :is(
+    .direction-switch .tab[aria-pressed='true'],
+    .language-switch .btn[aria-pressed='true'],
+    .segmented .tab.active,
+    .route-options > .btn[aria-pressed='true'],
+    .transit-route-picker > .btn[aria-pressed='true'],
+    .map-display-controls button[aria-pressed='true']
+  ),
+[data-theme='lax-dark'] .appearance-options > label:has(input:checked) {
+  background: #636366;
+}
+// Route letters become small colored dots beside the lot name.
+:is(.route-options, .transit-route-picker) > .btn > span {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: 10px;
+}
+
+// Next bus: one rounded card with a large tinted countdown.
+.arrivals .arrival-row.arrival-next {
+  @include card;
+  margin-bottom: 18px;
+  padding: 16px 16px 22px;
+}
+.arrivals .arrival-row.arrival-next::before {
+  content: none;
+}
+.arrivals .arrival-next .arrival-description strong {
+  color: var(--ios-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.arrivals .arrival-time strong {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+}
+.arrivals .arrival-next .arrival-time strong {
+  color: var(--ios-tint);
+}
+.arrivals .arrival-time,
+.arrivals .arrival-time > span {
+  color: var(--ios-secondary);
+}
+.arrivals .arrival-next .approach-track {
+  left: 16px;
+  right: 16px;
+  bottom: 10px;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--ios-fill);
+}
+.arrivals .arrival-next .approach-track i {
+  border-radius: 3px;
+  background: var(--ios-tint);
+}
+.arrivals .bus-symbol {
+  border-radius: 10px;
+  color: var(--ios-tint);
+  background: color-mix(in srgb, var(--ios-tint) 12%, transparent);
+}
+
+// Following buses: an inset grouped list with hairline separators.
+.arrival-list .arrival-row:not(.arrival-next) {
+  margin: 0;
+  padding: 11px 14px;
+  border: 0;
+  border-radius: 0;
+  background: var(--ios-card);
+  box-shadow: none;
+}
+.arrival-list .arrival-next + .arrival-row {
+  border-top-left-radius: $list-radius;
+  border-top-right-radius: $list-radius;
+}
+.arrival-list .arrival-row:not(.arrival-next):last-child {
+  border-bottom-left-radius: $list-radius;
+  border-bottom-right-radius: $list-radius;
+}
+// Hairline separators start after the icon column, like an iOS inset list.
+.arrival-list .arrival-row:not(.arrival-next) + .arrival-row:not(.arrival-next) {
+  background-image: linear-gradient(var(--ios-separator), var(--ios-separator));
+  background-size: calc(100% - 64px) 0.5px;
+  background-position: right top;
+  background-repeat: no-repeat;
+}
+.arrivals .arrival-row:not(.arrival-next) .arrival-time strong {
+  color: var(--ios-label);
+}
+
+// Status: green "Live" text with a dot, never a pastel pill.
+.arrivals .arrival-description .arrival-badge,
+[data-theme='lax-dark'] .arrivals .arrival-description .arrival-badge {
+  padding: 0;
+  background: transparent;
+  font-weight: 600;
+}
+.arrivals .arrival-description .arrival-badge.is-live,
+[data-theme='lax-dark'] .arrivals .arrival-description .arrival-badge.is-live {
+  color: var(--ios-green);
+}
+.arrivals .boarding-caption {
+  border: 0;
+  border-radius: 999px;
+  background: var(--ios-card);
+  color: var(--ios-secondary);
+}
+.arrivals .updated {
+  border-radius: 999px;
+  background: var(--ios-card);
+  color: var(--ios-secondary);
+}
+
+// Round icon buttons, filled with the tint when on.
+.bus-alert-toggle,
+.icon-button {
+  border-radius: 50%;
+}
+.bus-alert-toggle {
+  color: var(--ios-tint);
+  background: color-mix(in srgb, var(--ios-tint) 12%, transparent);
+}
+.bus-alert-toggle.is-on {
+  color: var(--ios-on-tint);
+  background: var(--ios-tint);
+}
+
+// Floating tab bar: tinted icon and label for the current tab.
+.bottom-nav {
+  border: 0;
+  border-radius: 26px;
+  background: color-mix(in srgb, var(--ios-card) 92%, transparent);
+  backdrop-filter: saturate(180%) blur(20px);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
+}
+.bottom-nav .nav-pill {
+  background: color-mix(in srgb, var(--ios-tint) 12%, transparent);
+  border-radius: 20px;
+}
+.bottom-nav .btn {
+  color: var(--ios-secondary);
+}
+.bottom-nav .btn.active {
+  color: var(--ios-tint);
+}
+
+// Menu: grouped rows with chevrons.
+.feedback-menu-button,
+.release-notes {
+  border: 0;
+  border-radius: $list-radius;
+  background: var(--ios-card);
+}
+.preferences-heading .btn {
+  border: 0;
+  border-radius: 50%;
+  background: var(--ios-fill);
+}
+.legal-links {
+  display: flex;
+  gap: 18px;
+  margin: 18px 0 6px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  :is(
+    .direction-switch .tab,
+    .language-switch .btn,
+    .route-options > .btn,
+    .transit-route-picker > .btn
+  ) {
+    transition: none;
+  }
+}
+
+// Clear leftovers from earlier designs on the segmented thumb and tab marker.
+.transit-route-picker > .btn.transit-route-button[aria-pressed='true'] {
+  border: 0;
+  padding: 0 4px;
+}
+.bottom-nav .nav-pill {
+  border: 0;
+  box-shadow: none;
+}
+
+// Stop reports: a solid route-colored action and a quiet filled one.
+.stop-reports .report-action {
+  border: 0;
+  border-radius: 14px;
+  box-shadow: none;
+}
+.stop-reports .report-departed {
+  background: var(--ios-fill);
+  color: var(--ios-label);
+}
+
+// Avatars: the header shows the rider's avatar instead of a generic icon.
+.avatar-circle {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  border-radius: 50%;
+}
+.header-actions .profile-button {
+  display: inline-flex;
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  min-height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+}
+.header-actions .profile-button > span:not(.avatar-circle) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.account-card > .avatar-circle {
+  margin-bottom: 12px;
+}
+.avatar-picker {
+  margin: 18px 0;
+  padding: 14px;
+  border: 0;
+  border-radius: $card-radius;
+  background: var(--ios-bg);
+}
+.avatar-picker legend {
+  float: left;
+  width: 100%;
+  margin-bottom: 12px;
+  color: var(--ios-secondary);
+  font-size: 13px;
+  font-weight: 500;
+}
+.avatar-grid {
+  clear: both;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+  gap: 12px;
+  justify-items: center;
+}
+.avatar-grid label {
+  position: relative;
+  display: grid;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.15s $ease;
+}
+.avatar-grid label:active {
+  transform: scale(0.92);
+}
+.avatar-grid input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.avatar-grid label:has(input:checked) {
+  box-shadow:
+    0 0 0 3px var(--ios-card),
+    0 0 0 5px var(--ios-tint);
+}
+.avatar-grid label:has(input:focus-visible) {
+  outline: 3px solid var(--ios-tint);
+  outline-offset: 4px;
+}
+.avatar-note {
+  margin: 12px 0 0;
+  color: var(--ios-secondary);
+  font-size: 13px;
+}
+
+// The phone header hides button labels; the avatar itself must stay visible.
+.app-header .header-actions .profile-button .avatar-circle {
+  display: inline-grid;
+}
+// Cards inside the white trip sheet sit on the grouped background, as on iOS.
+.trip-card .arrivals .arrival-row.arrival-next,
+.trip-card .arrival-list .arrival-row:not(.arrival-next) {
+  background-color: var(--ios-bg);
+}
+.arrivals .arrival-next .bus-symbol {
+  color: var(--ios-tint);
+  background: color-mix(in srgb, var(--ios-tint) 12%, transparent);
+}
+[data-theme='lax-dark'] .segmented .tab.active {
+  background: #636366;
+}
+
+// Map callout for the boarding stop: a card-colored bubble with label text.
+.shuttle-map .boarding-label,
+[data-theme='lax-dark'] .shuttle-map .boarding-label {
+  border-color: var(--ios-card);
+  border-radius: 12px;
+  background: var(--ios-card);
+  color: var(--ios-label);
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.16);
+}
+.shuttle-map .boarding-label::before {
+  border-top-color: var(--ios-card);
+}
+
+// DaisyUI tab boxes (Sign in / Create account) use the same raised thumb.
+.segmented.tabs-box .tab.tab-active,
+.segmented.tabs-box .tab.tab-active:hover {
+  border: 0;
+  background: var(--ios-card);
+  color: var(--ios-label);
+  box-shadow:
+    0 1px 3px rgb(0 0 0 / 0.12),
+    0 1px 1px rgb(0 0 0 / 0.04);
+}
+[data-theme='lax-dark'] .segmented.tabs-box .tab.tab-active {
+  background: #636366;
+}
+
+.page-card {
+  border: 0;
+  border-radius: 20px;
+  box-shadow: none;
+}

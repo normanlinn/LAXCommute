@@ -27,7 +27,7 @@
   line-height: 0;
   color: var(--marker-color);
   transform: translate(-50%, -50%) rotate(var(--heading)) translateY(-34px);
-  filter: drop-shadow(0 1px 2px #061f3660);
+  filter: drop-shadow(0 1px 2px color-mix(in srgb, var(--ios-label) 38%, transparent));
   pointer-events: none;
 }
 .map-marker-dot.marker-bus.bus-stale {
@@ -51,11 +51,11 @@
   font: inherit;
   font-size: 13px;
   font-weight: 650;
-  box-shadow: 0 6px 20px #061f3630;
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--ios-label) 19%, transparent);
   cursor: pointer;
 }
 .map-recenter:focus-visible {
-  outline: 3px solid #266beb;
+  outline: 3px solid var(--ios-tint);
   outline-offset: 2px;
 }
 @media (max-width: 760px) {

@@ -1,5 +1,6 @@
 // App styles, loaded after src/styles.css (Tailwind and DaisyUI setup).
 // Order matters: later partials override earlier ones, as in the original stylesheet.
+@use 'ios-tokens';
 @use 'fonts';
 @use 'base';
 @use 'guide';
@@ -18,4 +19,4 @@
 @use 'polish';
 @use 'outage';
 @use 'stop-reports';
-@use 'departure-board';
+@use 'ios';

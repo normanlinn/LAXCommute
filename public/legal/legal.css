@@ -1,20 +1,20 @@
 :root {
   color-scheme: light dark;
-  --paper: #f4f1ea;
-  --card: #fbf9f4;
-  --line: #d9d3c6;
-  --ink: #16212b;
-  --muted: #5c6a72;
-  --link: #0f7a74;
+  --paper: #f2f2f7;
+  --card: #ffffff;
+  --line: #d1d1d6;
+  --ink: #000000;
+  --muted: #6c6c70;
+  --link: #0066cc;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper: #111416;
-    --card: #1c2124;
-    --line: #2b3135;
-    --ink: #ece7dc;
-    --muted: #8d948f;
-    --link: #4cc3b8;
+    --paper: #000000;
+    --card: #1c1c1e;
+    --line: #38383a;
+    --ink: #ffffff;
+    --muted: #98989f;
+    --link: #0a84ff;
   }
 }
 * {
@@ -25,9 +25,13 @@ body {
   background: var(--paper);
   color: var(--ink);
   font:
-    16px/1.65 'Overpass',
-    system-ui,
+    17px/1.55 -apple-system,
+    BlinkMacSystemFont,
+    'SF Pro Text',
+    'Segoe UI',
+    Roboto,
     sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 main {
   max-width: 720px;
@@ -53,6 +57,8 @@ a {
 h1 {
   margin: 4px 0 6px;
   font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   line-height: 1.15;
 }
 .updated {
@@ -61,10 +67,18 @@ h1 {
   font-size: 14px;
 }
 h2 {
-  margin: 28px 0 6px;
-  padding-top: 20px;
-  border-top: 1px solid var(--line);
-  font-size: 19px;
+  margin: 28px 0 8px;
+  font-size: 20px;
+  font-weight: 700;
+}
+p,
+ul {
+  margin: 0 0 12px;
+}
+ul {
+  padding: 14px 16px 14px 34px;
+  border-radius: 12px;
+  background: var(--card);
 }
 p,
 li {

@@ -281,76 +281,82 @@ export default function Arrivals({
             <span>{t('We’ll keep checking while the app is open.')}</span>
           </div>
         )}
-      {(lastKnown ? reportedPredictions : arrivals).slice(0, 4).map((arrival, index) => {
-        const reportedAt = lastKnown ? Date.parse(data?.arrivalFetchedAt || '') : now;
-        const minutes = Math.max(0, Math.ceil((arrival.due - reportedAt) / 60_000));
-        const isLive = !lastKnown && !arrival.scheduled;
-        const arriving = isLive && arrival.due - now <= 30_000;
-        const approach =
-          isLive && index === 0
-            ? Math.min(1, Math.max(0, 1 - (arrival.due - now) / APPROACH_WINDOW_MS))
-            : 0;
-        const alertOn = busAlert.alert?.vehicleID === arrival.vehicleID && isLive;
-        const showBell = alertOn || (isLive && canSetAlert(arrival, now));
-        return (
-          <div
-            key={arrival.id}
-            className={`arrival-row ${index === 0 ? 'arrival-next' : ''}${arriving ? ' is-arriving' : ''}${lastKnown ? ' is-last-known' : ''}`}
-            style={{ '--i': index }}
-          >
-            <div className="bus-symbol">
-              <BusFront size={22} />
-            </div>
-            <div className="arrival-description">
-              <strong>{index === 0 ? t('Next shuttle') : t('Following shuttle')}</strong>
-              <div className="arrival-meta">
-                <span
-                  className={`arrival-badge ${lastKnown || arrival.scheduled ? 'is-scheduled' : 'is-live'}`}
-                >
-                  {!arrival.scheduled && !lastKnown && <i aria-hidden="true" />}
-                  {lastKnown ? t('Last reported') : arrival.scheduled ? t('Scheduled') : t('Live')}
-                </span>
-                <span className="arrival-bus-name">
-                  {arrival.busName ? t('Bus {name}', { name: arrival.busName }) : ''}
-                </span>
+      <div className="arrival-list">
+        {(lastKnown ? reportedPredictions : arrivals).slice(0, 4).map((arrival, index) => {
+          const reportedAt = lastKnown ? Date.parse(data?.arrivalFetchedAt || '') : now;
+          const minutes = Math.max(0, Math.ceil((arrival.due - reportedAt) / 60_000));
+          const isLive = !lastKnown && !arrival.scheduled;
+          const arriving = isLive && arrival.due - now <= 30_000;
+          const approach =
+            isLive && index === 0
+              ? Math.min(1, Math.max(0, 1 - (arrival.due - now) / APPROACH_WINDOW_MS))
+              : 0;
+          const alertOn = busAlert.alert?.vehicleID === arrival.vehicleID && isLive;
+          const showBell = alertOn || (isLive && canSetAlert(arrival, now));
+          return (
+            <div
+              key={arrival.id}
+              className={`arrival-row ${index === 0 ? 'arrival-next' : ''}${arriving ? ' is-arriving' : ''}${lastKnown ? ' is-last-known' : ''}`}
+              style={{ '--i': index }}
+            >
+              <div className="bus-symbol">
+                <BusFront size={22} />
               </div>
-            </div>
-            {showBell && (
-              <Button
-                type="button"
-                className={`icon-button bus-alert-toggle${alertOn ? ' is-on' : ''}`}
-                aria-pressed={alertOn}
-                title={alertOn ? t('Cancel alert') : t('Alert me 2 min before')}
-                aria-label={
-                  alertOn
-                    ? t('Cancel alert for bus {name}', { name: arrival.busName })
-                    : t('Alert me 2 min before bus {name} arrives', { name: arrival.busName })
-                }
-                onClick={() => void busAlert.toggle(arrival)}
-              >
-                {alertOn ? <BellRing size={18} /> : <Bell size={18} />}
-              </Button>
-            )}
-            <div className={`arrival-time${arriving ? ' is-arriving' : ''}`}>
-              {arriving ? (
-                <strong>{t('Arriving')}</strong>
-              ) : (
-                <>
-                  <strong>
-                    <RollingNumber value={minutes < 1 ? '<1' : minutes} />
-                  </strong>
-                  <span>{lastKnown ? t('min at last update') : t('min')}</span>
-                </>
+              <div className="arrival-description">
+                <strong>{index === 0 ? t('Next shuttle') : t('Following shuttle')}</strong>
+                <div className="arrival-meta">
+                  <span
+                    className={`arrival-badge ${lastKnown || arrival.scheduled ? 'is-scheduled' : 'is-live'}`}
+                  >
+                    {!arrival.scheduled && !lastKnown && <i aria-hidden="true" />}
+                    {lastKnown
+                      ? t('Last reported')
+                      : arrival.scheduled
+                        ? t('Scheduled')
+                        : t('Live')}
+                  </span>
+                  <span className="arrival-bus-name">
+                    {arrival.busName ? t('Bus {name}', { name: arrival.busName }) : ''}
+                  </span>
+                </div>
+              </div>
+              {showBell && (
+                <Button
+                  type="button"
+                  className={`icon-button bus-alert-toggle${alertOn ? ' is-on' : ''}`}
+                  aria-pressed={alertOn}
+                  title={alertOn ? t('Cancel alert') : t('Alert me 2 min before')}
+                  aria-label={
+                    alertOn
+                      ? t('Cancel alert for bus {name}', { name: arrival.busName })
+                      : t('Alert me 2 min before bus {name} arrives', { name: arrival.busName })
+                  }
+                  onClick={() => void busAlert.toggle(arrival)}
+                >
+                  {alertOn ? <BellRing size={18} /> : <Bell size={18} />}
+                </Button>
+              )}
+              <div className={`arrival-time${arriving ? ' is-arriving' : ''}`}>
+                {arriving ? (
+                  <strong>{t('Arriving')}</strong>
+                ) : (
+                  <>
+                    <strong>
+                      <RollingNumber value={minutes < 1 ? '<1' : minutes} />
+                    </strong>
+                    <span>{lastKnown ? t('min at last update') : t('min')}</span>
+                  </>
+                )}
+              </div>
+              {isLive && index === 0 && (
+                <div className="approach-track" aria-hidden="true">
+                  <i style={{ transform: `scaleX(${approach})` }} />
+                </div>
               )}
             </div>
-            {isLive && index === 0 && (
-              <div className="approach-track" aria-hidden="true">
-                <i style={{ transform: `scaleX(${approach})` }} />
-              </div>
-            )}
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
       {advice && (
         <div className="leave-card">
           <Footprints size={21} />
