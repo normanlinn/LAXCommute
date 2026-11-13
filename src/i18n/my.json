@@ -432,5 +432,13 @@
   "Slate and tangerine": "မီးခိုးနှင့် လိမ္မော်",
   "Desert night": "သဲကန္တာရ ည",
   "Royal navy and gold": "ရေတပ်ပြာနှင့် ရွှေ",
-  "Electric mono": "အဖြူအမည်း လျှပ်စစ်ပြာ"
+  "Electric mono": "အဖြူအမည်း လျှပ်စစ်ပြာ",
+  "Good morning, {name}": "မင်္ဂလာနံနက်ခင်းပါ {name}",
+  "Good afternoon, {name}": "မင်္ဂလာနေ့လည်ခင်းပါ {name}",
+  "Good evening, {name}": "မင်္ဂလာညနေခင်းပါ {name}",
+  "What should we call you?": "သင့်ကို ဘယ်လိုခေါ်ရမလဲ?",
+  "Nickname": "အမည်ပြောင်",
+  "Saved": "သိမ်းပြီး",
+  "Used to greet you. Saved to your account.": "သင့်ကို နှုတ်ဆက်ရန် အသုံးပြုသည်။ သင့်အကောင့်တွင် သိမ်းထားသည်။",
+  "Used to greet you. Saved on this device.": "သင့်ကို နှုတ်ဆက်ရန် အသုံးပြုသည်။ ဤစက်ပေါ်တွင် သိမ်းထားသည်။"
 }

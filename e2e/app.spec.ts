@@ -146,3 +146,14 @@ test('riders can pick one of eight themes, and it stays after reload', async ({ 
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-palette', 'royal');
 });
+
+test('riders can set a nickname and are greeted by it', async ({ page }) => {
+  await open(page);
+  await page.getByRole('navigation').getByRole('button', { name: 'Account' }).click();
+  await page.getByLabel('What should we call you?').fill('Norman');
+  await page.getByLabel('What should we call you?').press('Enter');
+  await page.getByRole('navigation').getByRole('button', { name: 'Explore' }).click();
+  await expect(page.locator('.greeting')).toContainText(/Good (morning|afternoon|evening), Norman/);
+  await page.reload();
+  await expect(page.locator('.greeting')).toContainText('Norman');
+});

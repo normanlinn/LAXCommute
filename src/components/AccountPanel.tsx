@@ -7,6 +7,7 @@ import { useAccount } from '../hooks/useAccount';
 import { getAuthClient } from '../services/auth';
 import Avatar from './Avatar';
 import AvatarPicker from './AvatarPicker';
+import NicknameField from './NicknameField';
 import { useAvatar } from '../hooks/useAvatar';
 
 export default function AccountPanel({
@@ -275,6 +276,7 @@ export default function AccountPanel({
           <Mail size={17} />
           {user.email}
         </p>
+        <NicknameField />
         <AvatarPicker />
         <div className="account-summary">
           <Check size={19} />
@@ -510,6 +512,7 @@ export default function AccountPanel({
           {t(message || authMessage)}
         </p>
       )}
+      <NicknameField />
       <AvatarPicker />
     </section>
   );

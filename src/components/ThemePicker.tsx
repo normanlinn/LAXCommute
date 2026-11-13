@@ -3,8 +3,22 @@ import { useLanguage } from '../i18n/LanguageProvider';
 import { useTheme } from '../theme/ThemeProvider';
 import { PALETTES } from '../theme/palettes';
 import { haptic } from '../domain/haptics';
+import { Check } from './ui/icons';
 
-/** The eight color themes; each previews its light and dark sides and its accent. */
+type Colors = { bg: string; card: string; tint: string };
+
+/** A tiny screen: the theme background with a card and its accent color. */
+function MiniScreen({ colors }: { colors: Colors }) {
+  return (
+    <span className="theme-mini" style={{ background: colors.bg }}>
+      <i style={{ background: colors.card }}>
+        <b style={{ background: colors.tint }} />
+      </i>
+    </span>
+  );
+}
+
+/** The eight color themes, each previewed in light and dark. */
 export default function ThemePicker() {
   const { t } = useLanguage();
   const { palette, setPalette } = useTheme();
@@ -26,14 +40,13 @@ export default function ThemePicker() {
               }}
             />
             <span className="theme-swatch" aria-hidden="true">
-              <span style={{ background: option.light.bg }}>
-                <i style={{ background: option.light.tint }} />
-              </span>
-              <span style={{ background: option.dark.bg }}>
-                <i style={{ background: option.dark.tint }} />
-              </span>
+              <MiniScreen colors={option.light} />
+              <MiniScreen colors={option.dark} />
             </span>
             <span className="theme-name">{t(option.name)}</span>
+            <span className="theme-check" aria-hidden="true">
+              <Check size={14} />
+            </span>
           </label>
         ))}
       </div>

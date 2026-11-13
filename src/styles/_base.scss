@@ -1,9 +1,9 @@
 // Page shell, header, trip card, forms and core components.
 :root {
   font-family:
+    'Plus Jakarta Sans',
     -apple-system,
     BlinkMacSystemFont,
-    'SF Pro Text',
     'Segoe UI',
     Roboto,
     'Walone',
@@ -69,7 +69,13 @@ h2,
 h3,
 .brand {
   font-family:
-    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, 'Walone', system-ui,
+    'Plus Jakarta Sans',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    'Walone',
+    system-ui,
     sans-serif;
 }
 .shuttle-map.leaflet-container,
@@ -112,9 +118,9 @@ h3,
 .brand small {
   display: block;
   font:
-    600 9px/1.8 -apple-system,
+    600 9px/1.8 'Plus Jakarta Sans',
+    -apple-system,
     BlinkMacSystemFont,
-    'SF Pro Text',
     'Segoe UI',
     Roboto,
     sans-serif;
@@ -772,7 +778,13 @@ input::placeholder {
   font-size: 27px;
   letter-spacing: -1px;
   font-family:
-    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, system-ui, sans-serif;
+    'Plus Jakarta Sans',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    system-ui,
+    sans-serif;
   font-weight: 800;
   line-height: 1;
 }

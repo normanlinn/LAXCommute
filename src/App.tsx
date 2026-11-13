@@ -50,6 +50,8 @@ import OutageNotice from './components/OutageNotice';
 import Avatar from './components/Avatar';
 import { useAvatar } from './hooks/useAvatar';
 import { usePaletteSync } from './hooks/usePaletteSync';
+import { useNickname } from './hooks/useNickname';
+import { dayPart } from './domain/nickname';
 import CrowdReports from './components/CrowdReports';
 import StopReports from './components/StopReports';
 import InstallApp from './components/InstallApp';
@@ -201,6 +203,17 @@ export default function App() {
   const online = useOnline();
   const { avatar } = useAvatar();
   usePaletteSync();
+  const { nickname } = useNickname();
+  const greeting = nickname
+    ? t(
+        {
+          morning: 'Good morning, {name}',
+          afternoon: 'Good afternoon, {name}',
+          evening: 'Good evening, {name}',
+        }[dayPart(new Date().getHours())],
+        { name: nickname },
+      )
+    : '';
   const route = routeForLot(lot);
   const routeQuery = useRoute(route.id);
   const stops = routeQuery.data?.stops || EMPTY;
@@ -405,7 +418,13 @@ export default function App() {
             <section className="map-column">
               <div className="map-topbar">
                 <div>
-                  <span className="eyebrow">{t('LAX EMPLOYEE SHUTTLES')}</span>
+                  {greeting ? (
+                    <span className="greeting" key={greeting}>
+                      {greeting}
+                    </span>
+                  ) : (
+                    <span className="eyebrow">{t('LAX EMPLOYEE SHUTTLES')}</span>
+                  )}
                   <h1>
                     {tab === 'home' ? t('Let’s get you home.') : t('Find your next shuttle.')}
                   </h1>

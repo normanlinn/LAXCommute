@@ -501,7 +501,8 @@ a {
 
 // ── Borders, rounding and motion ─────────────────────────────────────────────
 $line: 1px solid var(--ios-separator);
-$spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+// Quick ease-out with no overshoot, so controls feel crisp rather than bouncy.
+$spring: cubic-bezier(0.2, 0.8, 0.2, 1);
 
 // Every surface gets a fine outline in its theme's line color.
 .page-card,
@@ -615,11 +616,11 @@ $spring: cubic-bezier(0.34, 1.4, 0.64, 1);
 .official-tracker-open,
 .release-notes summary {
   transition:
-    transform 0.18s $spring,
-    background-color 0.2s ease,
-    border-color 0.2s ease,
-    color 0.2s ease,
-    box-shadow 0.2s ease;
+    transform 0.1s $spring,
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 @media (hover: hover) and (pointer: fine) {
   .btn:hover:not(:disabled),
@@ -627,7 +628,6 @@ $spring: cubic-bezier(0.34, 1.4, 0.64, 1);
   .bus-alert-toggle:hover,
   .feedback-menu-button:hover,
   .official-tracker-open:hover {
-    transform: translateY(-1px);
   }
   // Hover never adds a glow or a white box: ghost buttons get a soft tint of the
   // text color, which is dark on light themes and light on dark themes.
@@ -662,7 +662,6 @@ $spring: cubic-bezier(0.34, 1.4, 0.64, 1);
   }
   .theme-tile:hover,
   .avatar-grid label:hover {
-    transform: translateY(-2px);
   }
   .arrival-list .arrival-row:not(.arrival-next):hover {
     background-color: var(--ios-fill);
@@ -699,7 +698,8 @@ html {
   -webkit-tap-highlight-color: transparent;
 }
 
-// Theme picker: eight tiles, each previewing light, dark and the accent.
+// Theme picker: two columns of equal-height tiles. Each previews the theme's light
+// and dark screens (background, card, accent) beside its name; a check marks the choice.
 .theme-picker {
   margin: 18px 0 0;
   padding: 0;
@@ -712,15 +712,15 @@ html {
 }
 .theme-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
 }
 .theme-tile {
   position: relative;
   display: grid;
-  justify-items: center;
-  gap: 6px;
-  padding: 8px 4px 10px;
+  grid-template-rows: auto 2.5em;
+  gap: 8px;
+  padding: 8px 8px 10px;
   border: $line;
   border-radius: 18px;
   background: var(--ios-card);
@@ -733,7 +733,8 @@ html {
 }
 .theme-tile:has(input:checked) {
   border-color: var(--ios-tint);
-  box-shadow: 0 0 0 2px var(--ios-tint);
+  box-shadow: inset 0 0 0 1px var(--ios-tint);
+  background: color-mix(in srgb, var(--ios-tint) 7%, var(--ios-card));
 }
 .theme-tile:has(input:focus-visible) {
   outline: 3px solid var(--ios-tint);
@@ -742,30 +743,59 @@ html {
 .theme-swatch {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  width: 54px;
-  height: 54px;
-  overflow: hidden;
+  gap: 3px;
+  padding: 3px;
   border: $line;
-  border-radius: 50%;
+  border-radius: 13px;
+  background: var(--ios-fill);
 }
-.theme-swatch > span {
+.theme-mini {
   display: grid;
-  place-items: center;
+  place-items: end stretch;
+  height: 46px;
+  padding: 0 6px 6px;
+  border-radius: 10px;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.08);
 }
-.theme-swatch i {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
+.theme-mini i {
+  display: grid;
+  align-content: start;
+  height: 20px;
+  padding: 4px;
+  border-radius: 6px;
+}
+.theme-mini b {
+  width: 100%;
+  height: 5px;
+  border-radius: 3px;
 }
 .theme-name {
-  font-size: 11px;
+  padding: 0 4px;
+  font-size: 13px;
   font-weight: 600;
-  line-height: 1.2;
-  text-align: center;
+  line-height: 1.25;
+  text-align: left;
 }
-@media (max-width: 360px) {
+.theme-check {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  color: var(--ios-on-tint);
+  background: var(--ios-tint-fill);
+  transform: scale(0);
+  transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.theme-tile:has(input:checked) .theme-check {
+  transform: scale(1);
+}
+@media (max-width: 340px) {
   .theme-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -788,4 +818,263 @@ html {
   ::view-transition-new(root) {
     animation: none;
   }
+}
+
+// Update banner: a themed card that slides down, readable in every theme.
+.update-toast {
+  top: max(14px, env(safe-area-inset-top));
+  padding: 10px 10px 10px 16px;
+  gap: 10px;
+  border: $line;
+  border-radius: 20px;
+  background: var(--ios-card);
+  color: var(--ios-label);
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 12px 32px -12px color-mix(in srgb, var(--ios-label) 35%, transparent);
+  animation: toast-in 0.3s $spring both;
+}
+.update-toast .btn {
+  min-height: 38px;
+  height: 38px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  font-size: 14px;
+}
+.update-toast .btn:not([aria-label]) {
+  color: var(--ios-on-tint);
+  background: var(--ios-tint-fill);
+}
+.update-toast .btn[aria-label] {
+  width: 38px;
+  padding: 0;
+  color: var(--ios-secondary);
+  background: var(--ios-fill);
+}
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -24px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+// ── Smooth motion across the app ──────────────────────────────────────────────
+// Content eases in as screens open, cards follow one another, and every state
+// change (color, border, size) glides instead of jumping. Off with reduced motion.
+@keyframes soft-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+@keyframes soft-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+@keyframes float-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+html {
+  scroll-behavior: smooth;
+}
+.trip-card,
+.page-card,
+.map-surface {
+  animation: soft-rise 0.28s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.trip-card > *,
+.page-card > * {
+  animation: soft-rise 0.26s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@for $i from 1 through 10 {
+  .trip-card > :nth-child(#{$i}),
+  .page-card > :nth-child(#{$i}) {
+    animation-delay: #{$i * 0.015}s;
+  }
+}
+.transit-arrival-peek {
+  animation: float-up 0.3s 0.08s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.header-actions .profile-button .avatar-circle,
+.avatar-grid label:has(input:checked) .avatar-circle {
+  animation: soft-pop 0.4s $spring both;
+}
+.preferences-menu > * {
+  animation: soft-rise 0.24s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@for $i from 1 through 10 {
+  .preferences-menu > :nth-child(#{$i}) {
+    animation-delay: #{$i * 0.012}s;
+  }
+}
+.theme-tile {
+  transition:
+    transform 0.2s $spring,
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+:is(
+  .direction-switch .tab,
+  .language-switch .btn,
+  .segmented .tab,
+  .route-options > .btn,
+  .transit-route-picker > .btn
+),
+.appearance-options > label {
+  transition:
+    background-color 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+    color 0.2s ease,
+    box-shadow 0.25s ease,
+    transform 0.18s $spring;
+}
+.arrival-row,
+.bottom-nav .btn,
+.app :is(input, select, textarea),
+details > summary {
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.app :is(input, select, textarea):focus-visible {
+  border-color: var(--ios-tint);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--ios-tint) 22%, transparent);
+  outline: none;
+}
+details[open] > :not(summary) {
+  animation: soft-rise 0.2s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .update-toast,
+  .trip-card,
+  .page-card,
+  .map-surface,
+  .trip-card > *,
+  .page-card > *,
+  .transit-arrival-peek,
+  .header-actions .profile-button .avatar-circle,
+  .avatar-grid label:has(input:checked) .avatar-circle,
+  .preferences-menu > *,
+  details[open] > :not(summary) {
+    animation: none;
+  }
+}
+
+// Nickname greeting and field.
+.greeting {
+  display: inline-block;
+  margin-bottom: 2px;
+  color: var(--ios-tint-text);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  animation: soft-rise 0.28s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.nickname-field {
+  display: grid;
+  gap: 8px;
+  margin: 18px 0 0;
+  padding: 14px;
+  border: $line;
+  border-radius: $card-radius;
+  background: var(--ios-bg);
+}
+.nickname-field label {
+  color: var(--ios-secondary);
+  font-size: 13px;
+  font-weight: 600;
+}
+.nickname-input {
+  position: relative;
+}
+.nickname-input input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 84px 0 14px;
+  font-size: 17px;
+}
+.nickname-saved {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--ios-green);
+  font-size: 13px;
+  font-weight: 700;
+  opacity: 0;
+  transform: translateY(-50%) scale(0.9);
+  transition:
+    opacity 0.2s ease,
+    transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.nickname-saved.is-visible {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+.nickname-note {
+  margin: 0;
+  color: var(--ios-secondary);
+  font-size: 13px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .greeting {
+    animation: none;
+  }
+}
+
+// Buttons look like buttons at rest: a steady hairline border and soft fill, so
+// hover only deepens the color slightly instead of a border popping in.
+.share-button,
+.install-button,
+.menu-button,
+.map-toggle,
+.directions-link,
+.map-controls .btn,
+.icon-button:not(.bus-alert-toggle) {
+  border: 1px solid var(--ios-separator);
+  background-color: var(--ios-card);
+}
+.share-button,
+.install-button,
+.map-toggle,
+.directions-link {
+  border-radius: 999px;
+}
+@media (hover: hover) and (pointer: fine) {
+  :is(
+      .share-button,
+      .install-button,
+      .menu-button,
+      .map-toggle,
+      .directions-link,
+      .map-controls .btn,
+      .icon-button:not(.bus-alert-toggle)
+    ):hover:not(:disabled) {
+    border-color: color-mix(in srgb, var(--ios-label) 22%, var(--ios-separator));
+    background-color: color-mix(in srgb, var(--ios-label) 5%, var(--ios-card));
+  }
+  .bottom-nav .btn:not(.active):hover {
+    border-color: transparent;
+    background-color: color-mix(in srgb, var(--ios-label) 5%, transparent);
+  }
+}
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
 }

@@ -432,5 +432,13 @@
   "Slate and tangerine": "Pizarra y mandarina",
   "Desert night": "Noche del desierto",
   "Royal navy and gold": "Azul marino y oro",
-  "Electric mono": "Mono eléctrico"
+  "Electric mono": "Mono eléctrico",
+  "Good morning, {name}": "Buenos días, {name}",
+  "Good afternoon, {name}": "Buenas tardes, {name}",
+  "Good evening, {name}": "Buenas noches, {name}",
+  "What should we call you?": "¿Cómo te llamamos?",
+  "Nickname": "Apodo",
+  "Saved": "Guardado",
+  "Used to greet you. Saved to your account.": "Lo usamos para saludarte. Guardado en tu cuenta.",
+  "Used to greet you. Saved on this device.": "Lo usamos para saludarte. Guardado en este dispositivo."
 }
