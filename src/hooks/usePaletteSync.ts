@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useAccount } from './useAccount';
-import { useTheme } from '../theme/ThemeProvider';
+import { THEME_CHOICE_ENABLED, useTheme } from '../theme/ThemeProvider';
 import { isPaletteID } from '../theme/palettes';
 import { getAuthClient } from '../services/auth';
 
@@ -15,6 +15,7 @@ export function usePaletteSync() {
   const saved = user?.user_metadata?.palette;
 
   useEffect(() => {
+    if (!THEME_CHOICE_ENABLED) return;
     if (!user) {
       adoptedFor.current = null;
       return;

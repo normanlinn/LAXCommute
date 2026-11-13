@@ -1,7 +1,7 @@
 import { useId, useState } from 'react';
 import { Menu, Monitor, Moon, Sun, X } from './ui/icons';
 import { useLanguage } from '../i18n/LanguageProvider';
-import { useTheme, type ThemePreference } from '../theme/ThemeProvider';
+import { THEME_CHOICE_ENABLED, useTheme, type ThemePreference } from '../theme/ThemeProvider';
 import LanguageSwitch from './LanguageSwitch';
 import DeveloperFeedback from './DeveloperFeedback';
 import ReleaseNotes from './ReleaseNotes';
@@ -57,7 +57,7 @@ export default function AppMenu() {
               ))}
             </div>
           </fieldset>
-          <ThemePicker />
+          {THEME_CHOICE_ENABLED && <ThemePicker />}
           <div className="menu-language">
             <h3>{t('Language')}</h3>
             <LanguageSwitch />

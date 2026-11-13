@@ -8,6 +8,8 @@ import {
   type PaletteID,
 } from './palettes';
 
+/** Theme choice is paused: everyone gets the default palette until it returns. */
+export const THEME_CHOICE_ENABLED = false;
 export type ThemePreference = 'system' | 'light' | 'dark';
 export const THEME_STORAGE_KEY = 'laxcommute:theme';
 const ThemeContext = createContext({
@@ -38,9 +40,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [preference, updatePreference] = useState(() =>
     saved(THEME_STORAGE_KEY, isPreference, 'system' as ThemePreference),
   );
-  const [palette, updatePalette] = useState(() =>
+  const [chosenPalette, updatePalette] = useState(() =>
     saved(PALETTE_STORAGE_KEY, isPaletteID, DEFAULT_PALETTE),
   );
+  const palette = THEME_CHOICE_ENABLED ? chosenPalette : DEFAULT_PALETTE;
   const [systemDark, setSystemDark] = useState(
     () => window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false,
   );
@@ -66,6 +69,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     store(THEME_STORAGE_KEY, value);
   }
   function setPalette(value: PaletteID) {
+    if (!THEME_CHOICE_ENABLED) return;
     smoothly(() => updatePalette(value));
     store(PALETTE_STORAGE_KEY, value);
   }

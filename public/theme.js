@@ -2,11 +2,13 @@
 (() => {
   let preference = 'system';
   let palette = 'mono';
+  const themeChoice = false;
   const palettes = ['cobalt', 'forest', 'berry', 'harbor', 'slate', 'desert', 'royal', 'mono'];
   try {
     const saved = localStorage.getItem('laxcommute:theme');
     if (saved === 'light' || saved === 'dark') preference = saved;
-    const savedPalette = localStorage.getItem('laxcommute:palette');
+    // Theme choice is paused (THEME_CHOICE_ENABLED in ThemeProvider): keep the default.
+    const savedPalette = themeChoice && localStorage.getItem('laxcommute:palette');
     if (palettes.includes(savedPalette)) palette = savedPalette;
   } catch {
     // Use the device preference and default palette when storage is unavailable.
