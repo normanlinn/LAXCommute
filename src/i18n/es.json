@@ -448,5 +448,17 @@
   "Updating LAXCommute": "Actualizando LAXCommute",
   "Getting version {version} ready…": "Preparando la versión {version}…",
   "Getting the new version ready…": "Preparando la nueva versión…",
-  "Version {version} is ready": "La versión {version} está lista"
+  "Version {version} is ready": "La versión {version} está lista",
+  "Details": "Detalles",
+  "Official tracker": "Rastreador oficial",
+  "Every 7–15 min": "Cada 7–15 min",
+  "{minutes} min": "{minutes} min",
+  "Checking…": "Comprobando…",
+  "Typical service": "Servicio habitual",
+  "Waiting for the tracker": "Esperando al rastreador",
+  "Quick actions": "Acciones rápidas",
+  "Change stop": "Cambiar parada",
+  "Nearest stop": "Parada más cercana",
+  "Rider reports": "Reportes de pasajeros",
+  "Official times": "Horarios oficiales"
 }

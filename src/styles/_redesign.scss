@@ -1,0 +1,208 @@
+// Explore and Go home layout: the trip planner leads, the map fills the rest of the
+// screen on desktop, and the next shuttle is the first thing on every screen size.
+$spring: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+.app .outage-notice {
+  border: 1px solid color-mix(in srgb, var(--ios-orange) 35%, transparent);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--ios-orange) 9%, var(--ios-card));
+  box-shadow: none;
+}
+
+// ── Next shuttle ────────────────────────────────────────────────────────────
+.next-hero {
+  position: relative;
+  display: grid;
+  gap: 4px;
+  margin: 0 0 18px;
+  padding: 16px 18px 18px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--ios-tint) 26%, transparent);
+  border-radius: 22px;
+  background: var(--ios-soft);
+  color: var(--ios-tint-text);
+  animation: soft-rise 0.32s $spring both;
+}
+.next-hero::after {
+  content: '';
+  position: absolute;
+  right: -40px;
+  bottom: -60px;
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--ios-tint) 10%, transparent);
+  pointer-events: none;
+}
+.next-hero-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.next-hero-route {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  background: var(--ios-tint-fill);
+  color: var(--ios-on-tint);
+  font-size: 12px;
+  font-weight: 800;
+}
+.next-hero-label {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.next-hero-badge {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--ios-card);
+  color: var(--ios-secondary);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+.next-hero-badge i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ios-green);
+  animation: live-pulse 2s ease-in-out infinite;
+}
+.next-hero-badge.is-paused svg {
+  color: var(--ios-orange);
+}
+.next-hero-time {
+  position: relative;
+  z-index: 1;
+  margin-top: 6px;
+  font-size: clamp(34px, 9vw, 44px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+.next-hero-stop {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+// ── Go home quick actions ───────────────────────────────────────────────────
+.home-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: -6px 0 20px;
+}
+.app .home-actions .btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  height: auto;
+  min-height: 74px;
+  padding: 12px 14px;
+  border: 1px solid var(--ios-separator);
+  border-radius: 16px;
+  background: var(--ios-card);
+  color: var(--ios-label);
+  font-size: 13.5px;
+  font-weight: 700;
+  text-align: left;
+  text-decoration: none;
+  animation: soft-rise 0.3s $spring both;
+}
+@for $i from 1 through 4 {
+  .home-actions .btn:nth-child(#{$i}) {
+    animation-delay: #{0.04 + $i * 0.04}s;
+  }
+}
+.home-actions .btn svg {
+  color: var(--ios-tint-text);
+}
+@media (hover: hover) and (pointer: fine) {
+  .app .home-actions .btn:hover:not(:disabled) {
+    border-color: color-mix(in srgb, var(--ios-tint) 40%, transparent);
+    background: color-mix(in srgb, var(--ios-tint) 6%, var(--ios-card));
+  }
+}
+
+// ── Desktop: planner on the left, map fills the right and stays in view ─────
+@media (min-width: 1051px) {
+  .app .trip-layout {
+    grid-template-columns: clamp(380px, 29vw, 450px) minmax(0, 1fr);
+    margin-top: 20px;
+    padding-bottom: 40px;
+  }
+  .app .trip-layout > .trip-card {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .app .trip-layout > .map-column {
+    position: sticky;
+    top: 16px;
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .app .map-topbar {
+    padding: 4px 4px 14px;
+    align-items: center;
+  }
+  .app .map-topbar h1 {
+    font-size: clamp(24px, 2vw, 30px);
+  }
+  .app .map-surface {
+    height: clamp(520px, calc(100dvh - 210px), 920px);
+  }
+  // The planner's own next-shuttle card is beside the map, so the overlay is not needed.
+  .app .transit-arrival-peek {
+    display: none;
+  }
+}
+
+// ── Phones: the map leads and the planner card reads as a sheet beneath it ──
+@media (max-width: 760px) {
+  .next-hero {
+    margin-bottom: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .next-hero,
+  .home-actions .btn,
+  .next-hero-badge i {
+    animation: none;
+  }
+}
+
+// The next-shuttle card already answers "when"; the intro below it stays brief.
+.app .trip-intro h2 {
+  font-size: 21px;
+}
+.app .trip-intro p {
+  font-size: 13.5px;
+}
+
+// The phone's lot picker over the map uses the theme accent too.
+.transit-route-button {
+  --picker-color: var(--ios-tint);
+}
+.app .transit-route-button > span {
+  color: var(--ios-on-tint);
+}

@@ -448,5 +448,17 @@
   "Updating LAXCommute": "LAXCommute ကို အပ်ဒိတ်လုပ်နေသည်",
   "Getting version {version} ready…": "ဗားရှင်း {version} ကို ပြင်ဆင်နေသည်…",
   "Getting the new version ready…": "ဗားရှင်းအသစ်ကို ပြင်ဆင်နေသည်…",
-  "Version {version} is ready": "ဗားရှင်း {version} အဆင်သင့်ဖြစ်ပြီ"
+  "Version {version} is ready": "ဗားရှင်း {version} အဆင်သင့်ဖြစ်ပြီ",
+  "Details": "အသေးစိတ်",
+  "Official tracker": "တရားဝင် ခြေရာခံစနစ်",
+  "Every 7–15 min": "၇–၁၅ မိနစ်တစ်ကြိမ်",
+  "{minutes} min": "{minutes} မိနစ်",
+  "Checking…": "စစ်ဆေးနေသည်…",
+  "Typical service": "ပုံမှန် ဝန်ဆောင်မှု",
+  "Waiting for the tracker": "ခြေရာခံစနစ်ကို စောင့်နေသည်",
+  "Quick actions": "အမြန်လုပ်ဆောင်ချက်များ",
+  "Change stop": "မှတ်တိုင် ပြောင်းရန်",
+  "Nearest stop": "အနီးဆုံး မှတ်တိုင်",
+  "Rider reports": "ခရီးသည် သတင်းပို့ချက်များ",
+  "Official times": "တရားဝင် အချိန်များ"
 }

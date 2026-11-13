@@ -52,7 +52,7 @@ test('switching language loads Spanish on demand and keeps it after reload', asy
   await expect(page.locator('.arrival-row').first().getByText('Autobús 8001')).toBeVisible();
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('lang', 'es');
-  await expect(page.getByText('Autobús 8001').first()).toBeVisible();
+  await expect(page.getByText('Autobús 8001').filter({ visible: true }).first()).toBeVisible();
 });
 
 test('going offline keeps the last data and says so', async ({ page, context }) => {

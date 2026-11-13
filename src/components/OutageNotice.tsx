@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ExternalLink, Megaphone, X } from './ui/icons';
+import { ChevronDown, ExternalLink, Megaphone, X } from './ui/icons';
 import { useLanguage } from '../i18n/LanguageProvider';
 import { officialTrackerURL } from './OfficialTracker';
 
@@ -22,9 +22,14 @@ export default function OutageNotice({ routeID, stopID }: { routeID?: number; st
   if (hidden) return null;
   return (
     <aside className="outage-notice" role="status" aria-label={t('Service announcement')}>
-      <Megaphone size={20} aria-hidden="true" className="outage-icon" />
-      <div className="outage-copy">
-        <strong>{t('Live bus times are temporarily unavailable')}</strong>
+      <Megaphone size={18} aria-hidden="true" className="outage-icon" />
+      <details className="outage-copy">
+        <summary>
+          <strong>{t('Live bus times are temporarily unavailable')}</strong>
+          <span className="outage-more">
+            {t('Details')} <ChevronDown size={14} aria-hidden="true" />
+          </span>
+        </summary>
         <p>
           {t(
             'The developer is still contacting LAX and Syncromatics for authorized API access so LAXCommute can become fully functional again, including live bus locations and arrival times.',
@@ -33,12 +38,17 @@ export default function OutageNotice({ routeID, stopID }: { routeID?: number; st
         <p>
           {t(
             'Saved trips, stop maps and passenger reports remain available. Use the official tracker for live arrivals.',
-          )}{' '}
-          <a href={officialTrackerURL(routeID, stopID)} target="_blank" rel="noreferrer">
-            {t('Open official tracker')} <ExternalLink size={13} aria-hidden="true" />
-          </a>
+          )}
         </p>
-      </div>
+      </details>
+      <a
+        className="outage-link"
+        href={officialTrackerURL(routeID, stopID)}
+        target="_blank"
+        rel="noreferrer"
+      >
+        {t('Official tracker')} <ExternalLink size={13} aria-hidden="true" />
+      </a>
       <button
         type="button"
         className="btn btn-ghost outage-dismiss"

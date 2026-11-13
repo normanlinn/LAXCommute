@@ -10,7 +10,6 @@ import {
   useEffect,
   useMemo,
   useState,
-  type CSSProperties,
   type PointerEvent as ReactPointerEvent,
 } from 'react';
 import {
@@ -29,6 +28,7 @@ import {
   WifiOff,
   ChevronDown,
   SlidersHorizontal,
+  Users,
 } from './components/ui/icons';
 import {
   ROUTES,
@@ -55,6 +55,7 @@ import { useNickname } from './hooks/useNickname';
 import { dayPart } from './domain/nickname';
 import { smoothly } from './domain/motion';
 import CrowdReports from './components/CrowdReports';
+import NextShuttleHero from './components/NextShuttleHero';
 import StopReports from './components/StopReports';
 import InstallApp from './components/InstallApp';
 import ShareApp from './components/ShareApp';
@@ -147,6 +148,7 @@ export default function App() {
     };
   }, [mapToolsOpen]);
   const tripCardRef = useRef<HTMLElement>(null);
+  const stopSelectRef = useRef<HTMLSelectElement>(null);
   const [sheetExpanded, setSheetExpanded] = useState(true);
   const sheetGesture = useRef<{ pointer: number; startY: number; lastY: number } | null>(null);
   const ignoreSheetClick = useRef(false);
@@ -262,6 +264,12 @@ export default function App() {
     selectedStop
       ? availableArrivals(live.data?.predictions || EMPTY, Date.now())[0]
       : undefined;
+  const nextArriving = Boolean(
+    nextMapArrival && !nextMapArrival.scheduled && nextMapArrival.due - Date.now() <= 30_000,
+  );
+  const nextMinutes = nextMapArrival
+    ? Math.max(0, Math.ceil((nextMapArrival.due - Date.now()) / 60000))
+    : null;
   const vehicles = useMemo(
     () =>
       vehicleFresh && !live.isError && !live.data?.cached
@@ -480,7 +488,6 @@ export default function App() {
                       className="btn transit-route-button"
                       aria-pressed={r.lot === lot}
                       aria-label={t('{lot} Lot shuttle', { lot: r.lot })}
-                      style={{ '--picker-color': r.color } as CSSProperties}
                       onClick={() => chooseRoute(r.lot)}
                     >
                       <span aria-hidden="true">{r.short}</span>
@@ -684,6 +691,55 @@ export default function App() {
                     {t(saveState)}
                   </p>
                 )}
+                <NextShuttleHero
+                  routeShort={route.short}
+                  lotLabel={`${lot} ${t('Lot')}`}
+                  stopName={selectedStop?.name}
+                  minutes={nextMinutes}
+                  arriving={nextArriving}
+                  scheduled={Boolean(nextMapArrival?.scheduled)}
+                  liveDown={liveDown}
+                />
+                {tab === 'home' && (
+                  <div className="home-actions" role="group" aria-label={t('Quick actions')}>
+                    <Button
+                      onClick={() => {
+                        stopSelectRef.current?.focus();
+                        stopSelectRef.current?.scrollIntoView({
+                          behavior: reduceMotion ? 'auto' : 'smooth',
+                          block: 'center',
+                        });
+                      }}
+                    >
+                      <MapPin size={18} aria-hidden="true" />
+                      <span>{t('Change stop')}</span>
+                    </Button>
+                    <Button onClick={locate} disabled={locating || options.length === 0}>
+                      <Navigation size={18} aria-hidden="true" />
+                      <span>{locating ? t('Finding you…') : t('Nearest stop')}</span>
+                    </Button>
+                    <Button
+                      onClick={() =>
+                        document.querySelector('.stop-reports')?.scrollIntoView({
+                          behavior: reduceMotion ? 'auto' : 'smooth',
+                          block: 'start',
+                        })
+                      }
+                    >
+                      <Users size={18} aria-hidden="true" />
+                      <span>{t('Rider reports')}</span>
+                    </Button>
+                    <a
+                      className="btn"
+                      href={officialTrackerURL(route.id, selectedStop?.id)}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <ExternalLink size={18} aria-hidden="true" />
+                      <span>{t('Official times')}</span>
+                    </a>
+                  </div>
+                )}
                 <div className="trip-intro">
                   <span className="eyebrow">
                     {direction === 'parking' ? t('YOUR RIDE BACK') : t('TO WORK')}
@@ -779,6 +835,7 @@ export default function App() {
                   {' '}
                   {t('Where are you boarding?')}{' '}
                   <select
+                    ref={stopSelectRef}
                     className="select w-full"
                     value={selectedStop?.id || 0}
                     onChange={(e) => {
