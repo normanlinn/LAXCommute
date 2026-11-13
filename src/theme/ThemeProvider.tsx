@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
+import { smoothly } from '../domain/motion';
 import {
   DEFAULT_PALETTE,
   PALETTES,
@@ -33,15 +34,6 @@ function store(key: string, value: string) {
     // Appearance still works when the browser blocks storage.
   }
 }
-// Crossfade theme changes where the browser supports view transitions.
-function transition(change: () => void) {
-  const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-  const start = (document as Document & { startViewTransition?: (cb: () => void) => unknown })
-    .startViewTransition;
-  if (reduce || !start) change();
-  else start.call(document, change);
-}
-
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [preference, updatePreference] = useState(() =>
     saved(THEME_STORAGE_KEY, isPreference, 'system' as ThemePreference),
@@ -70,11 +62,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', colors.bg);
   }, [appearance, palette]);
   function setPreference(value: ThemePreference) {
-    transition(() => updatePreference(value));
+    smoothly(() => updatePreference(value));
     store(THEME_STORAGE_KEY, value);
   }
   function setPalette(value: PaletteID) {
-    transition(() => updatePalette(value));
+    smoothly(() => updatePalette(value));
     store(PALETTE_STORAGE_KEY, value);
   }
   return (

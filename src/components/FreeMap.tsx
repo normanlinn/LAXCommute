@@ -293,7 +293,7 @@ function FreeMap({
     ) => {
       if (!validPoint(point)) return;
       wanted.add(key);
-      const color = kind === 'you' ? '#266beb' : route.color;
+      const color = kind === 'you' ? '#266beb' : 'var(--ios-tint)';
       const heading = kind === 'bus' ? busHeading(point) : null;
       const appearance = `${kind}:${color}:${selected}:${kind === 'bus' ? point.name || point.id || '' : ''}:${heading}`;
       let entry = markers.get(key);
@@ -484,9 +484,15 @@ function FreeMap({
     for (const path of paths) {
       const points = path.coordinates.filter(validPoint).map(coordinates);
       if (points.length > 1) {
-        L.polyline(points, { color: '#fff', weight: 9, opacity: 0.95 }).addTo(overlays);
+        L.polyline(points, {
+          color: '#fff',
+          weight: 9,
+          opacity: 0.95,
+          className: 'route-casing',
+        }).addTo(overlays);
         const line = L.polyline(points, {
           color: route.color,
+          className: 'route-line',
           weight: 5,
           opacity: 0.9,
           interactive: false,

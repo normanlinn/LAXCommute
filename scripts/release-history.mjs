@@ -72,30 +72,40 @@ export function releaseHistory(log, version, builtAt = new Date().toISOString())
   };
 }
 
+function currentHistory() {
+  const { version: base } = JSON.parse(readFileSync('package.json', 'utf8'));
+  const log = git(['log', '--date=short', '--pretty=%h%x1f%ad%x1f%s']);
+  // Commits since the one that last set package.json's version.
+  const since = git(['log', '-1', '--format=%H', '-G', '"version":', '--', 'package.json']).trim();
+  const subjects = since
+    ? git(['log', '--reverse', '--format=%s', `${since}..HEAD`])
+        .split('\n')
+        .filter(Boolean)
+    : [];
+  return releaseHistory(log, nextVersion(base, subjects));
+}
+
 export function releaseHistoryPlugin() {
   return {
     name: 'release-history',
     resolveId: (id) => (id === ID ? `\0${ID}` : null),
+    // A tiny public file so an open (older) page can say which version is waiting.
+    generateBundle() {
+      // Only the browser build serves public files (not the Worker build).
+      if (this.environment?.name && this.environment.name !== 'client') return;
+      const history = currentHistory();
+      this.emitFile({
+        type: 'asset',
+        fileName: 'version.json',
+        source: JSON.stringify({
+          version: history.version,
+          highlights: history.days.flatMap((day) => day.items.map((item) => item.text)).slice(0, 3),
+        }),
+      });
+    },
     load(id) {
       if (id !== `\0${ID}`) return null;
-      const { version: base } = JSON.parse(readFileSync('package.json', 'utf8'));
-      const log = git(['log', '--date=short', '--pretty=%h%x1f%ad%x1f%s']);
-      // Commits since the one that last set package.json's version.
-      const since = git([
-        'log',
-        '-1',
-        '--format=%H',
-        '-G',
-        '"version":',
-        '--',
-        'package.json',
-      ]).trim();
-      const subjects = since
-        ? git(['log', '--reverse', '--format=%s', `${since}..HEAD`])
-            .split('\n')
-            .filter(Boolean)
-        : [];
-      return `export default ${JSON.stringify(releaseHistory(log, nextVersion(base, subjects)))};`;
+      return `export default ${JSON.stringify(currentHistory())};`;
     },
   };
 }

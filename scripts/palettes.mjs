@@ -5,6 +5,34 @@ import { writeFileSync } from 'node:fs';
 
 const BASE = [
   [
+    'mono',
+    'Electric mono',
+    {
+      bg: '#f4f4f4',
+      card: '#ffffff',
+      line: '#dcdcdc',
+      fill: '#ebebeb',
+      label: '#0a0a0a',
+      secondary: '#636363',
+      tint: '#2547ff',
+      soft: '#e5e9ff',
+      green: '#1f7a4d',
+      orange: '#b35a00',
+    },
+    {
+      bg: '#000000',
+      card: '#121212',
+      line: '#2c2c2c',
+      fill: '#1e1e1e',
+      label: '#fafafa',
+      secondary: '#a3a3a3',
+      tint: '#6b8cff',
+      soft: '#1a2350',
+      green: '#52d394',
+      orange: '#ffb547',
+    },
+  ],
+  [
     'cobalt',
     'Cobalt and sand',
     {
@@ -200,34 +228,6 @@ const BASE = [
       orange: '#ffcc4d',
     },
   ],
-  [
-    'mono',
-    'Electric mono',
-    {
-      bg: '#f4f4f4',
-      card: '#ffffff',
-      line: '#dcdcdc',
-      fill: '#ebebeb',
-      label: '#0a0a0a',
-      secondary: '#636363',
-      tint: '#2547ff',
-      soft: '#e5e9ff',
-      green: '#1f7a4d',
-      orange: '#b35a00',
-    },
-    {
-      bg: '#000000',
-      card: '#121212',
-      line: '#2c2c2c',
-      fill: '#1e1e1e',
-      label: '#fafafa',
-      secondary: '#a3a3a3',
-      tint: '#6b8cff',
-      soft: '#1a2350',
-      green: '#52d394',
-      orange: '#ffb547',
-    },
-  ],
 ];
 
 const hex = (c) =>
@@ -263,7 +263,7 @@ function build(base, dark) {
   const t = { ...base };
   t.secondary = readable(base.secondary, surfaces, dark);
   t.green = readable(base.green, surfaces, dark);
-  t['tint-text'] = readable(base.tint, surfaces, dark);
+  t['tint-text'] = readable(base.tint, [...surfaces, base.soft], dark);
   // Filled buttons: white or near-black label, whichever reads; darken the fill if neither does.
   let fill = base.tint;
   const label = () =>
@@ -323,7 +323,7 @@ export const PALETTES = ${JSON.stringify(
     2,
   )} as const;
 export type PaletteID = (typeof PALETTES)[number]['id'];
-export const DEFAULT_PALETTE: PaletteID = 'cobalt';
+export const DEFAULT_PALETTE: PaletteID = 'mono';
 export const PALETTE_STORAGE_KEY = 'laxcommute:palette';
 export function isPaletteID(value: unknown): value is PaletteID {
   return PALETTES.some((p) => p.id === value);

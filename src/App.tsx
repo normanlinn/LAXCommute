@@ -53,6 +53,7 @@ import { useAvatar } from './hooks/useAvatar';
 import { usePaletteSync } from './hooks/usePaletteSync';
 import { useNickname } from './hooks/useNickname';
 import { dayPart } from './domain/nickname';
+import { smoothly } from './domain/motion';
 import CrowdReports from './components/CrowdReports';
 import StopReports from './components/StopReports';
 import InstallApp from './components/InstallApp';
@@ -61,10 +62,7 @@ import DirectionsButton from './components/DirectionsButton';
 import AppMenu from './components/AppMenu';
 import MapLoading from './components/MapLoading';
 import CommuteWelcome from './components/CommuteWelcome';
-import { useTheme } from './theme/ThemeProvider';
 import { haptic } from './domain/haptics';
-const darkRouteColor = (color: string) =>
-  color === '#3262ab' ? '#88b7ff' : color === '#b76328' ? '#e4bb82' : '#58dce3';
 const AccountPanel = lazy(() => import('./components/AccountPanel'));
 const SavedCommute = lazy(() => import('./components/SavedCommute'));
 const EMPTY: never[] = [];
@@ -76,7 +74,6 @@ const TABS = [
 ];
 
 export default function App() {
-  const { appearance } = useTheme();
   const { t, language } = useLanguage();
   const reduceMotion = useReducedMotion() === true;
   const [compactMap, setCompactMap] = useState(
@@ -287,29 +284,37 @@ export default function App() {
       if (!sameLayout) window.scrollTo({ top: 0, behavior: 'instant' });
     }
     initialNavigation.current = true;
-    setWelcome(false);
-    setTab(next);
-    setSheetExpanded(true);
-    if (next === 'home') {
-      setDirection('parking');
-      setLot(profile.lot);
-      setOverride(null);
-    }
+    smoothly(() => {
+      setWelcome(false);
+      setTab(next);
+      setSheetExpanded(true);
+      if (next === 'home') {
+        setDirection('parking');
+        setLot(profile.lot);
+        setOverride(null);
+      }
+    });
   }
   function changeDirection(next: Direction) {
-    setDirection(next);
-    setOverride(null);
+    smoothly(() => {
+      setDirection(next);
+      setOverride(null);
+    });
   }
   function chooseRoute(next: string) {
     if (next !== lot) haptic('select');
-    setLot(next);
-    setOverride(null);
+    smoothly(() => {
+      setLot(next);
+      setOverride(null);
+    });
   }
   const chooseStop = useCallback(
     (stop: Stop) => {
       const nextDirection = /terminal/i.test(stop.name) ? 'parking' : 'work';
-      setDirection(nextDirection);
-      setOverride({ id: stop.id, direction: nextDirection, routeID: route.id, source: 'manual' });
+      smoothly(() => {
+        setDirection(nextDirection);
+        setOverride({ id: stop.id, direction: nextDirection, routeID: route.id, source: 'manual' });
+      });
     },
     [route.id],
   );
@@ -360,8 +365,9 @@ export default function App() {
     <div
       className="app"
       style={{
-        '--route-color': appearance === 'dark' ? darkRouteColor(route.color) : route.color,
-        '--route-solid-color': route.color,
+        // Routes take the theme's accent so every color on screen belongs to one palette.
+        '--route-color': 'var(--ios-tint)',
+        '--route-solid-color': 'var(--ios-tint)',
       }}
     >
       <header className="navbar app-header">
@@ -732,10 +738,6 @@ export default function App() {
                         className={r.lot === lot ? 'selected' : ''}
                         aria-pressed={r.lot === lot}
                         onClick={() => chooseRoute(r.lot)}
-                        style={{
-                          '--option-color':
-                            appearance === 'dark' ? darkRouteColor(r.color) : r.color,
-                        }}
                       >
                         <span>{r.short}</span>
                         {r.lot}
@@ -779,14 +781,12 @@ export default function App() {
                   <select
                     className="select w-full"
                     value={selectedStop?.id || 0}
-                    onChange={(e) =>
-                      setOverride({
-                        id: Number(e.target.value),
-                        routeID: route.id,
-                        direction,
-                        source: 'manual',
-                      })
-                    }
+                    onChange={(e) => {
+                      const id = Number(e.target.value);
+                      smoothly(() =>
+                        setOverride({ id, routeID: route.id, direction, source: 'manual' }),
+                      );
+                    }}
                   >
                     <option value={0} disabled>
                       {routeQuery.isPending ? t('Loading stops…') : t('Choose a boarding stop')}

@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@apple/mapkit-loader": "^1.0.0",
+    "@fontsource/plus-jakarta-sans": "^5.3.0",
     "@maplibre/maplibre-gl-leaflet": "^0.1.4",
     "@phosphor-icons/react": "^2.1.10",
     "@supabase/supabase-js": "2.117.2",

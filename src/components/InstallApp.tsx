@@ -2,12 +2,12 @@ import { useLanguage } from '../i18n/LanguageProvider';
 import Dialog from './ui/Dialog';
 import Button from './ui/Button';
 import { useEffect, useState } from 'react';
-import { Download, Share, X, Smartphone, RefreshCw } from './ui/icons';
+import { Download, Share, X, Smartphone } from './ui/icons';
+import UpdatePrompt from './UpdatePrompt';
 import { useRegisterSW } from 'virtual:pwa-register/react';
 
 export default function InstallApp() {
   const { t } = useLanguage();
-  const [updating, setUpdating] = useState(false);
   const [prompt, setPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [open, setOpen] = useState(false);
   const [platform, setPlatform] = useState(
@@ -70,32 +70,10 @@ export default function InstallApp() {
         </Button>
       )}
       {needRefresh && (
-        <div className="update-toast" role="status">
-          <span className="update-icon" aria-hidden="true">
-            <RefreshCw size={18} className={updating ? 'spin' : ''} />
-          </span>
-          <span className="update-copy">
-            <strong>{updating ? t('Updating…') : t('New version ready')}</strong>
-            <span>{t('Update to get the latest features and fixes.')}</span>
-          </span>
-          <Button
-            className="update-now"
-            disabled={updating}
-            onClick={() => {
-              setUpdating(true);
-              void updateServiceWorker(true);
-            }}
-          >
-            {t('Update')}
-          </Button>
-          <Button
-            className="update-dismiss"
-            aria-label={t('Dismiss app update')}
-            onClick={() => setNeedRefresh(false)}
-          >
-            <X size={16} />
-          </Button>
-        </div>
+        <UpdatePrompt
+          onUpdate={() => updateServiceWorker(true)}
+          onDismiss={() => setNeedRefresh(false)}
+        />
       )}
       <Dialog open={open} onClose={() => setOpen(false)} titleId="install-title">
         <Button

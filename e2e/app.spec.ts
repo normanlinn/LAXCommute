@@ -138,10 +138,11 @@ test('riders can choose an avatar, and it shows in the header after reload', asy
 
 test('riders can pick one of eight themes, and it stays after reload', async ({ page }) => {
   await open(page);
-  await expect(page.locator('html')).toHaveAttribute('data-palette', 'cobalt');
+  await expect(page.locator('html')).toHaveAttribute('data-palette', 'mono');
   await page.getByRole('button', { name: 'Open menu' }).click();
-  await expect(page.locator('.theme-tile')).toHaveCount(8);
-  await page.locator('.theme-tile', { hasText: 'Royal navy and gold' }).click();
+  await expect(page.locator('.theme-dot')).toHaveCount(8);
+  await page.locator('.theme-dot[title="Royal navy and gold"]').click();
+  await expect(page.locator('.theme-current')).toHaveText('Royal navy and gold');
   await expect(page.locator('html')).toHaveAttribute('data-palette', 'royal');
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-palette', 'royal');

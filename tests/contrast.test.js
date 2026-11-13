@@ -50,6 +50,9 @@ describe.each(cases)('%s theme, %s mode', (_id, _mode, c) => {
       expect(contrast(c.green, surface)).toBeGreaterThanOrEqual(4.5);
     }
   });
+  it('keeps selected controls readable: accent text on the soft accent fill', () => {
+    expect(contrast(c['tint-text'], c.soft)).toBeGreaterThanOrEqual(4.5);
+  });
 
   it('keeps labels readable on filled buttons', () => {
     expect(contrast(c['on-tint'], c['tint-fill'])).toBeGreaterThanOrEqual(4.5);

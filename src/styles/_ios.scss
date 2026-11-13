@@ -159,11 +159,9 @@ a {
 ),
 .appearance-options > label:has(input:checked),
 [data-theme='lax-dark'] .direction-switch .tab[aria-pressed='true'] {
-  background: var(--ios-card);
-  color: var(--ios-label);
-  box-shadow:
-    0 1px 3px rgb(0 0 0 / 0.12),
-    0 1px 1px rgb(0 0 0 / 0.04);
+  background: var(--ios-soft);
+  color: var(--ios-tint-text);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ios-tint) 30%, transparent);
 }
 [data-theme='lax-dark']
   :is(
@@ -175,7 +173,7 @@ a {
     .map-display-controls button[aria-pressed='true']
   ),
 [data-theme='lax-dark'] .appearance-options > label:has(input:checked) {
-  background: color-mix(in srgb, var(--ios-label) 16%, var(--ios-card));
+  background: var(--ios-soft);
 }
 // Route letters become small colored dots beside the lot name.
 :is(.route-options, .transit-route-picker) > .btn > span {
@@ -609,7 +607,7 @@ $spring: cubic-bezier(0.2, 0.8, 0.2, 1);
 .icon-button,
 .bus-alert-toggle,
 .feedback-menu-button,
-.theme-tile,
+.theme-dot,
 .avatar-grid label,
 .appearance-options > label,
 .map-display-controls button,
@@ -660,7 +658,7 @@ $spring: cubic-bezier(0.2, 0.8, 0.2, 1);
     background-color: color-mix(in srgb, var(--ios-label) 6%, transparent);
     box-shadow: none;
   }
-  .theme-tile:hover,
+  .theme-dot:hover,
   .avatar-grid label:hover {
   }
   .arrival-list .arrival-row:not(.arrival-next):hover {
@@ -672,7 +670,6 @@ $spring: cubic-bezier(0.2, 0.8, 0.2, 1);
 .bus-alert-toggle:active,
 .feedback-menu-button:active,
 .official-tracker-open:active,
-.theme-tile:active,
 .appearance-options > label:active {
   transform: scale(0.95);
   transition-duration: 0.08s;
@@ -698,105 +695,89 @@ html {
   -webkit-tap-highlight-color: transparent;
 }
 
-// Theme picker: two columns of equal-height tiles. Each previews the theme's light
-// and dark screens (background, card, accent) beside its name; a check marks the choice.
+// Theme picker: one compact row of round swatches in the current light or dark look.
 .theme-picker {
   margin: 18px 0 0;
   padding: 0;
   border: 0;
 }
 .theme-picker legend {
+  display: flex;
+  width: 100%;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
   margin-bottom: 10px;
   font-size: 15px;
   font-weight: 700;
 }
-.theme-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+.theme-current {
+  color: var(--ios-secondary);
+  font-size: 13px;
+  font-weight: 600;
+}
+.theme-dots {
+  display: flex;
+  flex-wrap: wrap;
   gap: 10px;
 }
-.theme-tile {
+.theme-dot {
   position: relative;
   display: grid;
-  grid-template-rows: auto 2.5em;
-  gap: 8px;
-  padding: 8px 8px 10px;
-  border: $line;
-  border-radius: 18px;
-  background: var(--ios-card);
   cursor: pointer;
 }
-.theme-tile input {
+.theme-dot input {
   position: absolute;
   opacity: 0;
   pointer-events: none;
 }
-.theme-tile:has(input:checked) {
-  border-color: var(--ios-tint);
-  box-shadow: inset 0 0 0 1px var(--ios-tint);
-  background: color-mix(in srgb, var(--ios-tint) 7%, var(--ios-card));
-}
-.theme-tile:has(input:focus-visible) {
-  outline: 3px solid var(--ios-tint);
-  outline-offset: 3px;
-}
-.theme-swatch {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3px;
-  padding: 3px;
-  border: $line;
-  border-radius: 13px;
-  background: var(--ios-fill);
-}
-.theme-mini {
-  display: grid;
-  place-items: end stretch;
-  height: 46px;
-  padding: 0 6px 6px;
-  border-radius: 10px;
-  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.08);
-}
-.theme-mini i {
-  display: grid;
-  align-content: start;
-  height: 20px;
-  padding: 4px;
-  border-radius: 6px;
-}
-.theme-mini b {
-  width: 100%;
-  height: 5px;
-  border-radius: 3px;
-}
-.theme-name {
-  padding: 0 4px;
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 1.25;
-  text-align: left;
-}
-.theme-check {
-  position: absolute;
-  top: 2px;
-  right: 2px;
+.theme-dot-face {
+  position: relative;
   display: grid;
   place-items: center;
-  width: 22px;
-  height: 22px;
+  width: 36px;
+  height: 36px;
+  overflow: hidden;
   border-radius: 50%;
-  color: var(--ios-on-tint);
-  background: var(--ios-tint-fill);
-  transform: scale(0);
-  transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--ios-label) 14%, transparent),
+    0 0 0 0 var(--ios-tint);
+  transition:
+    transform 0.2s $spring,
+    box-shadow 0.22s ease;
 }
-.theme-tile:has(input:checked) .theme-check {
+.theme-dot-face i {
+  position: absolute;
+  inset: 50% 0 0;
+}
+.theme-dot-face svg {
+  position: relative;
+  color: var(--ios-on-tint);
+  opacity: 0;
+  transform: scale(0.4);
+  transition:
+    opacity 0.18s ease,
+    transform 0.22s $spring;
+}
+.theme-dot:hover .theme-dot-face {
+  transform: scale(1.06);
+}
+.theme-dot:active .theme-dot-face {
+  transform: scale(0.94);
+}
+.theme-dot:has(input:checked) .theme-dot-face {
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--ios-label) 14%, transparent),
+    0 0 0 2px var(--ios-card),
+    0 0 0 4px var(--ios-tint);
+}
+.theme-dot:has(input:checked) .theme-dot-face svg {
+  opacity: 1;
   transform: scale(1);
 }
-@media (max-width: 340px) {
-  .theme-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
+.theme-dot:has(input:focus-visible) .theme-dot-face {
+  outline: 3px solid var(--ios-tint);
+  outline-offset: 4px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -804,13 +785,13 @@ html {
   .icon-button,
   .bus-alert-toggle,
   .feedback-menu-button,
-  .theme-tile,
+  .theme-dot-face,
   .avatar-grid label {
     transition: none;
   }
   .btn:active:not(:disabled),
-  .theme-tile:active,
-  .theme-tile:hover,
+  .theme-dot:active .theme-dot-face,
+  .theme-dot:hover .theme-dot-face,
   .avatar-grid label:hover {
     transform: none;
   }
@@ -916,13 +897,6 @@ html {
   .preferences-menu > :nth-child(#{$i}) {
     animation-delay: #{$i * 0.012}s;
   }
-}
-.theme-tile {
-  transition:
-    transform 0.2s $spring,
-    background-color 0.25s ease,
-    border-color 0.25s ease,
-    box-shadow 0.25s ease;
 }
 :is(
   .direction-switch .tab,
@@ -1335,4 +1309,196 @@ details[open] > :not(summary) {
   .modal-box select.select::picker-icon {
     display: block;
   }
+}
+
+// ── Updating ─────────────────────────────────────────────────────────────────
+.update-icon.is-pulsing {
+  animation: update-pulse 2.2s ease-in-out infinite;
+}
+@keyframes update-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--ios-tint) 35%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 7px color-mix(in srgb, var(--ios-tint) 0%, transparent);
+  }
+}
+.update-toast .update-copy ul,
+.whats-new-toast .update-copy ul {
+  margin-top: 4px;
+}
+.update-toast .update-copy li,
+.whats-new-toast .update-copy li {
+  animation: soft-rise 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@for $i from 1 through 3 {
+  .update-toast .update-copy li:nth-child(#{$i}),
+  .whats-new-toast .update-copy li:nth-child(#{$i}) {
+    animation-delay: #{0.12 + $i * 0.06}s;
+  }
+}
+.update-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: color-mix(in srgb, var(--ios-bg) 72%, transparent);
+  backdrop-filter: blur(14px) saturate(140%);
+  animation: fade-in 0.25s ease both;
+}
+.update-screen-card {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  width: min(340px, 100%);
+  padding: 30px 26px 26px;
+  border: $line;
+  border-radius: 28px;
+  background: var(--ios-card);
+  color: var(--ios-label);
+  text-align: center;
+  box-shadow: 0 24px 60px -24px color-mix(in srgb, var(--ios-label) 45%, transparent);
+  animation: soft-pop 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.update-screen-card strong {
+  margin-top: 10px;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.update-screen-card > span:not(.update-orbit, .update-progress) {
+  color: var(--ios-secondary);
+  font-size: 14px;
+}
+.update-orbit {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  color: var(--ios-tint-text);
+  background: var(--ios-soft);
+}
+.update-orbit-ring {
+  position: absolute;
+  inset: -5px;
+  border: 3px solid transparent;
+  border-top-color: var(--ios-tint);
+  border-right-color: color-mix(in srgb, var(--ios-tint) 40%, transparent);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+.update-orbit svg {
+  animation: bus-drive 1.4s ease-in-out infinite;
+}
+@keyframes bus-drive {
+  0%,
+  100% {
+    transform: translateX(-3px);
+  }
+  50% {
+    transform: translateX(3px);
+  }
+}
+.update-progress {
+  position: relative;
+  width: 100%;
+  height: 6px;
+  margin-top: 14px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--ios-fill);
+}
+.update-progress i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 40%;
+  border-radius: inherit;
+  background: var(--ios-tint);
+  animation: progress-sweep 1.2s cubic-bezier(0.45, 0, 0.25, 1) infinite;
+}
+@keyframes progress-sweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(260%);
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+// ── State changes: crossfade, with key pieces morphing in place ─────────────
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.24s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .update-icon.is-pulsing,
+  .update-screen,
+  .update-screen-card,
+  .update-orbit svg,
+  .update-toast .update-copy li,
+  .whats-new-toast .update-copy li {
+    animation: none;
+  }
+  .update-orbit-ring {
+    animation-duration: 2.4s;
+  }
+  .update-progress i {
+    animation-duration: 2.4s;
+  }
+}
+
+// ── Routes in the theme's colors ─────────────────────────────────────────────
+.app {
+  --option-color: var(--ios-tint);
+}
+.leaflet-overlay-pane path.route-line {
+  stroke: var(--ios-tint);
+}
+.leaflet-overlay-pane path.route-casing {
+  stroke: var(--ios-card);
+}
+.route-square,
+.transit-peek-symbol,
+.official-tracker-open {
+  color: var(--ios-on-tint);
+}
+.stop-reports .report-action:not(.report-departed) {
+  background: var(--ios-tint);
+  color: var(--ios-on-tint);
+}
+
+// Every segmented control picks out its choice with the theme accent.
+:root .segmented .tab.tab-active,
+:root .segmented .tab.tab-active:hover,
+:root .segmented .tab.active,
+:root[data-theme='lax-dark'] .segmented .tab.active,
+:root[data-theme='lax-dark'] .segmented.tabs-box .tab.tab-active,
+:root .route-options button.selected {
+  border: 0;
+  background: var(--ios-soft);
+  color: var(--ios-tint-text);
+  opacity: 1;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ios-tint) 30%, transparent);
+}
+:root .segmented .tab:disabled {
+  opacity: 1;
+}
+:root .feature-icon,
+:root[data-theme='lax-dark'] .account-card .feature-icon {
+  background: var(--ios-soft);
+  color: var(--ios-tint-text);
+}
+:root .nickname-field,
+:root .avatar-picker {
+  background: color-mix(in srgb, var(--ios-label) 4%, var(--ios-card));
 }

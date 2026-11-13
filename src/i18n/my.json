@@ -444,5 +444,9 @@
   "New version ready": "ဗားရှင်းအသစ် အဆင်သင့်ဖြစ်ပြီ",
   "Updating…": "အပ်ဒိတ်လုပ်နေသည်…",
   "Update to get the latest features and fixes.": "နောက်ဆုံး လုပ်ဆောင်ချက်များနှင့် ပြင်ဆင်ချက်များ ရရှိရန် အပ်ဒိတ်လုပ်ပါ။",
-  "Updated to v{version}": "v{version} သို့ အပ်ဒိတ်လုပ်ပြီး"
+  "Updated to v{version}": "v{version} သို့ အပ်ဒိတ်လုပ်ပြီး",
+  "Updating LAXCommute": "LAXCommute ကို အပ်ဒိတ်လုပ်နေသည်",
+  "Getting version {version} ready…": "ဗားရှင်း {version} ကို ပြင်ဆင်နေသည်…",
+  "Getting the new version ready…": "ဗားရှင်းအသစ်ကို ပြင်ဆင်နေသည်…",
+  "Version {version} is ready": "ဗားရှင်း {version} အဆင်သင့်ဖြစ်ပြီ"
 }

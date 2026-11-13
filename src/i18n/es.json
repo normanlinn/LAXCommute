@@ -444,5 +444,9 @@
   "New version ready": "Nueva versión lista",
   "Updating…": "Actualizando…",
   "Update to get the latest features and fixes.": "Actualiza para obtener las últimas funciones y correcciones.",
-  "Updated to v{version}": "Actualizado a v{version}"
+  "Updated to v{version}": "Actualizado a v{version}",
+  "Updating LAXCommute": "Actualizando LAXCommute",
+  "Getting version {version} ready…": "Preparando la versión {version}…",
+  "Getting the new version ready…": "Preparando la nueva versión…",
+  "Version {version} is ready": "La versión {version} está lista"
 }
