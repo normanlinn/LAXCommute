@@ -460,5 +460,12 @@
   "Change stop": "Cambiar parada",
   "Nearest stop": "Parada más cercana",
   "Rider reports": "Reportes de pasajeros",
-  "Official times": "Horarios oficiales"
+  "Official times": "Horarios oficiales",
+  "Slate blue": "Azul pizarra",
+  "Harbor": "Puerto",
+  "Arrived": "Llegó",
+  "Departed": "Salió",
+  "I see it here": "Lo veo aquí",
+  "I saw it leave": "Lo vi salir",
+  "Check the bus sign says {lot}. Reports from riders, not live tracking; they expire after 15 minutes.": "Confirma que el letrero del autobús diga {lot}. Reportes de pasajeros, no seguimiento en vivo; vencen a los 15 minutos."
 }

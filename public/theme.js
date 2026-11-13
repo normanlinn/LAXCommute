@@ -1,23 +1,13 @@
 // Apply the saved appearance and palette before the page paints. Keep in sync with ThemeProvider.
 (() => {
   let preference = 'system';
-  let palette = 'transit';
-  const themeChoice = false;
-  const palettes = [
-    'transit',
-    'cobalt',
-    'forest',
-    'berry',
-    'harbor',
-    'slate',
-    'desert',
-    'royal',
-    'mono',
-  ];
+  let palette = 'slateblue';
+  const themeChoice = true;
+  const palettes = ['slateblue', 'harbor'];
   try {
     const saved = localStorage.getItem('laxcommute:theme');
     if (saved === 'light' || saved === 'dark') preference = saved;
-    // Theme choice is paused (THEME_CHOICE_ENABLED in ThemeProvider): keep the default.
+    // Matches THEME_CHOICE_ENABLED in ThemeProvider.
     const savedPalette = themeChoice && localStorage.getItem('laxcommute:palette');
     if (palettes.includes(savedPalette)) palette = savedPalette;
   } catch {

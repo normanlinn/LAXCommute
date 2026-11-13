@@ -136,13 +136,17 @@ test('riders can choose an avatar, and it shows in the header after reload', asy
   );
 });
 
-test('theme choice is paused: everyone gets the default theme', async ({ page }) => {
-  await page.addInitScript(() => localStorage.setItem('laxcommute:palette', 'royal'));
+test('riders can switch between Slate blue and Harbor, and it stays after reload', async ({
+  page,
+}) => {
   await open(page);
-  await expect(page.locator('html')).toHaveAttribute('data-palette', 'transit');
+  await expect(page.locator('html')).toHaveAttribute('data-palette', 'slateblue');
   await page.getByRole('button', { name: 'Open menu' }).click();
-  await expect(page.getByText('Appearance')).toBeVisible();
-  await expect(page.locator('.theme-picker')).toHaveCount(0);
+  await expect(page.locator('.theme-option')).toHaveCount(2);
+  await page.locator('.theme-option', { hasText: 'Harbor' }).click();
+  await expect(page.locator('html')).toHaveAttribute('data-palette', 'harbor');
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-palette', 'harbor');
 });
 
 test('riders can set a nickname and are greeted by it', async ({ page }) => {

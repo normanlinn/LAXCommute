@@ -8,8 +8,8 @@ import {
   type PaletteID,
 } from './palettes';
 
-/** Theme choice is paused: everyone gets the default palette until it returns. */
-export const THEME_CHOICE_ENABLED = false;
+/** Riders can switch between the themes in palettes.ts (Slate blue and Harbor). */
+export const THEME_CHOICE_ENABLED = true;
 export type ThemePreference = 'system' | 'light' | 'dark';
 export const THEME_STORAGE_KEY = 'laxcommute:theme';
 const ThemeContext = createContext({

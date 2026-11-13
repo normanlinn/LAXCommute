@@ -82,7 +82,7 @@ export default function StopReports({ routeId, stop }: { routeId: number; stop?:
   return (
     <section
       className="crowd-panel stop-reports"
-      style={{ '--report-color': route?.color || '#007981' } as React.CSSProperties}
+      style={{ '--report-color': 'var(--ios-tint)' } as React.CSSProperties}
       aria-label={t('Passenger stop reports')}
     >
       <div className="crowd-heading">
@@ -100,26 +100,21 @@ export default function StopReports({ routeId, stop }: { routeId: number; stop?:
           <RefreshCw size={16} className={reports.isFetching ? 'spin' : ''} />
         </Button>
       </div>
-      <p className="crowd-note">
-        {t(
-          'Passenger observations at this stop, not live tracking or arrival predictions. Reports expire after 15 minutes.',
-        )}
-      </p>
       <div className="report-context">
         <span className="report-route-badge">
-          <BusFront size={17} aria-hidden="true" />
+          <BusFront size={14} aria-hidden="true" />
           {t('{lot} Lot shuttle', { lot })}
         </span>
         {stop && (
           <strong>
-            <MapPin size={16} aria-hidden="true" />
+            <MapPin size={14} aria-hidden="true" />
             {stop.name}
           </strong>
         )}
       </div>
       <p className="crowd-note">
         {t(
-          'Match the bus destination sign before reporting. These buttons report only the {lot} shuttle at this stop.',
+          'Check the bus sign says {lot}. Reports from riders, not live tracking; they expire after 15 minutes.',
           { lot },
         )}
       </p>
@@ -170,25 +165,26 @@ export default function StopReports({ routeId, stop }: { routeId: number; stop?:
           type="button"
           aria-busy={pending === 'arrived'}
           disabled={disabled}
+          aria-label={actionLabel('arrived')}
           onClick={() => send('arrived')}
         >
           <span className="report-action-icon" aria-hidden="true">
             {pending === 'arrived' ? (
-              <LoaderCircle className="spin" size={25} />
+              <LoaderCircle className="spin" size={20} />
             ) : confirmed === 'arrived' ? (
-              <Check size={25} />
+              <Check size={20} />
             ) : (
-              <ArrowDownToLine size={25} />
+              <ArrowDownToLine size={20} />
             )}
           </span>
           <span>
-            <strong>{actionLabel('arrived')}</strong>
+            <strong>{t('Arrived')}</strong>
             <small>
               {pending === 'arrived'
                 ? t('Submitting…')
                 : confirmed === 'arrived'
                   ? t('Report sent')
-                  : t('I see this shuttle at the stop')}
+                  : t('I see it here')}
             </small>
           </span>
         </Button>
@@ -197,25 +193,26 @@ export default function StopReports({ routeId, stop }: { routeId: number; stop?:
           type="button"
           aria-busy={pending === 'departed'}
           disabled={disabled}
+          aria-label={actionLabel('departed')}
           onClick={() => send('departed')}
         >
           <span className="report-action-icon" aria-hidden="true">
             {pending === 'departed' ? (
-              <LoaderCircle className="spin" size={25} />
+              <LoaderCircle className="spin" size={20} />
             ) : confirmed === 'departed' ? (
-              <Check size={25} />
+              <Check size={20} />
             ) : (
-              <ArrowUpRight size={25} />
+              <ArrowUpRight size={20} />
             )}
           </span>
           <span>
-            <strong>{actionLabel('departed')}</strong>
+            <strong>{t('Departed')}</strong>
             <small>
               {pending === 'departed'
                 ? t('Submitting…')
                 : confirmed === 'departed'
                   ? t('Report sent')
-                  : t('I saw this shuttle leave')}
+                  : t('I saw it leave')}
             </small>
           </span>
         </Button>

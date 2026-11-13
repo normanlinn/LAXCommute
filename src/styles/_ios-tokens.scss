@@ -1,6 +1,6 @@
 // Theme tokens: palettes, each with a light and a dark set (see _palettes.scss).
-// The page picks a palette with data-palette and a mode with data-theme; Electric
-// Quiet transit is the default. Every partial reads these variables, never raw colors.
+// The page picks a palette with data-palette and a mode with data-theme;
+// Slate blue is the default. Every partial reads these variables, never raw colors.
 @use 'sass:map';
 @use 'palettes' as *;
 
@@ -20,7 +20,7 @@
   --color-accent-content: #{map.get($set, 'on-tint')};
 }
 
-$default: map.get($palettes, 'transit');
+$default: map.get($palettes, 'slateblue');
 :root,
 [data-theme='lax'] {
   @include tokens(map.get($default, 'light'));

@@ -611,7 +611,6 @@ $spring: cubic-bezier(0.2, 0.8, 0.2, 1);
 .icon-button,
 .bus-alert-toggle,
 .feedback-menu-button,
-.theme-dot,
 .avatar-grid label,
 .appearance-options > label,
 .map-display-controls button,
@@ -662,7 +661,6 @@ $spring: cubic-bezier(0.2, 0.8, 0.2, 1);
     background-color: color-mix(in srgb, var(--ios-label) 6%, transparent);
     box-shadow: none;
   }
-  .theme-dot:hover,
   .avatar-grid label:hover {
   }
   .arrival-list .arrival-row:not(.arrival-next):hover {
@@ -699,89 +697,20 @@ html {
   -webkit-tap-highlight-color: transparent;
 }
 
-// Theme picker: one compact row of round swatches in the current light or dark look.
+// Theme picker: a two-way switch like Appearance, each option with its accent swatch.
 .theme-picker {
-  margin: 18px 0 0;
-  padding: 0;
-  border: 0;
+  margin-top: 18px;
 }
-.theme-picker legend {
-  display: flex;
-  width: 100%;
-  align-items: baseline;
-  justify-content: space-between;
+.theme-options > .theme-option {
+  flex-direction: row;
   gap: 8px;
-  margin-bottom: 10px;
-  font-size: 15px;
-  font-weight: 700;
 }
-.theme-current {
-  color: var(--ios-secondary);
-  font-size: 13px;
-  font-weight: 600;
-}
-.theme-dots {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-.theme-dot {
-  position: relative;
-  display: grid;
-  cursor: pointer;
-}
-.theme-dot input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-.theme-dot-face {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  overflow: hidden;
+.theme-swatch {
+  width: 14px;
+  height: 14px;
+  flex: none;
   border-radius: 50%;
-  box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, var(--ios-label) 14%, transparent),
-    0 0 0 0 var(--ios-tint);
-  transition:
-    transform 0.2s $spring,
-    box-shadow 0.22s ease;
-}
-.theme-dot-face i {
-  position: absolute;
-  inset: 50% 0 0;
-}
-.theme-dot-face svg {
-  position: relative;
-  color: var(--ios-on-tint);
-  opacity: 0;
-  transform: scale(0.4);
-  transition:
-    opacity 0.18s ease,
-    transform 0.22s $spring;
-}
-.theme-dot:hover .theme-dot-face {
-  transform: scale(1.06);
-}
-.theme-dot:active .theme-dot-face {
-  transform: scale(0.94);
-}
-.theme-dot:has(input:checked) .theme-dot-face {
-  box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, var(--ios-label) 14%, transparent),
-    0 0 0 2px var(--ios-card),
-    0 0 0 4px var(--ios-tint);
-}
-.theme-dot:has(input:checked) .theme-dot-face svg {
-  opacity: 1;
-  transform: scale(1);
-}
-.theme-dot:has(input:focus-visible) .theme-dot-face {
-  outline: 3px solid var(--ios-tint);
-  outline-offset: 4px;
+  box-shadow: 0 0 0 2px var(--ios-card);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -789,13 +718,10 @@ html {
   .icon-button,
   .bus-alert-toggle,
   .feedback-menu-button,
-  .theme-dot-face,
   .avatar-grid label {
     transition: none;
   }
   .btn:active:not(:disabled),
-  .theme-dot:active .theme-dot-face,
-  .theme-dot:hover .theme-dot-face,
   .avatar-grid label:hover {
     transform: none;
   }

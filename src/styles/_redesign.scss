@@ -283,3 +283,90 @@ $spring: cubic-bezier(0.2, 0.8, 0.2, 1);
 :root:root .bottom-nav .btn.active {
   color: var(--ios-on-tint);
 }
+
+// ── Rider updates card ──────────────────────────────────────────────────────
+.app .stop-reports .crowd-heading {
+  align-items: center;
+}
+.app .stop-reports .report-refresh {
+  width: 32px;
+  min-width: 32px;
+  height: 32px;
+  min-height: 32px;
+  border: 1px solid var(--ios-separator);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ios-secondary);
+}
+.app .report-route-badge {
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--ios-soft);
+  color: var(--ios-tint-text);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+.app .stop-reports .report-context > strong {
+  font-size: 14px;
+}
+.app .stop-reports .crowd-note {
+  font-size: 13px;
+  line-height: 1.45;
+}
+// Two equal buttons: icon on top, a one-word label, a short hint.
+.app .stop-reports .report-action {
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+  padding: 12px;
+  border: 0;
+  border-radius: 10px;
+  box-shadow: none;
+}
+.app .stop-reports .report-action strong {
+  font-size: 15px;
+  line-height: 1.2;
+}
+.app .stop-reports .report-action small {
+  font-size: 12.5px;
+  opacity: 0.85;
+}
+.app .stop-reports .report-action-icon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: color-mix(in srgb, currentColor 14%, transparent);
+}
+.app .stop-reports .report-arrived,
+.app .stop-reports .report-action:not(.report-departed) {
+  background: var(--ios-tint-fill);
+  color: var(--ios-on-tint);
+}
+.app .stop-reports .report-departed {
+  background: var(--ios-fill);
+  color: var(--ios-label);
+}
+.app .stop-reports .report-action:disabled {
+  opacity: 0.55;
+}
+.app .stop-reports select {
+  min-height: 42px;
+  border-radius: 8px;
+}
+.app .stop-reports .report-crowd-submit {
+  min-height: 44px;
+  border-radius: 8px;
+  background: var(--ios-tint-fill);
+  color: var(--ios-on-tint);
+  box-shadow: none;
+}
+.app .passenger-observation {
+  border-inline-start-color: var(--ios-tint);
+}
+.app .theme-options,
+.theme-options {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}

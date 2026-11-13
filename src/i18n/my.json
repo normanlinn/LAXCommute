@@ -460,5 +460,12 @@
   "Change stop": "မှတ်တိုင် ပြောင်းရန်",
   "Nearest stop": "အနီးဆုံး မှတ်တိုင်",
   "Rider reports": "ခရီးသည် သတင်းပို့ချက်များ",
-  "Official times": "တရားဝင် အချိန်များ"
+  "Official times": "တရားဝင် အချိန်များ",
+  "Slate blue": "ကျောက်ပြာ",
+  "Harbor": "ဆိပ်ကမ်း",
+  "Arrived": "ရောက်ပြီ",
+  "Departed": "ထွက်သွားပြီ",
+  "I see it here": "ဒီမှာ မြင်နေရသည်",
+  "I saw it leave": "ထွက်သွားတာ မြင်ခဲ့သည်",
+  "Check the bus sign says {lot}. Reports from riders, not live tracking; they expire after 15 minutes.": "ဘတ်စ်ကားဆိုင်းဘုတ်တွင် {lot} ဟုပါကြောင်း စစ်ဆေးပါ။ ခရီးသည်များ၏ သတင်းပို့ချက်များဖြစ်ပြီး တိုက်ရိုက်ခြေရာခံခြင်း မဟုတ်ပါ။ ၁၅ မိနစ်အကြာတွင် သက်တမ်းကုန်သည်။"
 }
