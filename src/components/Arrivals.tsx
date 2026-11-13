@@ -53,6 +53,7 @@ export default function Arrivals({
   profile,
   userLocation,
   routeID,
+  routeLabel,
   onRefresh,
 }: {
   data?: import('../types').LiveData;
@@ -64,6 +65,7 @@ export default function Arrivals({
   profile: import('../types').Commute;
   userLocation?: (import('../types').Point & { accuracy?: number; at?: number }) | null;
   routeID?: number;
+  routeLabel?: string;
   onRefresh: () => void;
 }) {
   const { t, language } = useLanguage();
@@ -281,7 +283,15 @@ export default function Arrivals({
             <span>{t('We’ll keep checking while the app is open.')}</span>
           </div>
         )}
-      <div className="arrival-list">
+      <div
+        className={`arrival-list${(lastKnown ? reportedPredictions : arrivals).length ? ' has-rows' : ''}`}
+      >
+        {routeLabel && stop && (lastKnown ? reportedPredictions : arrivals).length > 0 && (
+          <div className="route-card-head">
+            <strong>{routeLabel}</strong>
+            <span>{stop.name}</span>
+          </div>
+        )}
         {(lastKnown ? reportedPredictions : arrivals).slice(0, 4).map((arrival, index) => {
           const reportedAt = lastKnown ? Date.parse(data?.arrivalFetchedAt || '') : now;
           const minutes = Math.max(0, Math.ceil((arrival.due - reportedAt) / 60_000));

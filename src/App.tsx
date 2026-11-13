@@ -819,6 +819,7 @@ export default function App() {
                   profile={profile}
                   userLocation={userLocation}
                   routeID={route.id}
+                  routeLabel={`${route.lot} ${t('Lot')}`}
                   onRefresh={() => {
                     live.refetch();
                     if (routeQuery.isError) routeQuery.refetch();
