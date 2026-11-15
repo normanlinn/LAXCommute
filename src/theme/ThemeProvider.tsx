@@ -8,7 +8,7 @@ import {
   type PaletteID,
 } from './palettes';
 
-/** Riders can switch between the themes in palettes.ts (Maps classic and Graphite). */
+/** Riders can pick any theme in palettes.ts; Ember is the default. */
 export const THEME_CHOICE_ENABLED = true;
 export type ThemePreference = 'system' | 'light' | 'dark';
 export const THEME_STORAGE_KEY = 'laxcommute:theme';

@@ -52,8 +52,7 @@
 
 /* On phones, keep the map first and the commute form in document flow.
    Only the grab handle responds to drag; no floating sheet obscures the map. */
-.sheet-handle,
-.sheet-peek-hint {
+.sheet-handle {
   display: none !important;
 }
 
@@ -132,30 +131,13 @@
     overflow: visible;
     overscroll-behavior: auto;
   }
-  .trip-card.sheet-peek .trip-sheet-content > :not(.trip-intro) {
-    display: none !important;
-  }
-  .trip-card.sheet-peek .trip-intro p {
-    display: none;
-  }
-  .trip-card.sheet-peek .trip-intro h2 {
-    font-size: clamp(20px, 5.5vw, 25px);
-    margin: 3px 0 8px;
-  }
-  .trip-card.sheet-peek .sheet-peek-hint {
-    display: block !important;
-    color: var(--color-base-content);
-    opacity: 0.72;
-    font-size: 12px;
-    line-height: 1.5;
-  }
+
   .bottom-nav {
     z-index: 30;
   }
 }
 
 /* Deliberate, reversible state feedback (instead of one-time flashing). */
-.route-options .btn,
 .direction-switch .tab,
 .bottom-nav .btn {
   transition:
@@ -165,9 +147,7 @@
     box-shadow 180ms ease,
     transform 130ms ease;
 }
-.route-options .btn[aria-pressed='true'] {
-  box-shadow: inset 0 0 0 1px var(--option-color);
-}
+
 .direction-switch .tab[aria-pressed='true'],
 .bottom-nav .btn.active {
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 28%, transparent);
@@ -178,7 +158,6 @@
 @media (prefers-reduced-motion: reduce) {
   .trip-layout > .trip-card,
   .sheet-grip,
-  .route-options .btn,
   .direction-switch .tab,
   .bottom-nav .btn {
     transition: none !important;

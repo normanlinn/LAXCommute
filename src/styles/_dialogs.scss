@@ -1,9 +1,6 @@
 // Small-screen departures and native dialogs.
 /* Keep departures within reach on small screens; mount the heavy map on demand. */
-.map-toggle {
-  margin-bottom: 12px;
-  min-height: 44px;
-}
+
 #shuttle-map-panel[hidden] {
   display: none;
 }
@@ -26,8 +23,7 @@
     order: -1;
   }
   .direction-switch .tab,
-  .stop-actions button,
-  .route-options button {
+  .stop-actions button {
     min-height: 44px;
   }
 }

@@ -1,462 +1,258 @@
-// Explore and Go home layout: the trip planner leads, the map fills the rest of the
-// screen on desktop, and the next shuttle is the first thing on every screen size.
+// LAXCommute screen design: a full map with one sheet, in the style of Apple Maps and Transit.
+// Loaded last. Surfaces are the card color with hairline borders; the theme accent marks only
+// the selected lot, links and filled buttons. Every color comes from the --ios-* theme tokens.
 $spring: cubic-bezier(0.2, 0.8, 0.2, 1);
+$hairline: 1px solid var(--ios-separator);
+$float-shadow:
+  0 1px 2px rgb(0 0 0 / 0.08),
+  0 4px 14px rgb(0 0 0 / 0.1);
 
-.app .outage-notice {
-  border: 1px solid color-mix(in srgb, var(--ios-orange) 35%, transparent);
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--ios-orange) 9%, var(--ios-card));
-  box-shadow: none;
-}
-
-// ── Next shuttle: a departure row, like a station board ─────────────────────
-.next-hero {
-  margin: 0 0 16px;
-  overflow: hidden;
-  border: 1px solid var(--ios-separator);
-  border-radius: 12px;
-  background: var(--ios-card);
-  animation: soft-rise 0.28s $spring both;
-}
-.next-hero-row {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 14px 12px;
-}
-.next-hero-route {
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 6px;
-  background: var(--ios-tint-fill);
-  color: var(--ios-on-tint);
-  font-size: 14px;
-  font-weight: 800;
-}
-.next-hero-where {
-  display: grid;
-  min-width: 0;
-}
-.next-hero-where strong {
-  font-size: 15px;
-  font-weight: 700;
-}
-.next-hero-where span {
-  display: -webkit-box;
-  overflow: hidden;
-  color: var(--ios-secondary);
-  font-size: 13px;
-  line-height: 1.35;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-}
-.next-hero-time {
+// ── Brand: the logo and wordmark keep their colors in every theme ───────────
+.app .brand strong,
+.app .brand strong span {
   color: var(--ios-label);
-  font-size: 22px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
-  text-align: right;
-  white-space: nowrap;
 }
-.next-hero-status {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 9px 14px;
-  border-top: 1px solid var(--ios-separator);
-  color: var(--ios-secondary);
-  font-size: 12.5px;
-  font-weight: 500;
-}
-.next-hero-status i {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--ios-green);
-  animation: live-pulse 2s ease-in-out infinite;
-}
-.next-hero-status.is-paused svg {
-  color: var(--ios-secondary);
-}
-
-// ── Go home quick actions ───────────────────────────────────────────────────
-.home-actions {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-  margin: -6px 0 20px;
-}
-.app .home-actions .btn {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 10px;
-  height: auto;
-  min-height: 74px;
-  padding: 12px 14px;
-  border: 1px solid var(--ios-separator);
-  border-radius: 10px;
-  background: var(--ios-card);
-  color: var(--ios-label);
-  font-size: 13.5px;
-  font-weight: 700;
-  text-align: left;
-  text-decoration: none;
-  animation: soft-rise 0.3s $spring both;
-}
-@for $i from 1 through 4 {
-  .home-actions .btn:nth-child(#{$i}) {
-    animation-delay: #{0.04 + $i * 0.04}s;
-  }
-}
-.home-actions .btn svg {
-  color: var(--ios-tint-text);
-}
-@media (hover: hover) and (pointer: fine) {
-  .app .home-actions .btn:hover:not(:disabled) {
-    border-color: color-mix(in srgb, var(--ios-tint) 40%, transparent);
-    background: color-mix(in srgb, var(--ios-tint) 6%, var(--ios-card));
-  }
-}
-
-// ── Desktop: planner on the left, map fills the right and stays in view ─────
-@media (min-width: 1051px) {
-  .app .trip-layout {
-    grid-template-columns: clamp(380px, 29vw, 450px) minmax(0, 1fr);
-    margin-top: 20px;
-    padding-bottom: 40px;
-  }
-  .app .trip-layout > .trip-card {
-    grid-column: 1;
-    grid-row: 1;
-  }
-  .app .trip-layout > .map-column {
-    position: sticky;
-    top: 16px;
-    grid-column: 2;
-    grid-row: 1;
-  }
-  .app .map-topbar {
-    padding: 4px 4px 14px;
-    align-items: center;
-  }
-  .app .map-topbar h1 {
-    font-size: clamp(24px, 2vw, 30px);
-  }
-  .app .map-surface {
-    height: clamp(520px, calc(100dvh - 210px), 920px);
-  }
-  // The planner's own next-shuttle card is beside the map, so the overlay is not needed.
-  .app .transit-arrival-peek {
-    display: none;
-  }
-}
-
-// ── Phones: the map leads and the planner card reads as a sheet beneath it ──
-@media (max-width: 760px) {
-  .next-hero {
-    margin-bottom: 16px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .next-hero,
-  .home-actions .btn,
-  .next-hero-status i {
-    animation: none;
-  }
-}
-
-// The next-shuttle card already answers "when"; the intro below it stays brief.
-.app .trip-intro h2 {
-  font-size: 21px;
-}
-.app .trip-intro p {
-  font-size: 13.5px;
-}
-
-// The phone's lot picker over the map uses the theme accent too.
-.transit-route-button {
-  --picker-color: var(--ios-tint);
-}
-.app .transit-route-button > span {
-  color: var(--ios-on-tint);
-}
-
-// The app mark is near-black; a hairline keeps its edge visible on dark backgrounds.
 .app .brand img {
   border-radius: 10px;
-  box-shadow: 0 0 0 1px var(--ios-separator);
+}
+.app .brand small {
+  display: none;
 }
 
-// ── Calmer, crisper surfaces ────────────────────────────────────────────────
-// Segmented controls: a flat gray track, and the choice as a solid ink pill,
-// so the selected option reads at a glance instead of looking disabled.
+// ── Choice controls (Appearance, Language): outlined track, tinted choice ───
 :root:root
-  :is(
-    .direction-switch,
-    .language-switch,
-    .segmented.tabs,
-    .route-options,
-    .appearance-options,
-    .transit-route-picker
-  ) {
-  border: 0;
-  background: var(--ios-fill);
+  :is(.direction-switch, .language-switch, .segmented.tabs, .appearance-options, .theme-options) {
+  border: $hairline;
+  background: var(--ios-card);
   box-shadow: none;
 }
 :root:root:root:root
   :is(
-    .direction-switch .tab[aria-pressed='true'],
     .language-switch .btn[aria-pressed='true'],
     .segmented .tab.active,
     .segmented .tab.tab-active,
-    .route-options > .btn[aria-pressed='true'],
-    .route-options button.selected,
-    .transit-route-picker > .btn[aria-pressed='true'],
-    .map-display-controls button[aria-pressed='true'],
-    .appearance-options > label:has(input:checked)
+    .appearance-options > label:has(input:checked),
+    .direction-switch .btn[aria-pressed='true'],
+    .map-display-controls button[aria-pressed='true']
   ) {
   border: 0;
-  background: var(--ios-tint-fill);
-  color: var(--ios-on-tint);
-  box-shadow: none;
-}
-// Lot letters inside a selected pill flip to the pill's colors.
-:root:root :is(.route-options, .transit-route-picker) > .btn[aria-pressed='true'] > span {
-  background: var(--ios-on-tint);
-  color: var(--ios-tint-fill);
-}
-
-// One box deep: the next-shuttle row and the From/To summary sit flat in the planner.
-.app .trip-card .next-hero {
-  border: 0;
-  border-radius: 10px;
-  background: var(--ios-fill);
-}
-.app .trip-card .next-hero-status {
-  border-top-color: color-mix(in srgb, var(--ios-label) 8%, transparent);
-}
-.app .trip-destination {
-  border: 1px solid var(--ios-separator);
-  background: transparent;
-  box-shadow: none;
-}
-
-// Fewer labels: one title per screen, no repeated small-caps eyebrows.
-.app .trip-intro .eyebrow,
-.app .map-topbar .eyebrow,
-.app .brand small {
-  display: none;
-}
-.app .trip-intro p {
-  color: var(--ios-secondary);
-}
-
-// The outage line is neutral; only its icon carries the warning color.
-.app .outage-notice {
-  border: 1px solid var(--ios-separator);
-  background: var(--ios-card);
-}
-
-// Desktop tabs: flat, no floating shadow.
-@media (min-width: 761px) {
-  .app .bottom-nav {
-    border: 1px solid var(--ios-separator);
-    box-shadow: none;
-    background: var(--ios-card);
-  }
-}
-.app .map-controls .btn,
-.app .map-display-controls,
-.app .map-toggle {
-  box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
-}
-:root:root .bottom-nav .nav-pill {
-  background: var(--ios-tint-fill);
-}
-:root:root .bottom-nav .btn.active {
-  color: var(--ios-on-tint);
-}
-
-// ── Rider updates card ──────────────────────────────────────────────────────
-.app .stop-reports .crowd-heading {
-  align-items: center;
-}
-.app .stop-reports .report-refresh {
-  width: 32px;
-  min-width: 32px;
-  height: 32px;
-  min-height: 32px;
-  border: 1px solid var(--ios-separator);
-  border-radius: 8px;
-  background: transparent;
-  color: var(--ios-secondary);
-}
-.app .report-route-badge {
-  gap: 5px;
-  padding: 3px 8px;
-  border-radius: 6px;
   background: var(--ios-soft);
   color: var(--ios-tint-text);
-  font-size: 12.5px;
+  box-shadow: none;
+}
+
+// ── Theme picker: two columns of themes ─────────────────────────────────────
+.theme-picker {
+  margin: 18px 0 0;
+  padding: 0;
+  border: 0;
+}
+.theme-picker legend {
+  margin-bottom: 10px;
+  font-size: 15px;
   font-weight: 700;
 }
-.app .stop-reports .report-context > strong {
-  font-size: 14px;
-}
-.app .stop-reports .crowd-note {
-  font-size: 13px;
-  line-height: 1.45;
-}
-// Two equal buttons: icon on top, a one-word label, a short hint.
-.app .stop-reports .report-action {
-  flex-direction: column;
-  gap: 8px;
-  min-height: 0;
-  padding: 12px;
-  border: 0;
-  border-radius: 10px;
-  box-shadow: none;
-}
-.app .stop-reports .report-action strong {
-  font-size: 15px;
-  line-height: 1.2;
-}
-.app .stop-reports .report-action small {
-  font-size: 12.5px;
-  opacity: 0.85;
-}
-.app .stop-reports .report-action-icon {
+:root:root .theme-options {
   display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: color-mix(in srgb, currentColor 14%, transparent);
-}
-.app .stop-reports .report-arrived,
-.app .stop-reports .report-action:not(.report-departed) {
-  background: var(--ios-tint-fill);
-  color: var(--ios-on-tint);
-}
-.app .stop-reports .report-departed {
-  background: var(--ios-fill);
-  color: var(--ios-label);
-}
-.app .stop-reports .report-action:disabled {
-  opacity: 0.55;
-}
-.app .stop-reports select {
-  min-height: 42px;
-  border-radius: 8px;
-}
-.app .stop-reports .report-crowd-submit {
-  min-height: 44px;
-  border-radius: 8px;
-  background: var(--ios-tint-fill);
-  color: var(--ios-on-tint);
-  box-shadow: none;
-}
-.app .passenger-observation {
-  border-inline-start-color: var(--ios-tint);
-}
-.app .theme-options,
-.theme-options {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 12px;
+}
+.theme-option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 46px;
+  padding: 0 12px;
+  border-bottom: $hairline;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+}
+.theme-option:nth-child(odd) {
+  border-right: $hairline;
+}
+.theme-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.theme-swatch {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.12);
+}
+.theme-swatch i {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+}
+.theme-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.theme-check {
+  color: var(--ios-tint-text);
+  opacity: 0;
+}
+.theme-option:has(input:checked) {
+  background: var(--ios-soft);
+  color: var(--ios-tint-text);
+}
+.theme-option:has(input:checked) .theme-check {
+  opacity: 1;
+}
+.theme-option:has(input:focus-visible) {
+  outline: 3px solid var(--ios-tint);
+  outline-offset: -3px;
 }
 
-// Map colors, matched to the app theme (read by simpleBasemap.ts).
-:root,
-[data-theme='lax'] {
-  --map-land: #eef0ec;
-  --map-road: #ffffff;
-  --map-casing: #dcdfd8;
-  --map-park: #d9ebd3;
-  --map-water: #c7ddf2;
-  --map-building: #e3e5e0;
+// ── Tab bar: the current tab is the accent color, no filled pill ────────────
+:root:root .bottom-nav .nav-pill {
+  background: var(--ios-soft);
 }
-[data-theme='lax-dark'] {
-  --map-land: #1f2125;
-  --map-road: #3a3d43;
-  --map-casing: #2a2c31;
-  --map-park: #1e2b22;
-  --map-water: #16263a;
-  --map-building: #27292e;
-}
-[data-palette='graphite'][data-theme='lax'] {
-  --map-land: #ececec;
-  --map-water: #d4dee8;
-  --map-park: #dde6da;
-}
-[data-palette='graphite'][data-theme='lax-dark'] {
-  --map-land: #1a1a1a;
-  --map-road: #333333;
-  --map-casing: #242424;
-  --map-water: #18202a;
-  --map-park: #1e261d;
-  --map-building: #222222;
+:root:root .bottom-nav .btn.active {
+  color: var(--ios-tint-text);
 }
 
-// ── Maps-style screen: search and lot chips float over the map ─────────────
+// ── Map ─────────────────────────────────────────────────────────────────────
 .app #shuttle-map-panel {
   position: relative;
 }
-.app .map-search {
-  position: absolute;
-  z-index: 800;
-  top: 12px;
+.app .map-surface {
+  border: 0;
+}
+.app .shuttle-map .leaflet-bottom {
+  bottom: 0;
+}
+.app .shuttle-map .leaflet-control-attribution {
+  margin-bottom: 0;
+}
+.app .shuttle-map .leaflet-top.leaflet-right {
+  top: auto;
+  bottom: 24px;
+}
+.app .map-display-controls {
+  top: auto;
+  bottom: 24px;
   left: 12px;
+}
+// Map buttons: one rounded group, well inside the right edge.
+.app .map-controls {
+  position: absolute;
+  z-index: 790;
+  top: 12px;
   right: 12px;
+  left: auto;
+  display: flex;
+  flex-direction: column;
+  width: auto;
+  margin: 0;
+  overflow: hidden;
+  border: $hairline;
+  border-radius: 12px;
+  background: var(--ios-card);
+  box-shadow: $float-shadow;
+}
+.app .map-controls .btn {
   display: grid;
-  gap: 8px;
-  pointer-events: none;
+  place-items: center;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--ios-tint-text);
 }
-.app .map-search > * {
-  pointer-events: auto;
+.app .map-controls .btn + .btn {
+  border-top: $hairline;
 }
-@media (min-width: 761px) {
-  .app .map-search {
-    right: auto;
-    width: min(420px, calc(100% - 84px));
-  }
+.app .map-controls .btn:disabled {
+  color: var(--ios-secondary);
 }
+
+// ── Sheet ───────────────────────────────────────────────────────────────────
+.app .trip-card {
+  border: 0;
+  background: var(--ios-card);
+}
+.app .trip-sheet-content > * + * {
+  margin-top: 12px;
+}
+.app .trip-card .outage-notice {
+  padding: 6px 6px 6px 12px;
+  border: $hairline;
+  border-radius: 12px;
+  background: var(--ios-card);
+  box-shadow: none;
+}
+.sheet-heading h2 {
+  margin: 4px 0 0;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.sheet-section-title {
+  margin: 22px 0 8px;
+  font-size: 17px;
+  font-weight: 700;
+}
+.sheet-note {
+  margin: 0;
+  color: var(--ios-secondary);
+  font-size: 13px;
+}
+
+// Search: a white field with a hairline, like the Maps search bar.
 .stop-search {
   position: relative;
+  z-index: 2;
 }
 .stop-search-box {
   display: flex;
   align-items: center;
   gap: 9px;
-  height: 48px;
-  padding: 0 8px 0 16px;
-  border: 1px solid var(--ios-separator);
-  border-radius: 999px;
+  height: 44px;
+  padding: 0 6px 0 14px;
+  border: $hairline;
+  border-radius: 12px;
   background: var(--ios-card);
-  color: var(--ios-secondary);
-  box-shadow:
-    0 1px 2px rgb(0 0 0 / 0.08),
-    0 6px 18px rgb(0 0 0 / 0.1);
+  color: var(--ios-tint-text);
 }
 .stop-search-box:focus-within {
-  outline: 3px solid color-mix(in srgb, var(--ios-tint) 45%, transparent);
-  outline-offset: 1px;
+  border-color: var(--ios-tint);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ios-tint) 25%, transparent);
 }
-.stop-search-box input {
+.app .stop-search-box input,
+.app .stop-search-box input:focus,
+.app .stop-search-box input:focus-visible {
   flex: 1;
   min-width: 0;
   height: 100%;
+  min-height: 0;
+  padding: 0;
   border: 0;
+  border-radius: 0;
   background: transparent;
+  box-shadow: none;
+  outline: none;
   color: var(--ios-label);
   font: inherit;
   font-size: 16px;
-  outline: none;
 }
 .stop-search-box input::placeholder {
   color: var(--ios-secondary);
@@ -471,25 +267,25 @@ $spring: cubic-bezier(0.2, 0.8, 0.2, 1);
   height: 32px;
   border: 0;
   border-radius: 50%;
-  background: var(--ios-fill);
+  background: transparent;
   color: var(--ios-secondary);
   cursor: pointer;
 }
 .stop-search-list {
   position: absolute;
-  top: 54px;
+  z-index: 3;
+  top: 50px;
   left: 0;
   right: 0;
   max-height: 300px;
   margin: 0;
-  padding: 6px;
+  padding: 4px;
   overflow: auto;
-  border: 1px solid var(--ios-separator);
-  border-radius: 16px;
+  border: $hairline;
+  border-radius: 12px;
   background: var(--ios-card);
   box-shadow: 0 10px 30px rgb(0 0 0 / 0.16);
   list-style: none;
-  animation: soft-rise 0.18s $spring both;
 }
 .stop-search-list li {
   display: flex;
@@ -497,17 +293,16 @@ $spring: cubic-bezier(0.2, 0.8, 0.2, 1);
   gap: 10px;
   min-height: 44px;
   padding: 0 10px;
-  border-radius: 10px;
-  color: var(--ios-label);
+  border-radius: 9px;
   font-size: 15px;
   cursor: pointer;
 }
 .stop-search-list li svg {
   flex: none;
-  color: var(--ios-secondary);
+  color: var(--ios-tint-text);
 }
 .stop-search-list li.is-active {
-  background: var(--ios-fill);
+  background: var(--ios-soft);
 }
 .stop-search-list small {
   margin-left: auto;
@@ -515,115 +310,349 @@ $spring: cubic-bezier(0.2, 0.8, 0.2, 1);
   font-size: 12px;
 }
 
-// Lot chips under the search bar.
-:root:root:root .map-search .transit-route-picker {
+// The selected lot: a solid Transit-style departure card.
+.next-hero {
+  overflow: hidden;
+  border-radius: 14px;
+  background: var(--ios-tint-fill);
+  color: var(--ios-on-tint);
+}
+.next-hero-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 72px;
+  padding: 12px 14px;
+}
+.next-hero-route {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--ios-on-tint);
+  color: var(--ios-tint-fill);
+  font-size: 16px;
+  font-weight: 800;
+}
+.next-hero-where {
+  display: grid;
+  min-width: 0;
+}
+.next-hero-where strong {
+  font-size: 16px;
+  font-weight: 700;
+}
+.next-hero-where span {
+  overflow: hidden;
+  font-size: 13px;
+  opacity: 0.88;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.next-hero-time {
   display: flex;
+  align-items: baseline;
+  gap: 3px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.next-hero-time strong {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+.next-hero-time small {
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0.88;
+}
+.next-hero-status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 0 14px;
+  border-top: 1px solid color-mix(in srgb, var(--ios-on-tint) 22%, transparent);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.next-hero-status i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: live-pulse 2s ease-in-out infinite;
+}
+
+// The other lots: outlined rows under the card; tapping one switches to it.
+.lot-rows {
+  overflow: hidden;
+  border: $hairline;
+  border-radius: 14px;
+}
+.app .lot-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  width: 100%;
+  height: auto;
+  min-height: 56px;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 0;
+  background: var(--ios-card);
+  color: var(--ios-label);
+  text-align: left;
+  box-shadow: none;
+}
+.app .lot-row + .lot-row {
+  border-top: $hairline;
+}
+.lot-badge {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1.5px solid var(--ios-tint);
+  border-radius: 8px;
+  color: var(--ios-tint-text);
+  font-size: 13px;
+  font-weight: 800;
+}
+.lot-row-copy {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+.lot-row-copy strong {
+  font-size: 15px;
+}
+.lot-row-copy small {
+  color: var(--ios-secondary);
+  font-size: 12.5px;
+  font-weight: 500;
+}
+.app .lot-row svg {
+  color: var(--ios-secondary);
+}
+
+// Three equal action tiles.
+.sheet-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
-  width: auto;
-  margin: 0;
+}
+.app .sheet-action {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 3px;
+  height: 60px;
+  min-height: 60px;
+  padding: 0 4px;
+  border: $hairline;
+  border-radius: 12px;
+  background: var(--ios-card);
+  color: var(--ios-tint-text);
+  font-size: 12.5px;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: none;
+}
+
+// Trip settings: an inset list, like iOS Settings.
+.trip-list {
+  overflow: hidden;
+  border: $hairline;
+  border-radius: 14px;
+}
+.trip-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 6px 8px 6px 14px;
+}
+.trip-row + .trip-row {
+  border-top: $hairline;
+}
+.trip-key {
+  flex: none;
+  width: 92px;
+  color: var(--ios-secondary);
+  font-size: 13px;
+  font-weight: 500;
+}
+:root:root .trip-list .direction-switch {
+  display: flex;
+  gap: 6px;
+  margin: 0 0 0 auto;
   padding: 0;
   border: 0;
   background: transparent;
-  box-shadow: none;
 }
-.app .map-search .transit-route-picker > .btn {
-  display: inline-flex;
-  flex: none;
-  align-items: center;
-  gap: 6px;
-  min-height: 40px;
-  height: 40px;
-  padding: 0 14px 0 8px;
-  border: 1px solid var(--ios-separator);
+.app .direction-switch .btn {
+  min-height: 34px;
+  height: 34px;
+  padding: 0 12px;
+  border: $hairline;
   border-radius: 999px;
   background: var(--ios-card);
   color: var(--ios-label);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
 }
-.app .map-search .transit-route-picker > .btn > span {
-  display: inline-grid;
-  place-items: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: var(--ios-fill);
+:root:root:root:root .direction-switch .btn[aria-pressed='true'] {
+  border-color: var(--ios-tint);
+}
+.app .trip-select {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  padding: 0 6px;
+  border: 0;
+  background: transparent;
   color: var(--ios-label);
-  font-size: 12px;
-  font-weight: 800;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: right;
+  text-align-last: right;
 }
-
-// Map buttons: round, icon-only (each has a spoken label), on the right edge.
-.app .map-controls {
-  position: absolute;
-  z-index: 790;
-  top: 12px;
-  right: 12px;
-  left: auto;
-  width: auto;
-  margin: 0;
-}
-.app .map-tools-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.app .map-controls .btn {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  min-width: 44px;
-  height: 44px;
-  min-height: 44px;
-  padding: 0;
-  gap: 0;
-  border: 1px solid var(--ios-separator);
-  border-radius: 50%;
+.app .stop-actions .btn {
+  border: $hairline;
+  border-radius: 999px;
   background: var(--ios-card);
   color: var(--ios-tint-text);
-  font-size: 0;
-}
-.app .map-controls .btn svg {
-  width: 19px;
-  height: 19px;
-}
-.app .map-display-controls {
-  top: auto;
-  bottom: 30px;
-  left: 12px;
-}
-.app .shuttle-map .leaflet-top.leaflet-right {
-  top: auto;
-  bottom: 30px;
-}
-.app .transit-arrival-peek {
-  display: none;
 }
 
-// The sheet: greeting, next shuttle and departures first, then trip settings.
-.sheet-greeting {
-  margin: 0 0 8px;
-  color: var(--ios-secondary);
-  font-size: 14px;
-  font-weight: 600;
+// ── Rider updates card ──────────────────────────────────────────────────────
+.app .stop-reports {
+  border: $hairline;
+  border-radius: 14px;
+  background: var(--ios-card);
 }
-.sheet-section-title {
-  margin: 22px 0 10px;
-  font-size: 17px;
+.app .stop-reports .report-refresh {
+  width: 32px;
+  min-width: 32px;
+  height: 32px;
+  min-height: 32px;
+  border: $hairline;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ios-tint-text);
+}
+.app .report-route-badge {
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--ios-soft);
+  color: var(--ios-tint-text);
+  font-size: 12.5px;
   font-weight: 700;
 }
-
-@media (min-width: 1051px) {
-  .app .map-surface {
-    height: clamp(520px, calc(100dvh - 150px), 960px);
-  }
+.app .stop-reports .crowd-note {
+  font-size: 13px;
+  line-height: 1.45;
+}
+.app .stop-reports .report-action {
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+  padding: 12px;
+  border: $hairline;
+  border-radius: 12px;
+  box-shadow: none;
+}
+.app .stop-reports .report-action strong {
+  font-size: 15px;
+}
+.app .stop-reports .report-action small {
+  font-size: 12.5px;
+  opacity: 0.85;
+}
+.app .stop-reports .report-action-icon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: color-mix(in srgb, currentColor 14%, transparent);
+}
+.app .stop-reports .report-action:not(.report-departed) {
+  border-color: transparent;
+  background: var(--ios-tint-fill);
+  color: var(--ios-on-tint);
+}
+.app .stop-reports .report-departed {
+  background: var(--ios-card);
+  color: var(--ios-label);
+}
+.app .stop-reports .report-action:disabled {
+  opacity: 0.55;
+}
+.app .stop-reports select {
+  min-height: 42px;
+  border: $hairline;
+  border-radius: 10px;
+  background: var(--ios-card);
+}
+.app .stop-reports .report-crowd-submit {
+  min-height: 44px;
+  border-radius: 10px;
+  background: var(--ios-tint-fill);
+  color: var(--ios-on-tint);
+  box-shadow: none;
 }
 
-// Phone: the map stays put at the top and the sheet slides up over it as you scroll.
+// ── Outage notice outside the map screens ───────────────────────────────────
+.app > .outage-notice {
+  border: $hairline;
+  background: var(--ios-card);
+}
+
+// ── Phones: the map fills the top, the header floats on it, the sheet slides over ──
 @media (max-width: 760px) {
+  .app.is-map .app-header {
+    position: absolute;
+    z-index: 900;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: max(10px, env(safe-area-inset-top)) 12px 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    pointer-events: none;
+  }
+  .app.is-map .app-header > * {
+    pointer-events: auto;
+  }
+  .app.is-map .brand {
+    padding: 4px 12px 4px 4px;
+    border-radius: 999px;
+    background: var(--ios-card);
+    box-shadow: $float-shadow;
+  }
+  .app.is-map .brand img {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+  }
+  .app.is-map .brand strong {
+    font-size: 16px;
+  }
+  .app.is-map .header-actions > * {
+    background: var(--ios-card);
+    box-shadow: $float-shadow;
+  }
   .app .trip-layout {
-    margin-top: 0;
+    margin: 0;
     padding: 0;
   }
   .app .trip-layout > .map-column {
@@ -632,92 +661,124 @@ $spring: cubic-bezier(0.2, 0.8, 0.2, 1);
     z-index: 0;
   }
   .app .map-surface {
-    height: 58svh;
+    height: 56svh;
     min-height: 340px;
-    border: 0;
     border-radius: 0;
   }
   .app .map-controls {
-    top: 116px;
+    top: calc(max(10px, env(safe-area-inset-top)) + 58px);
   }
   .app .trip-layout > .trip-card {
     z-index: 2;
-    margin: -22px 0 0;
-    padding: 22px 16px 32px;
-    border: 0;
-    border-radius: 18px 18px 0 0;
-    box-shadow: 0 -8px 24px rgb(0 0 0 / 0.1);
+    margin: -20px 0 0;
+    padding: 6px 16px calc(110px + env(safe-area-inset-bottom));
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -4px 18px rgb(0 0 0 / 0.12);
   }
-}
-.app .map-tools-actions {
-  visibility: visible;
-  opacity: 1;
-  transform: none;
-  pointer-events: auto;
-}
-.app .shuttle-map .leaflet-bottom {
-  bottom: 0;
-}
-@media (max-width: 760px) {
-  .app .map-footer {
-    display: none;
-  }
-}
-.app .map-tools-actions {
-  position: static;
-  width: auto;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  box-shadow: none;
-}
-.app .trip-card .arrivals .section-heading .eyebrow {
-  display: none;
-}
-.app .trip-card .arrivals .section-heading h2 {
-  font-size: 17px;
-}
-@media (max-width: 760px) {
   .app .trip-card .sheet-handle {
-    min-height: 24px;
+    min-height: 22px;
+  }
+}
+
+// ── Tablets and desktops: full map, the sheet floats on its left like Maps on Mac ──
+@media (min-width: 761px) {
+  .app .trip-layout {
+    position: relative;
+    display: block;
+    width: 100%;
+    max-width: none;
+    height: calc(100dvh - 76px);
+    min-height: 520px;
+    margin: 0;
+    padding: 0;
+  }
+  .app .trip-layout > .map-column {
+    position: absolute;
+    inset: 0;
+  }
+  .app .trip-layout #shuttle-map-panel,
+  .app .trip-layout .map-view-wrapper,
+  .app .trip-layout .map-surface,
+  .app .trip-layout .shuttle-map {
+    height: 100%;
+    max-height: none;
+    border-radius: 0;
   }
   .app .trip-layout > .trip-card {
-    padding-top: 10px;
+    position: absolute;
+    z-index: 5;
+    top: 16px;
+    bottom: 16px;
+    left: 16px;
+    width: min(390px, calc(100% - 120px));
+    margin: 0;
+    padding: 16px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border: $hairline;
+    border-radius: 16px;
+    box-shadow: $float-shadow;
+  }
+  .app .trip-layout .map-display-controls {
+    left: calc(min(390px, 100% - 120px) + 32px);
+  }
+  .app .bottom-nav {
+    border: $hairline;
+    background: var(--ios-card);
+    box-shadow: none;
   }
 }
-.app .map-controls,
-.app .map-tools-actions {
-  min-width: 0;
-  width: auto;
-  align-items: flex-end;
+
+@media (prefers-reduced-motion: reduce) {
+  .next-hero-status i {
+    animation: none;
+  }
 }
-.app .shuttle-map .leaflet-control-attribution {
-  margin-bottom: 0;
+
+// Header and sheet details shared by every size.
+.app .brand img {
+  display: block;
+}
+:root:root .trip-card .sheet-grip,
+:root:root .trip-card .sheet-handle::before {
+  background: var(--ios-separator);
 }
 @media (max-width: 760px) {
-  // Keep the map's own controls clear of the sheet's rounded top edge.
+  .app.is-map .header-actions {
+    gap: 8px;
+  }
+  .app.is-map .header-actions > :is(.btn, button, a, .share-button, .install-button, .menu-button) {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    min-height: 40px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+  }
   .app .map-display-controls {
     bottom: 34px;
   }
-  .app .shuttle-map .leaflet-control-attribution {
-    margin-bottom: 22px;
-  }
 }
-.app .stop-search {
-  z-index: 2;
+
+// The departure card already names the stop and the next bus; skip the repeat heading.
+.app .trip-card .arrivals .section-heading,
+.app .trip-card .arrivals .boarding-caption {
+  display: none;
 }
-.app .stop-search-list {
-  z-index: 3;
+.app .stop-actions {
+  display: flex;
+  gap: 8px;
 }
-.app .stop-search-box input,
-.app .stop-search-box input:focus,
-.app .stop-search-box input:focus-visible {
-  height: 100%;
-  min-height: 0;
-  padding: 0;
+.app .stop-actions .btn {
+  height: 34px;
+  min-height: 34px;
+  padding: 0 12px;
+  font-size: 13px;
+}
+:root:root .app select.trip-select {
+  min-height: 40px;
   border: 0;
-  border-radius: 0;
-  background: transparent;
+  background-color: transparent;
   box-shadow: none;
-  outline: none;
 }

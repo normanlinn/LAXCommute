@@ -112,9 +112,7 @@ a {
 .direction-switch,
 .language-switch,
 .segmented.tabs,
-.route-options,
 .appearance-options,
-.transit-route-picker,
 .map-display-controls {
   gap: 2px;
   padding: 2px;
@@ -122,20 +120,11 @@ a {
   border-radius: 10px;
   background: var(--ios-fill);
 }
-.route-options,
 .appearance-options {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
-.transit-route-picker {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-:is(
-  .direction-switch .tab,
-  .language-switch .btn,
-  .route-options > .btn,
-  .transit-route-picker > .btn
-),
+
 .appearance-options > label,
 .map-display-controls button {
   min-height: 36px;
@@ -150,38 +139,16 @@ a {
     background-color 0.2s $ease,
     box-shadow 0.2s $ease;
 }
-:is(
-  .direction-switch .tab[aria-pressed='true'],
-  .language-switch .btn[aria-pressed='true'],
-  .route-options > .btn[aria-pressed='true'],
-  .transit-route-picker > .btn[aria-pressed='true'],
-  .map-display-controls button[aria-pressed='true']
-),
 .appearance-options > label:has(input:checked),
 [data-theme='lax-dark'] .direction-switch .tab[aria-pressed='true'] {
   background: var(--ios-soft);
   color: var(--ios-tint-text);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ios-tint) 30%, transparent);
 }
-[data-theme='lax-dark']
-  :is(
-    .direction-switch .tab[aria-pressed='true'],
-    .language-switch .btn[aria-pressed='true'],
-    .segmented .tab.active,
-    .route-options > .btn[aria-pressed='true'],
-    .transit-route-picker > .btn[aria-pressed='true'],
-    .map-display-controls button[aria-pressed='true']
-  ),
 [data-theme='lax-dark'] .appearance-options > label:has(input:checked) {
   background: var(--ios-soft);
 }
 // Route letters become small colored dots beside the lot name.
-:is(.route-options, .transit-route-picker) > .btn > span {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  font-size: 10px;
-}
 
 // Next bus: one rounded card with a large tinted countdown.
 .arrivals .arrival-row.arrival-next {
@@ -336,22 +303,13 @@ a {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .btn,
-  :is(
-    .direction-switch .tab,
-    .language-switch .btn,
-    .route-options > .btn,
-    .transit-route-picker > .btn
-  ) {
+  .btn {
     transition: none;
   }
 }
 
 // Clear leftovers from earlier designs on the segmented thumb and tab marker.
-.transit-route-picker > .btn.transit-route-button[aria-pressed='true'] {
-  border: 0;
-  padding: 0 4px;
-}
+
 .bottom-nav .nav-pill {
   border: 0;
   box-shadow: none;
@@ -530,21 +488,12 @@ $spring: cubic-bezier(0.2, 0.8, 0.2, 1);
 .direction-switch,
 .language-switch,
 .segmented.tabs,
-.route-options,
 .appearance-options,
-.transit-route-picker,
 .map-display-controls {
   border: $line;
   border-radius: 10px;
   padding: 3px;
 }
-:is(
-  .direction-switch .tab,
-  .language-switch .btn,
-  .segmented .tab,
-  .route-options > .btn,
-  .transit-route-picker > .btn
-),
 .appearance-options > label,
 .map-display-controls button {
   border-radius: 13px;
@@ -638,29 +587,7 @@ $spring: cubic-bezier(0.2, 0.8, 0.2, 1);
   .official-tracker-open:hover {
     box-shadow: none;
   }
-  :is(
-      .share-button,
-      .install-button,
-      .menu-button,
-      .map-toggle,
-      .directions-link,
-      .text-button,
-      .bottom-nav .btn:not(.active),
-      .map-controls .btn,
-      .icon-button:not(.bus-alert-toggle)
-    ):hover:not(:disabled) {
-    border-color: var(--ios-separator);
-    background-color: color-mix(in srgb, var(--ios-label) 8%, var(--ios-card));
-  }
-  :is(
-      .direction-switch .tab,
-      .language-switch .btn,
-      .segmented .tab,
-      .route-options > .btn
-    ):hover:not([aria-pressed='true'], .active, :disabled) {
-    background-color: color-mix(in srgb, var(--ios-label) 6%, transparent);
-    box-shadow: none;
-  }
+
   .avatar-grid label:hover {
   }
   .arrival-list .arrival-row:not(.arrival-next):hover {
@@ -815,9 +742,7 @@ html {
     animation-delay: #{$i * 0.015}s;
   }
 }
-.transit-arrival-peek {
-  animation: float-up 0.3s 0.08s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
+
 .header-actions .profile-button .avatar-circle,
 .avatar-grid label:has(input:checked) .avatar-circle {
   animation: soft-pop 0.4s $spring both;
@@ -830,13 +755,6 @@ html {
     animation-delay: #{$i * 0.012}s;
   }
 }
-:is(
-  .direction-switch .tab,
-  .language-switch .btn,
-  .segmented .tab,
-  .route-options > .btn,
-  .transit-route-picker > .btn
-),
 .appearance-options > label {
   transition:
     background-color 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
@@ -872,7 +790,6 @@ details[open] > :not(summary) {
   .map-surface,
   .trip-card > *,
   .page-card > *,
-  .transit-arrival-peek,
   .header-actions .profile-button .avatar-circle,
   .avatar-grid label:has(input:checked) .avatar-circle,
   .preferences-menu > *,
@@ -950,7 +867,6 @@ details[open] > :not(summary) {
 .share-button,
 .install-button,
 .menu-button,
-.map-toggle,
 .directions-link,
 .map-controls .btn,
 .icon-button:not(.bus-alert-toggle) {
@@ -959,23 +875,10 @@ details[open] > :not(summary) {
 }
 .share-button,
 .install-button,
-.map-toggle,
 .directions-link {
   border-radius: 999px;
 }
 @media (hover: hover) and (pointer: fine) {
-  :is(
-      .share-button,
-      .install-button,
-      .menu-button,
-      .map-toggle,
-      .directions-link,
-      .map-controls .btn,
-      .icon-button:not(.bus-alert-toggle)
-    ):hover:not(:disabled) {
-    border-color: color-mix(in srgb, var(--ios-label) 22%, var(--ios-separator));
-    background-color: color-mix(in srgb, var(--ios-label) 5%, var(--ios-card));
-  }
   .bottom-nav .btn:not(.active):hover {
     border-color: transparent;
     background-color: color-mix(in srgb, var(--ios-label) 5%, transparent);
@@ -1405,8 +1308,6 @@ details[open] > :not(summary) {
 .leaflet-overlay-pane path.route-casing {
   stroke: var(--ios-card);
 }
-.route-square,
-.transit-peek-symbol,
 .official-tracker-open {
   color: var(--ios-on-tint);
 }
@@ -1420,8 +1321,7 @@ details[open] > :not(summary) {
 :root .segmented .tab.tab-active:hover,
 :root .segmented .tab.active,
 :root[data-theme='lax-dark'] .segmented .tab.active,
-:root[data-theme='lax-dark'] .segmented.tabs-box .tab.tab-active,
-:root .route-options button.selected {
+:root[data-theme='lax-dark'] .segmented.tabs-box .tab.tab-active {
   border: 0;
   background: var(--ios-soft);
   color: var(--ios-tint-text);

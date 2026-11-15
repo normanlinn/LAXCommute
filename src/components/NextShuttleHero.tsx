@@ -6,6 +6,7 @@ type Props = {
   routeShort: string;
   lotLabel: string;
   stopName?: string;
+  destination: string;
   /** Minutes to the next bus, or null when no live or scheduled time is known. */
   minutes: number | null;
   arriving: boolean;
@@ -13,11 +14,12 @@ type Props = {
   liveDown: boolean;
 };
 
-/** The one answer riders look for first: which shuttle, from where, and how soon. */
+/** The selected lot's next departure, as a solid Transit-style card. */
 export default function NextShuttleHero({
   routeShort,
   lotLabel,
   stopName,
+  destination,
   minutes,
   arriving,
   scheduled,
@@ -25,22 +27,21 @@ export default function NextShuttleHero({
 }: Props) {
   const { t } = useLanguage();
   const reduce = useReducedMotion();
-  const answer = arriving
-    ? t('Arriving')
+  const known = arriving || minutes !== null;
+  const [value, unit] = arriving
+    ? [t('Now'), '']
     : minutes !== null
-      ? t('{minutes} min', { minutes })
+      ? [String(minutes), t('min')]
       : liveDown
-        ? t('Every 7–15 min')
-        : t('Checking…');
-  const note =
-    arriving || minutes !== null
-      ? scheduled
-        ? t('Scheduled')
-        : t('Live')
-      : liveDown
-        ? t('Typical service')
-        : t('Waiting for the tracker');
-  // A departure row, like a station board: route, where from, and how soon.
+        ? ['7–15', t('min')]
+        : ['…', ''];
+  const status = known
+    ? scheduled
+      ? t('Scheduled')
+      : t('Live')
+    : liveDown
+      ? t('Live times paused · typical service')
+      : t('Waiting for the tracker');
   return (
     <section className="next-hero" aria-live="polite" aria-label={t('Your next shuttle')}>
       <div className="next-hero-row">
@@ -49,21 +50,25 @@ export default function NextShuttleHero({
         </span>
         <span className="next-hero-where">
           <strong>{lotLabel}</strong>
-          <span>{stopName || t('Choose a boarding stop')}</span>
+          <span>
+            {t('to {place}', { place: destination })}
+            {stopName ? ` · ${stopName}` : ''}
+          </span>
         </span>
-        <motion.strong
-          key={answer}
+        <motion.span
+          key={value}
           className="next-hero-time"
           initial={reduce ? false : { opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.22, ease: [0.2, 0.8, 0.2, 1] }}
         >
-          {answer}
-        </motion.strong>
+          <strong>{value}</strong>
+          {unit && <small>{unit}</small>}
+        </motion.span>
       </div>
-      <div className={`next-hero-status${liveDown ? ' is-paused' : ''}`}>
-        {liveDown ? <Clock3 size={13} aria-hidden="true" /> : <i aria-hidden="true" />}
-        {note}
+      <div className="next-hero-status">
+        {liveDown && !known ? <Clock3 size={13} aria-hidden="true" /> : <i aria-hidden="true" />}
+        {status}
       </div>
     </section>
   );

@@ -14,6 +14,7 @@ import {
   Bug as PhBug,
   Bus,
   CaretDown,
+  CaretRight,
   ChatCenteredText,
   Check as PhCheck,
   CircleNotch,
@@ -86,6 +87,7 @@ export const Bug = icon(PhBug);
 export const BusFront = icon(Bus);
 export const Check = icon(PhCheck);
 export const ChevronDown = icon(CaretDown);
+export const ChevronRight = icon(CaretRight);
 export const CirclePlus = icon(PlusCircle);
 export const Clock3 = icon(Clock);
 export const Copy = icon(PhCopy);

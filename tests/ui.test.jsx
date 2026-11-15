@@ -345,7 +345,7 @@ it('guides a first visit into commute setup and restores remembered choices on r
   render(<App />);
   expect(screen.queryByRole('dialog')).toBeNull();
   expect(screen.getByRole('button', { name: 'Explore' }).getAttribute('aria-current')).toBe('page');
-  expect(screen.getByText('Terminal 3')).toBeTruthy();
+  expect(screen.getByText(/to Terminal 3/)).toBeTruthy();
   fireEvent.click(screen.getByRole('button', { name: 'My commute' }));
   expect((await screen.findByRole('combobox', { name: 'Usual terminal' })).value).toBe(
     'Terminal 3',

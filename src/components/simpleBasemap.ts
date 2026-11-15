@@ -76,15 +76,15 @@ function absolute(faces: typeof FONT_FACES) {
   );
 }
 
-/** Paints land, water, parks and roads in the theme's map colors (--map-* tokens). */
+/** Paints land, water, parks and roads in the theme's map colors (--ios-map-* tokens). */
 function styleBase(map: import('maplibre-gl').Map) {
   const color = {
-    land: themeColor('--map-land', '#eef0ec'),
-    road: themeColor('--map-road', '#ffffff'),
-    casing: themeColor('--map-casing', '#dcdfd8'),
-    park: themeColor('--map-park', '#d9ebd3'),
-    water: themeColor('--map-water', '#c7ddf2'),
-    building: themeColor('--map-building', '#e3e5e0'),
+    land: themeColor('--ios-map-land', '#eef0ec'),
+    road: themeColor('--ios-map-road', '#ffffff'),
+    casing: themeColor('--ios-map-casing', '#dcdfd8'),
+    park: themeColor('--ios-map-park', '#d9ebd3'),
+    water: themeColor('--ios-map-water', '#c7ddf2'),
+    building: themeColor('--ios-map-building', '#e3e5e0'),
   };
   type PaintKey = Parameters<import('maplibre-gl').Map['setPaintProperty']>[1];
   const paint = (id: string, property: PaintKey, value: string) => {

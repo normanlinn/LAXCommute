@@ -12,16 +12,7 @@
   flex: 1;
   min-width: 0;
 }
-.map-topbar .map-toggle {
-  flex: none;
-  gap: 6px;
-  margin: 0;
-  min-height: 40px;
-  padding: 8px 14px;
-  border: 1px solid var(--color-base-300);
-  border-radius: 999px;
-  font-size: 13px;
-}
+
 .map-stops-toggle {
   display: inline-flex;
   align-items: center;
@@ -46,14 +37,7 @@
   .map-topbar {
     padding: 4px 4px 12px;
   }
-  .map-topbar .map-route-label {
-    display: none;
-  }
-  .map-topbar .map-toggle {
-    min-height: 38px;
-    padding: 7px 12px;
-    font-size: 12px;
-  }
+
   .map-display-controls {
     flex-direction: row;
     align-items: center;
@@ -120,27 +104,7 @@
   #shuttle-map-panel {
     position: relative;
   }
-  .transit-arrival-peek {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    position: absolute;
-    left: 16px;
-    bottom: 16px;
-    z-index: 750;
-    width: min(400px, calc(100% - 32px));
-    min-height: 80px;
-    margin: 0;
-    padding: 12px 15px;
-    border: 1px solid var(--color-base-300);
-    border-radius: 12px;
-    background: var(--color-base-100);
-    color: var(--color-base-content);
-    box-shadow:
-      0 1px 2px rgb(0 0 0 / 0.05),
-      0 4px 14px rgb(0 0 0 / 0.07);
-    text-align: left;
-  }
+
   .shuttle-map-legend {
     left: auto;
     right: 16px;
@@ -180,27 +144,10 @@
 }
 @media (max-width: 420px) {
   /* Icon-only map toggle so the page title stays on one line. */
-  .map-topbar .map-toggle {
-    width: 40px;
-    min-width: 40px;
-    height: 40px;
-    min-height: 40px;
-    padding: 0;
-  }
-  .map-topbar .map-toggle span {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
 }
 @media (max-width: 760px) {
   /* Phones already show the shuttle picker above the map; don't repeat it below. */
-  .trip-card.has-map-picker .route-field {
-    display: none;
-  }
+
   .header-actions .install-button {
     border-color: transparent;
   }

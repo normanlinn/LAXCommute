@@ -368,9 +368,6 @@ html[data-theme='lax-dark'] {
   background: var(--color-neutral);
   color: var(--color-neutral-content);
 }
-.route-square {
-  background: var(--route-solid-color, var(--route-color));
-}
 
 /* Primary actions share semantic theme tokens across light and dark appearances. */
 .button-primary,
@@ -419,19 +416,7 @@ html[data-theme='lax-dark'] {
 .segmented .tab:not(.active) {
   color: var(--color-base-content);
 }
-.trip-destination {
-  background: var(--journey-surface);
-  border: 1px solid var(--control-border);
-}
-.journey-line span,
-.journey-line span:last-child {
-  border-color: var(--control-border);
-}
-.journey-line span:last-child,
-.journey-line i {
-  background: var(--control-border);
-}
-.route-options button:not(.selected),
+
 input,
 select,
 .map-controls .btn {
@@ -466,9 +451,7 @@ select,
   border-color: var(--control-border);
   box-shadow: 0 0 0 3px var(--interaction-ring);
 }
-.route-options .selected {
-  box-shadow: inset 0 0 0 1px var(--option-color);
-}
+
 .app input,
 .app select {
   transition:
@@ -493,10 +476,7 @@ select,
   .appearance-options label:hover {
     transform: translateY(-2px);
   }
-  .route-options .btn:not(:disabled):hover {
-    border-color: var(--option-color);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--option-color) 15%, transparent);
-  }
+
   .map-controls .btn:not(:disabled):hover,
   .button-light:not(:disabled):hover,
   .appearance-options label:hover {
