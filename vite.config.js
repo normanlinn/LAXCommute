@@ -30,12 +30,12 @@ export default defineConfig(({ mode }) => ({
     VitePWA({
       registerType: 'prompt',
       includeAssets: [
-        'icons/apple-touch-v8.png',
-        'icons/commute-v8-192.png',
-        'icons/commute-v8-512.png',
-        'icons/favicon-v8.png',
-        'icons/maskable-v8-512.png',
-        'social-preview-v8.png',
+        'icons/apple-touch-v9.png',
+        'icons/commute-v9-192.png',
+        'icons/commute-v9-512.png',
+        'icons/favicon-v9.png',
+        'icons/maskable-v9-512.png',
+        'social-preview-v9.png',
       ],
       manifest: {
         id: '/',
@@ -48,10 +48,10 @@ export default defineConfig(({ mode }) => ({
         start_url: '/',
         scope: '/',
         icons: [
-          { src: '/icons/commute-v8-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
-          { src: '/icons/commute-v8-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+          { src: '/icons/commute-v9-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: '/icons/commute-v9-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
           {
-            src: '/icons/maskable-v8-512.png',
+            src: '/icons/maskable-v9-512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable',

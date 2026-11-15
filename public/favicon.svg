@@ -1,1 +1,45 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="115" fill="#dc2626"/><g fill="#fff"><rect x="128" y="176" width="16" height="52" rx="8"/><rect x="368" y="176" width="16" height="52" rx="8"/><rect x="152" y="120" width="208" height="252" rx="40"/><rect x="176" y="356" width="44" height="44" rx="12"/><rect x="292" y="356" width="44" height="44" rx="12"/></g><g fill="#dc2626"><rect x="200" y="140" width="112" height="14" rx="7"/><rect x="176" y="170" width="160" height="102" rx="14"/><circle cx="198" cy="320" r="15"/><circle cx="314" cy="320" r="15"/><rect x="232" y="314" width="48" height="12" rx="6"/></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <clipPath id="r"><rect width="512" height="512" rx="115"/></clipPath>
+  <g clip-path="url(#r)">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffb547"/>
+      <stop offset="0.45" stop-color="#f0522f"/>
+      <stop offset="1" stop-color="#8e1b3a"/>
+    </linearGradient>
+    <linearGradient id="sun" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffe7a3"/>
+      <stop offset="1" stop-color="#ffb547"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#sky)"/>
+  <circle cx="256" cy="300" r="122" fill="url(#sun)" opacity="0.9"/>
+  <g fill="#ffe7a3" opacity="0.35">
+    <rect x="150" y="250" width="212" height="8" rx="4"/>
+    <rect x="166" y="276" width="180" height="8" rx="4"/>
+  </g>
+  <rect y="336" width="512" height="176" fill="#6b1530"/>
+  <g fill="#2a0a14">
+    <path d="M396 340 C398 280 402 220 412 168" fill="none" stroke="#2a0a14" stroke-width="10" stroke-linecap="round"/>
+    <path d="M412 168 C390 150 356 152 334 172 C362 162 390 164 410 172 Z"/>
+    <path d="M412 168 C404 140 380 122 352 120 C380 132 398 150 410 170 Z"/>
+    <path d="M412 168 C424 138 448 124 470 126 C450 136 432 152 414 170 Z"/>
+    <path d="M412 168 C438 160 462 168 474 190 C454 178 432 174 414 172 Z"/>
+    <path d="M412 168 C410 190 398 210 382 222 C396 204 404 186 410 170 Z"/>
+    <rect x="76" y="262" width="252" height="104" rx="24"/>
+    <rect x="66" y="300" width="10" height="34" rx="5"/>
+    <g fill="#ffb547" opacity="0.85">
+      <rect x="94" y="280" width="44" height="36" rx="7"/>
+      <rect x="148" y="280" width="44" height="36" rx="7"/>
+      <rect x="202" y="280" width="44" height="36" rx="7"/>
+      <rect x="258" y="280" width="54" height="56" rx="9"/>
+    </g>
+    <circle cx="128" cy="370" r="24"/>
+    <circle cx="276" cy="370" r="24"/>
+  </g>
+  <g fill="#8e1b3a">
+    <circle cx="128" cy="370" r="9"/>
+    <circle cx="276" cy="370" r="9"/>
+  </g>
+  </g>
+</svg>
