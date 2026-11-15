@@ -1,9 +1,9 @@
 // Apply the saved appearance and palette before the page paints. Keep in sync with ThemeProvider.
 (() => {
   let preference = 'system';
-  let palette = 'slateblue';
+  let palette = 'classic';
   const themeChoice = true;
-  const palettes = ['slateblue', 'harbor'];
+  const palettes = ['classic', 'graphite'];
   try {
     const saved = localStorage.getItem('laxcommute:theme');
     if (saved === 'light' || saved === 'dark') preference = saved;

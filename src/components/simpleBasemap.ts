@@ -76,6 +76,34 @@ function absolute(faces: typeof FONT_FACES) {
   );
 }
 
+/** Paints land, water, parks and roads in the theme's map colors (--map-* tokens). */
+function styleBase(map: import('maplibre-gl').Map) {
+  const color = {
+    land: themeColor('--map-land', '#eef0ec'),
+    road: themeColor('--map-road', '#ffffff'),
+    casing: themeColor('--map-casing', '#dcdfd8'),
+    park: themeColor('--map-park', '#d9ebd3'),
+    water: themeColor('--map-water', '#c7ddf2'),
+    building: themeColor('--map-building', '#e3e5e0'),
+  };
+  type PaintKey = Parameters<import('maplibre-gl').Map['setPaintProperty']>[1];
+  const paint = (id: string, property: PaintKey, value: string) => {
+    if (map.getLayer(id)) map.setPaintProperty(id, property, value);
+  };
+  paint('background', 'background-color', color.land);
+  paint('landuse_residential', 'fill-color', color.land);
+  for (const id of ['park', 'landcover_wood']) paint(id, 'fill-color', color.park);
+  paint('water', 'fill-color', color.water);
+  paint('waterway', 'line-color', color.water);
+  for (const id of ['building', 'aeroway-area']) paint(id, 'fill-color', color.building);
+  for (const layer of map.getStyle()?.layers || []) {
+    if (layer.type !== 'line') continue;
+    if (/casing/.test(layer.id)) paint(layer.id, 'line-color', color.casing);
+    else if (/^(highway|tunnel|road|aeroway)/.test(layer.id))
+      paint(layer.id, 'line-color', color.road);
+  }
+}
+
 export function createSimpleBasemap(style: string) {
   const layer = maplibreGL({
     style,
@@ -89,7 +117,10 @@ export function createSimpleBasemap(style: string) {
   // Follow theme and light/dark changes while the map is open.
   const themeWatch = new MutationObserver(() => {
     const gl = layer.getMaplibreMap();
-    if (gl?.isStyleLoaded()) styleLabels(gl);
+    if (gl?.isStyleLoaded()) {
+      styleBase(gl);
+      styleLabels(gl);
+    }
   });
   const add = layer.onAdd;
   layer.onAdd = function (map) {
@@ -97,6 +128,7 @@ export function createSimpleBasemap(style: string) {
     const gl = this.getMaplibreMap();
     gl?.on('load', () => {
       gl.setFontFaces(absolute(FONT_FACES));
+      styleBase(gl);
       styleLabels(gl);
     });
     themeWatch.observe(document.documentElement, {

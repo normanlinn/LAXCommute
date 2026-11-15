@@ -27,7 +27,6 @@ import {
   UserRound,
   WifiOff,
   ChevronDown,
-  SlidersHorizontal,
   Users,
 } from './components/ui/icons';
 import {
@@ -56,6 +55,7 @@ import { dayPart } from './domain/nickname';
 import { smoothly } from './domain/motion';
 import CrowdReports from './components/CrowdReports';
 import NextShuttleHero from './components/NextShuttleHero';
+import StopSearch from './components/StopSearch';
 import StopReports from './components/StopReports';
 import InstallApp from './components/InstallApp';
 import ShareApp from './components/ShareApp';
@@ -129,7 +129,7 @@ export default function App() {
     }
   }, [direction]);
   // Mobile opens on the map, like a transit app. Users can still collapse it.
-  const [mapExpanded, setMapExpanded] = useState(true);
+  const [mapExpanded] = useState(true);
   const [mapToolsOpen, setMapToolsOpen] = useState(false);
   const mapToolsRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -432,68 +432,37 @@ export default function App() {
         {showTrip ? (
           <>
             <section className="map-column">
-              <div className="map-topbar">
-                <div>
-                  {greeting ? (
-                    <span className="greeting" key={greeting}>
-                      {greeting}
-                    </span>
-                  ) : (
-                    <span className="eyebrow">{t('LAX EMPLOYEE SHUTTLES')}</span>
-                  )}
-                  <h1>
-                    {tab === 'home' ? t('Let’s get you home.') : t('Find your next shuttle.')}
-                  </h1>
-                </div>
-                <div className="map-route-label">
-                  <span className="route-square">{route.short}</span>
-                  <div>
-                    <strong>
-                      {lot} {t('Lot')}
-                    </strong>
-                    <span>
-                      {vehicles.length
-                        ? t('{count} buses on the map', { count: vehicles.length })
-                        : t(
-                            live.isError || routeQuery.isError
-                              ? 'Bus data unavailable'
-                              : live.isFetching || routeQuery.isPending
-                                ? 'Checking bus positions'
-                                : 'No fresh bus positions',
-                          )}
-                    </span>
-                  </div>
-                </div>
-                <Button
-                  className="map-toggle"
-                  aria-expanded={mapExpanded}
-                  aria-controls="shuttle-map-panel"
-                  onClick={() => setMapExpanded((value) => !value)}
-                >
-                  <Map size={17} /> <span>{mapExpanded ? t('Hide map') : t('Show map')}</span>
-                </Button>
+              <div className="map-topbar sr-only">
+                <h1>{tab === 'home' ? t('Let’s get you home.') : t('Find your next shuttle.')}</h1>
               </div>
               <div id="shuttle-map-panel" hidden={!mapExpanded}>
-                <div
-                  className="transit-route-picker"
-                  role="group"
-                  aria-label={t('Which shuttle do you want?')}
-                >
-                  {ROUTES.map((r) => (
-                    <motion.button
-                      type="button"
-                      key={r.id}
-                      whileTap={reduceMotion ? undefined : { scale: 0.96 }}
-                      transition={{ type: 'spring', stiffness: 460, damping: 32 }}
-                      className="btn transit-route-button"
-                      aria-pressed={r.lot === lot}
-                      aria-label={t('{lot} Lot shuttle', { lot: r.lot })}
-                      onClick={() => chooseRoute(r.lot)}
-                    >
-                      <span aria-hidden="true">{r.short}</span>
-                      {r.lot}
-                    </motion.button>
-                  ))}
+                <div className="map-search">
+                  <StopSearch
+                    stops={options}
+                    selected={selectedStop}
+                    onChoose={(stop) => chooseStop(stop)}
+                  />
+                  <div
+                    className="transit-route-picker"
+                    role="group"
+                    aria-label={t('Which shuttle do you want?')}
+                  >
+                    {ROUTES.map((r) => (
+                      <motion.button
+                        type="button"
+                        key={r.id}
+                        whileTap={reduceMotion ? undefined : { scale: 0.96 }}
+                        transition={{ type: 'spring', stiffness: 460, damping: 32 }}
+                        className="btn transit-route-button"
+                        aria-pressed={r.lot === lot}
+                        aria-label={t('{lot} Lot shuttle', { lot: r.lot })}
+                        onClick={() => chooseRoute(r.lot)}
+                      >
+                        <span aria-hidden="true">{r.short}</span>
+                        {r.lot}
+                      </motion.button>
+                    ))}
+                  </div>
                 </div>
                 {mapExpanded && (
                   <Suspense fallback={<MapLoading />}>
@@ -515,38 +484,7 @@ export default function App() {
                   ref={mapToolsRef}
                   className={`map-controls${mapToolsOpen ? ' mobile-open' : ''}`}
                 >
-                  <Button
-                    className="map-tools-toggle"
-                    aria-label={mapToolsOpen ? t('Close map tools') : t('Map tools')}
-                    aria-expanded={mapToolsOpen}
-                    aria-controls="map-tools-actions"
-                    onClick={() => setMapToolsOpen((open) => !open)}
-                  >
-                    <motion.span
-                      className="map-tools-icon"
-                      aria-hidden="true"
-                      animate={reduceMotion ? undefined : { rotate: mapToolsOpen ? 90 : 0 }}
-                      transition={{ type: 'spring', stiffness: 400, damping: 29 }}
-                    >
-                      <SlidersHorizontal size={21} />
-                    </motion.span>
-                  </Button>
-                  <motion.div
-                    className="map-tools-actions"
-                    id="map-tools-actions"
-                    aria-hidden={compactMap && !mapToolsOpen}
-                    initial={false}
-                    animate={
-                      reduceMotion || !compactMap
-                        ? { opacity: 1, y: 0, scale: 1 }
-                        : {
-                            opacity: mapToolsOpen ? 1 : 0,
-                            y: mapToolsOpen ? 0 : -6,
-                            scale: mapToolsOpen ? 1 : 0.97,
-                          }
-                    }
-                    transition={{ duration: 0.19, ease: 'easeOut' }}
-                  >
+                  <div className="map-tools-actions" id="map-tools-actions">
                     <Button
                       onClick={() => {
                         focus('route');
@@ -580,54 +518,8 @@ export default function App() {
                       <LocateFixed size={16} />
                       {locating ? t('Locating…') : t('Near me')}
                     </Button>
-                  </motion.div>
+                  </div>
                 </div>
-                <motion.button
-                  type="button"
-                  className="btn transit-arrival-peek"
-                  initial={reduceMotion ? false : { opacity: 0, y: 14 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: reduceMotion ? 0 : 0.36, ease: 'easeOut' }}
-                  whileTap={reduceMotion ? undefined : { scale: 0.985 }}
-                  onClick={() => {
-                    setSheetExpanded(true);
-                    tripCardRef.current?.scrollIntoView({
-                      behavior: reduceMotion ? 'auto' : 'smooth',
-                      block: 'start',
-                    });
-                  }}
-                >
-                  <span className="transit-peek-symbol" aria-hidden="true">
-                    <BusFront size={23} />
-                  </span>
-                  <span className="transit-peek-copy">
-                    <small>{t('Your next shuttle')}</small>
-                    <strong>{selectedStop?.name || t('Choose a boarding stop')}</strong>
-                    {nextMapArrival && (
-                      <span>
-                        {nextMapArrival.scheduled ? t('Scheduled') : t('Live')} ·{' '}
-                        {t('Bus {name}', { name: nextMapArrival.busName || route.short })}
-                      </span>
-                    )}
-                  </span>
-                  <span className="transit-peek-eta">
-                    {nextMapArrival ? (
-                      nextMapArrival.due - Date.now() <= 30_000 && !nextMapArrival.scheduled ? (
-                        <span>{t('Arriving')}</span>
-                      ) : (
-                        <>
-                          <strong>
-                            {Math.max(0, Math.ceil((nextMapArrival.due - Date.now()) / 60000))}
-                          </strong>
-                          <small>{t('min')}</small>
-                        </>
-                      )
-                    ) : (
-                      <span>{t('View arrivals')}</span>
-                    )}
-                    <ChevronDown size={15} aria-hidden="true" />
-                  </span>
-                </motion.button>
               </div>
               {/* One status line; the arrivals card explains outages and links to official times. */}
               <div className={`map-footer${liveDown ? ' is-paused' : ''}`}>
@@ -691,6 +583,7 @@ export default function App() {
                     {t(saveState)}
                   </p>
                 )}
+                {greeting && <p className="sheet-greeting">{greeting}</p>}
                 <NextShuttleHero
                   routeShort={route.short}
                   lotLabel={`${lot} ${t('Lot')}`}
@@ -740,29 +633,23 @@ export default function App() {
                     </a>
                   </div>
                 )}
-                <div className="trip-intro">
-                  <span className="eyebrow">
-                    {direction === 'parking' ? t('YOUR RIDE BACK') : t('TO WORK')}
-                  </span>
-                  <motion.h2
-                    key={direction}
-                    initial={reduceMotion ? false : { opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.22 }}
-                  >
-                    {direction === 'parking'
-                      ? t('Back to your parking lot.')
-                      : t('Where are you waiting?')}
-                  </motion.h2>
-                  <p>
-                    {direction === 'parking'
-                      ? t('{terminal} is your usual terminal. Choose any other stop for today.', {
-                          terminal: profile.terminal,
-                        })
-                      : t('Choose your shuttle and the stop you’re waiting at.')}
-                  </p>
-                  <span className="sheet-peek-hint">{t('Swipe up for stops and arrivals')}</span>
-                </div>
+                <Arrivals
+                  data={live.data}
+                  error={live.error}
+                  loading={live.isPending && live.fetchStatus === 'fetching'}
+                  fetching={live.isFetching}
+                  stop={selectedStop}
+                  direction={direction}
+                  profile={profile}
+                  userLocation={userLocation}
+                  routeID={route.id}
+                  routeLabel={`${route.lot} ${t('Lot')}`}
+                  onRefresh={() => {
+                    live.refetch();
+                    if (routeQuery.isError) routeQuery.refetch();
+                  }}
+                />
+                <h3 className="sheet-section-title">{t('Your trip')}</h3>
                 <div
                   className="tabs tabs-box segmented direction-switch"
                   role="group"
@@ -784,22 +671,6 @@ export default function App() {
                     <Home size={16} aria-hidden="true" />
                     <span className="direction-label">{t('To parking')}</span>
                   </Button>
-                </div>
-                <div className="field route-field">
-                  <span>{t('Which shuttle do you want?')}</span>
-                  <div className="route-options">
-                    {ROUTES.map((r) => (
-                      <Button
-                        key={r.id}
-                        className={r.lot === lot ? 'selected' : ''}
-                        aria-pressed={r.lot === lot}
-                        onClick={() => chooseRoute(r.lot)}
-                      >
-                        <span>{r.short}</span>
-                        {r.lot}
-                      </Button>
-                    ))}
-                  </div>
                 </div>
                 {direction === 'work' && lot !== 'South' && (
                   <p className="small muted">
@@ -887,22 +758,6 @@ export default function App() {
                     {t(routeQuery.data.warning)}
                   </p>
                 )}
-                <Arrivals
-                  data={live.data}
-                  error={live.error}
-                  loading={live.isPending && live.fetchStatus === 'fetching'}
-                  fetching={live.isFetching}
-                  stop={selectedStop}
-                  direction={direction}
-                  profile={profile}
-                  userLocation={userLocation}
-                  routeID={route.id}
-                  routeLabel={`${route.lot} ${t('Lot')}`}
-                  onRefresh={() => {
-                    live.refetch();
-                    if (routeQuery.isError) routeQuery.refetch();
-                  }}
-                />
                 <StopReports
                   key={`${route.id}:${selectedStop?.id || 0}`}
                   routeId={route.id}

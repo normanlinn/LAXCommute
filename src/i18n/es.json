@@ -467,5 +467,11 @@
   "Departed": "Salió",
   "I see it here": "Lo veo aquí",
   "I saw it leave": "Lo vi salir",
-  "Check the bus sign says {lot}. Reports from riders, not live tracking; they expire after 15 minutes.": "Confirma que el letrero del autobús diga {lot}. Reportes de pasajeros, no seguimiento en vivo; vencen a los 15 minutos."
+  "Check the bus sign says {lot}. Reports from riders, not live tracking; they expire after 15 minutes.": "Confirma que el letrero del autobús diga {lot}. Reportes de pasajeros, no seguimiento en vivo; vencen a los 15 minutos.",
+  "Maps classic": "Mapa clásico",
+  "Graphite": "Grafito",
+  "Search stops or terminals": "Buscar paradas o terminales",
+  "Clear search": "Borrar búsqueda",
+  "Current": "Actual",
+  "Your trip": "Tu viaje"
 }

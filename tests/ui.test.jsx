@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { beforeAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { loadMessages } from '../src/i18n/LanguageProvider';
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import App from '../src/App';
 import { ThemeProvider } from '../src/theme/ThemeProvider';
 import AccountPanel from '../src/components/AccountPanel';
@@ -93,7 +93,7 @@ describe('commute UI', () => {
         </ThemeProvider>
       </LanguageProvider>,
     );
-    fireEvent.click(screen.getByRole('button', { name: /^E\s*East$/ }));
+    fireEvent.click(screen.getByRole('button', { name: 'East Lot shuttle' }));
     const boarding = screen.getByRole('combobox', { name: 'Where are you boarding?' });
     fireEvent.change(boarding, { target: { value: '3' } });
     fireEvent.click(screen.getByRole('button', { name: 'Open menu' }));
@@ -168,28 +168,26 @@ describe('commute UI', () => {
     expect(saved.value).toBe('Terminal B (TBIT)');
     expect(localStorage.getItem('laxcommute:profile:guest')).toBeNull();
   });
-  it('keeps mobile map actions collapsed until requested', () => {
+  it('keeps every map action visible with a spoken label', () => {
     render(<App />);
     fireEvent.click(screen.getByRole('button', { name: 'Explore first' }));
-    const tools = screen.getByRole('button', { name: 'Map tools' });
-    expect(tools.getAttribute('aria-expanded')).toBe('false');
-    expect(document.querySelector('.map-controls').classList.contains('mobile-open')).toBe(false);
+    expect(screen.queryByRole('button', { name: 'Map tools' })).toBeNull();
+    for (const name of ['Whole route', 'My stop', 'Near me'])
+      expect(screen.getByRole('button', { name })).toBeTruthy();
+  });
 
-    fireEvent.click(tools);
-    const close = screen.getByRole('button', { name: 'Close map tools' });
-    expect(close.getAttribute('aria-expanded')).toBe('true');
-    expect(document.querySelector('.map-controls').classList.contains('mobile-open')).toBe(true);
-
-    fireEvent.click(screen.getByRole('button', { name: 'Whole route' }));
-    expect(screen.getByRole('button', { name: 'Map tools' }).getAttribute('aria-expanded')).toBe(
-      'false',
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: 'Map tools' }));
-    fireEvent.keyDown(document, { key: 'Escape' });
-    expect(screen.getByRole('button', { name: 'Map tools' }).getAttribute('aria-expanded')).toBe(
-      'false',
-    );
+  it('finds a boarding stop from the search box over the map', () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: 'Explore first' }));
+    const search = screen.getByRole('combobox', { name: 'Search stops or terminals' });
+    fireEvent.focus(search);
+    fireEvent.change(search, { target: { value: 'stop #1' } });
+    const option = within(screen.getByRole('listbox')).getByRole('option', {
+      name: /South Lot Stop #1/,
+    });
+    fireEvent.mouseDown(option);
+    const select = screen.getByRole('combobox', { name: 'Where are you boarding?' });
+    expect(select.selectedOptions[0].textContent).toBe('South Lot Stop #1');
   });
 
   it('shows commute controls below the map and supports accessible swipe to collapse or expand', () => {
@@ -305,7 +303,7 @@ it.each([
   ['West', 6883],
 ])('requests %s arrivals at the selected South boarding stop', async (lot, routeID) => {
   render(<App />);
-  fireEvent.click(screen.getByRole('button', { name: new RegExp(`^[EW]\\s*${lot}$`) }));
+  fireEvent.click(screen.getByRole('button', { name: `${lot} Lot shuttle` }));
   const select = screen.getByRole('combobox', { name: 'Where are you boarding?' });
   expect(select.value).toBe('4');
   fireEvent.change(select, { target: { value: '3' } });

@@ -5,57 +5,58 @@ import { writeFileSync } from 'node:fs';
 
 const BASE = [
   [
-    'slateblue',
-    'Slate blue',
+    'classic',
+    'Maps classic',
     {
-      bg: '#f5f7fa',
+      bg: '#f2f2f7',
       card: '#ffffff',
-      line: '#dde3ea',
-      fill: '#ecf0f5',
-      label: '#121821',
-      secondary: '#566273',
-      tint: '#2f5d8a',
-      soft: '#e3ecf6',
-      green: '#1f7a4d',
+      line: '#e5e5ea',
+      fill: '#ececf1',
+      label: '#000000',
+      secondary: '#6c6c70',
+      tint: '#0a6cff',
+      soft: '#e5f0ff',
+      green: '#248a3d',
       orange: '#a55400',
     },
     {
-      bg: '#0c1016',
-      card: '#151b23',
-      line: '#29323e',
-      fill: '#1e2631',
-      label: '#edf1f6',
-      secondary: '#98a4b3',
-      tint: '#8db4e2',
-      soft: '#1d2c40',
-      green: '#4ade80',
-      orange: '#f5a524',
+      bg: '#000000',
+      card: '#1c1c1e',
+      line: '#38383a',
+      fill: '#2c2c2e',
+      label: '#ffffff',
+      secondary: '#98989f',
+      tint: '#0a84ff',
+      fillLabel: '#ffffff',
+      soft: '#0d2a4d',
+      green: '#30d158',
+      orange: '#ff9f0a',
     },
   ],
   [
-    'harbor',
-    'Harbor',
+    'graphite',
+    'Graphite',
     {
-      bg: '#f4f7f7',
+      bg: '#f4f4f4',
       card: '#ffffff',
-      line: '#dae3e5',
-      fill: '#eaf0f1',
-      label: '#0f1a1c',
-      secondary: '#516669',
-      tint: '#2c6e7a',
-      soft: '#dfeef0',
-      green: '#1f7a4d',
+      line: '#e0e0e0',
+      fill: '#ebebeb',
+      label: '#111111',
+      secondary: '#5c5c5c',
+      tint: '#111111',
+      soft: '#eaeaea',
+      green: '#1e7b3c',
       orange: '#a55400',
     },
     {
-      bg: '#0a1113',
-      card: '#131c1f',
-      line: '#253336',
-      fill: '#1b272a',
-      label: '#ecf4f5',
-      secondary: '#94a9ac',
-      tint: '#86c7d2',
-      soft: '#15323a',
+      bg: '#0a0a0a',
+      card: '#1a1a1a',
+      line: '#2e2e2e',
+      fill: '#242424',
+      label: '#f5f5f5',
+      secondary: '#a3a3a3',
+      tint: '#f5f5f5',
+      soft: '#2a2a2a',
       green: '#4ade80',
       orange: '#f5a524',
     },
@@ -98,8 +99,10 @@ function build(base, dark) {
   t['tint-text'] = readable(base.tint, [...surfaces, base.soft], dark);
   // Filled buttons: white or near-black label, whichever reads; darken the fill if neither does.
   let fill = base.tint;
+  // A palette can ask for white button text (system blue reads best that way).
   const label = () =>
-    contrast('#ffffff', fill) >= contrast('#0b0b0b', fill) ? '#ffffff' : '#0b0b0b';
+    base.fillLabel ||
+    (contrast('#ffffff', fill) >= contrast('#0b0b0b', fill) ? '#ffffff' : '#0b0b0b');
   for (let i = 0; i < 40 && contrast(label(), fill) < 4.5; i++)
     fill = hex(rgb(fill).map((v) => v * 0.92));
   t['tint-fill'] = fill;
@@ -155,7 +158,7 @@ export const PALETTES = ${JSON.stringify(
     2,
   )} as const;
 export type PaletteID = (typeof PALETTES)[number]['id'];
-export const DEFAULT_PALETTE: PaletteID = 'slateblue';
+export const DEFAULT_PALETTE: PaletteID = 'classic';
 export const PALETTE_STORAGE_KEY = 'laxcommute:palette';
 export function isPaletteID(value: unknown): value is PaletteID {
   return PALETTES.some((p) => p.id === value);

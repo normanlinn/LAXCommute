@@ -8,7 +8,7 @@ import {
   type PaletteID,
 } from './palettes';
 
-/** Riders can switch between the themes in palettes.ts (Slate blue and Harbor). */
+/** Riders can switch between the themes in palettes.ts (Maps classic and Graphite). */
 export const THEME_CHOICE_ENABLED = true;
 export type ThemePreference = 'system' | 'light' | 'dark';
 export const THEME_STORAGE_KEY = 'laxcommute:theme';

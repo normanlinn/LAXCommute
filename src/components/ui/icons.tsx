@@ -2,6 +2,7 @@
 import type { ComponentType, CSSProperties } from 'react';
 import {
   ArrowLineDown,
+  MagnifyingGlass,
   ArrowRight as PhArrowRight,
   ArrowSquareOut,
   ArrowsClockwise,
@@ -101,6 +102,7 @@ export const Map = icon(MapTrifold);
 export const MapPin = icon(PhMapPin);
 export const MapPinned = icon(MapPinArea);
 export const Megaphone = icon(PhMegaphone);
+export const Search = icon(MagnifyingGlass);
 export const Menu = icon(List);
 export const MessageSquare = icon(ChatCenteredText);
 export const Monitor = icon(PhMonitor);

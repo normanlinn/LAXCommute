@@ -136,17 +136,17 @@ test('riders can choose an avatar, and it shows in the header after reload', asy
   );
 });
 
-test('riders can switch between Slate blue and Harbor, and it stays after reload', async ({
+test('riders can switch between Maps classic and Graphite, and it stays after reload', async ({
   page,
 }) => {
   await open(page);
-  await expect(page.locator('html')).toHaveAttribute('data-palette', 'slateblue');
+  await expect(page.locator('html')).toHaveAttribute('data-palette', 'classic');
   await page.getByRole('button', { name: 'Open menu' }).click();
   await expect(page.locator('.theme-option')).toHaveCount(2);
-  await page.locator('.theme-option', { hasText: 'Harbor' }).click();
-  await expect(page.locator('html')).toHaveAttribute('data-palette', 'harbor');
+  await page.locator('.theme-option', { hasText: 'Graphite' }).click();
+  await expect(page.locator('html')).toHaveAttribute('data-palette', 'graphite');
   await page.reload();
-  await expect(page.locator('html')).toHaveAttribute('data-palette', 'harbor');
+  await expect(page.locator('html')).toHaveAttribute('data-palette', 'graphite');
 });
 
 test('riders can set a nickname and are greeted by it', async ({ page }) => {
@@ -155,9 +155,11 @@ test('riders can set a nickname and are greeted by it', async ({ page }) => {
   await page.getByLabel('What should we call you?').fill('Norman');
   await page.getByLabel('What should we call you?').press('Enter');
   await page.getByRole('navigation').getByRole('button', { name: 'Explore' }).click();
-  await expect(page.locator('.greeting')).toContainText(/Good (morning|afternoon|evening), Norman/);
+  await expect(page.locator('.sheet-greeting')).toContainText(
+    /Good (morning|afternoon|evening), Norman/,
+  );
   await page.reload();
-  await expect(page.locator('.greeting')).toContainText('Norman');
+  await expect(page.locator('.sheet-greeting')).toContainText('Norman');
 });
 
 test('after an update, returning riders see what changed once', async ({ page }) => {

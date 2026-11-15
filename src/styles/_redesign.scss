@@ -370,3 +370,354 @@ $spring: cubic-bezier(0.2, 0.8, 0.2, 1);
 .theme-options {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
+
+// Map colors, matched to the app theme (read by simpleBasemap.ts).
+:root,
+[data-theme='lax'] {
+  --map-land: #eef0ec;
+  --map-road: #ffffff;
+  --map-casing: #dcdfd8;
+  --map-park: #d9ebd3;
+  --map-water: #c7ddf2;
+  --map-building: #e3e5e0;
+}
+[data-theme='lax-dark'] {
+  --map-land: #1f2125;
+  --map-road: #3a3d43;
+  --map-casing: #2a2c31;
+  --map-park: #1e2b22;
+  --map-water: #16263a;
+  --map-building: #27292e;
+}
+[data-palette='graphite'][data-theme='lax'] {
+  --map-land: #ececec;
+  --map-water: #d4dee8;
+  --map-park: #dde6da;
+}
+[data-palette='graphite'][data-theme='lax-dark'] {
+  --map-land: #1a1a1a;
+  --map-road: #333333;
+  --map-casing: #242424;
+  --map-water: #18202a;
+  --map-park: #1e261d;
+  --map-building: #222222;
+}
+
+// ── Maps-style screen: search and lot chips float over the map ─────────────
+.app #shuttle-map-panel {
+  position: relative;
+}
+.app .map-search {
+  position: absolute;
+  z-index: 800;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  display: grid;
+  gap: 8px;
+  pointer-events: none;
+}
+.app .map-search > * {
+  pointer-events: auto;
+}
+@media (min-width: 761px) {
+  .app .map-search {
+    right: auto;
+    width: min(420px, calc(100% - 84px));
+  }
+}
+.stop-search {
+  position: relative;
+}
+.stop-search-box {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  height: 48px;
+  padding: 0 8px 0 16px;
+  border: 1px solid var(--ios-separator);
+  border-radius: 999px;
+  background: var(--ios-card);
+  color: var(--ios-secondary);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.08),
+    0 6px 18px rgb(0 0 0 / 0.1);
+}
+.stop-search-box:focus-within {
+  outline: 3px solid color-mix(in srgb, var(--ios-tint) 45%, transparent);
+  outline-offset: 1px;
+}
+.stop-search-box input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--ios-label);
+  font: inherit;
+  font-size: 16px;
+  outline: none;
+}
+.stop-search-box input::placeholder {
+  color: var(--ios-secondary);
+}
+.stop-search-box input::-webkit-search-cancel-button {
+  display: none;
+}
+.stop-search-clear {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--ios-fill);
+  color: var(--ios-secondary);
+  cursor: pointer;
+}
+.stop-search-list {
+  position: absolute;
+  top: 54px;
+  left: 0;
+  right: 0;
+  max-height: 300px;
+  margin: 0;
+  padding: 6px;
+  overflow: auto;
+  border: 1px solid var(--ios-separator);
+  border-radius: 16px;
+  background: var(--ios-card);
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.16);
+  list-style: none;
+  animation: soft-rise 0.18s $spring both;
+}
+.stop-search-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 10px;
+  border-radius: 10px;
+  color: var(--ios-label);
+  font-size: 15px;
+  cursor: pointer;
+}
+.stop-search-list li svg {
+  flex: none;
+  color: var(--ios-secondary);
+}
+.stop-search-list li.is-active {
+  background: var(--ios-fill);
+}
+.stop-search-list small {
+  margin-left: auto;
+  color: var(--ios-secondary);
+  font-size: 12px;
+}
+
+// Lot chips under the search bar.
+:root:root:root .map-search .transit-route-picker {
+  display: flex;
+  gap: 8px;
+  width: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.app .map-search .transit-route-picker > .btn {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  height: 40px;
+  padding: 0 14px 0 8px;
+  border: 1px solid var(--ios-separator);
+  border-radius: 999px;
+  background: var(--ios-card);
+  color: var(--ios-label);
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+}
+.app .map-search .transit-route-picker > .btn > span {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--ios-fill);
+  color: var(--ios-label);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+// Map buttons: round, icon-only (each has a spoken label), on the right edge.
+.app .map-controls {
+  position: absolute;
+  z-index: 790;
+  top: 12px;
+  right: 12px;
+  left: auto;
+  width: auto;
+  margin: 0;
+}
+.app .map-tools-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.app .map-controls .btn {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  gap: 0;
+  border: 1px solid var(--ios-separator);
+  border-radius: 50%;
+  background: var(--ios-card);
+  color: var(--ios-tint-text);
+  font-size: 0;
+}
+.app .map-controls .btn svg {
+  width: 19px;
+  height: 19px;
+}
+.app .map-display-controls {
+  top: auto;
+  bottom: 30px;
+  left: 12px;
+}
+.app .shuttle-map .leaflet-top.leaflet-right {
+  top: auto;
+  bottom: 30px;
+}
+.app .transit-arrival-peek {
+  display: none;
+}
+
+// The sheet: greeting, next shuttle and departures first, then trip settings.
+.sheet-greeting {
+  margin: 0 0 8px;
+  color: var(--ios-secondary);
+  font-size: 14px;
+  font-weight: 600;
+}
+.sheet-section-title {
+  margin: 22px 0 10px;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+@media (min-width: 1051px) {
+  .app .map-surface {
+    height: clamp(520px, calc(100dvh - 150px), 960px);
+  }
+}
+
+// Phone: the map stays put at the top and the sheet slides up over it as you scroll.
+@media (max-width: 760px) {
+  .app .trip-layout {
+    margin-top: 0;
+    padding: 0;
+  }
+  .app .trip-layout > .map-column {
+    position: sticky;
+    top: 0;
+    z-index: 0;
+  }
+  .app .map-surface {
+    height: 58svh;
+    min-height: 340px;
+    border: 0;
+    border-radius: 0;
+  }
+  .app .map-controls {
+    top: 116px;
+  }
+  .app .trip-layout > .trip-card {
+    z-index: 2;
+    margin: -22px 0 0;
+    padding: 22px 16px 32px;
+    border: 0;
+    border-radius: 18px 18px 0 0;
+    box-shadow: 0 -8px 24px rgb(0 0 0 / 0.1);
+  }
+}
+.app .map-tools-actions {
+  visibility: visible;
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+.app .shuttle-map .leaflet-bottom {
+  bottom: 0;
+}
+@media (max-width: 760px) {
+  .app .map-footer {
+    display: none;
+  }
+}
+.app .map-tools-actions {
+  position: static;
+  width: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.app .trip-card .arrivals .section-heading .eyebrow {
+  display: none;
+}
+.app .trip-card .arrivals .section-heading h2 {
+  font-size: 17px;
+}
+@media (max-width: 760px) {
+  .app .trip-card .sheet-handle {
+    min-height: 24px;
+  }
+  .app .trip-layout > .trip-card {
+    padding-top: 10px;
+  }
+}
+.app .map-controls,
+.app .map-tools-actions {
+  min-width: 0;
+  width: auto;
+  align-items: flex-end;
+}
+.app .shuttle-map .leaflet-control-attribution {
+  margin-bottom: 0;
+}
+@media (max-width: 760px) {
+  // Keep the map's own controls clear of the sheet's rounded top edge.
+  .app .map-display-controls {
+    bottom: 34px;
+  }
+  .app .shuttle-map .leaflet-control-attribution {
+    margin-bottom: 22px;
+  }
+}
+.app .stop-search {
+  z-index: 2;
+}
+.app .stop-search-list {
+  z-index: 3;
+}
+.app .stop-search-box input,
+.app .stop-search-box input:focus,
+.app .stop-search-box input:focus-visible {
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  outline: none;
+}
