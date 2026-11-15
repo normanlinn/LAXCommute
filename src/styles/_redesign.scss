@@ -3,6 +3,8 @@
 // the selected lot, links and filled buttons. Every color comes from the --ios-* theme tokens.
 $spring: cubic-bezier(0.2, 0.8, 0.2, 1);
 $hairline: 1px solid var(--ios-separator);
+$card-radius: 22px;
+$control-radius: 16px;
 $float-shadow:
   0 1px 2px rgb(0 0 0 / 0.08),
   0 4px 14px rgb(0 0 0 / 0.1);
@@ -160,7 +162,7 @@ $float-shadow:
   margin: 0;
   overflow: hidden;
   border: $hairline;
-  border-radius: 12px;
+  border-radius: 20px;
   background: var(--ios-card);
   box-shadow: $float-shadow;
 }
@@ -190,24 +192,59 @@ $float-shadow:
   border: 0;
   background: var(--ios-card);
 }
-.app .trip-sheet-content > * + * {
-  margin-top: 12px;
+.app .trip-sheet-content,
+.app .trip-sheet-details {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+.app .trip-sheet-details[hidden] {
+  display: none;
+}
+.app .trip-card .arrivals {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.app .trip-card .arrival-list:not(.has-rows) {
+  display: none;
+}
+.app .trip-card .official-tracker {
+  margin: 0;
+  border-radius: $card-radius;
+  padding: 14px;
+}
+.app .trip-card .official-tracker-open {
+  border-radius: $control-radius;
+  color: var(--ios-on-tint);
+  background: var(--ios-tint-fill);
 }
 .app .trip-card .outage-notice {
+  margin: 0;
   padding: 6px 6px 6px 12px;
   border: $hairline;
   border-radius: 12px;
   background: var(--ios-card);
   box-shadow: none;
 }
+.official-tracker-map {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: 5px;
+  min-height: 34px;
+  color: var(--ios-tint-text);
+  font-size: 13px;
+  font-weight: 650;
+}
 .sheet-heading h2 {
-  margin: 4px 0 0;
+  margin: 2px 0 0;
   font-size: 20px;
   font-weight: 700;
   letter-spacing: -0.02em;
 }
 .sheet-section-title {
-  margin: 22px 0 8px;
+  margin: 6px 0 0;
   font-size: 17px;
   font-weight: 700;
 }
@@ -229,7 +266,7 @@ $float-shadow:
   height: 44px;
   padding: 0 6px 0 14px;
   border: $hairline;
-  border-radius: 12px;
+  border-radius: $control-radius;
   background: var(--ios-card);
   color: var(--ios-tint-text);
 }
@@ -282,7 +319,7 @@ $float-shadow:
   padding: 4px;
   overflow: auto;
   border: $hairline;
-  border-radius: 12px;
+  border-radius: $control-radius;
   background: var(--ios-card);
   box-shadow: 0 10px 30px rgb(0 0 0 / 0.16);
   list-style: none;
@@ -313,7 +350,7 @@ $float-shadow:
 // The selected lot: a solid Transit-style departure card.
 .next-hero {
   overflow: hidden;
-  border-radius: 14px;
+  border-radius: $card-radius;
   background: var(--ios-tint-fill);
   color: var(--ios-on-tint);
 }
@@ -345,11 +382,10 @@ $float-shadow:
   font-weight: 700;
 }
 .next-hero-where span {
-  overflow: hidden;
   font-size: 13px;
+  line-height: 1.35;
   opacity: 0.88;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 .next-hero-time {
   display: flex;
@@ -391,7 +427,7 @@ $float-shadow:
 .lot-rows {
   overflow: hidden;
   border: $hairline;
-  border-radius: 14px;
+  border-radius: $card-radius;
 }
 .app .lot-row {
   display: flex;
@@ -456,7 +492,7 @@ $float-shadow:
   min-height: 60px;
   padding: 0 4px;
   border: $hairline;
-  border-radius: 12px;
+  border-radius: $control-radius;
   background: var(--ios-card);
   color: var(--ios-tint-text);
   font-size: 12.5px;
@@ -469,7 +505,7 @@ $float-shadow:
 .trip-list {
   overflow: hidden;
   border: $hairline;
-  border-radius: 14px;
+  border-radius: $card-radius;
 }
 .trip-row {
   display: flex;
@@ -483,7 +519,6 @@ $float-shadow:
 }
 .trip-key {
   flex: none;
-  width: 92px;
   color: var(--ios-secondary);
   font-size: 13px;
   font-weight: 500;
@@ -534,7 +569,7 @@ $float-shadow:
 // ── Rider updates card ──────────────────────────────────────────────────────
 .app .stop-reports {
   border: $hairline;
-  border-radius: 14px;
+  border-radius: $card-radius;
   background: var(--ios-card);
 }
 .app .stop-reports .report-refresh {
@@ -566,7 +601,7 @@ $float-shadow:
   min-height: 0;
   padding: 12px;
   border: $hairline;
-  border-radius: 12px;
+  border-radius: $control-radius;
   box-shadow: none;
 }
 .app .stop-reports .report-action strong {
@@ -611,29 +646,78 @@ $float-shadow:
 }
 
 // ── Outage notice outside the map screens ───────────────────────────────────
-.app > .outage-notice {
+.app-scroll > .outage-notice {
   border: $hairline;
   background: var(--ios-card);
 }
 
+.app-scroll {
+  display: contents;
+}
+
 // ── Phones: the map fills the top, the header floats on it, the sheet slides over ──
 @media (max-width: 760px) {
+  .app {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    height: 100dvh;
+    min-height: 0;
+    padding: 0;
+  }
+  .app-scroll {
+    display: block;
+    position: relative;
+    min-width: 0;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+  }
+  .app .bottom-nav {
+    position: relative;
+    inset: auto;
+    transform: none;
+    width: min(440px, calc(100% - 20px));
+    margin: 6px auto calc(6px + env(safe-area-inset-bottom));
+    padding: 5px;
+    border-radius: 24px;
+  }
+  .app .bottom-nav .btn {
+    min-width: 0;
+    min-height: 48px;
+    gap: 2px;
+    padding: 5px 2px;
+    border-radius: 18px;
+  }
+  .app .bottom-nav .nav-pill {
+    border-radius: inherit;
+  }
   .app.is-map .app-header {
     position: absolute;
     z-index: 900;
     top: 0;
     left: 0;
     right: 0;
-    padding: max(10px, env(safe-area-inset-top)) 12px 0;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+    min-height: 0;
+    padding: calc(8px + env(safe-area-inset-top)) 10px 0;
     border: 0;
     background: transparent;
     box-shadow: none;
     pointer-events: none;
   }
+  .app .map-tile-warning {
+    bottom: 94px;
+    right: auto;
+    max-width: min(245px, calc(100% - 24px));
+    background: var(--ios-card);
+  }
   .app.is-map .app-header > * {
     pointer-events: auto;
   }
   .app.is-map .brand {
+    justify-self: start;
+    min-width: 0;
+    max-width: 100%;
     padding: 4px 12px 4px 4px;
     border-radius: 999px;
     background: var(--ios-card);
@@ -644,14 +728,22 @@ $float-shadow:
     height: 30px;
     border-radius: 8px;
   }
+  .app.is-map .brand > div {
+    min-width: 0;
+  }
   .app.is-map .brand strong {
+    display: block;
+    overflow: hidden;
     font-size: 16px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .app.is-map .header-actions > * {
     background: var(--ios-card);
     box-shadow: $float-shadow;
   }
   .app .trip-layout {
+    gap: 0;
     margin: 0;
     padding: 0;
   }
@@ -661,22 +753,27 @@ $float-shadow:
     z-index: 0;
   }
   .app .map-surface {
-    height: 56svh;
-    min-height: 340px;
+    height: clamp(275px, 47svh, 460px);
+    min-height: 0;
     border-radius: 0;
   }
   .app .map-controls {
-    top: calc(max(10px, env(safe-area-inset-top)) + 58px);
+    top: calc(62px + env(safe-area-inset-top));
   }
   .app .trip-layout > .trip-card {
     z-index: 2;
-    margin: -20px 0 0;
-    padding: 6px 16px calc(110px + env(safe-area-inset-bottom));
-    border-radius: 16px 16px 0 0;
+    margin: -18px 0 0;
+    padding: 0 clamp(12px, 4vw, 20px) 16px;
+    border-radius: 28px 28px 0 0;
     box-shadow: 0 -4px 18px rgb(0 0 0 / 0.12);
   }
   .app .trip-card .sheet-handle {
-    min-height: 22px;
+    height: 34px;
+    min-height: 34px;
+    border-radius: 28px 28px 0 0;
+  }
+  .app .trip-sheet-content {
+    padding: 0;
   }
 }
 
@@ -689,6 +786,7 @@ $float-shadow:
     max-width: none;
     height: calc(100dvh - 76px);
     min-height: 520px;
+    gap: 0;
     margin: 0;
     padding: 0;
   }
@@ -716,7 +814,7 @@ $float-shadow:
     overflow-y: auto;
     overscroll-behavior: contain;
     border: $hairline;
-    border-radius: 16px;
+    border-radius: 26px;
     box-shadow: $float-shadow;
   }
   .app .trip-layout .map-display-controls {
@@ -757,23 +855,46 @@ $float-shadow:
     border-radius: 50%;
   }
   .app .map-display-controls {
-    bottom: 34px;
+    bottom: 36px;
+    left: 10px;
+    border-radius: 20px;
   }
 }
 
-// The departure card already names the stop and the next bus; skip the repeat heading.
+@media (max-width: 360px) {
+  .app.is-map .header-actions {
+    gap: 5px;
+  }
+  .app.is-map .brand {
+    padding-right: 7px;
+  }
+  .app.is-map .brand strong {
+    font-size: 13px;
+  }
+  .app .trip-row {
+    gap: 6px;
+    padding-inline: 8px;
+  }
+  .app .direction-switch .btn {
+    padding-inline: 8px;
+  }
+}
+
+// The departure card already names the next bus; skip the repeat heading.
 .app .trip-card .arrivals .section-heading,
 .app .trip-card .arrivals .boarding-caption {
   display: none;
 }
 .app .stop-actions {
   display: flex;
+  flex-wrap: wrap;
+  margin: 0;
   gap: 8px;
 }
 .app .stop-actions .btn {
-  height: 34px;
-  min-height: 34px;
-  padding: 0 12px;
+  height: auto;
+  min-height: 44px;
+  padding: 4px 12px;
   font-size: 13px;
 }
 :root:root .app select.trip-select {

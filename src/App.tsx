@@ -125,6 +125,7 @@ export default function App() {
       /* Navigation still works without storage. */
     }
   }, [direction]);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const tripCardRef = useRef<HTMLElement>(null);
   const stopSelectRef = useRef<HTMLSelectElement>(null);
   const [sheetExpanded, setSheetExpanded] = useState(true);
@@ -253,7 +254,7 @@ export default function App() {
       vehicleFresh && !live.isError && !live.data?.cached
         ? (live.data?.vehicles || EMPTY).filter((v) => validVehicle(v))
         : EMPTY,
-    [live.data?.vehicles, vehicleFresh, live.isError],
+    [live.data?.vehicles, live.data?.cached, vehicleFresh, live.isError],
   );
   useEffect(() => {
     setLot(profile.lot);
@@ -267,7 +268,9 @@ export default function App() {
       haptic('tap');
       // A new page should open at its top, not at the previous page's scroll position.
       const sameLayout = (next === 'map' || next === 'home') && (tab === 'map' || tab === 'home');
-      if (!sameLayout) window.scrollTo({ top: 0, behavior: 'instant' });
+      if (!sameLayout) {
+        (compactMap ? scrollRef.current : window)?.scrollTo({ top: 0, behavior: 'instant' });
+      }
     }
     initialNavigation.current = true;
     smoothly(() => {
@@ -356,360 +359,380 @@ export default function App() {
         '--route-solid-color': 'var(--ios-tint)',
       }}
     >
-      <header className="navbar app-header">
-        <a
-          className="brand"
-          lang="en"
-          href="#"
-          onClick={(e) => {
-            e.preventDefault();
-            changeTab('map');
-          }}
-          aria-label={t('LAXCommute home')}
-        >
-          <img src="/icons/commute-v9-192.png" alt="" width={43} height={43} />
-          <div>
-            <strong>
-              LAX<span>Commute</span>
-            </strong>
-            <small lang={language}>{t('YOUR AIRPORT. YOUR COMMUTE.')}</small>
-          </div>
-        </a>
-        <div className="header-actions">
-          <ShareApp />
-          <InstallApp />
-          <AppMenu />
-          <Button
-            className="profile-button"
-            onClick={() => changeTab('account')}
-            aria-label={user ? t('Open your account') : t('Sign in')}
+      <div className="app-scroll" ref={scrollRef}>
+        <header className="navbar app-header">
+          <a
+            className="brand"
+            lang="en"
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              changeTab('map');
+            }}
+            aria-label={t('LAXCommute home')}
           >
-            <Avatar id={avatar} size={34} />
-            <span>{user ? t('My account') : t('Sign in')}</span>
-          </Button>
-        </div>
-      </header>
-      {!online && (
-        <div className="offline-banner" role="status">
-          <WifiOff size={16} />{' '}
-          {t(
-            'You’re offline. Saved settings are available; live data will resume when you reconnect.',
-          )}{' '}
-        </div>
-      )}
-      <WhatsNew />
-      {online && feedOutage && !showTrip && (
-        <OutageNotice routeID={route.id} stopID={selectedStop?.id} />
-      )}
-      <motion.main
-        // Map and Go home share one layout; keeping its key stable avoids remounting the map.
-        key={showTrip ? 'trip' : tab}
-        className={showTrip ? 'trip-layout' : 'settings-layout'}
-        initial={reduceMotion ? false : { opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.28, ease: [0.2, 0.8, 0.2, 1] }}
-      >
-        {showTrip ? (
-          <>
-            <section className="map-column">
-              <div className="map-topbar sr-only">
-                <h1>{tab === 'home' ? t('Let’s get you home.') : t('Find your next shuttle.')}</h1>
-              </div>
-              <div id="shuttle-map-panel">
-                <Suspense fallback={<MapLoading />}>
-                  <ShuttleMap
-                    routeLoading={routeQuery.isPending && routeQuery.fetchStatus === 'fetching'}
-                    route={route}
-                    liveData={live.data}
-                    stops={mapStops}
-                    paths={paths}
-                    vehicles={vehicles}
-                    selectedStop={selectedStop}
-                    userLocation={userLocation}
-                    onSelectStop={chooseStop}
-                    focusRequest={focusRequest}
-                  />
-                </Suspense>
-                <div className="map-controls" role="group" aria-label={t('Map tools')}>
-                  <Button
-                    onClick={() => focus('route')}
-                    aria-label={t('Whole route')}
-                    title={t('Whole route')}
-                  >
-                    <Route size={18} />
-                  </Button>
-                  <Button
-                    onClick={() => focus('stop')}
-                    disabled={!selectedStop}
-                    aria-label={t('My stop')}
-                    title={t('My stop')}
-                  >
-                    <MapPin size={18} />
-                  </Button>
-                  <Button
-                    onClick={locate}
-                    disabled={locating || options.length === 0}
-                    aria-label={locating ? t('Locating…') : t('Near me')}
-                    title={t('Near me')}
-                  >
-                    <LocateFixed size={18} />
-                  </Button>
-                </div>
-              </div>
-            </section>
-            <aside
-              ref={tripCardRef}
-              className={`card bg-base-100 trip-card ${sheetExpanded ? 'sheet-expanded' : 'sheet-peek'}`}
+            <img src="/icons/commute-v9-192.png" alt="" width={43} height={43} />
+            <div>
+              <strong>
+                LAX<span>Commute</span>
+              </strong>
+              <small lang={language}>{t('YOUR AIRPORT. YOUR COMMUTE.')}</small>
+            </div>
+          </a>
+          <div className="header-actions">
+            <ShareApp />
+            <InstallApp />
+            <AppMenu />
+            <Button
+              className="profile-button"
+              onClick={() => changeTab('account')}
+              aria-label={user ? t('Open your account') : t('Sign in')}
             >
-              <Button
-                className="sheet-handle"
-                aria-label={t(
-                  sheetExpanded ? 'Collapse commute details' : 'Expand commute details',
-                )}
-                aria-expanded={sheetExpanded}
-                aria-controls="trip-sheet-content"
-                onPointerDown={startSheetDrag}
-                onPointerMove={moveSheetDrag}
-                onPointerUp={(event) => finishSheetDrag(event)}
-                onPointerCancel={(event) => finishSheetDrag(event, true)}
-                onClick={(event) => {
-                  if (event.detail !== 0 && ignoreSheetClick.current) {
-                    ignoreSheetClick.current = false;
-                    return;
-                  }
-                  setSheetExpanded((expanded) => !expanded);
-                }}
-                onKeyDown={(event) => {
-                  if (event.key === 'ArrowUp') {
-                    event.preventDefault();
-                    setSheetExpanded(true);
-                  } else if (event.key === 'ArrowDown') {
-                    event.preventDefault();
-                    setSheetExpanded(false);
-                  }
-                }}
-              >
-                <span className="sheet-grip" aria-hidden="true" />
-              </Button>
-              <div id="trip-sheet-content" className="trip-sheet-content">
-                {saveState && hasSaved && (
-                  <p className="alert alert-soft alert-success notice" role="status">
-                    {t(saveState)}
-                  </p>
-                )}
-                <StopSearch stops={options} selected={selectedStop} onChoose={chooseStop} />
-                <div className="sheet-heading">
-                  <h2>{greeting || t('Departures')}</h2>
+              <Avatar id={avatar} size={34} />
+              <span>{user ? t('My account') : t('Sign in')}</span>
+            </Button>
+          </div>
+        </header>
+        {!online && (
+          <div className="offline-banner" role="status">
+            <WifiOff size={16} />{' '}
+            {t(
+              'You’re offline. Saved settings are available; live data will resume when you reconnect.',
+            )}{' '}
+          </div>
+        )}
+        <WhatsNew />
+        {online && feedOutage && !showTrip && (
+          <OutageNotice routeID={route.id} stopID={selectedStop?.id} />
+        )}
+        <motion.main
+          // Map and Go home share one layout; keeping its key stable avoids remounting the map.
+          key={showTrip ? 'trip' : tab}
+          className={showTrip ? 'trip-layout' : 'settings-layout'}
+          initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.28, ease: [0.2, 0.8, 0.2, 1] }}
+        >
+          {showTrip ? (
+            <>
+              <section className="map-column">
+                <div className="map-topbar sr-only">
+                  <h1>
+                    {tab === 'home' ? t('Let’s get you home.') : t('Find your next shuttle.')}
+                  </h1>
                 </div>
-                <NextShuttleHero
-                  routeShort={route.short}
-                  lotLabel={`${lot} ${t('Lot')}`}
-                  stopName={selectedStop?.name}
-                  destination={
-                    direction === 'parking'
-                      ? t('{lot} employee parking', { lot })
-                      : profile.terminal
-                  }
-                  minutes={nextMinutes}
-                  arriving={nextArriving}
-                  scheduled={Boolean(nextMapArrival?.scheduled)}
-                  liveDown={liveDown}
-                />
-                <div className="lot-rows" role="group" aria-label={t('Which shuttle do you want?')}>
-                  {ROUTES.filter((r) => r.id !== route.id).map((r) => (
+                <div id="shuttle-map-panel">
+                  <Suspense fallback={<MapLoading />}>
+                    <ShuttleMap
+                      routeLoading={routeQuery.isPending && routeQuery.fetchStatus === 'fetching'}
+                      route={route}
+                      liveData={live.data}
+                      stops={mapStops}
+                      paths={paths}
+                      vehicles={vehicles}
+                      selectedStop={selectedStop}
+                      userLocation={userLocation}
+                      onSelectStop={chooseStop}
+                      focusRequest={focusRequest}
+                    />
+                  </Suspense>
+                  <div className="map-controls" role="group" aria-label={t('Map tools')}>
                     <Button
-                      key={r.id}
-                      className="lot-row"
-                      aria-label={t('{lot} Lot shuttle', { lot: r.lot })}
-                      onClick={() => chooseRoute(r.lot)}
+                      onClick={() => focus('route')}
+                      aria-label={t('Whole route')}
+                      title={t('Whole route')}
                     >
-                      <span className="lot-badge" aria-hidden="true">
-                        {r.short}
-                      </span>
-                      <span className="lot-row-copy">
-                        <strong>
-                          {r.lot} {t('Lot')}
-                        </strong>
-                        <small>{t(r.coverage)}</small>
-                      </span>
-                      <ChevronRight size={16} aria-hidden="true" />
+                      <Route size={18} />
                     </Button>
-                  ))}
-                </div>
-                <div className="sheet-actions">
-                  <a
-                    className="sheet-action"
-                    href={officialTrackerURL(route.id, selectedStop?.id)}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <ExternalLink size={18} aria-hidden="true" />
-                    {t('Live times')}
-                  </a>
-                  {selectedStop && <DirectionsButton stop={selectedStop} compact />}
-                  <Button
-                    className="sheet-action"
-                    onClick={() =>
-                      document.querySelector('.stop-reports')?.scrollIntoView({
-                        behavior: reduceMotion ? 'auto' : 'smooth',
-                        block: 'start',
-                      })
-                    }
-                  >
-                    <Users size={18} aria-hidden="true" />
-                    {t('Report')}
-                  </Button>
-                </div>
-                {online && feedOutage && (
-                  <OutageNotice routeID={route.id} stopID={selectedStop?.id} />
-                )}
-                <Arrivals
-                  data={live.data}
-                  error={live.error}
-                  loading={live.isPending && live.fetchStatus === 'fetching'}
-                  fetching={live.isFetching}
-                  stop={selectedStop}
-                  direction={direction}
-                  profile={profile}
-                  userLocation={userLocation}
-                  routeID={route.id}
-                  routeLabel={`${route.lot} ${t('Lot')}`}
-                  onRefresh={() => {
-                    live.refetch();
-                    if (routeQuery.isError) routeQuery.refetch();
-                  }}
-                />
-                <h3 className="sheet-section-title">{t('Your trip')}</h3>
-                <div className="trip-list">
-                  <div className="trip-row">
-                    <span className="trip-key">{t('Going')}</span>
-                    <div
-                      className="direction-switch"
-                      role="group"
-                      aria-label={t('Travel direction')}
+                    <Button
+                      onClick={() => focus('stop')}
+                      disabled={!selectedStop}
+                      aria-label={t('My stop')}
+                      title={t('My stop')}
                     >
-                      <Button
-                        className={direction === 'work' ? 'active' : ''}
-                        aria-pressed={direction === 'work'}
-                        onClick={() => changeDirection('work')}
+                      <MapPin size={18} />
+                    </Button>
+                    <Button
+                      onClick={locate}
+                      disabled={locating || options.length === 0}
+                      aria-label={locating ? t('Locating…') : t('Near me')}
+                      title={t('Near me')}
+                    >
+                      <LocateFixed size={18} />
+                    </Button>
+                  </div>
+                </div>
+              </section>
+              <aside
+                ref={tripCardRef}
+                className={`card bg-base-100 trip-card ${sheetExpanded ? 'sheet-expanded' : 'sheet-peek'}`}
+              >
+                <Button
+                  className="sheet-handle"
+                  aria-label={t(
+                    sheetExpanded ? 'Collapse commute details' : 'Expand commute details',
+                  )}
+                  aria-expanded={sheetExpanded}
+                  aria-controls="trip-sheet-details"
+                  onPointerDown={startSheetDrag}
+                  onPointerMove={moveSheetDrag}
+                  onPointerUp={(event) => finishSheetDrag(event)}
+                  onPointerCancel={(event) => finishSheetDrag(event, true)}
+                  onClick={(event) => {
+                    if (event.detail !== 0 && ignoreSheetClick.current) {
+                      ignoreSheetClick.current = false;
+                      return;
+                    }
+                    setSheetExpanded((expanded) => !expanded);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === 'ArrowUp') {
+                      event.preventDefault();
+                      setSheetExpanded(true);
+                    } else if (event.key === 'ArrowDown') {
+                      event.preventDefault();
+                      setSheetExpanded(false);
+                    }
+                  }}
+                >
+                  <span className="sheet-grip" aria-hidden="true" />
+                </Button>
+                <div id="trip-sheet-content" className="trip-sheet-content">
+                  {saveState && hasSaved && (
+                    <p className="alert alert-soft alert-success notice" role="status">
+                      {t(saveState)}
+                    </p>
+                  )}
+                  <StopSearch stops={options} selected={selectedStop} onChoose={chooseStop} />
+                  <div className="sheet-heading">
+                    <h2>{greeting || t('Departures')}</h2>
+                  </div>
+                  <NextShuttleHero
+                    routeShort={route.short}
+                    lotLabel={`${lot} ${t('Lot')}`}
+                    destination={
+                      direction === 'parking'
+                        ? t('{lot} employee parking', { lot })
+                        : profile.terminal
+                    }
+                    minutes={nextMinutes}
+                    arriving={nextArriving}
+                    scheduled={Boolean(nextMapArrival?.scheduled)}
+                    liveDown={liveDown}
+                  />
+                  <div
+                    id="trip-sheet-details"
+                    className="trip-sheet-details"
+                    hidden={compactMap && !sheetExpanded}
+                  >
+                    <div
+                      className="lot-rows"
+                      role="group"
+                      aria-label={t('Which shuttle do you want?')}
+                    >
+                      {ROUTES.filter((r) => r.id !== route.id).map((r) => (
+                        <Button
+                          key={r.id}
+                          className="lot-row"
+                          aria-label={t('{lot} Lot shuttle', { lot: r.lot })}
+                          onClick={() => chooseRoute(r.lot)}
+                        >
+                          <span className="lot-badge" aria-hidden="true">
+                            {r.short}
+                          </span>
+                          <span className="lot-row-copy">
+                            <strong>
+                              {r.lot} {t('Lot')}
+                            </strong>
+                            <small>{t(r.coverage)}</small>
+                          </span>
+                          <ChevronRight size={16} aria-hidden="true" />
+                        </Button>
+                      ))}
+                    </div>
+                    <div className="sheet-actions">
+                      <a
+                        className="sheet-action"
+                        href={officialTrackerURL(route.id, selectedStop?.id)}
+                        target="_blank"
+                        rel="noreferrer"
                       >
-                        {t('To work')}
-                      </Button>
+                        <ExternalLink size={18} aria-hidden="true" />
+                        {t('Live times')}
+                      </a>
+                      {selectedStop && <DirectionsButton stop={selectedStop} compact />}
                       <Button
-                        className={direction === 'parking' ? 'active' : ''}
-                        aria-pressed={direction === 'parking'}
-                        onClick={() => changeDirection('parking')}
+                        className="sheet-action"
+                        onClick={() =>
+                          document.querySelector('.stop-reports')?.scrollIntoView({
+                            behavior: reduceMotion ? 'auto' : 'smooth',
+                            block: 'start',
+                          })
+                        }
                       >
-                        {t('To parking')}
+                        <Users size={18} aria-hidden="true" />
+                        {t('Report')}
                       </Button>
                     </div>
-                  </div>
-                  <label className="trip-row">
-                    <span className="trip-key">{t('Boarding')}</span>
-                    <select
-                      aria-label={t('Where are you boarding?')}
-                      ref={stopSelectRef}
-                      className="select trip-select"
-                      value={selectedStop?.id || 0}
-                      onChange={(e) => {
-                        const id = Number(e.target.value);
-                        smoothly(() =>
-                          setOverride({ id, routeID: route.id, direction, source: 'manual' }),
-                        );
+                    {online && feedOutage && (
+                      <OutageNotice routeID={route.id} stopID={selectedStop?.id} />
+                    )}
+                    <Arrivals
+                      data={live.data}
+                      error={live.error}
+                      loading={live.isPending && live.fetchStatus === 'fetching'}
+                      fetching={live.isFetching}
+                      stop={selectedStop}
+                      direction={direction}
+                      profile={profile}
+                      userLocation={userLocation}
+                      routeID={route.id}
+                      routeLabel={`${route.lot} ${t('Lot')}`}
+                      onRefresh={() => {
+                        live.refetch();
+                        if (routeQuery.isError) routeQuery.refetch();
                       }}
-                    >
-                      <option value={0} disabled>
-                        {routeQuery.isPending ? t('Loading stops…') : t('Choose a boarding stop')}
-                      </option>
-                      {options.map((s) => (
-                        <option key={s.id} value={s.id}>
-                          {s.name}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
+                    />
+                    <h3 className="sheet-section-title">{t('Your trip')}</h3>
+                    <div className="trip-list">
+                      <div className="trip-row">
+                        <span className="trip-key">{t('Going')}</span>
+                        <div
+                          className="direction-switch"
+                          role="group"
+                          aria-label={t('Travel direction')}
+                        >
+                          <Button
+                            className={direction === 'work' ? 'active' : ''}
+                            aria-pressed={direction === 'work'}
+                            onClick={() => changeDirection('work')}
+                          >
+                            {t('To work')}
+                          </Button>
+                          <Button
+                            className={direction === 'parking' ? 'active' : ''}
+                            aria-pressed={direction === 'parking'}
+                            onClick={() => changeDirection('parking')}
+                          >
+                            {t('To parking')}
+                          </Button>
+                        </div>
+                      </div>
+                      <label className="trip-row">
+                        <span className="trip-key">{t('Boarding')}</span>
+                        <select
+                          aria-label={t('Where are you boarding?')}
+                          ref={stopSelectRef}
+                          className="select trip-select"
+                          value={selectedStop?.id || 0}
+                          onChange={(e) => {
+                            const id = Number(e.target.value);
+                            smoothly(() =>
+                              setOverride({ id, routeID: route.id, direction, source: 'manual' }),
+                            );
+                          }}
+                        >
+                          <option value={0} disabled>
+                            {routeQuery.isPending
+                              ? t('Loading stops…')
+                              : t('Choose a boarding stop')}
+                          </option>
+                          {options.map((s) => (
+                            <option key={s.id} value={s.id}>
+                              {s.name}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                    </div>
+                    {direction === 'work' && lot !== 'South' && (
+                      <p className="sheet-note">
+                        {t('Waiting at South Lot? Choose your stop below to see {lot} buses.', {
+                          lot,
+                        })}
+                      </p>
+                    )}
+                    <div className="stop-actions">
+                      <Button
+                        className={!todayID ? 'active' : ''}
+                        onClick={() => setOverride(null)}
+                      >
+                        <Bookmark size={14} /> {t('Usual stop')}{' '}
+                      </Button>
+                      <Button onClick={locate} disabled={locating || options.length === 0}>
+                        <Navigation size={14} />
+                        {locating ? t('Finding you…') : t('Use my location')}
+                      </Button>
+                    </div>
+                    {todayID && (
+                      <p className="today-note">
+                        {override?.source === 'nearby' ? t('Nearby stop') : t('Today’s stop')}{' '}
+                        {t('· your saved commute stays the same.')}{' '}
+                      </p>
+                    )}
+                    {locationError && (
+                      <p className="alert alert-soft alert-warning notice" role="status">
+                        {t(locationError)}
+                      </p>
+                    )}
+                    {routeQuery.isError && (
+                      <p className="alert alert-soft alert-warning notice" role="status">
+                        {' '}
+                        {t('Boarding stops are unavailable.')}{' '}
+                        <Button onClick={() => routeQuery.refetch()}>{t('Retry')}</Button>
+                      </p>
+                    )}
+                    {routeQuery.data?.warning && (
+                      <p className="crowd-note" role="status">
+                        {t(routeQuery.data.warning)}
+                      </p>
+                    )}
+                    <StopReports
+                      key={`${route.id}:${selectedStop?.id || 0}`}
+                      routeId={route.id}
+                      stop={selectedStop}
+                    />
+                    {vehicles.length > 0 && <CrowdReports routeId={route.id} vehicles={vehicles} />}
+                  </div>
                 </div>
-                {direction === 'work' && lot !== 'South' && (
-                  <p className="sheet-note">
-                    {t('Waiting at South Lot? Choose your stop below to see {lot} buses.', { lot })}
-                  </p>
-                )}
-                <div className="stop-actions">
-                  <Button className={!todayID ? 'active' : ''} onClick={() => setOverride(null)}>
-                    <Bookmark size={14} /> {t('Usual stop')}{' '}
-                  </Button>
-                  <Button onClick={locate} disabled={locating || options.length === 0}>
-                    <Navigation size={14} />
-                    {locating ? t('Finding you…') : t('Use my location')}
-                  </Button>
-                </div>
-                {todayID && (
-                  <p className="today-note">
-                    {override?.source === 'nearby' ? t('Nearby stop') : t('Today’s stop')}{' '}
-                    {t('· your saved commute stays the same.')}{' '}
-                  </p>
-                )}
-                {locationError && (
-                  <p className="alert alert-soft alert-warning notice" role="status">
-                    {t(locationError)}
-                  </p>
-                )}
-                {routeQuery.isError && (
-                  <p className="alert alert-soft alert-warning notice" role="status">
-                    {' '}
-                    {t('Boarding stops are unavailable.')}{' '}
-                    <Button onClick={() => routeQuery.refetch()}>{t('Retry')}</Button>
-                  </p>
-                )}
-                {routeQuery.data?.warning && (
-                  <p className="crowd-note" role="status">
-                    {t(routeQuery.data.warning)}
-                  </p>
-                )}
-                <StopReports
-                  key={`${route.id}:${selectedStop?.id || 0}`}
-                  routeId={route.id}
-                  stop={selectedStop}
+              </aside>
+            </>
+          ) : (
+            <Suspense
+              fallback={
+                <section className="card bg-base-100 page-card">
+                  {t('Opening your settings…')}
+                </section>
+              }
+            >
+              {tab === 'saved' ? (
+                <SavedCommute
+                  key={`${user?.id || 'guest'}-${profile.lot}-${profile.terminal}`}
+                  profile={profile}
+                  remember={remember}
+                  save={async (next, rememberHere) => {
+                    await save(next, rememberHere);
+                    setLot(next.lot);
+                    setDirection('work');
+                    setOverride(null);
+                    skipWelcome();
+                    changeTab('map');
+                  }}
+                  saveState={saveState}
+                  onGoHome={() => changeTab('home')}
+                  onAccount={() => changeTab('account')}
                 />
-                {vehicles.length > 0 && <CrowdReports routeId={route.id} vehicles={vehicles} />}
-              </div>
-            </aside>
-          </>
-        ) : (
-          <Suspense
-            fallback={
-              <section className="card bg-base-100 page-card">
-                {t('Opening your settings…')}
-              </section>
-            }
-          >
-            {tab === 'saved' ? (
-              <SavedCommute
-                key={`${user?.id || 'guest'}-${profile.lot}-${profile.terminal}`}
-                profile={profile}
-                remember={remember}
-                save={async (next, rememberHere) => {
-                  await save(next, rememberHere);
-                  setLot(next.lot);
-                  setDirection('work');
-                  setOverride(null);
-                  skipWelcome();
-                  changeTab('map');
-                }}
-                saveState={saveState}
-                onGoHome={() => changeTab('home')}
-                onAccount={() => changeTab('account')}
-              />
-            ) : (
-              <AccountPanel
-                profile={profile}
-                onSaved={() => changeTab('saved')}
-                onGuest={() => changeTab('map')}
-              />
-            )}
-          </Suspense>
-        )}
-      </motion.main>
+              ) : (
+                <AccountPanel
+                  profile={profile}
+                  onSaved={() => changeTab('saved')}
+                  onGuest={() => changeTab('map')}
+                />
+              )}
+            </Suspense>
+          )}
+        </motion.main>
+      </div>
       <CommuteWelcome
         open={welcome && !hasSaved && !recovering && !authReturn}
         onSetup={() => changeTab('saved')}

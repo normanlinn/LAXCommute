@@ -5,7 +5,6 @@ import { Clock3 } from './ui/icons';
 type Props = {
   routeShort: string;
   lotLabel: string;
-  stopName?: string;
   destination: string;
   /** Minutes to the next bus, or null when no live or scheduled time is known. */
   minutes: number | null;
@@ -18,7 +17,6 @@ type Props = {
 export default function NextShuttleHero({
   routeShort,
   lotLabel,
-  stopName,
   destination,
   minutes,
   arriving,
@@ -50,10 +48,7 @@ export default function NextShuttleHero({
         </span>
         <span className="next-hero-where">
           <strong>{lotLabel}</strong>
-          <span>
-            {t('to {place}', { place: destination })}
-            {stopName ? ` · ${stopName}` : ''}
-          </span>
+          <span>{t('to {place}', { place: destination })}</span>
         </span>
         <motion.span
           key={value}

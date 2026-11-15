@@ -4,6 +4,7 @@ import Button from './ui/Button';
 
 // The operator's public tracker opens straight to one stop's live arrivals.
 // It cannot be embedded, so riders are sent there in a new tab.
+const FLYLAX_MAP = 'https://shuttles.flylax.com/employeeparking';
 const DIRECTIONS: Record<number, string> = {
   6883: 'west-lot',
   6884: 'east-lot',
@@ -11,7 +12,7 @@ const DIRECTIONS: Record<number, string> = {
 };
 export function officialTrackerURL(routeID?: number, stopID?: number) {
   const direction = routeID ? DIRECTIONS[routeID] : undefined;
-  if (!direction) return 'https://shuttles.flylax.com/employeeparking';
+  if (!direction) return FLYLAX_MAP;
   const route = `https://laxbus.syncromatics.com/route/${routeID}/direction/${direction}`;
   return stopID ? `${route}/stop/${stopID}/arrivals` : route;
 }
@@ -76,6 +77,11 @@ export default function OfficialTracker({
             {t('LAX service information')}
           </a>
         </p>
+        {routeID && (
+          <a className="official-tracker-map" href={FLYLAX_MAP} target="_blank" rel="noreferrer">
+            {t('FlyLAX shuttle map')} <ExternalLink size={14} aria-hidden="true" />
+          </a>
+        )}
       </div>
     </section>
   );
