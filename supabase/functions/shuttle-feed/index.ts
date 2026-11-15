@@ -14,6 +14,7 @@ Deno.serve(
       claim: cache.claim,
       // Set with: supabase secrets set SYNCROMATICS_API_KEY=...
       apiKey: Deno.env.get('SYNCROMATICS_API_KEY') || undefined,
+      useFlyLax: Deno.env.get('SHUTTLE_FEED_SOURCE') === 'flylax',
     },
     (request) => allow(`feed:${connectingIP(request)}`, 1200),
   ),

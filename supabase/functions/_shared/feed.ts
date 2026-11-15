@@ -7,15 +7,23 @@ export interface FeedOptions {
   /** Syncromatics portal API key issued for LAXCommute. Without it the public
    * rtpi proxy is used, which now only answers Syncromatics' own pages. */
   apiKey?: string;
+  useFlyLax?: boolean;
 }
 type Envelope<T = unknown> = { data: T[]; fetchedAt: string; sourceUnavailable?: boolean };
 const BASE = 'https://laxbus.syncromatics.com/api/rtpi';
 const PORTAL = 'https://api.syncromatics.com/portal/';
+const FLYLAX = 'https://shuttles.flylax.com/api/laxbus/';
 // The portal takes the same paths as the rtpi proxy's `path` parameter.
 export function feedRequest(
   path: string,
   apiKey?: string,
+  useFlyLax = false,
 ): { url: string; headers: Record<string, string> } {
+  if (useFlyLax)
+    return {
+      url: new URL(path.split('?')[0], FLYLAX).toString(),
+      headers: { Accept: 'application/json' },
+    };
   if (!apiKey) {
     const url = new URL(BASE);
     url.searchParams.set('path', path);
@@ -82,6 +90,34 @@ export function validFeed(path: string, data: unknown): data is unknown[] {
       : typeof x.lastUpdated === 'string' && Number.isFinite(Date.parse(x.lastUpdated));
   });
 }
+// FlyLAX publishes stops attached to each pattern and returns every route's
+// arrivals at a shared stop. Adapt both to the existing route-scoped feed.
+async function flyLaxStops(routePath: string, read: (path: string) => Promise<Response>) {
+  const patternsPath = `${routePath}/patterns`;
+  const patterns: unknown = await (await read(patternsPath)).json();
+  if (!validFeed(patternsPath, patterns) || !patterns.length || patterns.length > 16)
+    throw new FeedError('The shuttle feed returned an unexpected response.');
+  const groups = await Promise.all(
+    (patterns as { id: number }[]).map(async ({ id }) => {
+      const rows: unknown = await (await read(`${patternsPath}/${id}/stops`)).json();
+      if (
+        !Array.isArray(rows) ||
+        !rows.length ||
+        rows.length > 5000 ||
+        rows.some((row) => !Number.isSafeInteger(row?.stopSequence) || !row.stop)
+      )
+        throw new FeedError('The shuttle feed returned an unexpected response.');
+      const stops: unknown = rows
+        .sort((a, b) => a.stopSequence - b.stopSequence)
+        .map((row) => row.stop);
+      if (!validFeed(`${routePath}/stops`, stops))
+        throw new FeedError('The shuttle feed returned an unexpected response.');
+      return stops as Stop[];
+    }),
+  );
+  return [...new Map(groups.flat().map((stop) => [stop.id, stop])).values()];
+}
+
 export async function cachedFeed<T = unknown>(
   path: string,
   ttl: number,
@@ -91,6 +127,7 @@ export async function cachedFeed<T = unknown>(
     origin = 'https://laxcommute-cache.invalid',
     claim,
     apiKey,
+    useFlyLax,
   }: FeedOptions = {},
 ): Promise<Envelope<T>> {
   const key = new Request(`${origin}/feed/${encodeURIComponent(path)}`);
@@ -121,25 +158,46 @@ export async function cachedFeed<T = unknown>(
         }
         throw new FeedError('The shuttle feed is refreshing. Please retry.', 503);
       }
-      const request = feedRequest(path, apiKey);
       let lastError: unknown;
       for (let attempt = 0; attempt < 2; attempt++) {
         try {
-          const fetchedAt = new Date().toISOString();
-          const response = await fetcher(request.url, {
-            headers: request.headers,
-            redirect: 'error',
-            signal: AbortSignal.timeout(3500),
-          });
-          if (!response.ok) {
-            // 401/403: the provider refused this server. Retrying cannot help.
-            if (response.status === 401 || response.status === 403) {
-              console.warn(`Shuttle source refused access (${response.status})`);
-              attempt = 1;
+          const requestedAt = Date.now();
+          const signal = AbortSignal.timeout(useFlyLax && path.endsWith('/stops') ? 6000 : 3500);
+          const read = async (feedPath: string) => {
+            const request = feedRequest(feedPath, apiKey, useFlyLax);
+            const response = await fetcher(request.url, {
+              headers: request.headers,
+              redirect: 'error',
+              signal,
+            });
+            if (!response.ok) {
+              // Retrying a refusal cannot restore access.
+              if (response.status === 401 || response.status === 403) {
+                console.warn(`Shuttle source refused access (${response.status})`);
+                attempt = 1;
+              }
+              throw new FeedError('The shuttle feed is temporarily unavailable.');
             }
-            throw new FeedError('The shuttle feed is temporarily unavailable.');
+            return response;
+          };
+          let data: unknown;
+          let fetchedAt = new Date(requestedAt).toISOString();
+          if (useFlyLax && path.endsWith('/stops')) {
+            data = await flyLaxStops(path.slice(0, -'/stops'.length), read);
+          } else {
+            const response = await read(path);
+            data = await response.json();
+            if (useFlyLax && path.includes('/arrivals?')) {
+              const routeID = Number(path.split('routeId=')[1]);
+              if (!Array.isArray(data) || data.length > 5000)
+                throw new FeedError('The shuttle feed returned an unexpected response.');
+              data = data.filter((arrival) => arrival?.route?.id === routeID);
+              // A cached upstream prediction is relative to its original age.
+              const age = response.headers.get('Age');
+              if (age && /^\d{1,9}$/.test(age))
+                fetchedAt = new Date(requestedAt - Number(age) * 1000).toISOString();
+            }
           }
-          const data: unknown = await response.json();
           if (!validFeed(path, data))
             throw new FeedError('The shuttle feed returned an unexpected response.');
           const envelope = { data: data as T[], fetchedAt };

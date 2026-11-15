@@ -36,3 +36,7 @@ Apply `supabase/shuttle_feed_cache.sql` and `supabase/request_limits.sql` to a f
 The project currently uses Supabase's built-in test email sender. Public passwordless/signup email delivery requires an existing custom SMTP provider to be connected. SMTP credentials must be entered directly in Supabase, never committed or sent in chat. Google and Apple providers remain disabled until their provider credentials are configured. Leaked-password protection is unavailable on the current Free plan; no paid upgrade was made. CAPTCHA remains an optional separate integration and is not claimed as implemented.
 
 No claim is made that every Supabase product endpoint has a custom application rate limiter. User-data endpoints retain Supabase's platform controls and owner-only RLS. The custom limits above cover the app's proxy, Edge Functions, and configured Auth actions.
+
+## FlyLAX employee parking tracker
+
+The `shuttle-feed` function can read routes, stop arrivals and vehicle locations from the FlyLAX employee parking tracker. Set the Edge Function environment variable `SHUTTLE_FEED_SOURCE=flylax` after LAWA approves use of the feed. With the variable unset, the function uses its existing Syncromatics configuration. The app links to the official FlyLAX map when its live feed is unavailable.

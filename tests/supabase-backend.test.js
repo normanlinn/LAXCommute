@@ -1,5 +1,11 @@
 import { afterEach, expect, it, vi } from 'vitest';
-import { cachedFeed, feedRequest, validFeed } from '../supabase/functions/_shared/feed.ts';
+import {
+  cachedFeed,
+  feedRequest,
+  liveSnapshot,
+  routeDetails,
+  validFeed,
+} from '../supabase/functions/_shared/feed.ts';
 import { createEdgeHandler } from '../supabase/functions/_shared/edge-handler.ts';
 import { createDeleteAccountHandler } from '../supabase/functions/_shared/delete-account.ts';
 import worker from '../worker/index.ts';
@@ -189,4 +195,42 @@ it('does not hammer the source after it refuses access', async () => {
     }),
   ).rejects.toThrow();
   expect(fetcher).toHaveBeenCalledTimes(1);
+});
+
+it('reads FlyLAX pattern stops and only the requested route’s arrivals at a shared stop', async () => {
+  const stop = { id: 11319089, name: 'South Lot Stop #1', lat: 33.95313, lon: -118.393406 };
+  const anotherStop = { ...stop, id: 11319090, name: 'Terminal B - Lower Level' };
+  const vehicle = { ...stop, id: 10760, lastUpdated: new Date().toISOString() };
+  const arrival = { secondsToArrival: 120, route: { id: 6885 }, vehicle };
+  const responses = {
+    '/api/laxbus/routes/6885/patterns': [{ id: 31115, shape: 'encoded' }],
+    '/api/laxbus/routes/6885/patterns/31115/stops': [
+      { stopSequence: 2, stop: anotherStop },
+      { stopSequence: 1, stop },
+      { stopSequence: 3, stop },
+    ],
+    '/api/laxbus/routes/6885/vehicles': [vehicle],
+    '/api/laxbus/stops/11319089/arrivals': [arrival, { ...arrival, route: { id: 6884 } }],
+  };
+  const fetcher = vi.fn(async (input, options) => {
+    const url = new URL(input);
+    expect(url.origin).toBe('https://shuttles.flylax.com');
+    expect(url.search).toBe('');
+    expect(options.headers['Api-Key']).toBeUndefined();
+    const data = responses[url.pathname];
+    return data
+      ? Response.json(data, { headers: { Age: '3' } })
+      : new Response(null, { status: 404 });
+  });
+  const options = { cache: memory(), fetcher, useFlyLax: true, apiKey: 'legacy-key' };
+  const route = await routeDetails(6885, options);
+  expect(route.stops).toEqual([stop, anotherStop]);
+  const before = Date.now();
+  const live = await liveSnapshot(6885, stop.id, options);
+  expect(live.sourceUnavailable).toBe(false);
+  expect(live.vehicles).toEqual([vehicle]);
+  expect(live.arrivals).toEqual([arrival]);
+  expect(Date.parse(live.arrivalFetchedAt)).toBeLessThanOrEqual(Date.now() - 3000);
+  expect(Date.parse(live.arrivalFetchedAt)).toBeGreaterThanOrEqual(before - 3000);
+  await expect(liveSnapshot(6885, stop.id + 10, options)).rejects.toMatchObject({ status: 400 });
 });
