@@ -10,10 +10,14 @@ import {
   ArrowUpRight as PhArrowUpRight,
   Bell as PhBell,
   BellRinging,
+  BookOpenText,
+  Briefcase as PhBriefcase,
   BookmarkSimple,
   Bug as PhBug,
   Bus,
+  Car as PhCar,
   CaretDown,
+  CaretLeft,
   CaretRight,
   ChatCenteredText,
   Check as PhCheck,
@@ -26,7 +30,9 @@ import {
   EnvelopeSimple,
   Export,
   Footprints as PhFootprints,
+  Globe as PhGlobe,
   House,
+  Info as PhInfo,
   List,
   LockKey,
   MapPin as PhMapPin,
@@ -37,6 +43,7 @@ import {
   Moon as PhMoon,
   NavigationArrow,
   PaintBrush,
+  Palette as PhPalette,
   PaperPlaneRight,
   Path,
   PlusCircle,
@@ -44,6 +51,7 @@ import {
   ShieldCheck as PhShieldCheck,
   SignOut,
   SlidersHorizontal as PhSlidersHorizontal,
+  Sparkle as PhSparkle,
   Sun as PhSun,
   User,
   Users as PhUsers,
@@ -82,11 +90,15 @@ export const ArrowRight = icon(PhArrowRight);
 export const ArrowUpRight = icon(PhArrowUpRight);
 export const Bell = icon(PhBell);
 export const BellRing = icon(BellRinging);
+export const BookOpen = icon(BookOpenText);
 export const Bookmark = icon(BookmarkSimple);
+export const Briefcase = icon(PhBriefcase);
 export const Bug = icon(PhBug);
 export const BusFront = icon(Bus);
+export const Car = icon(PhCar);
 export const Check = icon(PhCheck);
 export const ChevronDown = icon(CaretDown);
+export const ChevronLeft = icon(CaretLeft);
 export const ChevronRight = icon(CaretRight);
 export const CirclePlus = icon(PlusCircle);
 export const Clock3 = icon(Clock);
@@ -94,7 +106,9 @@ export const Copy = icon(PhCopy);
 export const Download = icon(DownloadSimple);
 export const ExternalLink = icon(ArrowSquareOut);
 export const Footprints = icon(PhFootprints);
+export const Globe = icon(PhGlobe);
 export const Home = icon(House);
+export const Info = icon(PhInfo);
 export const LoaderCircle = icon(CircleNotch);
 export const LocateFixed = icon(Crosshair);
 export const LockKeyhole = icon(LockKey);
@@ -111,6 +125,7 @@ export const Monitor = icon(PhMonitor);
 export const Moon = icon(PhMoon);
 export const Navigation = icon(NavigationArrow);
 export const Paintbrush = icon(PaintBrush);
+export const Palette = icon(PhPalette);
 export const RefreshCw = icon(ArrowsClockwise);
 export const Route = icon(Path);
 export const Send = icon(PaperPlaneRight);
@@ -119,6 +134,7 @@ export const Share2 = icon(ShareNetwork);
 export const ShieldCheck = icon(PhShieldCheck);
 export const SlidersHorizontal = icon(PhSlidersHorizontal);
 export const Smartphone = icon(DeviceMobile);
+export const Sparkle = icon(PhSparkle);
 export const Sun = icon(PhSun);
 export const UserRound = icon(User);
 export const Users = icon(PhUsers);

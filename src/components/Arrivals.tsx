@@ -163,13 +163,10 @@ export default function Arrivals({
   return (
     <section className="arrivals" aria-label={t('Upcoming departures')}>
       <div className="section-heading">
-        <div>
-          <span className="eyebrow">{t('NEXT DEPARTURES')}</span>
-          <h3>{stop ? t('Your next shuttle') : t('Choose a boarding stop')}</h3>
-        </div>
+        <h3>{stop ? t('Your next shuttle') : t('Choose a boarding stop')}</h3>
         <Button
           type="button"
-          className="icon-button"
+          className="icon-btn"
           title={t('Refresh live bus data')}
           aria-label={t('Refresh live bus data')}
           onClick={onRefresh}
@@ -214,7 +211,7 @@ export default function Arrivals({
           </div>
           <Button
             type="button"
-            className="icon-button"
+            className="icon-btn"
             aria-label={t('Dismiss')}
             onClick={busAlert.dismiss}
           >
@@ -232,7 +229,7 @@ export default function Arrivals({
         />
       )}
       {!error && stop && warnings.some((w) => w.includes('Arrival')) && (
-        <p className="alert alert-soft alert-warning notice">
+        <p className="notice is-warning">
           {' '}
           {t('Arrival times are unavailable. Updates continue automatically.')}{' '}
         </p>
@@ -333,7 +330,7 @@ export default function Arrivals({
               {showBell && (
                 <Button
                   type="button"
-                  className={`icon-button bus-alert-toggle${alertOn ? ' is-on' : ''}`}
+                  className={`icon-btn bus-alert-toggle${alertOn ? ' is-on' : ''}`}
                   aria-pressed={alertOn}
                   title={alertOn ? t('Cancel alert') : t('Alert me 2 min before')}
                   aria-label={

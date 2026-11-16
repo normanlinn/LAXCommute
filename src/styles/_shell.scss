@@ -1,0 +1,263 @@
+// The app frame. Phone: a full-screen map, one bottom sheet with three heights, and a tab bar.
+// Desktop: the same map fills the window and the sheet floats at the left as a panel.
+
+.app {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--ios-map-land, var(--ios-bg));
+}
+
+// ---- Map and its floating controls ----
+.map-stage {
+  position: absolute;
+  inset: 0;
+  .map-view-wrapper,
+  .map-surface {
+    height: 100%;
+  }
+}
+.map-top {
+  position: absolute;
+  z-index: 5;
+  top: calc(12px + var(--safe-top));
+  left: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.avatar-button {
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--ios-card);
+  box-shadow: var(--shadow);
+}
+.map-tools {
+  position: absolute;
+  z-index: 5;
+  top: calc(72px + var(--safe-top));
+  right: 12px;
+  display: grid;
+  overflow: hidden;
+  border-radius: var(--r);
+  background: var(--ios-card);
+  box-shadow: var(--shadow);
+  .btn {
+    width: 46px;
+    height: 46px;
+    color: var(--ios-tint-text);
+  }
+  .btn + .btn {
+    border-top: 1px solid var(--ios-line);
+  }
+}
+
+// ---- The sheet (phone) ----
+.panel {
+  --visible: 58%;
+  position: absolute;
+  z-index: 10;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(100% - 68px - var(--safe-top));
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  background: var(--ios-card);
+  box-shadow: 0 -4px 24px rgb(0 0 0 / 12%);
+  transform: translateY(calc(100% - var(--visible) + var(--drag, 0px)));
+  transition: transform 0.38s var(--ease);
+  &[data-detent='peek'] {
+    --visible: calc(var(--tabbar-h) + 238px);
+  }
+  &[data-detent='full'] {
+    --visible: 100%;
+  }
+  &.is-dragging {
+    transition: none;
+  }
+}
+.panel-head {
+  display: none;
+}
+.sheet-grip {
+  flex: none;
+  width: 100%;
+  height: 26px;
+  cursor: grab;
+  touch-action: none;
+  i {
+    width: 38px;
+    height: 5px;
+    border-radius: 3px;
+    background: var(--ios-line);
+  }
+}
+.panel-body {
+  flex: none;
+  height: calc(var(--visible) - 26px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 0 16px calc(var(--tabbar-h) + 24px);
+  > * {
+    flex: none;
+  }
+}
+
+// My trip and Me fill the screen on phones.
+.app:not(.is-map) .panel {
+  height: 100%;
+  border-radius: 0;
+  background: var(--ios-bg);
+  box-shadow: none;
+  transform: none;
+  .panel-body {
+    height: 100%;
+    padding-top: calc(16px + var(--safe-top));
+  }
+}
+
+// ---- Tab bar (phone) ----
+.tabbar {
+  position: absolute;
+  z-index: 20;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 6px 10px var(--safe-bottom);
+  border-top: 1px solid var(--ios-line);
+  background: color-mix(in srgb, var(--ios-card) 90%, transparent);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  .btn {
+    position: relative;
+    flex-direction: column;
+    gap: 2px;
+    height: 54px;
+    color: var(--ios-secondary);
+    font-size: 11px;
+    font-weight: 700;
+    &.active {
+      color: var(--ios-tint-text);
+    }
+    > :not(.tab-pill) {
+      position: relative;
+    }
+  }
+  .tab-pill {
+    display: none;
+  }
+}
+
+// ---- Static guide below the app: kept for search engines, read from Me ----
+body:has(.app) #shuttle-guide {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+// ---- Desktop ----
+@media (min-width: 761px) {
+  .map-top {
+    top: 16px;
+    left: 432px;
+    right: auto;
+    width: min(420px, calc(100% - 520px));
+  }
+  .avatar-button {
+    display: none;
+  }
+  .map-tools {
+    top: 16px;
+    right: 16px;
+  }
+  .panel,
+  .app:not(.is-map) .panel {
+    top: 16px;
+    bottom: 16px;
+    left: 16px;
+    right: auto;
+    width: 400px;
+    height: auto;
+    border-radius: var(--r-lg);
+    background: var(--ios-card);
+    box-shadow: var(--shadow);
+    transform: none;
+    .panel-body {
+      flex: 1;
+      height: auto;
+      min-height: 0;
+      padding: 8px 16px 24px;
+    }
+  }
+  .panel-head {
+    display: flex;
+    flex: none;
+    align-items: center;
+    height: 112px;
+    padding: 0 16px 52px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    img {
+      border-radius: 8px;
+    }
+  }
+  .sheet-grip {
+    display: none;
+  }
+  .tabbar {
+    top: 76px;
+    left: 28px;
+    right: auto;
+    bottom: auto;
+    display: flex;
+    gap: 4px;
+    padding: 0;
+    border: 0;
+    background: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    .btn {
+      flex-direction: row;
+      gap: 6px;
+      height: 38px;
+      padding: 0 14px;
+      border-radius: 999px;
+      font-size: 14px;
+      svg {
+        width: 18px;
+        height: 18px;
+      }
+    }
+    .tab-pill {
+      display: block;
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: var(--ios-soft);
+    }
+  }
+}
+
+// The map's own controls belong to Explore only.
+.app:not(.is-map)
+  :is(.map-display-controls, .map-recenter, .transit-bus-detail, .shuttle-map-legend) {
+  display: none;
+}

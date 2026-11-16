@@ -85,7 +85,7 @@ beforeEach(() => {
 });
 afterEach(cleanup);
 describe('commute UI', () => {
-  it('keeps the East route and a South Lot override when switching languages', () => {
+  it('keeps the East route and a South Lot override when switching languages', async () => {
     render(
       <LanguageProvider>
         <ThemeProvider>
@@ -96,19 +96,16 @@ describe('commute UI', () => {
     fireEvent.click(screen.getByRole('button', { name: 'East Lot shuttle' }));
     const boarding = screen.getByRole('combobox', { name: 'Where are you boarding?' });
     fireEvent.change(boarding, { target: { value: '3' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Open menu' }));
-    fireEvent.click(screen.getByRole('radio', { name: 'Dark' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Me' }));
+    fireEvent.click(await screen.findByRole('radio', { name: 'Dark' }));
     expect(document.documentElement.dataset.theme).toBe('lax-dark');
-    expect(boarding.value).toBe('3');
     fireEvent.click(screen.getByRole('button', { name: 'မြန်မာ' }));
-    expect(boarding.value).toBe('3');
-    expect(boarding.selectedOptions[0].textContent).toBe('South Lot Stop #1');
-    expect(screen.getByRole('combobox', { name: 'ဘယ်မှတ်တိုင်မှ စီးမလဲ။' })).toBe(boarding);
+    fireEvent.click(screen.getByRole('button', { name: 'မြေပုံ' }));
+    const again = screen.getByRole('combobox', { name: 'ဘယ်မှတ်တိုင်မှ စီးမလဲ။' });
+    expect(again.value).toBe('3');
+    expect(again.selectedOptions[0].textContent).toBe('South Lot Stop #1');
     expect(liveRequests).toHaveBeenLastCalledWith(6884, 3, true);
     expect(localStorage.getItem('laxcommute:profile:guest')).toBeNull();
-    fireEvent.click(screen.getByRole('button', { name: 'English' }));
-    expect(screen.getByRole('combobox', { name: 'Where are you boarding?' })).toBe(boarding);
-    expect(boarding.value).toBe('3');
   });
   it('preserves account input and translates a sign-in error after switching languages', async () => {
     auth.signInWithPassword.mockResolvedValueOnce({
@@ -140,7 +137,8 @@ describe('commute UI', () => {
   });
   it('offers walking directions to the currently selected stop in Apple or Google Maps', async () => {
     render(<App />);
-    fireEvent.click(screen.getByRole('button', { name: 'Go home' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Explore first' }));
+    fireEvent.click(screen.getByRole('button', { name: 'To parking' }));
     fireEvent.change(screen.getByRole('combobox', { name: 'Where are you boarding?' }), {
       target: { value: '2' },
     });
@@ -157,13 +155,13 @@ describe('commute UI', () => {
   });
   it('shows a return-to-parking flow and preserves the usual terminal after a daily override', async () => {
     render(<App />);
-    fireEvent.click(screen.getByRole('button', { name: 'Go home' }));
+    fireEvent.click(screen.getByRole('button', { name: 'To parking' }));
     const boarding = screen.getByRole('combobox', { name: 'Where are you boarding?' });
     expect(boarding.value).toBe('1');
     fireEvent.change(boarding, { target: { value: '2' } });
     expect(boarding.value).toBe('2');
     expect(screen.getByText(/Today’s stop/)).toBeTruthy();
-    fireEvent.click(screen.getByRole('button', { name: 'My commute' }));
+    fireEvent.click(screen.getByRole('button', { name: 'My trip' }));
     const saved = await screen.findByRole('combobox', { name: 'Usual terminal' });
     expect(saved.value).toBe('Terminal B (TBIT)');
     expect(localStorage.getItem('laxcommute:profile:guest')).toBeNull();
@@ -190,49 +188,34 @@ describe('commute UI', () => {
     expect(select.selectedOptions[0].textContent).toBe('South Lot Stop #1');
   });
 
-  it('shows commute controls below the map and supports accessible swipe to collapse or expand', () => {
-    window.matchMedia = vi.fn(() => ({
-      matches: true,
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-    }));
+  it('moves the departures sheet between three heights by swipe, tap or arrow keys', () => {
     const { container } = render(<App />);
-    const sheet = container.querySelector('.trip-card');
-    expect(sheet.classList.contains('sheet-expanded')).toBe(true);
+    const sheet = container.querySelector('.panel');
+    const grip = () => container.querySelector('.sheet-grip');
+    expect(sheet.dataset.detent).toBe('half');
     expect(screen.getByRole('combobox', { name: 'Where are you boarding?' })).toBeTruthy();
-    const collapse = screen.getByRole('button', { name: 'Collapse commute details' });
-    fireEvent.keyDown(collapse, { key: 'ArrowDown' });
-    expect(sheet.classList.contains('sheet-peek')).toBe(true);
+    fireEvent.keyDown(grip(), { key: 'ArrowDown' });
+    expect(sheet.dataset.detent).toBe('peek');
 
-    const expand = screen.getByRole('button', { name: 'Expand commute details' });
-    fireEvent.pointerDown(expand, { pointerId: 1, pointerType: 'touch', button: 0, clientY: 380 });
-    fireEvent.pointerMove(expand, { pointerId: 1, pointerType: 'touch', clientY: 300 });
-    expect(sheet.classList.contains('sheet-dragging')).toBe(true);
-    expect(sheet.style.getPropertyValue('--sheet-grip-pull')).toBe('-11.428571428571429px');
-    expect(sheet.style.height).toBe('');
-    fireEvent.pointerUp(expand, { pointerId: 1, pointerType: 'touch', clientY: 300 });
-    expect(sheet.classList.contains('sheet-expanded')).toBe(true);
-    expect(sheet.style.getPropertyValue('--sheet-grip-pull')).toBe('');
-    fireEvent.click(expand, { detail: 1 });
-    expect(sheet.classList.contains('sheet-expanded')).toBe(true);
+    fireEvent.pointerDown(grip(), { pointerId: 1, pointerType: 'touch', button: 0, clientY: 380 });
+    fireEvent.pointerMove(grip(), { pointerId: 1, pointerType: 'touch', clientY: 300 });
+    expect(sheet.classList.contains('is-dragging')).toBe(true);
+    expect(sheet.style.getPropertyValue('--drag')).toBe('-80px');
+    fireEvent.pointerUp(grip(), { pointerId: 1, pointerType: 'touch', clientY: 300 });
+    expect(sheet.dataset.detent).toBe('half');
+    expect(sheet.style.getPropertyValue('--drag')).toBe('');
+    // The click that ends a drag does not also toggle the sheet.
+    fireEvent.click(grip(), { detail: 1 });
+    expect(sheet.dataset.detent).toBe('half');
 
-    const expanded = screen.getByRole('button', { name: 'Collapse commute details' });
-    fireEvent.pointerDown(expanded, {
-      pointerId: 2,
-      pointerType: 'touch',
-      button: 0,
-      clientY: 200,
-    });
-    fireEvent.pointerMove(expanded, { pointerId: 2, pointerType: 'touch', clientY: 295 });
-    fireEvent.pointerUp(expanded, { pointerId: 2, pointerType: 'touch', clientY: 295 });
-    expect(sheet.classList.contains('sheet-peek')).toBe(true);
-    fireEvent.click(screen.getByRole('button', { name: 'Expand commute details' }));
-    expect(sheet.classList.contains('sheet-expanded')).toBe(true);
-
-    fireEvent.click(screen.getByRole('button', { name: 'Go home' }));
-    expect(sheet.classList.contains('sheet-expanded')).toBe(true);
+    fireEvent.click(screen.getByRole('button', { name: 'Expand departures' }));
+    expect(sheet.dataset.detent).toBe('full');
+    fireEvent.pointerDown(grip(), { pointerId: 2, pointerType: 'touch', button: 0, clientY: 100 });
+    fireEvent.pointerMove(grip(), { pointerId: 2, pointerType: 'touch', clientY: 400 });
+    fireEvent.pointerUp(grip(), { pointerId: 2, pointerType: 'touch', clientY: 400 });
+    expect(sheet.dataset.detent).toBe('peek');
   });
-  it('uses DaisyUI components for buttons, forms, and installation help', async () => {
+  it('gives every button the shared base style and offers installation help', async () => {
     render(<App />);
     fireEvent.click(screen.getByRole('button', { name: 'Explore first' }));
     await screen.findByRole('combobox', { name: 'Where are you boarding?' });
@@ -243,6 +226,10 @@ describe('commute UI', () => {
         .getByRole('combobox', { name: 'Where are you boarding?' })
         .classList.contains('select'),
     ).toBe(true);
+    fireEvent.click(screen.getByRole('button', { name: 'Me' }));
+    await screen.findByRole('heading', { name: 'Me' });
+    for (const button of screen.getAllByRole('button'))
+      expect(button.classList.contains('btn')).toBe(true);
     fireEvent.click(screen.getByRole('button', { name: 'Add to home screen' }));
     expect(screen.getByRole('dialog', { name: 'Your commute, one tap away.' })).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'Got it' }));
@@ -250,7 +237,7 @@ describe('commute UI', () => {
   });
   it('saves exact boarding stops for a guest without requiring sign-in', async () => {
     render(<App />);
-    fireEvent.click(screen.getByRole('button', { name: 'My commute' }));
+    fireEvent.click(screen.getByRole('button', { name: 'My trip' }));
     fireEvent.click(await screen.findByRole('button', { name: 'Save my commute' }));
     await screen.findByText('Saved on this device.', { selector: '[role="status"]' });
     const stored = JSON.parse(localStorage.getItem('laxcommute:profile:guest'));
@@ -336,7 +323,7 @@ it('exposes the selected account option when switching to create account', () =>
 it('guides a first visit into commute setup and restores remembered choices on reopening', async () => {
   const first = render(<App />);
   expect(screen.getByRole('dialog', { name: 'Save your usual trip.' })).toBeTruthy();
-  fireEvent.click(screen.getByRole('button', { name: 'Set up my commute' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Set up my trip' }));
   const terminal = await screen.findByRole('combobox', { name: 'Usual terminal' });
   fireEvent.change(terminal, { target: { value: 'Terminal 3' } });
   fireEvent.click(screen.getByRole('button', { name: 'Save my commute' }));
@@ -346,7 +333,7 @@ it('guides a first visit into commute setup and restores remembered choices on r
   expect(screen.queryByRole('dialog')).toBeNull();
   expect(screen.getByRole('button', { name: 'Explore' }).getAttribute('aria-current')).toBe('page');
   expect(screen.getByText(/to Terminal 3/)).toBeTruthy();
-  fireEvent.click(screen.getByRole('button', { name: 'My commute' }));
+  fireEvent.click(screen.getByRole('button', { name: 'My trip' }));
   expect((await screen.findByRole('combobox', { name: 'Usual terminal' })).value).toBe(
     'Terminal 3',
   );
@@ -363,7 +350,7 @@ it('dismisses the introduction for later visits without inventing a saved commut
 
 it('redirects a saved East preference to its map and shows setup again only after clearing site data', async () => {
   const first = render(<App />);
-  fireEvent.click(screen.getByRole('button', { name: 'Set up my commute' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Set up my trip' }));
   const lot = await screen.findByRole('combobox', { name: 'Parking lot' });
   fireEvent.change(lot, { target: { value: 'East' } });
   fireEvent.click(screen.getByRole('button', { name: 'Save my commute' }));

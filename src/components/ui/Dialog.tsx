@@ -1,15 +1,26 @@
-import { useLayoutEffect, useRef } from 'react';
+import { useLayoutEffect, useRef, type ReactNode } from 'react';
+import { X } from './icons';
 
+/**
+ * A modal sheet: slides up from the bottom on phones and sits centered on wider screens.
+ * Pass `title` and `closeLabel` for the standard heading with a close button.
+ */
 export default function Dialog({
   open,
   onClose,
   titleId,
+  title,
+  closeLabel,
+  className = '',
   children,
 }: {
   open: boolean;
   onClose: () => void;
   titleId: string;
-  children: React.ReactNode;
+  title?: ReactNode;
+  closeLabel?: string;
+  className?: string;
+  children: ReactNode;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const panel = useRef<HTMLDivElement>(null);
@@ -19,8 +30,7 @@ export default function Dialog({
     if (!dialog || !box) return;
     if (open && !dialog.open) dialog.showModal();
     if (!dialog.open) return;
-    // Keep the native focus trap/top layer until the exit finishes. Avoid
-    // competing CSS scale, opacity and discrete top-layer transitions on Safari.
+    // Keep the native focus trap and top layer until the exit finishes.
     if (!box.animate || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       if (!open) dialog.close();
       return;
@@ -29,14 +39,14 @@ export default function Dialog({
     const animation = box.animate(
       open
         ? [
-            { opacity: 0, transform: 'translateY(8px)' },
-            { opacity: 1, transform: 'none' },
+            { transform: 'translateY(24px)', opacity: 0 },
+            { transform: 'none', opacity: 1 },
           ]
         : [
-            { opacity: 1, transform: 'none' },
-            { opacity: 0, transform: 'translateY(8px)' },
+            { transform: 'none', opacity: 1 },
+            { transform: 'translateY(24px)', opacity: 0 },
           ],
-      { duration: open ? 180 : 140, easing: 'ease-out', fill: 'both' },
+      { duration: open ? 220 : 150, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'both' },
     );
     animation.finished
       .then(() => {
@@ -61,7 +71,23 @@ export default function Dialog({
         if (event.target === event.currentTarget) onClose();
       }}
     >
-      <div ref={panel} className="modal-box install-dialog app-dialog-panel">
+      <div ref={panel} className={`dialog-panel ${className}`}>
+        <span className="dialog-grip" aria-hidden="true" />
+        {title !== undefined && (
+          <header className="dialog-head">
+            <h2 id={titleId}>{title}</h2>
+            {closeLabel && (
+              <button
+                type="button"
+                className="btn icon-btn"
+                aria-label={closeLabel}
+                onClick={onClose}
+              >
+                <X size={18} />
+              </button>
+            )}
+          </header>
+        )}
         {children}
       </div>
     </dialog>

@@ -1,159 +1,319 @@
-// Small-screen departures and native dialogs.
-/* Keep departures within reach on small screens; mount the heavy map on demand. */
+// Modal sheets: from the bottom on phones, centered on wider screens.
 
-#shuttle-map-panel[hidden] {
-  display: none;
-}
-.updated.freshness-fresh {
-  color: var(--color-primary);
-}
-.updated.freshness-aging,
-.updated.freshness-stale {
-  font-weight: 650;
-}
-.last-known-notice {
-  border-left: 3px solid var(--color-warning);
-}
-.arrival-time span {
-  max-width: 110px;
-  text-align: right;
-}
-@media (max-width: 760px) {
-  .trip-card {
-    order: -1;
-  }
-  .direction-switch .tab,
-  .stop-actions button {
-    min-height: 44px;
-  }
-}
-/* Native dialog owns the top layer; only its panel animates. In particular,
-   avoid DaisyUI's discrete transitions and a blurred map backdrop on iOS. */
 .app-dialog {
   position: fixed;
-  inset: 0;
+  inset: auto 0 0;
   width: 100%;
-  height: 100%;
-  max-width: none;
-  max-height: none;
+  max-width: 100%;
+  max-height: 100dvh;
   margin: 0;
-  padding: 20px;
+  padding: 0;
   border: 0;
   background: transparent;
-  color: var(--color-base-content);
-  overflow: hidden;
+  color: var(--ios-label);
+  overflow: visible;
+  &::backdrop {
+    background: rgb(0 0 0 / 38%);
+  }
+  @media (min-width: 761px) {
+    inset: 0;
+    width: min(440px, calc(100% - 32px));
+    margin: auto;
+  }
+}
+.dialog-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-height: 92dvh;
+  overflow: auto;
   overscroll-behavior: contain;
-  transition: none;
+  padding: 8px 18px calc(20px + var(--safe-bottom));
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  background: var(--ios-card);
+  > * {
+    flex: none;
+  }
+  > p {
+    color: var(--ios-secondary);
+  }
+  @media (min-width: 761px) {
+    max-height: min(760px, 88dvh);
+    padding: 20px 22px 22px;
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow);
+  }
 }
-.app-dialog:not([open]) {
-  display: none;
+.dialog-grip {
+  align-self: center;
+  width: 38px;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--ios-line);
+  @media (min-width: 761px) {
+    display: none;
+  }
 }
-.app-dialog[open] {
-  display: grid;
-  place-items: center;
-}
-.app-dialog::backdrop {
-  display: block;
-  background: #07101c70;
-  backdrop-filter: none;
+.dialog-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  h2 {
+    padding-top: 6px;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .icon-btn {
+    flex: none;
+    margin-right: -6px;
+    background: var(--ios-fill);
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+  }
 }
 
-/* The native iOS dialog is drawn in the top layer. Its backdrop previously
-   used a hard-coded green tint; keep both it and the underlying page in the
-   same cool graphite palette as the open menu. No blur on iOS. */
-html[data-theme='lax-dark'],
-html[data-theme='lax-dark'] body,
-html[data-theme='lax-dark'] .app {
-  background-color: var(--ios-bg);
+// ---- Welcome ----
+.welcome {
+  h2 {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
 }
-html[data-theme='lax-dark'] .app-dialog::backdrop {
-  background: rgb(3 7 16 / 79%);
-}
-html[data-theme='lax-dark'] .app-dialog-panel {
-  background: var(--ios-card);
-  color: var(--ios-label);
-  border: 1px solid var(--ios-separator);
-}
-html[data-theme='lax-dark'] .app-header {
-  background: var(--ios-card);
-}
-.app-dialog > .app-dialog-panel {
-  opacity: 1;
-  scale: 1;
-  translate: none;
-  transition: none;
-  animation: none;
-  max-height: calc(100dvh - 40px);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-}
-.share-button {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  padding: 11px 12px;
+.welcome-logo {
+  width: 64px;
+  height: 64px;
+  margin-top: 6px;
   border-radius: 16px;
-  color: var(--color-base-content);
 }
-.share-link-field {
+
+// ---- Install steps ----
+.steps {
   display: grid;
   gap: 8px;
-  margin: 20px 0;
+  padding-left: 22px;
+  font-size: 15px;
 }
-.share-link-field input {
-  width: 100%;
+
+// ---- Theme and avatar pickers ----
+.theme-picker,
+.avatar-picker {
+  border: 0;
+  padding: 0;
+  min-width: 0;
+  legend {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+}
+.theme-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.theme-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 8px 10px;
+  border: 1px solid var(--ios-line);
+  border-radius: 12px;
+  cursor: pointer;
+  input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  &:has(input:checked) {
+    border-color: var(--ios-tint);
+    background: var(--ios-soft);
+  }
+  &:has(input:focus-visible) {
+    outline: 3px solid color-mix(in srgb, var(--ios-tint) 50%, transparent);
+    outline-offset: 2px;
+  }
+}
+.theme-swatch {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--ios-line);
+  border-radius: 50%;
+  i {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+  }
+}
+.theme-name {
+  flex: 1;
   min-width: 0;
   font-size: 14px;
+  font-weight: 700;
 }
-.menu-language .language-switch {
-  flex-wrap: wrap;
-}
-.menu-language .language-switch .btn {
-  min-width: 0;
-  padding-inline: 8px;
-}
-@media (max-width: 700px) {
-  .share-button {
-    padding: 9px;
-  }
-  .share-button span {
-    display: none;
-  }
-  .header-actions {
-    gap: 4px;
-  }
-  .header-actions .btn {
-    min-width: 44px;
-    min-height: 44px;
+.theme-check {
+  color: var(--ios-tint-text);
+  visibility: hidden;
+  .theme-option:has(input:checked) & {
+    visibility: visible;
   }
 }
-@media (max-width: 380px) {
-  .app-header .brand > img,
-  .app-header .brand small {
-    display: none;
+.avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  justify-items: center;
+  label {
+    position: relative;
+    border-radius: 50%;
+    cursor: pointer;
+    &:has(input:checked) {
+      outline: 3px solid var(--ios-tint);
+      outline-offset: 3px;
+    }
+    &:has(input:focus-visible) {
+      outline: 3px solid color-mix(in srgb, var(--ios-tint) 50%, transparent);
+      outline-offset: 3px;
+    }
   }
-  .app-header .brand strong {
-    font-size: 16px;
+  input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
   }
 }
-
-.developer-credit {
-  margin: 20px 0 0;
-  padding-top: 16px;
-  border-top: 1px solid var(--color-base-300);
+.avatar-note {
+  margin-top: 12px;
+  color: var(--ios-secondary);
   font-size: 13px;
   text-align: center;
 }
-.developer-credit a {
+
+// ---- What's new ----
+.release-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  div {
+    padding: 10px;
+    border-radius: 12px;
+    background: var(--ios-fill);
+  }
+  dt {
+    color: var(--ios-secondary);
+    font-size: 12px;
+  }
+  dd {
+    font-size: 17px;
+    font-weight: 800;
+  }
+}
+.release-timeline {
+  display: grid;
+  gap: 16px;
+  padding: 0;
+  list-style: none;
+  h4 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 800;
+  }
+  ul {
+    display: grid;
+    gap: 6px;
+    padding: 0;
+    list-style: none;
+  }
+}
+.release-latest {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--ios-soft);
+  color: var(--ios-tint-text);
+  font-size: 11px;
+}
+.release-item {
+  display: grid;
+  gap: 2px;
+  font-size: 14px;
+}
+.release-kind {
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
-  color: var(--color-base-content);
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  gap: 4px;
+  color: var(--ios-secondary);
+  font-size: 12px;
+  font-weight: 700;
 }
-.developer-credit a:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 4px;
-  border-radius: 4px;
+.release-more {
+  padding: 8px 0;
+  border: 0;
+  background: none;
+  color: var(--ios-tint-text);
+  font-weight: 700;
+  cursor: pointer;
+  text-align: left;
+}
+.release-build {
+  color: var(--ios-secondary);
+  font-size: 12px;
+}
+
+// ---- Feedback, share, privacy, guide ----
+.feedback-modal,
+.feedback-modal form {
+  display: grid;
+  gap: 12px;
+}
+.privacy-sheet p,
+.guide-content p {
+  font-size: 14px;
+}
+.privacy-sheet svg {
+  vertical-align: -3px;
+  color: var(--ios-tint-text);
+}
+.guide-content {
+  display: grid;
+  gap: 12px;
+  color: var(--ios-secondary);
+  h2,
+  h3 {
+    margin-bottom: 2px;
+    color: var(--ios-label);
+    font-size: 15px;
+    font-weight: 800;
+  }
+}
+
+// The crawlable guide outside the app (before the app starts, or without JavaScript).
+.shuttle-guide {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  font-family: var(--font);
+}
+.shuttle-guide-disclosure > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  font-weight: 800;
+  cursor: pointer;
+  list-style: none;
+  &::-webkit-details-marker {
+    display: none;
+  }
 }

@@ -25,7 +25,7 @@ test('shows live arrivals for the default stop', async ({ page }) => {
 test('every tab fits the screen without sideways scrolling', async ({ page }) => {
   await open(page);
   await noSideScroll(page);
-  for (const tab of ['Go home', 'My commute', 'Account', 'Explore']) {
+  for (const tab of ['My trip', 'Me', 'Explore']) {
     await page.getByRole('navigation').getByRole('button', { name: tab }).click();
     await page.waitForTimeout(400);
     await noSideScroll(page);
@@ -45,10 +45,10 @@ test('the bell sets and cancels a bus-close alert', async ({ page, context }) =>
 
 test('switching language loads Spanish on demand and keeps it after reload', async ({ page }) => {
   await open(page);
-  await page.getByRole('button', { name: 'Open menu' }).click();
+  await page.getByRole('navigation').getByRole('button', { name: 'Me' }).click();
   await page.getByRole('button', { name: 'Español' }).click();
   await expect(page.locator('html')).toHaveAttribute('lang', 'es');
-  await page.getByRole('button', { name: 'Cerrar menú' }).click();
+  await page.getByRole('navigation').getByRole('button', { name: 'Explorar' }).click();
   await expect(page.locator('.arrival-row').first().getByText('Autobús 8001')).toBeVisible();
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('lang', 'es');
@@ -75,7 +75,7 @@ test('a GPS fix turns into a leave-by time for the next bus', async ({ page, con
   await expect(card).toContainText('min walk from where you are');
 });
 
-test('when the live feed is down, riders get a link to the official times for their lot', async ({
+test('when the live feed is down, the card says so once and explains why on request', async ({
   page,
 }) => {
   await mockFeed(page);
@@ -84,62 +84,53 @@ test('when the live feed is down, riders get a link to the official times for th
   );
   await page.goto('/');
   await page.getByRole('button', { name: 'Explore first' }).click();
-  await expect(page.getByText('Plan your trip while live tracking is paused')).toBeVisible();
-  await expect(page.getByRole('link', { name: /View official live arrivals/ })).toHaveAttribute(
+  const status = page.getByRole('button', { name: /Typical service · live times paused/ });
+  await expect(status).toBeVisible();
+  await expect(page.getByText('live times paused')).toHaveCount(1);
+  await status.click();
+  const why = page.getByRole('dialog', { name: 'Live times are paused' });
+  await expect(why).toContainText('Syncromatics');
+  await expect(why.getByRole('link', { name: /Open the official tracker/ })).toHaveAttribute(
     'href',
     'https://laxbus.syncromatics.com/route/6885/direction/south-lot/stop/11319089/arrivals',
   );
+  await why.getByRole('button', { name: 'Got it' }).click();
+  await expect(why).toBeHidden();
 });
 
-test('the menu shows version history with an update count', async ({ page }) => {
+test('Me shows version history with an update count', async ({ page }) => {
   await open(page);
-  await page.getByRole('button', { name: 'Open menu' }).click();
-  await page.getByText("What's new", { exact: true }).click();
+  await page.getByRole('navigation').getByRole('button', { name: 'Me' }).click();
+  await page.getByRole('button', { name: /What's new/ }).click();
   await expect(page.getByText(/\d+ updates since/)).toBeVisible();
   await expect(page.locator('.release-timeline > li').first()).toContainText('Latest');
 });
 
-test('an outage announcement explains why live times are missing and can be dismissed', async ({
-  page,
-}) => {
-  await mockFeed(page);
-  await page.route(/\/api\/live\/\d+/, (r) =>
-    r.fulfill({ status: 502, json: { error: 'Shuttle data is temporarily unavailable.' } }),
-  );
-  await page.goto('/');
-  await page.getByRole('button', { name: 'Explore first' }).click();
-  const notice = page.locator('.outage-notice');
-  await expect(notice).toContainText('Live bus times are temporarily unavailable');
-  await expect(notice).toContainText('Syncromatics');
-  await notice.getByRole('button', { name: 'Dismiss announcement' }).click();
-  await expect(notice).toBeHidden();
-  await page.reload();
-  await expect(page.locator('.outage-notice')).toBeHidden();
+test('no paused-times message while live times are working', async ({ page }) => {
+  await open(page);
+  await expect(page.locator('.departure')).toContainText('Live');
+  await expect(page.getByText('live times paused')).toHaveCount(0);
 });
 
-test('no outage announcement while live times are working', async ({ page }) => {
+test('riders can choose an avatar, and it stays after reload', async ({ page }) => {
   await open(page);
-  await expect(page.locator('.outage-notice')).toHaveCount(0);
-});
-
-test('riders can choose an avatar, and it shows in the header after reload', async ({ page }) => {
-  await open(page);
-  await page.getByRole('navigation').getByRole('button', { name: 'Account' }).click();
+  const me = page.getByRole('navigation').getByRole('button', { name: 'Me' });
+  await me.click();
+  await page.getByRole('button', { name: 'Your avatar' }).click();
   await page.getByRole('radio', { name: 'Moon' }).check({ force: true });
-  const header = page.locator('.header-actions .profile-button .avatar-circle');
-  await expect(header).toBeVisible();
-  await expect(header).toHaveCSS('background-color', 'rgb(88, 86, 214)');
+  await page.keyboard.press('Escape');
+  const profile = page.locator('.profile-card .avatar-circle');
+  await expect(profile).toHaveCSS('background-color', 'rgb(88, 86, 214)');
   await page.reload();
-  await expect(page.locator('.header-actions .profile-button .avatar-circle')).toHaveCSS(
-    'background-color',
-    'rgb(88, 86, 214)',
-  );
+  await me.click();
+  await expect(profile).toHaveCSS('background-color', 'rgb(88, 86, 214)');
 });
 
 test('riders can switch among the twelve themes, and it stays after reload', async ({ page }) => {
   await open(page);
   await expect(page.locator('html')).toHaveAttribute('data-palette', 'ember');
-  await page.getByRole('button', { name: 'Open menu' }).click();
+  await page.getByRole('navigation').getByRole('button', { name: 'Me' }).click();
+  await page.getByRole('button', { name: /Theme/ }).click();
   await expect(page.locator('.theme-option')).toHaveCount(12);
   await page.locator('.theme-option', { hasText: 'Pacific coast' }).click();
   await expect(page.locator('html')).toHaveAttribute('data-palette', 'pacific');
@@ -149,7 +140,7 @@ test('riders can switch among the twelve themes, and it stays after reload', asy
 
 test('riders can set a nickname and are greeted by it', async ({ page }) => {
   await open(page);
-  await page.getByRole('navigation').getByRole('button', { name: 'Account' }).click();
+  await page.getByRole('navigation').getByRole('button', { name: 'Me' }).click();
   await page.getByLabel('What should we call you?').fill('Norman');
   await page.getByLabel('What should we call you?').press('Enter');
   await page.getByRole('navigation').getByRole('button', { name: 'Explore' }).click();

@@ -2,13 +2,10 @@ import { useLanguage } from '../i18n/LanguageProvider';
 import { authErrorMessage, authReturnUrl } from '../domain/auth';
 import Button from './ui/Button';
 import { useEffect, useState } from 'react';
-import { Check, Mail, LogOut, ArrowRight, LockKeyhole } from './ui/icons';
+import { Check, Mail, LogOut, ArrowRight } from './ui/icons';
 import { useAccount } from '../hooks/useAccount';
 import { getAuthClient } from '../services/auth';
-import Avatar from './Avatar';
-import AvatarPicker from './AvatarPicker';
-import NicknameField from './NicknameField';
-import { useAvatar } from '../hooks/useAvatar';
+import Row from './ui/Row';
 
 export default function AccountPanel({
   profile,
@@ -20,7 +17,6 @@ export default function AccountPanel({
   onGuest?: () => void;
 }) {
   const { t } = useLanguage();
-  const { avatar } = useAvatar();
   const { user, ready, authError, authMessage, clearAuthError, recovering, setRecovering } =
     useAccount();
   const [mode, setMode] = useState<'signin' | 'signup' | 'reset' | 'confirm' | 'reset-code'>(
@@ -262,47 +258,39 @@ export default function AccountPanel({
   }
   if (!ready)
     return (
-      <section className="card bg-base-100 page-card">
+      <section className="account-view">
         <p>{t('Loading your account…')}</p>
       </section>
     );
   if (user && !recovering)
     return (
-      <section className="card bg-base-100 page-card account-card">
-        <Avatar id={avatar} size={72} />
-        <span className="eyebrow">{t('YOUR ACCOUNT')}</span>
-        <h1>{t('You’re ready to go.')}</h1>
-        <p className="email-display">
-          <Mail size={17} />
-          {user.email}
-        </p>
-        <NicknameField />
-        <AvatarPicker />
-        <div className="account-summary">
-          <Check size={19} />
-          <div>
-            <strong>
-              {profile.terminal} ↔ {profile.lot} {t('Lot')}{' '}
-            </strong>
-            <span>{t('Your saved commute syncs with this account.')}</span>
+      <section className="account-view">
+        <h2>{t('You’re ready to go.')}</h2>
+        <div className="group">
+          <div className="row">
+            <span className="row-icon" aria-hidden="true">
+              <Mail size={18} />
+            </span>
+            <span className="row-text">
+              <strong>{user.email}</strong>
+              <small>{t('Your saved commute syncs with this account.')}</small>
+            </span>
           </div>
+          <Row
+            icon={<Check size={18} />}
+            label={`${profile.terminal} ↔ ${profile.lot} ${t('Lot')}`}
+            detail={t('Edit saved commute')}
+            onClick={onSaved}
+          />
         </div>
-        <Button className="button button-primary full-width" onClick={onSaved}>
-          {' '}
-          {t('Edit saved commute')} <ArrowRight size={17} />
-        </Button>
-        <Button className="button button-light full-width" onClick={signOut} disabled={busy}>
+        <Button className="button-light" onClick={signOut} disabled={busy}>
           <LogOut size={16} />
           {busy ? t('Signing out…') : t('Sign out')}
         </Button>
         {confirmDelete ? (
-          <div className="notice" role="group" aria-label={t('Delete account')}>
+          <div className="notice is-warning" role="group" aria-label={t('Delete account')}>
             <p>{t('Permanently delete your account and synced commute? This cannot be undone.')}</p>
-            <Button
-              className="button button-light full-width"
-              disabled={busy}
-              onClick={deleteAccount}
-            >
+            <Button className="button-danger" disabled={busy} onClick={deleteAccount}>
               {t('Permanently delete my account')}
             </Button>
             <Button className="text-button" disabled={busy} onClick={() => setConfirmDelete(false)}>
@@ -310,29 +298,29 @@ export default function AccountPanel({
             </Button>
           </div>
         ) : (
-          <Button className="text-button" disabled={busy} onClick={() => setConfirmDelete(true)}>
+          <Button
+            className="text-button is-danger"
+            disabled={busy}
+            onClick={() => setConfirmDelete(true)}
+          >
             {t('Delete my account')}
           </Button>
         )}
         {(error || authError) && (
-          <p className="alert alert-soft alert-warning notice" role="alert">
+          <p className="notice is-warning" role="alert">
             {t(error || authError)}
           </p>
         )}
         {(message || authMessage) && (
-          <p className="alert alert-soft alert-success success-message" role="status">
+          <p className="notice is-success" role="status">
             {t(message || authMessage)}
           </p>
         )}
       </section>
     );
   return (
-    <section className="card bg-base-100 page-card account-card">
-      <div className="feature-icon">
-        <LockKeyhole size={26} />
-      </div>
-      <span className="eyebrow">{t('YOUR ACCOUNT')}</span>
-      <h1>
+    <section className="account-view">
+      <h2>
         {recovering
           ? t('Choose a new password.')
           : mode === 'signup'
@@ -344,17 +332,16 @@ export default function AccountPanel({
                 : mode === 'reset'
                   ? t('Reset your password.')
                   : t('Welcome back.')}
-      </h1>
-      <p>
-        {' '}
+      </h2>
+      <p className="lead">
         {t(
           'Want your usual trip on another phone? Sign in here. Checking buses is free, with or without an account.',
         )}{' '}
       </p>
       {!recovering && !needsCode && (
-        <div className="tabs tabs-box segmented" role="group" aria-label={t('YOUR ACCOUNT')}>
+        <div className="segmented" role="group" aria-label={t('YOUR ACCOUNT')}>
           <Button
-            className={mode === 'signin' ? 'tab tab-active active' : 'tab'}
+            className={mode === 'signin' ? 'active' : ''}
             aria-pressed={mode === 'signin'}
             onClick={() => changeMode('signin')}
             disabled={busy}
@@ -363,7 +350,7 @@ export default function AccountPanel({
             {t('Sign in')}{' '}
           </Button>
           <Button
-            className={mode === 'signup' ? 'tab tab-active active' : 'tab'}
+            className={mode === 'signup' ? 'active' : ''}
             aria-pressed={mode === 'signup'}
             onClick={() => changeMode('signup')}
             disabled={busy}
@@ -374,21 +361,17 @@ export default function AccountPanel({
         </div>
       )}
       {!recovering && (mode === 'signin' || mode === 'signup') && (
-        <Button
-          className="button button-light full-width"
-          disabled={busy || cooldown > 0}
-          onClick={emailSignIn}
-        >
+        <Button className="button-light" disabled={busy || cooldown > 0} onClick={emailSignIn}>
           {t('Email me a sign-in link')}
         </Button>
       )}
       <form onSubmit={submit}>
         {!recovering && (
-          <label className="field">
+          <label className="form-field">
             {' '}
             {t('Email address')}{' '}
             <input
-              className="input w-full"
+              className="input"
               type="email"
               name="email"
               autoComplete="email"
@@ -401,11 +384,11 @@ export default function AccountPanel({
           </label>
         )}
         {(recovering || (mode !== 'reset' && !needsCode)) && (
-          <label className="field">
+          <label className="form-field">
             {' '}
             {t('Password')}{' '}
             <input
-              className="input w-full"
+              className="input"
               type="password"
               name="password"
               autoComplete={mode === 'signin' && !recovering ? 'current-password' : 'new-password'}
@@ -422,11 +405,11 @@ export default function AccountPanel({
         )}
         {needsCode && !recovering && (
           <>
-            <label className="field">
+            <label className="form-field">
               {' '}
               {t('Email code')}{' '}
               <input
-                className="input w-full"
+                className="input"
                 name="code"
                 type="text"
                 inputMode="numeric"
@@ -442,7 +425,7 @@ export default function AccountPanel({
                 aria-describedby="email-code-help"
               />
             </label>
-            <p className="small muted" id="email-code-help">
+            <p className="hint" id="email-code-help">
               {' '}
               {t(
                 'If your email only contains a link, open it in the browser where you requested it.',
@@ -450,7 +433,7 @@ export default function AccountPanel({
             </p>
           </>
         )}
-        <Button type="submit" className="button button-primary full-width" disabled={busy}>
+        <Button type="submit" className="button-primary" disabled={busy}>
           {busy
             ? t('Please wait…')
             : recovering
@@ -479,11 +462,7 @@ export default function AccountPanel({
       )}
       {needsCode && !recovering && (
         <>
-          <Button
-            className="button button-light full-width"
-            onClick={resend}
-            disabled={busy || cooldown > 0}
-          >
+          <Button className="button-light" onClick={resend} disabled={busy || cooldown > 0}>
             {cooldown
               ? t('Resend available in {seconds}s', { seconds: cooldown })
               : mode === 'reset-code'
@@ -497,23 +476,21 @@ export default function AccountPanel({
         </>
       )}
       {!recovering && onGuest && (
-        <Button className="button button-light full-width" onClick={onGuest}>
+        <Button className="button-light" onClick={onGuest}>
           {' '}
           {t('Continue as guest')}{' '}
         </Button>
       )}
       {(error || authError) && (
-        <p className="alert alert-soft alert-warning notice" role="alert">
+        <p className="notice is-warning" role="alert">
           {t(error || authError)}
         </p>
       )}
       {(message || authMessage) && (
-        <p className="alert alert-soft alert-success success-message" role="status">
+        <p className="notice is-success" role="status">
           {t(message || authMessage)}
         </p>
       )}
-      <NicknameField />
-      <AvatarPicker />
     </section>
   );
 }

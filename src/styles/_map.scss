@@ -1,282 +1,425 @@
-// Transit-style map, map actions and dark-mode controls.
-/* LAXCommute transit-style map, with genuine route geometry and GPS snapshots. */
+// The Leaflet map: markers, route line, map display controls, legend and loading state.
+// Floating controls sit clear of the search bar (top) and the sheet (bottom).
 
-.map-marker-dot.marker-bus {
+.map-surface {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
-  width: 50px;
-  height: 50px;
-  border: 3px solid #fff;
-  border-radius: 50%;
-  box-shadow:
-    0 1px 2px rgb(0 0 0 / 0.05),
-    0 4px 14px rgb(0 0 0 / 0.07);
-  color: #fff;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--ios-map-land);
 }
-.map-marker-dot.marker-bus svg {
-  width: 23px;
-  height: 23px;
-  flex: none;
+.shuttle-map {
+  width: 100%;
+  height: 100%;
+  &.leaflet-container {
+    background: var(--ios-map-land);
+    font-family: inherit;
+  }
+  .leaflet-control-attribution {
+    padding: 2px 6px;
+    background: color-mix(in srgb, var(--ios-card) 85%, transparent);
+    color: var(--ios-secondary);
+    font-size: 10px;
+    line-height: 1.5;
+    a {
+      color: inherit;
+    }
+  }
+  .leaflet-bar {
+    overflow: hidden;
+    border: 0;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    a {
+      width: 40px;
+      height: 40px;
+      border-color: var(--ios-line);
+      background: var(--ios-card);
+      color: var(--ios-label);
+      line-height: 40px;
+    }
+  }
+  .leaflet-tooltip {
+    max-width: 240px;
+    padding: 8px 11px;
+    border: 1px solid var(--ios-line);
+    border-radius: 10px;
+    background: var(--ios-card);
+    color: var(--ios-label);
+    white-space: normal;
+    box-shadow: var(--shadow);
+  }
+  .boarding-label {
+    width: max-content;
+    max-width: 190px;
+    border-color: var(--ios-label);
+    background: var(--ios-label);
+    color: var(--ios-card);
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+    &::before {
+      border-top-color: var(--ios-label);
+    }
+    small {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--ios-tint);
+      font-size: 9px;
+      letter-spacing: 1.2px;
+    }
+  }
+}
+.leaflet-overlay-pane path.route-line {
+  stroke: var(--ios-tint);
+}
+.leaflet-overlay-pane path.route-casing {
+  stroke: var(--ios-card);
+}
+
+// ---- Markers ----
+.shuttle-marker {
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: none;
+  &:focus-visible {
+    outline: 3px solid var(--ios-tint);
+    border-radius: 50%;
+  }
+}
+.map-marker-dot {
+  display: block;
+  width: 16px;
+  height: 16px;
+  border: 3px solid var(--marker-color);
+  border-radius: 50%;
+  background: var(--ios-card);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 20%);
+  &.marker-selected {
+    width: 26px;
+    height: 26px;
+    border: 4px solid #fff;
+    background: var(--marker-color);
+    outline: 3px solid var(--marker-color);
+  }
+  &.marker-you {
+    border-color: #fff;
+    background: var(--ios-tint);
+    outline: 7px solid color-mix(in srgb, var(--ios-tint) 20%, transparent);
+  }
+  &.marker-bus {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border: 3px solid #fff;
+    background: var(--marker-color);
+    color: #fff;
+    svg {
+      width: 23px;
+      height: 23px;
+    }
+    &.bus-focused {
+      outline: 3px solid var(--marker-color);
+      outline-offset: 3px;
+    }
+  }
+  .bus-heading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: block;
+    width: 16px;
+    height: 13px;
+    color: var(--marker-color);
+    line-height: 0;
+    pointer-events: none;
+    transform: translate(-50%, -50%) rotate(var(--heading)) translateY(-34px);
+  }
 }
 .bus-marker-number {
-  position: static;
   display: block;
-  transform: none;
   max-width: 42px;
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
+  overflow: hidden;
   color: #fff;
   font-size: 10px;
   font-weight: 800;
   line-height: 1.15;
-  overflow: hidden;
+  text-align: center;
   text-overflow: ellipsis;
   white-space: nowrap;
-  text-align: center;
-  box-shadow: none;
 }
-.map-marker-dot.marker-bus.bus-focused {
-  outline: 3px solid var(--marker-color);
-  outline-offset: 3px;
-  box-shadow:
-    0 1px 2px rgb(0 0 0 / 0.05),
-    0 4px 14px rgb(0 0 0 / 0.07);
+.route-arrow-marker {
+  border: 0;
+  background: none;
+  pointer-events: none;
 }
-.transit-bus-detail {
-  position: absolute;
-  left: 14px;
-  right: auto;
-  bottom: 87px;
-  z-index: 750;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  max-width: min(315px, calc(100% - 28px));
-  min-width: 0;
-  padding: 11px 12px;
-  border: 1px solid var(--color-base-300);
-  border-radius: 10px;
-  background: var(--color-base-100);
-  color: var(--color-base-content);
-  box-shadow:
-    0 1px 2px rgb(0 0 0 / 0.05),
-    0 4px 14px rgb(0 0 0 / 0.07);
-}
-.transit-bus-detail-icon {
-  color: var(--route-color);
-  font-size: 19px;
-}
-.transit-bus-detail > div {
+.route-arrow {
   display: grid;
-  min-width: 0;
-  gap: 2px;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+  color: #fff;
+  filter: drop-shadow(0 0 1px rgb(0 0 0 / 50%));
+  transform: rotate(var(--bearing));
 }
-.transit-bus-detail strong {
-  font-size: 13px;
-}
-.transit-bus-detail small {
-  font-size: 11px;
-  opacity: 0.73;
-}
-.transit-bus-detail button {
-  flex: none;
-  margin-left: auto;
-  width: 38px;
-  height: 38px;
-  border-radius: 11px;
-  background: var(--color-base-200);
-  color: var(--color-base-content);
-  font-size: 24px;
-}
-@media (max-width: 760px) {
-  .trip-layout {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    margin-top: 4px;
-    padding: 0 12px;
+@media (prefers-reduced-motion: no-preference) {
+  .map-marker-dot.marker-bus {
+    transition: translate 0.28s var(--ease);
   }
-  .trip-layout > .map-column {
-    order: 0;
-    width: 100%;
-    position: relative;
-    min-width: 0;
-  }
-  .trip-layout > .trip-card {
-    order: 1;
-    position: relative;
-    z-index: 2;
-    width: 100%;
-    margin: 8px 0 24px;
-    padding: 30px 20px 24px;
-    border: 1px solid var(--color-base-300);
-    border-radius: 14px;
-    box-shadow:
-      0 1px 2px rgb(0 0 0 / 0.05),
-      0 4px 14px rgb(0 0 0 / 0.07);
-    scroll-margin-top: 16px;
-  }
-  .trip-layout > .trip-card::before {
-    content: '';
-    position: absolute;
-    top: 11px;
-    left: calc(50% - 22px);
-    width: 44px;
-    height: 5px;
-    border-radius: 12px;
-    background: var(--color-base-300);
-  }
-  .map-topbar {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 6px 14px;
-  }
-  .map-topbar h1 {
-    max-width: 100%;
-    font-size: clamp(22px, 6vw, 29px);
-  }
-
-  #shuttle-map-panel {
-    position: relative;
-  }
-
-  .map-surface {
-    height: clamp(365px, 54svh, 640px);
-    min-height: 365px;
-    max-height: none;
-    border-radius: 23px;
-  }
-  .map-controls {
-    display: flex;
-    flex-direction: column;
-    gap: 9px;
-    position: absolute;
-    top: 144px;
-    right: 12px;
-    left: auto;
-    z-index: 5;
-    width: auto;
-    margin: 0;
-  }
-  .map-controls .btn {
-    display: grid;
-    place-items: center;
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
-    min-height: 44px;
-    padding: 10px;
-    overflow: hidden;
-    white-space: nowrap;
-    font-size: 0;
-    line-height: 0;
-    border-radius: 8px;
-  }
-  .map-controls .btn svg {
-    width: 18px;
-    height: 18px;
-  }
-
-  .shuttle-map-legend {
-    display: none;
-  }
-  /* Keep tile attribution visible above the overlapping arrival card. */
-  .shuttle-map.leaflet-container .leaflet-control-attribution {
-    margin-bottom: 109px;
-  }
-  .transit-bus-detail {
-    left: 10px;
-    bottom: 122px;
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) and (max-width: 760px) {
   .map-marker-dot.marker-selected:not(.marker-bus) {
-    animation: transit-stop-attention 0.55s ease-out both;
+    animation: stop-pop 0.5s var(--ease) both;
   }
 }
-@keyframes transit-stop-attention {
+@keyframes stop-pop {
   from {
     transform: scale(0.78);
   }
-  to {
-    transform: scale(1);
+}
+
+// ---- Controls drawn by the map: style switch, other stops, back to my stop ----
+.map-display-controls,
+.map-recenter,
+.transit-bus-detail,
+.map-tile-warning,
+.shuttle-map-legend {
+  position: absolute;
+  z-index: 600;
+}
+.map-display-controls {
+  top: calc(72px + var(--safe-top));
+  left: 12px;
+  display: flex;
+  gap: 8px;
+}
+.basemap-switch {
+  display: flex;
+  padding: 3px;
+  border-radius: 12px;
+  background: var(--ios-card);
+  box-shadow: var(--shadow);
+  button {
+    min-height: 34px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 9px;
+    background: none;
+    color: var(--ios-secondary);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    &[aria-pressed='true'] {
+      background: var(--ios-soft);
+      color: var(--ios-tint-text);
+    }
+  }
+}
+.map-stops-toggle {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--ios-card);
+  box-shadow: var(--shadow);
+  color: var(--ios-secondary);
+  cursor: pointer;
+  &[aria-pressed='true'] {
+    color: var(--ios-tint-text);
+  }
+  span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+}
+.map-recenter {
+  top: calc(222px + var(--safe-top));
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--ios-card);
+  box-shadow: var(--shadow);
+  color: var(--ios-tint-text);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.transit-bus-detail,
+.map-tile-warning {
+  top: calc(124px + var(--safe-top));
+  left: 12px;
+  right: 72px;
+}
+.transit-bus-detail {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--ios-card);
+  box-shadow: var(--shadow);
+  font-size: 13px;
+  > div {
+    display: grid;
+    flex: 1;
+    min-width: 0;
+  }
+  small {
+    color: var(--ios-secondary);
+    font-size: 12px;
+  }
+  button {
+    flex: none;
+    width: 34px;
+    height: 34px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--ios-fill);
+    color: var(--ios-label);
+    font-size: 20px;
+    cursor: pointer;
+  }
+}
+.transit-bus-detail-icon {
+  color: var(--ios-tint);
+}
+.map-tile-warning {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--ios-card);
+  box-shadow: var(--shadow);
+  font-size: 12px;
+}
+.shuttle-map-legend {
+  display: none;
+  bottom: 24px;
+  right: 16px;
+  gap: 12px;
+  padding: 7px 10px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--ios-card) 92%, transparent);
+  color: var(--ios-label);
+  font-size: 11px;
+  pointer-events: none;
+  span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  i {
+    width: 10px;
+    height: 10px;
+    border: 2px solid var(--ios-secondary);
+    border-radius: 50%;
+  }
+  .legend-bus {
+    border-radius: 3px;
+    background: var(--ios-secondary);
+  }
+  .legend-you {
+    border-color: var(--ios-tint);
+    background: var(--ios-tint);
   }
 }
 
-/* Map actions: desktop shortcuts stay visible; phones use one unobtrusive tool button. */
-
+// Phones: the sheet covers the bottom, so the attribution moves up and zoom is by pinch.
 @media (max-width: 760px) {
-  /* Pinch and double-tap still zoom the real Leaflet map. */
-  .shuttle-map.leaflet-container .leaflet-control-zoom {
+  .shuttle-map .leaflet-control-zoom {
     display: none;
   }
-  .map-controls {
-    position: absolute;
-    top: 70px;
-    right: 13px;
-    left: auto;
-    z-index: 12;
-    width: 48px;
-    margin: 0;
-    display: flex;
-    align-items: flex-end;
-    gap: 6px;
+  .shuttle-map .leaflet-bottom.leaflet-right {
+    top: calc(118px + var(--safe-top));
+    bottom: auto;
+    left: 0;
+    right: auto;
   }
 }
-/* Framer Motion drives the popover entrance and exit; avoid a second CSS animation. */
+@media (min-width: 761px) {
+  .map-display-controls {
+    top: 76px;
+    left: 432px;
+  }
+  .transit-bus-detail,
+  .map-tile-warning {
+    top: auto;
+    bottom: 24px;
+    left: 432px;
+    right: auto;
+    width: min(360px, calc(100% - 460px));
+  }
+  .map-recenter {
+    top: 260px;
+    right: 16px;
+  }
+  .shuttle-map-legend {
+    display: flex;
+  }
+  // Zoom buttons sit under the map tools.
+  .shuttle-map .leaflet-top.leaflet-right {
+    top: 160px;
+    right: 6px;
+  }
+}
 
-/* Dark-mode interaction surfaces: one Midnight Blue system for forms and navigation.
-   Keep route-identity colors untouched; no hard-coded legacy green states. */
-[data-theme='lax-dark'] .bottom-nav button.active {
-  background: color-mix(in srgb, var(--color-primary) 17%, var(--color-base-100));
-  color: var(--color-primary);
+// ---- Loading ----
+.map-skeleton {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: var(--ios-map-land);
 }
-[data-theme='lax-dark'] .bottom-nav button:focus-visible,
-[data-theme='lax-dark'] .account-card .btn:focus-visible,
-[data-theme='lax-dark'] .crowd-form .btn:focus-visible {
-  outline: 3px solid var(--color-primary);
-  outline-offset: 2px;
+.map-skeleton-road {
+  position: absolute;
+  width: 110%;
+  height: 18px;
+  border-radius: 16px;
+  background: var(--ios-map-road);
+  &.road-one {
+    top: 30%;
+    left: -5%;
+    transform: rotate(-8deg);
+  }
+  &.road-two {
+    top: 55%;
+    left: -5%;
+    transform: rotate(12deg);
+  }
 }
-[data-theme='lax-dark'] .account-card .feature-icon,
-[data-theme='lax-dark'] .account-card .account-summary {
-  background: var(--journey-surface);
-  color: var(--color-primary);
+.map-skeleton-stop {
+  position: absolute;
+  top: 42%;
+  left: 47%;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
 }
-[data-theme='lax-dark'] .account-card .account-summary strong {
-  color: var(--color-base-content);
-}
-[data-theme='lax-dark'] .account-card .field :is(input, select):focus-visible {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px var(--interaction-ring);
-}
-[data-theme='lax-dark'] .account-card .success-message {
-  background: var(--journey-surface);
-  color: var(--color-base-content) !important;
-  border: 1px solid var(--color-base-300);
-}
-[data-theme='lax-dark'] .account-card .notice {
-  background: var(--journey-surface);
-  border-color: var(--color-base-300);
-  color: var(--color-base-content);
-}
-[data-theme='lax-dark'] .account-card .notice button {
-  color: var(--color-primary);
-}
-[data-theme='lax-dark'] .account-card .segmented .tab[aria-pressed='true'] {
-  background: var(--color-primary);
-  color: var(--color-primary-content);
-}
-[data-theme='lax-dark'] .crowd-form select:focus-visible,
-[data-theme='lax-dark'] .feedback-modal :is(input, select, textarea):focus-visible {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px var(--interaction-ring);
+.map-skeleton-card {
+  position: absolute;
+  top: calc(80px + var(--safe-top));
+  left: 50%;
+  display: grid;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: var(--ios-card);
+  color: var(--ios-secondary);
+  font-size: 12px;
+  transform: translateX(-50%);
+  .skeleton {
+    width: 120px;
+    height: 10px;
+  }
 }

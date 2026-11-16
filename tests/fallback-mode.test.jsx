@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { afterEach, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { getFallbackRoute } from '../src/services/shuttle';
@@ -15,6 +15,14 @@ const { send, read } = vi.hoisted(() => ({
   read: vi.fn(async () => []),
 }));
 vi.mock('../src/services/community', () => ({ getStopReports: read, sendStopReport: send }));
+beforeEach(() => {
+  HTMLDialogElement.prototype.showModal = function () {
+    this.open = true;
+  };
+  HTMLDialogElement.prototype.close = function () {
+    this.open = false;
+  };
+});
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
@@ -93,6 +101,8 @@ it('submits a stop observation without GPS or a live vehicle and prevents rapid 
     <StopReports
       routeId={6884}
       stop={{ id: 11319519, name: 'East Lot Stop #1', lat: 33.95, lon: -118.38 }}
+      open
+      onOpenChange={() => {}}
     />,
   );
   fireEvent.click(screen.getByRole('button', { name: /East shuttle arrived/ }));
@@ -116,6 +126,8 @@ it.each([
     <StopReports
       routeId={routeId}
       stop={{ id: 11319089, name: 'South Lot Stop #1', lat: 33.95, lon: -118.39 }}
+      open
+      onOpenChange={() => {}}
     />,
   );
   expect(screen.getByRole('button', { name: new RegExp(`${lot} shuttle arrived`) })).toBeTruthy();

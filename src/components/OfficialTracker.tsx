@@ -45,7 +45,7 @@ export default function OfficialTracker({
         </div>
         <Button
           type="button"
-          className="icon-button"
+          className="icon-btn"
           aria-label={t('Try our live feed again')}
           title={t('Try our live feed again')}
           onClick={onRetry}

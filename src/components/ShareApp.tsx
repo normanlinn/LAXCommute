@@ -1,5 +1,6 @@
 import { useEffect, useId, useState } from 'react';
-import { Copy, Share2, X } from './ui/icons';
+import { Copy, Share2 } from './ui/icons';
+import Row from './ui/Row';
 import { useLanguage } from '../i18n/LanguageProvider';
 import Button from './ui/Button';
 import Dialog from './ui/Dialog';
@@ -48,24 +49,24 @@ export default function ShareApp() {
 
   return (
     <>
-      <Button className="share-button" aria-label={t('Share app')} onClick={share}>
-        <Share2 size={18} />
-        <span>{t('Share app')}</span>
-      </Button>
-      <Dialog open={open} onClose={() => setOpen(false)} titleId={titleId}>
-        <Button
-          className="modal-close icon-button"
-          aria-label={t('Close sharing')}
-          onClick={() => setOpen(false)}
-        >
-          <X size={20} />
-        </Button>
-        <h2 id={titleId}>{t('Share LAXCommute')}</h2>
+      <Row
+        icon={<Share2 size={18} />}
+        label={t('Share LAXCommute')}
+        aria-label={t('Share app')}
+        onClick={share}
+      />
+      <Dialog
+        open={open}
+        onClose={() => setOpen(false)}
+        titleId={titleId}
+        title={t('Share LAXCommute')}
+        closeLabel={t('Close sharing')}
+      >
         <p>
           {t('Send this link to a friend or coworker. They can check buses without an account.')}
         </p>
         <label className="share-link-field">
-          {t('App link')}
+          <span>{t('App link')}</span>
           <input
             className="input"
             readOnly
@@ -73,10 +74,10 @@ export default function ShareApp() {
             onFocus={(event) => event.currentTarget.select()}
           />
         </label>
-        <Button className="button button-primary full-width" onClick={copy}>
+        <Button className="button-primary" onClick={copy}>
           <Copy size={18} /> {t('Copy link')}
         </Button>
-        <p role="status" aria-live="polite">
+        <p className="hint" role="status" aria-live="polite">
           {copied
             ? t('Link copied.')
             : copyFailed

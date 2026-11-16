@@ -30,39 +30,35 @@ export default function NicknameField() {
   }, [draft]);
 
   return (
-    <div className="nickname-field">
-      <label htmlFor={id}>{t('What should we call you?')}</label>
-      <div className="nickname-input">
-        <input
-          id={id}
-          type="text"
-          inputMode="text"
-          autoComplete="nickname"
-          maxLength={NICKNAME_MAX}
-          placeholder={t('Nickname')}
-          value={draft}
-          onChange={(event) => setDraft(event.target.value)}
-          onBlur={() => commit()}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter') {
-              event.preventDefault();
-              commit();
-            }
-          }}
-        />
-        <span className={`nickname-saved${saved ? ' is-visible' : ''}`} role="status">
-          {saved && (
-            <>
-              <Check size={14} /> {t('Saved')}
-            </>
-          )}
-        </span>
-      </div>
-      <p className="nickname-note">
-        {user
-          ? t('Used to greet you. Saved to your account.')
-          : t('Used to greet you. Saved on this device.')}
-      </p>
-    </div>
+    <label className="field nickname-field" htmlFor={id}>
+      <span>
+        {t('What should we call you?')}
+        <small>
+          {user
+            ? t('Used to greet you. Saved to your account.')
+            : t('Used to greet you. Saved on this device.')}
+        </small>
+      </span>
+      <input
+        id={id}
+        type="text"
+        inputMode="text"
+        autoComplete="nickname"
+        maxLength={NICKNAME_MAX}
+        placeholder={t('Nickname')}
+        value={draft}
+        onChange={(event) => setDraft(event.target.value)}
+        onBlur={() => commit()}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') {
+            event.preventDefault();
+            commit();
+          }
+        }}
+      />
+      <span className={`nickname-saved${saved ? ' is-visible' : ''}`} role="status">
+        {saved && <Check size={14} aria-label={t('Saved')} />}
+      </span>
+    </label>
   );
 }

@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { ThemeProvider, useTheme } from '../src/theme/ThemeProvider';
-import AppMenu from '../src/components/AppMenu';
+import AppearancePicker from '../src/components/AppearancePicker';
 
 let query;
 let change;
@@ -11,7 +11,7 @@ function Subject() {
   const { appearance } = useTheme();
   return (
     <>
-      <AppMenu />
+      <AppearancePicker />
       <output>{appearance}</output>
     </>
   );
@@ -22,7 +22,6 @@ function open() {
       <Subject />
     </ThemeProvider>,
   );
-  fireEvent.click(screen.getByRole('button', { name: 'Open menu' }));
   return view;
 }
 beforeEach(() => {
@@ -48,7 +47,7 @@ afterEach(() => {
   document.documentElement.dataset.theme = 'lax';
   document.documentElement.style.colorScheme = 'light';
 });
-describe('appearance menu', () => {
+describe('appearance choice', () => {
   it('follows device changes by default, honors manual choices, and returns to System', () => {
     const view = open();
     expect(screen.getByRole('radio', { name: 'System' }).checked).toBe(true);
@@ -71,14 +70,10 @@ describe('appearance menu', () => {
     view.unmount();
     expect(query.removeEventListener).toHaveBeenCalledWith('change', change);
   });
-  it('remembers Dark after reopening, and closes the menu with Escape', () => {
+  it('remembers Dark after reopening', () => {
     const view = open();
     fireEvent.click(screen.getByRole('radio', { name: 'Dark' }));
     expect(localStorage.getItem('laxcommute:theme')).toBe('dark');
-    fireEvent(screen.getByRole('dialog'), new Event('cancel', { bubbles: true, cancelable: true }));
-    expect(screen.getByRole('button', { name: 'Open menu' }).getAttribute('aria-expanded')).toBe(
-      'false',
-    );
     view.unmount();
     open();
     expect(screen.getByRole('radio', { name: 'Dark' }).checked).toBe(true);

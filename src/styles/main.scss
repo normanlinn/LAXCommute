@@ -1,24 +1,11 @@
 // App styles, loaded after src/styles.css (Tailwind and DaisyUI setup).
-// Order matters: later partials override earlier ones, as in the original stylesheet.
+// One partial per area. Every color comes from the theme tokens (--ios-*).
 @use 'ios-tokens';
 @use 'fonts';
 @use 'base';
-@use 'guide';
-@use 'theme';
-@use 'route-view';
-@use 'arrivals';
+@use 'shell';
+@use 'lists';
+@use 'explore';
 @use 'dialogs';
-@use 'community';
+@use 'live';
 @use 'map';
-@use 'layout';
-@use 'live-arrivals';
-@use 'layout-refresh';
-@use 'map-overlays';
-@use 'arrivals-hero';
-@use 'whats-new';
-@use 'polish';
-@use 'outage';
-@use 'stop-reports';
-@use 'ios';
-@use 'transit';
-@use 'redesign';

@@ -1,5 +1,6 @@
 import { useId, useState } from 'react';
-import { MessageSquare, X } from './ui/icons';
+import { MessageSquare } from './ui/icons';
+import Row from './ui/Row';
 import { useLanguage } from '../i18n/LanguageProvider';
 import { sendDeveloperFeedback } from '../services/community';
 import Button from './ui/Button';
@@ -33,28 +34,32 @@ export default function DeveloperFeedback() {
   }
   return (
     <>
-      <Button
+      <Row
+        icon={<MessageSquare size={18} />}
+        label={t('Send feedback to the developer')}
+        aria-haspopup="dialog"
         onClick={() => {
           setOpen(true);
           setStatus('');
         }}
-        className="feedback-menu-button"
+      />
+      <Dialog
+        open={open}
+        onClose={() => setOpen(false)}
+        titleId={titleId}
+        title={t('Feedback to developer')}
+        closeLabel={t('Close')}
       >
-        <MessageSquare size={19} /> {t('Send feedback to the developer')}
-      </Button>
-      <Dialog open={open} onClose={() => setOpen(false)} titleId={titleId}>
         <div className="feedback-modal">
-          <div className="preferences-heading">
-            <h2 id={titleId}>{t('Feedback to developer')}</h2>
-            <Button onClick={() => setOpen(false)} aria-label={t('Close')}>
-              <X size={21} />
-            </Button>
-          </div>
           <p>{t('Found a bug or have an idea to improve LAXCommute? Let us know.')}</p>
           <form onSubmit={submit}>
             <label>
               {t('Type of feedback')}
-              <select value={category} onChange={(e) => setCategory(e.target.value)}>
+              <select
+                className="select"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+              >
                 <option value="suggestion">{t('Suggestion')}</option>
                 <option value="bug">{t('Report a bug')}</option>
                 <option value="other">{t('Other feedback')}</option>
@@ -63,6 +68,7 @@ export default function DeveloperFeedback() {
             <label>
               {t('Your message')}
               <textarea
+                className="textarea"
                 required
                 minLength={10}
                 maxLength={2000}
@@ -75,13 +81,14 @@ export default function DeveloperFeedback() {
             <label>
               {t('Email (optional, for a reply)')}
               <input
+                className="input"
                 type="email"
                 maxLength={254}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </label>
-            <p className="crowd-note">
+            <p className="hint">
               {t(
                 'Only the developer can read your message. Please do not include passwords or sensitive information.',
               )}
@@ -94,7 +101,7 @@ export default function DeveloperFeedback() {
               {sending ? t('Sending…') : t('Send feedback')}
             </Button>
             {status && (
-              <p role="status" className="crowd-message">
+              <p role="status" className="notice">
                 {status}
               </p>
             )}

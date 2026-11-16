@@ -1,0 +1,502 @@
+// Live data and rider reports: arrivals, leave-by advice, crowding, update toasts.
+
+// ---- Arrivals (shown when live times are flowing) ----
+.arrivals {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 4px 4px -4px;
+  .eyebrow {
+    display: none;
+  }
+  h3 {
+    color: var(--ios-secondary);
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .icon-btn {
+    width: 32px;
+    height: 32px;
+  }
+}
+.boarding-caption {
+  display: none;
+}
+.arrival-list.has-rows {
+  overflow: hidden;
+  border: 1px solid var(--ios-line);
+  border-radius: var(--r);
+}
+.route-card-head {
+  display: none;
+}
+.arrival-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 62px;
+  padding: 10px 14px;
+  & + & {
+    border-top: 1px solid var(--ios-line);
+  }
+  &.is-last-known {
+    opacity: 0.75;
+  }
+}
+.bus-symbol {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--ios-soft);
+  color: var(--ios-tint-text);
+}
+.arrival-description {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  strong {
+    font-size: 15px;
+    font-weight: 700;
+  }
+}
+.arrival-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  color: var(--ios-secondary);
+  font-size: 12px;
+}
+.arrival-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 700;
+  &.is-live {
+    color: var(--ios-green);
+  }
+  i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+}
+.arrival-time {
+  display: grid;
+  justify-items: end;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  strong {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  > span {
+    color: var(--ios-secondary);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  &.is-arriving strong {
+    color: var(--ios-green);
+    font-size: 17px;
+  }
+}
+.rolling-number {
+  display: inline-block;
+}
+.bus-alert-toggle {
+  width: 36px;
+  height: 36px;
+  &.is-on {
+    background: var(--ios-soft);
+    color: var(--ios-tint-text);
+  }
+}
+.approach-track {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 0;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--ios-fill);
+  i {
+    display: block;
+    height: 100%;
+    background: var(--ios-tint);
+    transform-origin: left;
+    transition: transform 1s linear;
+  }
+}
+.leave-card,
+.bus-alert-banner,
+.nearby-gps-notice,
+.official-tracker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--r);
+  background: var(--ios-fill);
+  font-size: 14px;
+  > div {
+    display: grid;
+    flex: 1;
+    gap: 2px;
+    min-width: 0;
+  }
+  span {
+    color: var(--ios-secondary);
+    font-size: 13px;
+  }
+  > svg {
+    color: var(--ios-tint-text);
+  }
+}
+.bus-alert-banner {
+  background: var(--ios-soft);
+}
+.official-tracker {
+  flex-wrap: wrap;
+}
+.official-tracker-status {
+  display: flex;
+  flex: 1 1 100%;
+  align-items: center;
+  gap: 10px;
+}
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ios-orange);
+}
+.official-tracker-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+}
+.official-tracker-details {
+  display: grid;
+  flex-basis: 100%;
+  gap: 4px;
+}
+.empty-arrivals {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding: 16px;
+  color: var(--ios-secondary);
+  font-size: 14px;
+  text-align: center;
+  p {
+    color: var(--ios-label);
+    font-weight: 600;
+  }
+}
+.updated {
+  color: var(--ios-secondary);
+  font-size: 12px;
+  text-align: center;
+}
+.arrival-loading {
+  display: grid;
+  gap: 8px;
+}
+.arrival-skeleton-row {
+  display: grid;
+  grid-template-columns: 36px 1fr 44px;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--ios-line);
+  border-radius: var(--r);
+}
+.skeleton-icon {
+  width: 36px;
+  height: 36px;
+}
+.skeleton-copy {
+  display: grid;
+  gap: 6px;
+}
+.skeleton-label {
+  width: 60%;
+  height: 12px;
+}
+.skeleton-hint {
+  width: 40%;
+  height: 10px;
+}
+.skeleton-time {
+  height: 24px;
+}
+
+// ---- Rider reports (in their sheet) and bus crowding ----
+.crowd-note {
+  color: var(--ios-secondary);
+  font-size: 13px;
+}
+.crowd-message {
+  color: var(--ios-secondary);
+  font-size: 14px;
+}
+.report-context {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  strong {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+}
+.report-route-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--ios-soft);
+  color: var(--ios-tint-text);
+  font-size: 13px;
+  font-weight: 700;
+}
+.stop-report-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.report-action {
+  flex-direction: column;
+  gap: 6px;
+  min-height: 96px;
+  padding: 10px;
+  border: 1px solid var(--ios-line);
+  border-radius: var(--r);
+  background: var(--ios-card);
+  > span:last-child {
+    display: grid;
+    gap: 2px;
+  }
+  strong {
+    font-size: 16px;
+    font-weight: 800;
+  }
+  small {
+    opacity: 0.85;
+    font-size: 12px;
+  }
+  &.report-arrived {
+    border-color: transparent;
+    background: var(--ios-tint-fill);
+    color: var(--ios-on-tint);
+  }
+  &.report-sent {
+    border-color: transparent;
+    background: color-mix(in srgb, var(--ios-green) 16%, var(--ios-card));
+    color: var(--ios-label);
+  }
+}
+.crowd-form {
+  display: grid;
+  gap: 10px;
+  select {
+    width: 100%;
+    min-height: 48px;
+    padding: 0 12px;
+    border: 1px solid var(--ios-line);
+    border-radius: 12px;
+    background: var(--ios-card);
+    color: var(--ios-label);
+    font-size: 16px;
+  }
+}
+.report-list {
+  display: grid;
+  gap: 6px;
+}
+.crowd-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--ios-fill);
+  font-size: 14px;
+  strong {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  time,
+  small {
+    color: var(--ios-secondary);
+    font-size: 12px;
+  }
+}
+.report-notice {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  &.report-notice-success {
+    color: var(--ios-green);
+    font-weight: 700;
+  }
+}
+.crowd-panel {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--ios-line);
+  border-radius: var(--r);
+}
+.crowd-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  > div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--ios-tint-text);
+  }
+  strong {
+    color: var(--ios-label);
+  }
+}
+
+// ---- Toasts: what's new, app update ----
+.whats-new-toast,
+.update-toast {
+  position: fixed;
+  z-index: 40;
+  top: calc(12px + var(--safe-top));
+  left: 50%;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: min(420px, calc(100% - 24px));
+  padding: 12px 12px 12px 14px;
+  border-radius: var(--r);
+  background: var(--ios-label);
+  color: var(--ios-card);
+  box-shadow: var(--shadow);
+  transform: translateX(-50%);
+  animation: toast-in 0.3s var(--ease);
+  .btn {
+    color: inherit;
+  }
+}
+@keyframes toast-in {
+  from {
+    transform: translate(-50%, -12px);
+    opacity: 0;
+  }
+}
+.update-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--ios-tint-fill);
+  color: var(--ios-on-tint);
+}
+.update-copy {
+  display: grid;
+  flex: 1;
+  gap: 4px;
+  min-width: 0;
+  font-size: 14px;
+  ul {
+    display: grid;
+    gap: 2px;
+    padding-left: 16px;
+    opacity: 0.85;
+    font-size: 13px;
+  }
+}
+.update-now {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--ios-tint-fill);
+  color: var(--ios-on-tint) !important;
+  font-size: 13px;
+  font-weight: 700;
+}
+.update-dismiss {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+.update-screen {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--ios-bg);
+}
+.update-screen-card {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding: 24px;
+  text-align: center;
+  strong {
+    font-size: 18px;
+  }
+}
+.update-orbit {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  color: var(--ios-tint-text);
+}
+.update-orbit-ring {
+  position: absolute;
+  inset: 0;
+  border: 3px solid var(--ios-line);
+  border-top-color: var(--ios-tint);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+.update-progress {
+  width: 160px;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--ios-fill);
+  i {
+    display: block;
+    width: 40%;
+    height: 100%;
+    background: var(--ios-tint);
+    animation: progress-sweep 1.2s var(--ease) infinite;
+  }
+}
+@keyframes progress-sweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(250%);
+  }
+}

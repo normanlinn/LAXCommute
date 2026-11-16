@@ -92,5 +92,7 @@ it('routes every partial through the shared iOS tokens instead of one-off colors
   for (const legacy of ['#172233', '#0b111b', '#18bdc7', '#83bdff', '#111416', '#16212b']) {
     expect(css.toLowerCase()).not.toContain(legacy);
   }
-  expect((css.match(/var\(--ios-/g) || []).length).toBeGreaterThan(250);
+  // Apart from white on colored markers, every color is a theme token.
+  expect(css.match(/#[0-9a-f]{3,8}\b/gi)?.filter((hex) => !/^#fff$/i.test(hex)) || []).toEqual([]);
+  expect((css.match(/var\(--ios-/g) || []).length).toBeGreaterThan(200);
 });

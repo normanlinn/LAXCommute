@@ -1,0 +1,250 @@
+// Explore: stop search, greeting, direction switch, departure card and action tiles.
+
+.stop-search {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+.stop-search-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 48px;
+  padding: 0 14px;
+  border-radius: var(--r);
+  background: var(--ios-card);
+  box-shadow: var(--shadow);
+  color: var(--ios-secondary);
+  cursor: text;
+  input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    color: var(--ios-label);
+    font-size: 16px;
+    font-weight: 600;
+    outline: none;
+    &::placeholder {
+      color: var(--ios-secondary);
+      font-weight: 500;
+    }
+    &::-webkit-search-cancel-button {
+      display: none;
+    }
+  }
+  &:has(input:focus-visible) {
+    box-shadow:
+      0 0 0 3px color-mix(in srgb, var(--ios-tint) 40%, transparent),
+      var(--shadow);
+  }
+}
+.stop-search-clear {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--ios-fill);
+  color: var(--ios-secondary);
+  cursor: pointer;
+}
+.stop-search-list {
+  position: absolute;
+  top: 56px;
+  left: 0;
+  right: 0;
+  max-height: min(50dvh, 360px);
+  overflow: auto;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  border-radius: var(--r);
+  background: var(--ios-card);
+  box-shadow: var(--shadow);
+  li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 46px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    color: var(--ios-label);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    svg {
+      color: var(--ios-tint-text);
+    }
+    span {
+      flex: 1;
+    }
+    small {
+      color: var(--ios-secondary);
+      font-size: 12px;
+    }
+    &.is-active {
+      background: var(--ios-fill);
+    }
+  }
+}
+
+.sheet-heading {
+  display: grid;
+  gap: 2px;
+  h2 {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  span {
+    color: var(--ios-secondary);
+    font-size: 13px;
+  }
+}
+.direction-switch .btn {
+  gap: 6px;
+}
+
+// ---- Departure card: the one solid accent surface ----
+.departure {
+  overflow: hidden;
+  border-radius: var(--r);
+  background: var(--ios-tint-fill);
+  color: var(--ios-on-tint);
+}
+.departure-main {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+}
+.route-badge {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  background: var(--ios-on-tint);
+  color: var(--ios-tint-fill);
+  font-size: 17px;
+  font-weight: 800;
+  &.is-outline {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    border: 1.5px solid var(--ios-tint-text);
+    background: none;
+    color: var(--ios-tint-text);
+    font-size: 13px;
+  }
+}
+.departure-where {
+  display: grid;
+  min-width: 0;
+  strong {
+    font-size: 17px;
+    font-weight: 800;
+  }
+  small {
+    overflow: hidden;
+    opacity: 0.9;
+    font-size: 13px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+.departure-time {
+  display: grid;
+  justify-items: end;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  strong {
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+  small {
+    margin-top: 3px;
+    opacity: 0.9;
+    font-size: 12px;
+    font-weight: 600;
+  }
+}
+.departure-status {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 14px;
+  border-top: 1px solid color-mix(in srgb, var(--ios-on-tint) 22%, transparent);
+  color: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  &.btn:hover {
+    background: color-mix(in srgb, var(--ios-on-tint) 8%, transparent);
+  }
+}
+.departure-why {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+  opacity: 0.9;
+}
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 0 currentColor;
+  animation: live-pulse 2s infinite;
+  &.is-off {
+    opacity: 0.5;
+    animation: none;
+  }
+}
+@keyframes live-pulse {
+  70% {
+    box-shadow: 0 0 0 6px transparent;
+  }
+}
+
+.action-tiles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.action-tile {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 4px;
+  height: 68px;
+  border: 1px solid var(--ios-line);
+  border-radius: var(--r);
+  background: var(--ios-card);
+  color: var(--ios-tint-text);
+  font-size: 13px;
+  font-weight: 700;
+  @media (hover: hover) {
+    &:hover {
+      background: var(--ios-fill);
+    }
+  }
+}
+
+// The boarding stop row: the select fills the row, read left to right.
+.stop-field > select {
+  flex: 1;
+  text-align: left;
+  font-size: 15px;
+}
+.stop-choices {
+  justify-content: flex-start;
+  min-height: 50px;
+}

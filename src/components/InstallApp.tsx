@@ -1,11 +1,28 @@
 import { useLanguage } from '../i18n/LanguageProvider';
 import Dialog from './ui/Dialog';
 import Button from './ui/Button';
+import Row from './ui/Row';
 import { useEffect, useState } from 'react';
-import { Download, Share, X, Smartphone } from './ui/icons';
+import { CirclePlus, Share } from './ui/icons';
 import UpdatePrompt from './UpdatePrompt';
 import { useRegisterSW } from 'virtual:pwa-register/react';
 
+/** Offers a new version of the app when the service worker has one waiting. */
+export function AppUpdates() {
+  const {
+    needRefresh: [needRefresh, setNeedRefresh],
+    updateServiceWorker,
+  } = useRegisterSW();
+  if (!needRefresh) return null;
+  return (
+    <UpdatePrompt
+      onUpdate={() => updateServiceWorker(true)}
+      onDismiss={() => setNeedRefresh(false)}
+    />
+  );
+}
+
+/** An "Add to Home Screen" row: the browser's install prompt, or steps for this phone. */
 export default function InstallApp() {
   const { t } = useLanguage();
   const [prompt, setPrompt] = useState<BeforeInstallPromptEvent | null>(null);
@@ -16,10 +33,6 @@ export default function InstallApp() {
   const [installed, setInstalled] = useState(() =>
     Boolean(matchMedia('(display-mode: standalone)').matches || navigator.standalone),
   );
-  const {
-    needRefresh: [needRefresh, setNeedRefresh],
-    updateServiceWorker,
-  } = useRegisterSW();
   useEffect(() => {
     const receive = (event: BeforeInstallPromptEvent) => {
       event.preventDefault();
@@ -33,13 +46,13 @@ export default function InstallApp() {
     const displayMode = matchMedia('(display-mode: standalone)');
     const updateDisplayMode = () =>
       setInstalled(Boolean(displayMode.matches || navigator.standalone));
-    displayMode.addEventListener('change', updateDisplayMode);
+    displayMode.addEventListener?.('change', updateDisplayMode);
     addEventListener('beforeinstallprompt', receive);
     addEventListener('appinstalled', done);
     return () => {
       removeEventListener('beforeinstallprompt', receive);
       removeEventListener('appinstalled', done);
-      displayMode.removeEventListener('change', updateDisplayMode);
+      displayMode.removeEventListener?.('change', updateDisplayMode);
     };
   }, []);
   async function install() {
@@ -56,75 +69,60 @@ export default function InstallApp() {
       setPrompt(null);
     }
   }
+  if (installed) return null;
   return (
     <>
-      {!installed && (
-        <Button
-          type="button"
-          className="install-button"
-          onClick={install}
-          aria-label={t('Add to home screen')}
-        >
-          <Download size={16} />
-          <span>{t('Add to home screen')}</span>
-        </Button>
-      )}
-      {needRefresh && (
-        <UpdatePrompt
-          onUpdate={() => updateServiceWorker(true)}
-          onDismiss={() => setNeedRefresh(false)}
-        />
-      )}
-      <Dialog open={open} onClose={() => setOpen(false)} titleId="install-title">
-        <Button
-          className="modal-close icon-button"
-          onClick={() => setOpen(false)}
-          aria-label={t('Close installation instructions')}
-        >
-          <X size={20} />
-        </Button>
-        <div className="feature-icon">
-          <Smartphone size={26} />
-        </div>
-        <h2 id="install-title">{t('Your commute, one tap away.')}</h2>
+      <Row
+        icon={<CirclePlus size={18} />}
+        label={t('Add to home screen')}
+        aria-haspopup="dialog"
+        onClick={install}
+      />
+      <Dialog
+        open={open}
+        onClose={() => setOpen(false)}
+        titleId="install-title"
+        title={t('Your commute, one tap away.')}
+        closeLabel={t('Close installation instructions')}
+      >
         <p>{t('Add LAXCommute to your home screen for an app-style experience.')}</p>
-        <div className="tabs tabs-box segmented">
+        <div className="segmented" role="group" aria-label={t('Your phone')}>
           <Button
-            className={platform === 'iphone' ? 'tab tab-active active' : 'tab'}
+            aria-pressed={platform === 'iphone'}
+            className={platform === 'iphone' ? 'active' : ''}
             onClick={() => setPlatform('iphone')}
           >
             iPhone
           </Button>
           <Button
-            className={platform === 'android' ? 'tab tab-active active' : 'tab'}
+            aria-pressed={platform === 'android'}
+            className={platform === 'android' ? 'active' : ''}
             onClick={() => setPlatform('android')}
           >
             Android
           </Button>
         </div>
         {platform === 'iphone' ? (
-          <ol>
+          <ol className="steps">
             <li>{t('Open this website in Safari.')}</li>
             <li>
               {t('Tap Share, then choose Add to Home Screen and Add.')} <Share size={14} />
             </li>
           </ol>
         ) : (
-          <ol>
+          <ol className="steps">
             <li>{t('Open this website in Chrome.')}</li>
             <li>{t('Tap the three-dot menu.')}</li>
             <li>{t('Choose Install app or Add to home screen.')}</li>
           </ol>
         )}
-        <p className="small muted">
-          {' '}
+        <p className="hint">
           {t(
             'Live bus data needs an internet connection. Home-screen installation needs a secure HTTPS website.',
-          )}{' '}
+          )}
         </p>
-        <Button className="button button-primary full-width" onClick={() => setOpen(false)}>
-          {' '}
-          {t('Got it')}{' '}
+        <Button className="button-primary" onClick={() => setOpen(false)}>
+          {t('Got it')}
         </Button>
       </Dialog>
     </>

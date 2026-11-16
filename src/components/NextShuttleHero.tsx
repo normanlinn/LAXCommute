@@ -1,6 +1,6 @@
 import { motion, useReducedMotion } from 'motion/react';
 import { useLanguage } from '../i18n/LanguageProvider';
-import { Clock3 } from './ui/icons';
+import { ChevronRight, Clock3 } from './ui/icons';
 
 type Props = {
   routeShort: string;
@@ -12,9 +12,13 @@ type Props = {
   arriving: boolean;
   scheduled: boolean;
   liveDown: boolean;
+  /** Typical gap between buses, shown while live times are paused. */
+  typical: string;
+  /** Opens the explanation of why live times are paused. */
+  onExplain: () => void;
 };
 
-/** The selected lot's next departure, as a solid Transit-style card. */
+/** The selected lot's next departure: the one solid accent card on the screen. */
 export default function NextShuttleHero({
   routeShort,
   lotLabel,
@@ -24,6 +28,8 @@ export default function NextShuttleHero({
   arriving,
   scheduled,
   liveDown,
+  typical,
+  onExplain,
 }: Props) {
   const { t } = useLanguage();
   const reduce = useReducedMotion();
@@ -33,31 +39,24 @@ export default function NextShuttleHero({
     : minutes !== null
       ? [String(minutes), t('min')]
       : liveDown
-        ? ['7–15', t('min')]
+        ? [typical, t('min')]
         : ['…', ''];
-  const status = known
-    ? scheduled
-      ? t('Scheduled')
-      : t('Live')
-    : liveDown
-      ? t('Live times paused · typical service')
-      : t('Waiting for the tracker');
   return (
-    <section className="next-hero" aria-live="polite" aria-label={t('Your next shuttle')}>
-      <div className="next-hero-row">
-        <span className="next-hero-route" aria-hidden="true">
+    <section className="departure" aria-live="polite" aria-label={t('Your next shuttle')}>
+      <div className="departure-main">
+        <span className="route-badge" aria-hidden="true">
           {routeShort}
         </span>
-        <span className="next-hero-where">
-          <strong>{lotLabel}</strong>
-          <span>
+        <span className="departure-where">
+          <strong>{t('{lot} shuttle', { lot: lotLabel })}</strong>
+          <small>
             {t('to {place}', { place: destination })}
             {stopName ? ` · ${stopName}` : ''}
-          </span>
+          </small>
         </span>
         <motion.span
           key={value}
-          className="next-hero-time"
+          className="departure-time"
           initial={reduce ? false : { opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.22, ease: [0.2, 0.8, 0.2, 1] }}
@@ -66,10 +65,21 @@ export default function NextShuttleHero({
           {unit && <small>{unit}</small>}
         </motion.span>
       </div>
-      <div className="next-hero-status">
-        {liveDown && !known ? <Clock3 size={13} aria-hidden="true" /> : <i aria-hidden="true" />}
-        {status}
-      </div>
+      {liveDown && !known ? (
+        <button type="button" className="btn departure-status" onClick={onExplain}>
+          <Clock3 size={15} aria-hidden="true" />
+          <span>{t('Typical service · live times paused')}</span>
+          <span className="departure-why">
+            {t('Why')}
+            <ChevronRight size={14} aria-hidden="true" />
+          </span>
+        </button>
+      ) : (
+        <p className="departure-status">
+          <i className={known && !scheduled ? 'live-dot' : 'live-dot is-off'} aria-hidden="true" />
+          {known ? (scheduled ? t('Scheduled') : t('Live')) : t('Waiting for the tracker')}
+        </p>
+      )}
     </section>
   );
 }
