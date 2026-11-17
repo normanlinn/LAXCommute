@@ -14,7 +14,8 @@
     background: var(--ios-map-land);
     font-family: inherit;
   }
-  .leaflet-control-attribution {
+  // One class more than Leaflet's own rule, which loads later with the map.
+  &.leaflet-container .leaflet-control-attribution {
     padding: 2px 6px;
     background: color-mix(in srgb, var(--ios-card) 85%, transparent);
     color: var(--ios-secondary);

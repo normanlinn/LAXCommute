@@ -2,18 +2,18 @@
 export const PALETTES = [
   {
     id: 'lax',
-    name: 'LAX Gateway',
+    name: 'LAX Pacific',
     light: {
-      bg: '#f0f4f8',
+      bg: '#f7fbfc',
       card: '#ffffff',
-      tint: '#0077c8',
-      hero: '#0077c8',
+      tint: '#007981',
+      hero: '#18bdc7',
     },
     dark: {
-      bg: '#070e17',
-      card: '#0f1c2e',
-      tint: '#00a3e0',
-      hero: '#005a9c',
+      bg: '#081923',
+      card: '#102b35',
+      tint: '#58dce3',
+      hero: '#18bdc7',
     },
   },
   {

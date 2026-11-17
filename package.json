@@ -12,7 +12,7 @@
     "preview": "vite preview --host 0.0.0.0",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "audit": "npm audit --audit-level=moderate && npm audit --omit=dev --audit-level=low",
+    "audit": "npm audit --omit=dev --audit-level=low && npm audit --audit-level=critical",
     "deploy": "npm run build && wrangler deploy",
     "deploy:check": "npm run build && wrangler deploy --dry-run",
     "setup": "node scripts/setup.mjs",

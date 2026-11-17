@@ -126,16 +126,18 @@ test('riders can choose an avatar, and it stays after reload', async ({ page }) 
   await expect(profile).toHaveCSS('background-color', 'rgb(88, 86, 214)');
 });
 
-test('riders can switch among the twelve themes, and it stays after reload', async ({ page }) => {
+test('riders can switch between the two LAX themes, and it stays after reload', async ({
+  page,
+}) => {
   await open(page);
-  await expect(page.locator('html')).toHaveAttribute('data-palette', 'ember');
+  await expect(page.locator('html')).toHaveAttribute('data-palette', 'lax');
   await page.getByRole('navigation').getByRole('button', { name: 'Me' }).click();
   await page.getByRole('button', { name: /Theme/ }).click();
-  await expect(page.locator('.theme-option')).toHaveCount(12);
-  await page.locator('.theme-option', { hasText: 'Pacific coast' }).click();
-  await expect(page.locator('html')).toHaveAttribute('data-palette', 'pacific');
+  await expect(page.locator('.theme-option')).toHaveCount(2);
+  await page.locator('.theme-option', { hasText: 'LAX Sunset Pylons' }).click();
+  await expect(page.locator('html')).toHaveAttribute('data-palette', 'sunset');
   await page.reload();
-  await expect(page.locator('html')).toHaveAttribute('data-palette', 'pacific');
+  await expect(page.locator('html')).toHaveAttribute('data-palette', 'sunset');
 });
 
 test('riders can set a nickname and are greeted by it', async ({ page }) => {
