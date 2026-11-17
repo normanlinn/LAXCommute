@@ -73,10 +73,13 @@ export default function ReleaseNotes() {
                 {index === 0 && <span className="release-latest">{t('Latest')}</span>}
               </h4>
               <ul>
-                {day.items.map((item, n) => {
+                {day.items.map((item) => {
                   const { label, Icon } = KINDS[item.kind] || KINDS.improved;
                   return (
-                    <li key={n} className={`release-item kind-${item.kind}`}>
+                    <li
+                      key={`${item.kind}:${item.text}`}
+                      className={`release-item kind-${item.kind}`}
+                    >
                       <span className="release-kind">
                         <Icon size={13} aria-hidden="true" /> {t(label)}
                       </span>

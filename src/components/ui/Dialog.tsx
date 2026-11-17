@@ -52,6 +52,7 @@ export default function Dialog({
       .then(() => {
         if (active && !open) dialog.close();
       })
+      // Cancelling a running animation (a quick reopen) rejects this promise; that is expected.
       .catch(() => {});
     return () => {
       active = false;

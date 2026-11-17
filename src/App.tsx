@@ -1,29 +1,17 @@
 import { useLanguage } from './i18n/LanguageProvider';
-import type { Direction, Point, Stop } from './types';
+import type { Direction, Stop } from './types';
 import Button from './components/ui/Button';
 import Row from './components/ui/Row';
 import { motion, useReducedMotion } from 'motion/react';
-import {
-  lazy,
-  Suspense,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type PointerEvent as ReactPointerEvent,
-} from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ArrowDownUp,
-  Bookmark,
   Briefcase,
   Car,
   ExternalLink,
   LocateFixed,
-  Map,
   MapPin,
   Route,
-  UserRound,
   Users,
   WifiOff,
 } from './components/ui/icons';
@@ -58,20 +46,15 @@ import { AppUpdates } from './components/InstallApp';
 import DirectionsButton from './components/DirectionsButton';
 import MapLoading from './components/MapLoading';
 import CommuteWelcome from './components/CommuteWelcome';
+import TabBar, { type Tab } from './components/TabBar';
+import { useSheetDetents } from './hooks/useSheetDetents';
+import { useCurrentLocation } from './hooks/useCurrentLocation';
 import { haptic } from './domain/haptics';
 const SavedCommute = lazy(() => import('./components/SavedCommute'));
 const MePage = lazy(() => import('./components/MePage'));
 const EMPTY: never[] = [];
 // LAX's published guidance for employee shuttles, shown while live times are paused.
 const TYPICAL_GAP = '7–15';
-type Tab = 'map' | 'trip' | 'me';
-const TABS = [
-  { id: 'map', label: 'Explore', Icon: Map },
-  { id: 'trip', label: 'My trip', Icon: Bookmark },
-  { id: 'me', label: 'Me', Icon: UserRound },
-] as const;
-// Phone sheet heights: a peek at the departure card, half the screen, or full.
-const DETENTS = ['peek', 'half', 'full'] as const;
 
 export default function App() {
   const { t } = useLanguage();
@@ -120,56 +103,20 @@ export default function App() {
     }
   }, [direction]);
 
-  // The phone sheet: drag the grip between three heights, or tap it to step through them.
-  const sheetRef = useRef<HTMLElement>(null);
-  const [detent, setDetent] = useState(1);
-  const drag = useRef<{ pointer: number; startY: number; lastY: number } | null>(null);
-  const ignoreClick = useRef(false);
-  function startDrag(event: ReactPointerEvent<HTMLButtonElement>) {
-    if (event.button !== 0) return;
-    ignoreClick.current = false;
-    drag.current = { pointer: event.pointerId, startY: event.clientY, lastY: event.clientY };
-    event.currentTarget.setPointerCapture?.(event.pointerId);
-  }
-  function moveDrag(event: ReactPointerEvent<HTMLButtonElement>) {
-    const gesture = drag.current;
-    const sheet = sheetRef.current;
-    if (!gesture || gesture.pointer !== event.pointerId || !sheet) return;
-    gesture.lastY = event.clientY;
-    const distance = gesture.lastY - gesture.startY;
-    if (Math.abs(distance) < 6 && !sheet.classList.contains('is-dragging')) return;
-    sheet.classList.add('is-dragging');
-    sheet.style.setProperty('--drag', `${distance}px`);
-  }
-  function endDrag(event: ReactPointerEvent<HTMLButtonElement>, cancelled = false) {
-    const gesture = drag.current;
-    if (!gesture || gesture.pointer !== event.pointerId) return;
-    drag.current = null;
-    const sheet = sheetRef.current;
-    sheet?.classList.remove('is-dragging');
-    sheet?.style.removeProperty('--drag');
-    if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId);
-    }
-    const distance = gesture.lastY - gesture.startY;
-    ignoreClick.current = Math.abs(distance) >= 6;
-    if (cancelled || Math.abs(distance) < 40) return;
-    // Long swipes jump two steps; short ones move one.
-    const steps = Math.abs(distance) > 220 ? 2 : 1;
-    setDetent((current) => Math.max(0, Math.min(2, current + (distance < 0 ? steps : -steps))));
-  }
-
   const [override, setOverride] = useState<{
     routeID: number;
     direction: Direction;
     id: number;
     source: string;
   } | null>(null);
-  const [userLocation, setUserLocation] = useState<
-    (Point & { accuracy?: number; at?: number }) | null
-  >(null);
-  const [locationError, setLocationError] = useState('');
-  const [locating, setLocating] = useState(false);
+  const sheet = useSheetDetents();
+  const {
+    location: userLocation,
+    error: locationError,
+    setError: setLocationError,
+    locating,
+    locate: findLocation,
+  } = useCurrentLocation();
   const [focusRequest, setFocusRequest] = useState({ mode: 'route', serial: 0 });
   const [outageOpen, setOutageOpen] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
@@ -277,7 +224,7 @@ export default function App() {
     smoothly(() => {
       setLot(next);
       setOverride(null);
-      setDetent((current) => Math.max(current, 1));
+      sheet.reveal();
     });
   }
   const chooseStop = useCallback(
@@ -286,7 +233,7 @@ export default function App() {
       smoothly(() => {
         setDirection(nextDirection);
         setOverride({ id: stop.id, direction: nextDirection, routeID: route.id, source: 'manual' });
-        setDetent((current) => Math.max(current, 1));
+        sheet.reveal();
       });
     },
     [route.id],
@@ -295,71 +242,18 @@ export default function App() {
     setFocusRequest((current) => ({ mode, serial: current.serial + 1 }));
   }
   function locate() {
-    setLocationError('');
-    if (!navigator.geolocation) {
-      setLocationError(
-        'This browser does not support location. Choose your boarding stop manually.',
-      );
-      return;
-    }
-    setLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const location = {
-          lat: position.coords.latitude,
-          lon: position.coords.longitude,
-          accuracy: position.coords.accuracy,
-          at: Date.now(),
-        };
-        setUserLocation(location);
-        setLocating(false);
-        const nearest = nearestStop(options, location);
-        if (!nearest || distanceMeters(location, nearest) > 3_000) {
-          setLocationError('You’re outside the boarding area. Choose a stop manually.');
-          focus('you');
-          return;
-        }
+    findLocation((fix) => {
+      const nearest = nearestStop(options, fix);
+      if (!nearest || distanceMeters(fix, nearest) > 3_000) {
+        setLocationError('You’re outside the boarding area. Choose a stop manually.');
+      } else {
         setOverride({ id: nearest.id, direction, routeID: route.id, source: 'nearby' });
-        focus('you');
-      },
-      (error) => {
-        setLocating(false);
-        setLocationError(
-          error.code === 1
-            ? 'Location access was declined. You can choose any boarding stop manually.'
-            : 'Your location could not be found. Try again or choose a stop manually.',
-        );
-      },
-      { enableHighAccuracy: false, timeout: 10_000, maximumAge: 60_000 },
-    );
+      }
+      focus('you');
+    });
   }
 
   const explore = tab === 'map';
-  const tabs = (
-    <nav className="tabbar" aria-label={t('Main navigation')}>
-      {TABS.map(({ id, label, Icon }) => (
-        <Button
-          key={id}
-          className={tab === id ? 'active' : ''}
-          aria-current={tab === id ? 'page' : undefined}
-          onClick={() => changeTab(id)}
-        >
-          {tab === id && (
-            <motion.span
-              layoutId="tab-pill"
-              className="tab-pill"
-              aria-hidden="true"
-              transition={
-                reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 520, damping: 40 }
-              }
-            />
-          )}
-          <Icon size={22} aria-hidden="true" />
-          <span>{t(label)}</span>
-        </Button>
-      ))}
-    </nav>
-  );
 
   return (
     <div
@@ -428,9 +322,9 @@ export default function App() {
       </div>
 
       <aside
-        ref={sheetRef}
+        ref={sheet.sheetRef}
         className="panel"
-        data-detent={DETENTS[detent]}
+        data-detent={sheet.detent}
         aria-label={explore ? t('Departures') : undefined}
       >
         <header className="panel-head">
@@ -442,25 +336,8 @@ export default function App() {
         {explore && (
           <Button
             className="sheet-grip"
-            aria-label={detent === 2 ? t('Collapse departures') : t('Expand departures')}
-            aria-expanded={detent > 0}
-            onPointerDown={startDrag}
-            onPointerMove={moveDrag}
-            onPointerUp={(event) => endDrag(event)}
-            onPointerCancel={(event) => endDrag(event, true)}
-            onClick={(event) => {
-              if (event.detail !== 0 && ignoreClick.current) {
-                ignoreClick.current = false;
-                return;
-              }
-              setDetent((current) => (current + 1) % 3);
-            }}
-            onKeyDown={(event) => {
-              if (event.key === 'ArrowUp') setDetent((current) => Math.min(2, current + 1));
-              else if (event.key === 'ArrowDown') setDetent((current) => Math.max(0, current - 1));
-              else return;
-              event.preventDefault();
-            }}
+            aria-label={sheet.expanded ? t('Collapse departures') : t('Expand departures')}
+            {...sheet.gripProps}
           >
             <i aria-hidden="true" />
           </Button>
@@ -730,7 +607,7 @@ export default function App() {
           )}
         </motion.div>
       </aside>
-      {tabs}
+      <TabBar tab={tab} onChange={changeTab} />
       <WhatsNew />
       <AppUpdates />
       <OutageNotice

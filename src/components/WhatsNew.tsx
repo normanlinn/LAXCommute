@@ -32,7 +32,10 @@ export default function WhatsNew() {
     return () => clearTimeout(timer);
   }, [version]);
   if (!version) return null;
-  const items = history.days.flatMap((day) => day.items).slice(0, 3);
+  // The three newest distinct changes (the same message can recur on different days).
+  const items = [...new Set(history.days.flatMap((day) => day.items.map((item) => item.text)))]
+    .slice(0, 3)
+    .map((text) => ({ text }));
   return (
     <aside className="whats-new-toast" role="status" aria-label={t("What's new")}>
       <span className="update-icon is-done" aria-hidden="true">
@@ -42,8 +45,8 @@ export default function WhatsNew() {
         <strong>{t('Updated to v{version}', { version })}</strong>
         {items.length > 0 && (
           <ul>
-            {items.map((item, index) => (
-              <li key={index} lang="en">
+            {items.map((item) => (
+              <li key={item.text} lang="en">
                 {item.text}
               </li>
             ))}
