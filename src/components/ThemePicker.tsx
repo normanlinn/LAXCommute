@@ -5,46 +5,17 @@ import { PALETTES, type PaletteID } from '../theme/palettes';
 import { haptic } from '../domain/haptics';
 import { Check, Monitor, Moon, Sun } from './ui/icons';
 
-type CategoryKey = 'all' | 'aviation' | 'california' | 'minimal';
-
-const THEME_CATEGORIES: Record<string, CategoryKey> = {
-  runway: 'aviation',
-  cockpit: 'aviation',
-  board: 'aviation',
-  modernist: 'aviation',
-  sunset: 'california',
-  golden: 'california',
-  pacific: 'california',
-  hollywood: 'california',
-  palm: 'california',
-  rose: 'california',
-  ember: 'minimal',
-  apple: 'minimal',
-  nordic: 'minimal',
-  ocean: 'minimal',
-  matcha: 'minimal',
-  lavender: 'minimal',
-};
-
-const CATEGORIES: { id: CategoryKey; label: string }[] = [
-  { id: 'all', label: 'All' },
-  { id: 'aviation', label: 'Aviation & LAX' },
-  { id: 'california', label: 'California Skies' },
-  { id: 'minimal', label: 'Studio & Minimal' },
-];
-
 const APPEARANCE_CHOICES: { value: ThemePreference; label: string; Icon: typeof Sun }[] = [
   { value: 'system', label: 'System', Icon: Monitor },
   { value: 'light', label: 'Light', Icon: Sun },
   { value: 'dark', label: 'Dark', Icon: Moon },
 ];
 
-/** Modern theme gallery with interactive live preview and aviation/LA collections. */
+/** Curated theme gallery featuring Pacific Aero and Sunset Horizon. */
 export default function ThemePicker() {
   const { t } = useLanguage();
   const { palette, setPalette, appearance, preference, setPreference } = useTheme();
   const name = useId();
-  const [category, setCategory] = useState<CategoryKey>('all');
   const [previewId, setPreviewId] = useState<PaletteID | null>(null);
 
   const activeOption = useMemo(
@@ -52,11 +23,6 @@ export default function ThemePicker() {
     [previewId, palette],
   );
   const previewColors = activeOption[appearance];
-
-  const visiblePalettes = useMemo(() => {
-    if (category === 'all') return PALETTES;
-    return PALETTES.filter((p) => THEME_CATEGORIES[p.id] === category);
-  }, [category]);
 
   return (
     <fieldset className="theme-picker">
@@ -138,28 +104,9 @@ export default function ThemePicker() {
         ))}
       </div>
 
-      {/* Category filter tabs */}
-      <div className="theme-categories" role="tablist" aria-label={t('Theme')}>
-        {CATEGORIES.map((cat) => (
-          <button
-            key={cat.id}
-            type="button"
-            role="tab"
-            className={`chip ${category === cat.id ? 'is-active' : ''}`}
-            aria-selected={category === cat.id}
-            onClick={() => {
-              haptic('tap');
-              setCategory(cat.id);
-            }}
-          >
-            {t(cat.label)}
-          </button>
-        ))}
-      </div>
-
       {/* Palette choices */}
       <div className="theme-options">
-        {visiblePalettes.map((option) => {
+        {PALETTES.map((option) => {
           const colors = option[appearance];
           const isSelected = palette === option.id;
           return (
