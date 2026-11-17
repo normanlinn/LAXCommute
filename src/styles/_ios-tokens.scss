@@ -20,7 +20,7 @@
   --color-accent-content: #{map.get($set, 'on-tint')};
 }
 
-$default: map.get($palettes, 'pacific');
+$default: map.get($palettes, 'lax');
 :root,
 [data-theme='lax'] {
   @include tokens(map.get($default, 'light'));
