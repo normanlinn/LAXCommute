@@ -14,6 +14,7 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from 'react';
 import {
+  ArrowDownUp,
   Bookmark,
   Briefcase,
   Car,
@@ -485,18 +486,53 @@ export default function App() {
                 <h2>{greeting}</h2>
                 <span>{direction === 'work' ? t('Heading to work') : t('Heading home')}</span>
               </div>
-              <div className="direction-switch" role="group" aria-label={t('Travel direction')}>
-                <Button aria-pressed={direction === 'work'} onClick={() => changeDirection('work')}>
-                  <Briefcase size={17} aria-hidden="true" />
-                  {t('To work')}
-                </Button>
+              <div className="direction-row">
+                <div className="direction-switch" role="group" aria-label={t('Travel direction')}>
+                  <Button
+                    aria-pressed={direction === 'work'}
+                    onClick={() => changeDirection('work')}
+                  >
+                    <Briefcase size={17} aria-hidden="true" />
+                    {t('To work')}
+                  </Button>
+                  <Button
+                    aria-pressed={direction === 'parking'}
+                    onClick={() => changeDirection('parking')}
+                  >
+                    <Car size={17} aria-hidden="true" />
+                    {t('To parking')}
+                  </Button>
+                </div>
                 <Button
-                  aria-pressed={direction === 'parking'}
-                  onClick={() => changeDirection('parking')}
+                  className="flip-button"
+                  aria-label={t('Flip direction')}
+                  title={t('Flip direction')}
+                  onClick={() => changeDirection(direction === 'work' ? 'parking' : 'work')}
                 >
-                  <Car size={17} aria-hidden="true" />
-                  {t('To parking')}
+                  <ArrowDownUp size={18} aria-hidden="true" />
                 </Button>
+              </div>
+              <div className="lot-selector" role="tablist" aria-label={t('Select shuttle lot')}>
+                {ROUTES.map((r) => {
+                  const isSelected = r.lot === lot;
+                  return (
+                    <button
+                      key={r.id}
+                      type="button"
+                      role="tab"
+                      aria-selected={isSelected}
+                      className={`lot-selector-tab ${isSelected ? 'is-active' : ''}`}
+                      onClick={() => chooseRoute(r.lot)}
+                    >
+                      <span className="lot-selector-badge" aria-hidden="true">
+                        {r.short}
+                      </span>
+                      <span className="lot-selector-name">
+                        {r.lot} {t('Lot')}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
               {saveState && hasSaved && (
                 <p className="notice is-success" role="status">

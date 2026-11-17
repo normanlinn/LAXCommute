@@ -192,6 +192,70 @@ export const PALETTES = [
       hero: '#5b2bb5',
     },
   },
+  {
+    id: 'runway',
+    name: 'Runway night',
+    light: {
+      bg: '#f0f7fa',
+      card: '#ffffff',
+      tint: '#0284c7',
+      hero: '#0279b7',
+    },
+    dark: {
+      bg: '#0b1218',
+      card: '#121e27',
+      tint: '#38bdf8',
+      hero: '#0369a1',
+    },
+  },
+  {
+    id: 'cockpit',
+    name: 'Flight deck',
+    light: {
+      bg: '#f9f6f0',
+      card: '#ffffff',
+      tint: '#d97706',
+      hero: '#a95c06',
+    },
+    dark: {
+      bg: '#11100e',
+      card: '#1c1916',
+      tint: '#fbbf24',
+      hero: '#b45309',
+    },
+  },
+  {
+    id: 'sunset',
+    name: 'Sunset flight',
+    light: {
+      bg: '#faf5f6',
+      card: '#ffffff',
+      tint: '#e11d48',
+      hero: '#e11d48',
+    },
+    dark: {
+      bg: '#140e13',
+      card: '#20161e',
+      tint: '#fb7185',
+      hero: '#be123c',
+    },
+  },
+  {
+    id: 'modernist',
+    name: 'Theme building',
+    light: {
+      bg: '#f2f8f8',
+      card: '#ffffff',
+      tint: '#0d9488',
+      hero: '#0b7d73',
+    },
+    dark: {
+      bg: '#0c1515',
+      card: '#142222',
+      tint: '#2dd4bf',
+      hero: '#0f766e',
+    },
+  },
 ] as const;
 export type PaletteID = (typeof PALETTES)[number]['id'];
 export const DEFAULT_PALETTE: PaletteID = 'ember';

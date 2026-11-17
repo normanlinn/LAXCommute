@@ -1,6 +1,7 @@
 // The app's icon set (Phosphor, bold outline), exported under the names the components use.
 import type { ComponentType, CSSProperties } from 'react';
 import {
+  Airplane as PhAirplane,
   ArrowLineDown,
   MagnifyingGlass,
   ArrowRight as PhArrowRight,
@@ -84,6 +85,7 @@ function icon(Phosphor: ComponentType<PhosphorProps>): IconComponent {
   return Icon;
 }
 
+export const Airplane = icon(PhAirplane);
 export const ArrowDownToLine = icon(ArrowLineDown);
 export const ArrowDownUp = icon(ArrowsDownUp);
 export const ArrowRight = icon(PhArrowRight);

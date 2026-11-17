@@ -41,6 +41,16 @@ export default function NextShuttleHero({
       : liveDown
         ? [typical, t('min')]
         : ['…', ''];
+
+  const clockTime = arriving
+    ? t('Due now')
+    : minutes !== null
+      ? new Date(Date.now() + minutes * 60_000).toLocaleTimeString([], {
+          hour: 'numeric',
+          minute: '2-digit',
+        })
+      : null;
+
   return (
     <section className="departure" aria-live="polite" aria-label={t('Your next shuttle')}>
       <div className="departure-main">
@@ -77,7 +87,12 @@ export default function NextShuttleHero({
       ) : (
         <p className="departure-status">
           <i className={known && !scheduled ? 'live-dot' : 'live-dot is-off'} aria-hidden="true" />
-          {known ? (scheduled ? t('Scheduled') : t('Live')) : t('Waiting for the tracker')}
+          <span>
+            {known ? (scheduled ? t('Scheduled') : t('Live')) : t('Waiting for the tracker')}
+          </span>
+          {clockTime && known && (
+            <span className="departure-clock-tag">· {arriving ? clockTime : `~${clockTime}`}</span>
+          )}
         </p>
       )}
     </section>

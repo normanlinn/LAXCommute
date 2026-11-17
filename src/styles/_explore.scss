@@ -103,8 +103,89 @@
     font-size: 13px;
   }
 }
+.direction-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  .direction-switch {
+    flex: 1;
+  }
+}
+.flip-button {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--ios-line);
+  border-radius: 12px;
+  background: var(--ios-card);
+  color: var(--ios-secondary);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  &:hover {
+    background: var(--ios-fill);
+    color: var(--ios-label);
+  }
+  &:active {
+    transform: scale(0.96);
+  }
+}
+.lot-selector {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+.lot-selector-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 6px 8px;
+  border: 1px solid var(--ios-line);
+  border-radius: var(--r-sm);
+  background: var(--ios-card);
+  color: var(--ios-secondary);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  &:hover {
+    background: var(--ios-fill);
+    color: var(--ios-label);
+  }
+  &.is-active {
+    border-color: var(--ios-tint);
+    background: var(--ios-soft);
+    color: var(--ios-tint-text);
+  }
+  &:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--ios-tint) 50%, transparent);
+    outline-offset: 2px;
+  }
+}
+.lot-selector-badge {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  background: var(--ios-fill);
+  color: var(--ios-secondary);
+  font-size: 11px;
+  font-weight: 800;
+  .lot-selector-tab.is-active & {
+    background: var(--ios-tint);
+    color: var(--ios-on-tint);
+  }
+}
 .direction-switch .btn {
   gap: 6px;
+}
+.departure-clock-tag {
+  font-weight: 700;
+  opacity: 0.95;
 }
 
 // ---- Departure card: the one solid accent surface ----

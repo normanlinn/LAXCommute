@@ -37,8 +37,8 @@ const cases = Object.entries(themes).flatMap(([id, modes]) =>
   Object.entries(modes).map(([mode, colors]) => [id, mode, colors]),
 );
 
-it('defines all twelve themes in light and dark', () => {
-  expect(cases).toHaveLength(24);
+it('defines all sixteen themes in light and dark', () => {
+  expect(cases).toHaveLength(32);
 });
 
 describe.each(cases)('%s theme, %s mode', (_id, _mode, c) => {

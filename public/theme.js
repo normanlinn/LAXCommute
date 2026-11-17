@@ -16,6 +16,10 @@
     'ocean',
     'matcha',
     'lavender',
+    'runway',
+    'cockpit',
+    'sunset',
+    'modernist',
   ];
   try {
     const saved = localStorage.getItem('laxcommute:theme');
