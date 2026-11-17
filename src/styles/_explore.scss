@@ -181,8 +181,9 @@
   color: var(--ios-secondary);
   font-size: 11px;
   font-weight: 800;
+  // The card's own color pair, so the letter always meets contrast.
   .lot-selector-tab.is-active & {
-    background: var(--ios-tint);
+    background: var(--ios-tint-fill);
     color: var(--ios-on-tint);
   }
 }
