@@ -47,9 +47,7 @@ describe('language preference', () => {
     expect(localStorage.getItem(LANGUAGE_STORAGE_KEY)).toBe('my');
     first.unmount();
     openSwitch();
-    expect(screen.getByRole('button', { name: 'မြန်မာ' }).getAttribute('aria-pressed')).toBe(
-      'true',
-    );
+    expect(screen.getByRole('button', { name: 'မြန်မာ' }).getAttribute('aria-pressed')).toBe('true');
     fireEvent.click(screen.getByRole('button', { name: 'English' }));
     expect(screen.getByText('Leave in 12 min')).toBeTruthy();
     expect(document.documentElement.lang).toBe('en');
