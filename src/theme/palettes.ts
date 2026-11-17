@@ -4,16 +4,16 @@ export const PALETTES = [
     id: 'lax',
     name: 'LAX Pacific',
     light: {
-      bg: '#f7fbfc',
+      bg: '#f4f9fa',
       card: '#ffffff',
-      tint: '#007981',
-      hero: '#18bdc7',
+      tint: '#00838f',
+      hero: '#007c87',
     },
     dark: {
-      bg: '#081923',
-      card: '#102b35',
-      tint: '#58dce3',
-      hero: '#18bdc7',
+      bg: '#071722',
+      card: '#0f2532',
+      tint: '#4fd8e0',
+      hero: '#09828c',
     },
   },
   {

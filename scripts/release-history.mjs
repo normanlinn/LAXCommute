@@ -59,8 +59,11 @@ export function releaseHistory(log, version, builtAt = new Date().toISOString())
   const days = [];
   for (const entry of entries) {
     const day = days.at(-1);
-    if (day?.date === entry.date) day.items.push({ kind: entry.kind, text: entry.text });
-    else days.push({ date: entry.date, items: [{ kind: entry.kind, text: entry.text }] });
+    if (day?.date === entry.date) {
+      // A repeated message on the same day adds nothing; it also keeps list keys unique.
+      if (!day.items.some((item) => item.kind === entry.kind && item.text === entry.text))
+        day.items.push({ kind: entry.kind, text: entry.text });
+    } else days.push({ date: entry.date, items: [{ kind: entry.kind, text: entry.text }] });
   }
   return {
     version,
