@@ -527,8 +527,11 @@ export default function App() {
                       <span className="lot-selector-badge" aria-hidden="true">
                         {r.short}
                       </span>
-                      <span className="lot-selector-name">
-                        {r.lot} {t('Lot')}
+                      <span className="lot-selector-meta">
+                        <strong className="lot-selector-name">
+                          {r.lot} {t('Lot')}
+                        </strong>
+                        <small className="lot-selector-coverage">{t(r.coverage)}</small>
                       </span>
                     </button>
                   );

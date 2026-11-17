@@ -50,22 +50,28 @@
   }
   .boarding-label {
     width: max-content;
-    max-width: 190px;
+    max-width: 210px;
+    padding: 6px 12px;
     border-color: var(--ios-label);
+    border-radius: 10px;
     background: var(--ios-label);
     color: var(--ios-card);
-    font-size: 12px;
-    font-weight: 700;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
     text-align: center;
+    box-shadow: 0 4px 14px rgb(0 0 0 / 18%);
     &::before {
       border-top-color: var(--ios-label);
     }
     small {
       display: block;
-      margin-bottom: 3px;
+      margin-bottom: 2px;
       color: var(--ios-tint);
-      font-size: 9px;
-      letter-spacing: 1.2px;
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
   }
 }
@@ -113,14 +119,16 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 50px;
-    height: 50px;
-    border: 3px solid #fff;
+    width: 48px;
+    height: 48px;
+    border: 2.5px solid #fff;
+    border-radius: 14px;
     background: var(--marker-color);
     color: #fff;
+    box-shadow: 0 4px 14px rgb(0 0 0 / 25%);
     svg {
-      width: 23px;
-      height: 23px;
+      width: 22px;
+      height: 22px;
     }
     &.bus-focused {
       outline: 3px solid var(--marker-color);
@@ -146,7 +154,8 @@
   overflow: hidden;
   color: #fff;
   font-size: 10px;
-  font-weight: 800;
+  font-weight: 600;
+  letter-spacing: 0.02em;
   line-height: 1.15;
   text-align: center;
   text-overflow: ellipsis;
@@ -198,22 +207,27 @@
 .basemap-switch {
   display: flex;
   padding: 3px;
-  border-radius: 12px;
-  background: var(--ios-card);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ios-card) 92%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid color-mix(in srgb, var(--ios-line) 60%, transparent);
   box-shadow: var(--shadow);
   button {
     min-height: 34px;
     padding: 0 12px;
     border: 0;
-    border-radius: 9px;
+    border-radius: 999px;
     background: none;
     color: var(--ios-secondary);
-    font-size: 13px;
-    font-weight: 700;
+    font-size: 12.5px;
+    font-weight: 600;
     cursor: pointer;
+    transition: all 0.15s ease;
     &[aria-pressed='true'] {
       background: var(--ios-soft);
       color: var(--ios-tint-text);
+      box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
     }
   }
 }
@@ -222,14 +236,18 @@
   place-items: center;
   width: 40px;
   height: 40px;
-  border: 0;
-  border-radius: 12px;
-  background: var(--ios-card);
+  border: 1px solid color-mix(in srgb, var(--ios-line) 60%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ios-card) 92%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   box-shadow: var(--shadow);
   color: var(--ios-secondary);
   cursor: pointer;
+  transition: all 0.15s ease;
   &[aria-pressed='true'] {
     color: var(--ios-tint-text);
+    background: var(--ios-soft);
   }
   span {
     position: absolute;
@@ -247,14 +265,20 @@
   gap: 6px;
   min-height: 40px;
   padding: 0 14px;
-  border: 0;
+  border: 1px solid color-mix(in srgb, var(--ios-line) 60%, transparent);
   border-radius: 999px;
-  background: var(--ios-card);
+  background: color-mix(in srgb, var(--ios-card) 92%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   box-shadow: var(--shadow);
   color: var(--ios-tint-text);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.15s ease;
+  &:hover {
+    background: var(--ios-card);
+  }
 }
 .transit-bus-detail,
 .map-tile-warning {
@@ -266,9 +290,12 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  background: var(--ios-card);
+  padding: 10px 14px;
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--ios-line) 70%, transparent);
+  background: color-mix(in srgb, var(--ios-card) 94%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   box-shadow: var(--shadow);
   font-size: 13px;
   > div {

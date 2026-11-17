@@ -10,9 +10,12 @@
   align-items: center;
   gap: 10px;
   height: 48px;
-  padding: 0 14px;
-  border-radius: var(--r);
-  background: var(--ios-card);
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--ios-line) 70%, transparent);
+  background: color-mix(in srgb, var(--ios-card) 88%, transparent);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
   box-shadow: var(--shadow);
   color: var(--ios-secondary);
   cursor: text;
@@ -22,12 +25,12 @@
     border: 0;
     background: transparent;
     color: var(--ios-label);
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 15px;
+    font-weight: 500;
     outline: none;
     &::placeholder {
       color: var(--ios-secondary);
-      font-weight: 500;
+      font-weight: 400;
     }
     &::-webkit-search-cancel-button {
       display: none;
@@ -35,7 +38,7 @@
   }
   &:has(input:focus-visible) {
     box-shadow:
-      0 0 0 3px color-mix(in srgb, var(--ios-tint) 40%, transparent),
+      0 0 0 3px color-mix(in srgb, var(--ios-tint) 35%, transparent),
       var(--shadow);
   }
 }
@@ -134,41 +137,71 @@
 .lot-selector {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 6px;
+  gap: 8px;
 }
 .lot-selector-tab {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   justify-content: center;
-  gap: 6px;
-  min-height: 38px;
-  padding: 6px 8px;
+  gap: 4px;
+  min-height: 58px;
+  padding: 8px 10px;
   border: 1px solid var(--ios-line);
-  border-radius: var(--r-sm);
+  border-radius: var(--r);
   background: var(--ios-card);
   color: var(--ios-secondary);
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.18s ease;
   &:hover {
     background: var(--ios-fill);
+    transform: translateY(-1px);
     color: var(--ios-label);
   }
   &.is-active {
     border-color: var(--ios-tint);
     background: var(--ios-soft);
     color: var(--ios-tint-text);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--ios-tint) 16%, transparent);
   }
   &:focus-visible {
     outline: 3px solid color-mix(in srgb, var(--ios-tint) 50%, transparent);
     outline-offset: 2px;
   }
 }
+.lot-selector-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  min-width: 0;
+  width: 100%;
+}
+.lot-selector-name {
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--ios-label);
+  .lot-selector-tab.is-active & {
+    color: var(--ios-tint-text);
+  }
+}
+.lot-selector-coverage {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--ios-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  opacity: 0.85;
+}
 .lot-selector-badge {
   display: grid;
   place-items: center;
-  width: 20px;
+  width: 22px;
   height: 20px;
   border-radius: 6px;
   background: var(--ios-fill);
@@ -191,27 +224,35 @@
 // ---- Departure card: the one solid accent surface ----
 .departure {
   overflow: hidden;
-  border-radius: var(--r);
-  background: var(--ios-tint-fill);
+  border-radius: 18px;
+  background: linear-gradient(
+    135deg,
+    var(--ios-tint-fill) 0%,
+    color-mix(in srgb, var(--ios-tint-fill) 84%, rgb(0 0 0)) 100%
+  );
   color: var(--ios-on-tint);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, #fff 25%, transparent),
+    0 8px 24px color-mix(in srgb, var(--ios-tint-fill) 25%, transparent);
 }
 .departure-main {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 12px;
-  padding: 14px;
+  gap: 14px;
+  padding: 16px;
 }
 .route-badge {
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 11px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   background: var(--ios-on-tint);
   color: var(--ios-tint-fill);
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 800;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 12%);
   &.is-outline {
     width: 32px;
     height: 32px;
@@ -243,7 +284,7 @@
   line-height: 1;
   font-variant-numeric: tabular-nums;
   strong {
-    font-size: 30px;
+    font-size: 32px;
     font-weight: 800;
     letter-spacing: -0.03em;
   }
@@ -260,7 +301,7 @@
   justify-content: flex-start;
   gap: 8px;
   width: 100%;
-  padding: 10px 14px;
+  padding: 11px 16px;
   border-top: 1px solid color-mix(in srgb, var(--ios-on-tint) 22%, transparent);
   color: inherit;
   font-size: 13px;
@@ -304,16 +345,22 @@
   display: grid;
   place-items: center;
   align-content: center;
-  gap: 4px;
-  height: 68px;
+  gap: 5px;
+  height: 70px;
   border: 1px solid var(--ios-line);
-  border-radius: var(--r);
+  border-radius: 16px;
   background: var(--ios-card);
   color: var(--ios-tint-text);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
+  transition:
+    transform 0.18s var(--ease),
+    box-shadow 0.18s var(--ease),
+    background 0.18s;
   @media (hover: hover) {
     &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px color-mix(in srgb, var(--ios-tint) 12%, transparent);
       background: var(--ios-fill);
     }
   }

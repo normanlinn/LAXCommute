@@ -36,8 +36,9 @@
 .group {
   overflow: hidden;
   border: 1px solid var(--ios-line);
-  border-radius: var(--r);
+  border-radius: 16px;
   background: var(--ios-card);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 6%);
   // Dialogs live next to the rows that open them; they never draw a divider.
   > :not(dialog) ~ :not(dialog) {
     border-top: 1px solid var(--ios-line);
@@ -71,7 +72,7 @@
   place-items: center;
   width: 32px;
   height: 32px;
-  border-radius: 9px;
+  border-radius: 10px;
   background: var(--ios-soft);
   color: var(--ios-tint-text);
   &:has(.avatar-circle, .route-badge) {

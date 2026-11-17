@@ -2,8 +2,6 @@ import { setWorkerUrl } from 'maplibre-gl';
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import { maplibreGL } from '@maplibre/maplibre-gl-leaflet';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import boldLatin from '@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-700-normal.woff2?url';
-import boldLatinExt from '@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-ext-700-normal.woff2?url';
 import mediumLatin from '@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-500-normal.woff2?url';
 import mediumLatinExt from '@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-ext-500-normal.woff2?url';
 
@@ -11,7 +9,8 @@ setWorkerUrl(workerUrl);
 
 // OpenFreeMap serves glyphs for Noto Sans only (Regular, Bold, Italic). The map draws
 // Latin text with the app's own Plus Jakarta Sans instead; any other script still comes
-// from the Noto glyphs, so no label goes missing.
+// from the Noto glyphs, so no label goes missing. In-map text uses refined medium weight
+// instead of heavy bold for a modern, clean cartography look.
 const LATIN = [
   'U+0000-00FF',
   'U+0131',
@@ -31,17 +30,15 @@ const LATIN = [
 const LATIN_EXT = ['U+0100-02BA', 'U+1E00-1E9F', 'U+1EF2-1EFF', 'U+20A0-20AB', 'U+A720-A7FF'];
 const FONT_FACES = {
   'Noto Sans Bold': [
-    { url: boldLatin, 'unicode-range': LATIN },
-    { url: boldLatinExt, 'unicode-range': LATIN_EXT },
+    { url: mediumLatin, 'unicode-range': LATIN },
+    { url: mediumLatinExt, 'unicode-range': LATIN_EXT },
   ],
   'Noto Sans Regular': [
     { url: mediumLatin, 'unicode-range': LATIN },
     { url: mediumLatinExt, 'unicode-range': LATIN_EXT },
   ],
 };
-const MAJOR_FONT = ['Noto Sans Bold'];
-const MINOR_FONT = ['Noto Sans Regular'];
-// Place and street names are the labels riders navigate by; they get the bold face.
+const MAP_FONT = ['Noto Sans Regular'];
 const MAJOR_LABEL =
   /place|city|town|village|suburb|neighbourhood|road|highway|street|transportation_name|airport|aerodrome/i;
 
@@ -50,7 +47,7 @@ function themeColor(name: string, fallback: string) {
   return value || fallback;
 }
 
-/** Restyles every text label to the app's fonts and the current theme's colors. */
+/** Restyles every text label to the app's fonts and the current theme's colors without heavy bold. */
 function styleLabels(map: import('maplibre-gl').Map) {
   const label = themeColor('--ios-label', '#141a2a');
   const secondary = themeColor('--ios-secondary', '#62677a');
@@ -58,11 +55,12 @@ function styleLabels(map: import('maplibre-gl').Map) {
   for (const layer of map.getStyle()?.layers || []) {
     if (layer.type !== 'symbol' || !layer.layout?.['text-font']) continue;
     const major = MAJOR_LABEL.test(layer.id);
-    map.setLayoutProperty(layer.id, 'text-font', major ? MAJOR_FONT : MINOR_FONT);
+    map.setLayoutProperty(layer.id, 'text-font', MAP_FONT);
     map.setPaintProperty(layer.id, 'text-color', major ? label : secondary);
     map.setPaintProperty(layer.id, 'text-halo-color', halo);
-    map.setPaintProperty(layer.id, 'text-halo-width', major ? 1.6 : 1.2);
-    map.setPaintProperty(layer.id, 'text-halo-blur', 0.4);
+    map.setPaintProperty(layer.id, 'text-halo-width', major ? 1.0 : 0.8);
+    map.setPaintProperty(layer.id, 'text-halo-blur', 0.2);
+    map.setLayoutProperty(layer.id, 'text-letter-spacing', 0.03);
   }
 }
 

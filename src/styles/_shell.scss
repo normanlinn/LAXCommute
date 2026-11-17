@@ -42,12 +42,15 @@
   right: 12px;
   display: grid;
   overflow: hidden;
-  border-radius: var(--r);
-  background: var(--ios-card);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ios-card) 92%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid color-mix(in srgb, var(--ios-line) 60%, transparent);
   box-shadow: var(--shadow);
   .btn {
-    width: 46px;
-    height: 46px;
+    width: 44px;
+    height: 44px;
     color: var(--ios-tint-text);
   }
   .btn + .btn {
@@ -66,9 +69,10 @@
   height: calc(100% - 68px - var(--safe-top));
   display: flex;
   flex-direction: column;
-  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  border-radius: 28px 28px 0 0;
+  border-top: 1px solid color-mix(in srgb, var(--ios-line) 60%, transparent);
   background: var(--ios-card);
-  box-shadow: 0 -4px 24px rgb(0 0 0 / 12%);
+  box-shadow: 0 -4px 30px rgb(0 0 0 / 14%);
   transform: translateY(calc(100% - var(--visible) + var(--drag, 0px)));
   transition: transform 0.38s var(--ease);
   &[data-detent='peek'] {
@@ -87,14 +91,14 @@
 .sheet-grip {
   flex: none;
   width: 100%;
-  height: 26px;
+  height: 24px;
   cursor: grab;
   touch-action: none;
   i {
-    width: 38px;
-    height: 5px;
-    border-radius: 3px;
-    background: var(--ios-line);
+    width: 36px;
+    height: 4.5px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--ios-line) 85%, var(--ios-secondary));
   }
 }
 .panel-body {
@@ -134,20 +138,22 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   padding: 6px 10px var(--safe-bottom);
-  border-top: 1px solid var(--ios-line);
-  background: color-mix(in srgb, var(--ios-card) 90%, transparent);
-  backdrop-filter: blur(16px) saturate(1.4);
-  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border-top: 1px solid color-mix(in srgb, var(--ios-line) 70%, transparent);
+  background: color-mix(in srgb, var(--ios-card) 85%, transparent);
+  backdrop-filter: blur(20px) saturate(1.5);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
   .btn {
     position: relative;
     flex-direction: column;
-    gap: 2px;
+    gap: 3px;
     height: 54px;
     color: var(--ios-secondary);
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 600;
+    transition: color 0.15s ease;
     &.active {
       color: var(--ios-tint-text);
+      font-weight: 700;
     }
     > :not(.tab-pill) {
       position: relative;
@@ -188,11 +194,12 @@ body:has(.app) #shuttle-guide {
     bottom: 16px;
     left: 16px;
     right: auto;
-    width: 400px;
+    width: 410px;
     height: auto;
-    border-radius: var(--r-lg);
+    border-radius: 24px;
+    border: 1px solid color-mix(in srgb, var(--ios-line) 70%, transparent);
     background: var(--ios-card);
-    box-shadow: var(--shadow);
+    box-shadow: 0 8px 32px rgb(0 0 0 / 14%);
     transform: none;
     .panel-body {
       flex: 1;
