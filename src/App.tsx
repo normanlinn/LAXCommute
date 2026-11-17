@@ -1,11 +1,9 @@
 import { useLanguage } from './i18n/LanguageProvider';
 import type { Direction, Stop } from './types';
 import Button from './components/ui/Button';
-import Row from './components/ui/Row';
 import { motion, useReducedMotion } from 'motion/react';
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  ArrowDownUp,
   Briefcase,
   Car,
   ExternalLink,
@@ -363,41 +361,31 @@ export default function App() {
                 <h2>{greeting}</h2>
                 <span>{direction === 'work' ? t('Heading to work') : t('Heading home')}</span>
               </div>
-              <div className="direction-row">
-                <div className="direction-switch" role="group" aria-label={t('Travel direction')}>
-                  <Button
-                    aria-pressed={direction === 'work'}
-                    onClick={() => changeDirection('work')}
-                  >
-                    <Briefcase size={17} aria-hidden="true" />
-                    {t('To work')}
-                  </Button>
-                  <Button
-                    aria-pressed={direction === 'parking'}
-                    onClick={() => changeDirection('parking')}
-                  >
-                    <Car size={17} aria-hidden="true" />
-                    {t('To parking')}
-                  </Button>
-                </div>
+              <div className="direction-switch" role="group" aria-label={t('Travel direction')}>
+                <Button aria-pressed={direction === 'work'} onClick={() => changeDirection('work')}>
+                  <Briefcase size={17} aria-hidden="true" />
+                  {t('To work')}
+                </Button>
                 <Button
-                  className="flip-button"
-                  aria-label={t('Flip direction')}
-                  title={t('Flip direction')}
-                  onClick={() => changeDirection(direction === 'work' ? 'parking' : 'work')}
+                  aria-pressed={direction === 'parking'}
+                  onClick={() => changeDirection('parking')}
                 >
-                  <ArrowDownUp size={18} aria-hidden="true" />
+                  <Car size={17} aria-hidden="true" />
+                  {t('To parking')}
                 </Button>
               </div>
-              <div className="lot-selector" role="tablist" aria-label={t('Select shuttle lot')}>
+              <div
+                className="lot-selector"
+                role="group"
+                aria-label={t('Which shuttle do you want?')}
+              >
                 {ROUTES.map((r) => {
                   const isSelected = r.lot === lot;
                   return (
-                    <button
+                    <Button
                       key={r.id}
-                      type="button"
-                      role="tab"
-                      aria-selected={isSelected}
+                      aria-pressed={isSelected}
+                      aria-label={t('{lot} Lot shuttle', { lot: r.lot })}
                       className={`lot-selector-tab ${isSelected ? 'is-active' : ''}`}
                       onClick={() => chooseRoute(r.lot)}
                     >
@@ -410,7 +398,7 @@ export default function App() {
                         </strong>
                         <small className="lot-selector-coverage">{t(r.coverage)}</small>
                       </span>
-                    </button>
+                    </Button>
                   );
                 })}
               </div>
@@ -472,11 +460,13 @@ export default function App() {
                 />
               )}
 
-              {direction === 'work' && lot !== 'South' && (
-                <p className="group-note">
-                  {t('Waiting at South Lot? Choose your stop below to see {lot} buses.', { lot })}
-                </p>
-              )}
+              {direction === 'work' &&
+                lot !== 'South' &&
+                !/\bsouth\s+lot\b/i.test(selectedStop?.name || '') && (
+                  <p className="group-note">
+                    {t('Waiting at South Lot? Choose your stop below to see {lot} buses.', { lot })}
+                  </p>
+                )}
               <h3 className="group-title">{t('At this stop')}</h3>
               <div className="group">
                 <label className="field stop-field">
@@ -554,19 +544,6 @@ export default function App() {
                 </p>
               )}
 
-              <h3 className="group-title">{t('Other lots')}</h3>
-              <div className="group" role="group" aria-label={t('Which shuttle do you want?')}>
-                {ROUTES.filter((r) => r.id !== route.id).map((r) => (
-                  <Row
-                    key={r.id}
-                    icon={<b className="route-badge is-outline">{r.short}</b>}
-                    label={`${r.lot} ${t('Lot')}`}
-                    detail={t(r.coverage)}
-                    aria-label={t('{lot} Lot shuttle', { lot: r.lot })}
-                    onClick={() => chooseRoute(r.lot)}
-                  />
-                ))}
-              </div>
               {vehicles.length > 0 && <CrowdReports routeId={route.id} vehicles={vehicles} />}
             </>
           ) : (

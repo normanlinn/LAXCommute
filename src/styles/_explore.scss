@@ -106,34 +106,6 @@
     font-size: 13px;
   }
 }
-.direction-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  .direction-switch {
-    flex: 1;
-  }
-}
-.flip-button {
-  flex: none;
-  width: 44px;
-  height: 44px;
-  border: 1px solid var(--ios-line);
-  border-radius: 12px;
-  background: var(--ios-card);
-  color: var(--ios-secondary);
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  &:hover {
-    background: var(--ios-fill);
-    color: var(--ios-label);
-  }
-  &:active {
-    transform: scale(0.96);
-  }
-}
 .lot-selector {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -141,6 +113,7 @@
 }
 .lot-selector-tab {
   display: flex;
+  text-align: left;
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
@@ -270,12 +243,14 @@
     font-size: 17px;
     font-weight: 800;
   }
+  // Destination and stop can wrap to a second line, never more.
   small {
+    display: -webkit-box;
     overflow: hidden;
     opacity: 0.9;
     font-size: 13px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
   }
 }
 .departure-time {
