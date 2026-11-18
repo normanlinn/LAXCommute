@@ -1,25 +1,42 @@
-// Avatar choices: an icon on one of Apple's system colors. Stored by id.
+// Avatar choices: the LA collection. Each icon sits on one of three shades of the active
+// theme (fill, light, deep), so avatars change with the theme and light or dark mode.
+// Stored by id.
 export const AVATARS = [
-  { id: 'plane', label: 'Plane', color: '#FF9500' },
-  { id: 'bus', label: 'Shuttle', color: '#34C759' },
-  { id: 'palm', label: 'Palm tree', color: '#00C7BE' },
-  { id: 'sun', label: 'Sun', color: '#FFCC00' },
-  { id: 'moon', label: 'Moon', color: '#5856D6' },
-  { id: 'coffee', label: 'Coffee', color: '#A2845E' },
-  { id: 'suitcase', label: 'Suitcase', color: '#FF2D55' },
-  { id: 'headphones', label: 'Headphones', color: '#AF52DE' },
-  { id: 'ticket', label: 'Ticket', color: '#FF3B30' },
-  { id: 'waves', label: 'Waves', color: '#32ADE6' },
-  { id: 'mountains', label: 'Mountains', color: '#8E8E93' },
-  { id: 'compass', label: 'Compass', color: '#007AFF' },
+  { id: 'plane', label: 'Plane', tone: 'fill' },
+  { id: 'palm', label: 'Palm tree', tone: 'light' },
+  { id: 'sunset', label: 'Sunset', tone: 'deep' },
+  { id: 'star', label: 'Star', tone: 'fill' },
+  { id: 'waves', label: 'Waves', tone: 'light' },
+  { id: 'film', label: 'Film', tone: 'deep' },
+  { id: 'car', label: 'Car', tone: 'fill' },
+  { id: 'bus', label: 'Shuttle', tone: 'light' },
+  { id: 'skyline', label: 'Skyline', tone: 'deep' },
+  { id: 'music', label: 'Music', tone: 'fill' },
+  { id: 'coffee', label: 'Coffee', tone: 'light' },
+  { id: 'mountains', label: 'Mountains', tone: 'deep' },
 ] as const;
 export type AvatarID = (typeof AVATARS)[number]['id'];
 export const DEFAULT_AVATAR: AvatarID = 'plane';
 export const AVATAR_STORAGE_KEY = 'laxcommute:avatar';
 
+// Avatars saved before the LA collection map to their closest new icon.
+const RENAMED: Record<string, AvatarID> = {
+  sun: 'sunset',
+  moon: 'star',
+  suitcase: 'skyline',
+  headphones: 'music',
+  ticket: 'film',
+  compass: 'car',
+};
+
 export function isAvatarID(value: unknown): value is AvatarID {
   return AVATARS.some((a) => a.id === value);
 }
+/** A saved value as a current avatar id, or null if it is not one. */
+export function toAvatarID(value: unknown): AvatarID | null {
+  if (isAvatarID(value)) return value;
+  return typeof value === 'string' && Object.hasOwn(RENAMED, value) ? RENAMED[value] : null;
+}
 export function avatarFor(id: unknown) {
-  return AVATARS.find((a) => a.id === id) || AVATARS[0];
+  return AVATARS.find((a) => a.id === toAvatarID(id)) || AVATARS[0];
 }

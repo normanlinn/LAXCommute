@@ -415,15 +415,9 @@
   "Plane": "Avión",
   "Shuttle": "Autobús",
   "Palm tree": "Palmera",
-  "Sun": "Sol",
-  "Moon": "Luna",
   "Coffee": "Café",
-  "Suitcase": "Maleta",
-  "Headphones": "Audífonos",
-  "Ticket": "Boleto",
   "Waves": "Olas",
   "Mountains": "Montañas",
-  "Compass": "Brújula",
   "Theme": "Tema",
   "Cobalt and sand": "Cobalto y arena",
   "Forest canopy": "Bosque",
@@ -538,5 +532,11 @@
   "Until then, the card shows the typical time between buses for your lot. Saved trips, stop maps and passenger reports still work.": "Mientras tanto, la tarjeta muestra el tiempo habitual entre autobuses de tu estacionamiento. Los viajes guardados, los mapas de paradas y los reportes de pasajeros siguen funcionando.",
   "Why": "Por qué",
   "Your phone": "Tu teléfono",
-  "{lot} shuttle": "Shuttle de {lot}"
+  "{lot} shuttle": "Shuttle de {lot}",
+  "Sunset": "Atardecer",
+  "Star": "Estrella",
+  "Film": "Cine",
+  "Car": "Auto",
+  "Skyline": "Horizonte urbano",
+  "Music": "Música"
 }

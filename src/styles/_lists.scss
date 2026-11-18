@@ -196,6 +196,19 @@ fieldset.field {
   flex: none;
   place-items: center;
   border-radius: 50%;
+  // Three shades of the active theme, each with a readable icon color.
+  &.tone-fill {
+    background: var(--ios-tint-fill);
+    color: var(--ios-on-tint);
+  }
+  &.tone-light {
+    background: color-mix(in srgb, var(--ios-tint-fill) 45%, white);
+    color: color-mix(in srgb, var(--ios-tint-fill) 35%, black);
+  }
+  &.tone-deep {
+    background: color-mix(in srgb, var(--ios-tint-fill) 22%, black);
+    color: color-mix(in srgb, var(--ios-tint-fill) 35%, white);
+  }
 }
 .nickname-field input {
   max-width: 50%;

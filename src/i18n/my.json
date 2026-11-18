@@ -415,15 +415,9 @@
   "Plane": "လေယာဉ်",
   "Shuttle": "ကား",
   "Palm tree": "ထန်းပင်",
-  "Sun": "နေ",
-  "Moon": "လ",
   "Coffee": "ကော်ဖီ",
-  "Suitcase": "ခရီးဆောင်အိတ်",
-  "Headphones": "နားကြပ်",
-  "Ticket": "လက်မှတ်",
   "Waves": "လှိုင်း",
   "Mountains": "တောင်များ",
-  "Compass": "သံလိုက်အိမ်မြှောင်",
   "Theme": "အပြင်အဆင်",
   "Cobalt and sand": "ကိုဘော့နှင့် သဲ",
   "Forest canopy": "သစ်တော",
@@ -538,5 +532,11 @@
   "Until then, the card shows the typical time between buses for your lot. Saved trips, stop maps and passenger reports still work.": "ထိုအချိန်အထိ ကတ်တွင် သင့်ကားပါကင်အတွက် ဘတ်စ်ကားကြားပုံမှန်အချိန်ကို ပြပါမည်။ သိမ်းထားသောခရီး၊ မှတ်တိုင်မြေပုံနှင့် ခရီးသည်သတင်းများ ဆက်အသုံးပြုနိုင်ပါသည်။",
   "Why": "ဘာကြောင့်လဲ",
   "Your phone": "သင့်ဖုန်း",
-  "{lot} shuttle": "{lot} ဘတ်စ်ကား"
+  "{lot} shuttle": "{lot} ဘတ်စ်ကား",
+  "Sunset": "နေဝင်ချိန်",
+  "Star": "ကြယ်",
+  "Film": "ရုပ်ရှင်",
+  "Car": "ကား",
+  "Skyline": "မြို့ပြမြင်ကွင်း",
+  "Music": "ဂီတ"
 }

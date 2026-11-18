@@ -117,13 +117,15 @@ test('riders can choose an avatar, and it stays after reload', async ({ page }) 
   const me = page.getByRole('navigation').getByRole('button', { name: 'Me' });
   await me.click();
   await page.getByRole('button', { name: 'Your avatar' }).click();
-  await page.getByRole('radio', { name: 'Moon' }).check({ force: true });
+  await page.getByRole('radio', { name: 'Film' }).check({ force: true });
   await page.keyboard.press('Escape');
   const profile = page.locator('.profile-card .avatar-circle');
-  await expect(profile).toHaveCSS('background-color', 'rgb(88, 86, 214)');
+  await expect(profile).toHaveClass(/tone-deep/);
   await page.reload();
   await me.click();
-  await expect(profile).toHaveCSS('background-color', 'rgb(88, 86, 214)');
+  await expect(profile).toHaveClass(/tone-deep/);
+  await page.getByRole('button', { name: 'Your avatar' }).click();
+  await expect(page.getByRole('radio', { name: 'Film' })).toBeChecked();
 });
 
 test('riders can switch between the two LAX themes, and it stays after reload', async ({

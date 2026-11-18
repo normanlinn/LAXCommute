@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
-import { AVATAR_STORAGE_KEY, DEFAULT_AVATAR, isAvatarID, type AvatarID } from '../domain/avatars';
+import { AVATAR_STORAGE_KEY, DEFAULT_AVATAR, toAvatarID, type AvatarID } from '../domain/avatars';
 import { useAccount } from './useAccount';
 import { getAuthClient } from '../services/auth';
 
 function savedLocally(): AvatarID {
   try {
     const value = localStorage.getItem(AVATAR_STORAGE_KEY);
-    return isAvatarID(value) ? value : DEFAULT_AVATAR;
+    return toAvatarID(value) ?? DEFAULT_AVATAR;
   } catch {
     return DEFAULT_AVATAR;
   }
@@ -28,7 +28,7 @@ export function useAvatar() {
       listeners.delete(setLocal);
     };
   }, []);
-  const avatar: AvatarID = isAvatarID(fromAccount) ? fromAccount : local;
+  const avatar: AvatarID = toAvatarID(fromAccount) ?? local;
 
   const setAvatar = useCallback(
     async (id: AvatarID) => {
