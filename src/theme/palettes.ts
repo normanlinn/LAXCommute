@@ -32,6 +32,70 @@ export const PALETTES = [
       hero: '#c2410c',
     },
   },
+  {
+    id: 'hollywood',
+    name: 'Hollywood Night',
+    light: {
+      bg: '#f7f5f0',
+      card: '#ffffff',
+      tint: '#8a6512',
+      hero: '#16130c',
+    },
+    dark: {
+      bg: '#0b0a07',
+      card: '#1a1710',
+      tint: '#f4c95d',
+      hero: '#2a2416',
+    },
+  },
+  {
+    id: 'venice',
+    name: 'Venice Beach',
+    light: {
+      bg: '#fbf8f2',
+      card: '#ffffff',
+      tint: '#1e5ea8',
+      hero: '#1e5ea8',
+    },
+    dark: {
+      bg: '#0b1522',
+      card: '#132235',
+      tint: '#6aa8f0',
+      hero: '#2b6fbf',
+    },
+  },
+  {
+    id: 'jacaranda',
+    name: 'Jacaranda',
+    light: {
+      bg: '#f8f6fc',
+      card: '#ffffff',
+      tint: '#5b3fa3',
+      hero: '#6a4bb8',
+    },
+    dark: {
+      bg: '#110d1c',
+      card: '#1c1630',
+      tint: '#b9a2f2',
+      hero: '#5a3fa3',
+    },
+  },
+  {
+    id: 'griffith',
+    name: 'Griffith Observatory',
+    light: {
+      bg: '#f3f4f8',
+      card: '#ffffff',
+      tint: '#2f3f8f',
+      hero: '#1d2650',
+    },
+    dark: {
+      bg: '#080b18',
+      card: '#11162b',
+      tint: '#ffd27a',
+      hero: '#2b3a8c',
+    },
+  },
 ] as const;
 export type PaletteID = (typeof PALETTES)[number]['id'];
 export const DEFAULT_PALETTE: PaletteID = 'lax';

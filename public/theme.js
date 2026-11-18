@@ -3,7 +3,7 @@
   let preference = 'system';
   let palette = 'lax';
   const themeChoice = true;
-  const palettes = ['lax', 'sunset'];
+  const palettes = ['lax', 'sunset', 'hollywood', 'venice', 'jacaranda', 'griffith'];
   try {
     const saved = localStorage.getItem('laxcommute:theme');
     if (saved === 'light' || saved === 'dark') preference = saved;

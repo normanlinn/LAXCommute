@@ -38,7 +38,7 @@ const cases = Object.entries(themes).flatMap(([id, modes]) =>
 );
 
 it('defines the curated themes in light and dark', () => {
-  expect(cases).toHaveLength(4);
+  expect(cases).toHaveLength(12);
 });
 
 describe.each(cases)('%s theme, %s mode', (_id, _mode, c) => {
