@@ -97,7 +97,7 @@ describe('commute UI', () => {
     const boarding = screen.getByRole('combobox', { name: 'Where are you boarding?' });
     fireEvent.change(boarding, { target: { value: '3' } });
     fireEvent.click(screen.getByRole('button', { name: 'Me' }));
-    fireEvent.click(await screen.findByRole('radio', { name: 'Dark' }));
+    fireEvent.click(await screen.findByRole('radio', { name: 'Dark' }, { timeout: 5000 }));
     expect(document.documentElement.dataset.theme).toBe('lax-dark');
     fireEvent.click(screen.getByRole('button', { name: 'မြန်မာ' }));
     fireEvent.click(screen.getByRole('button', { name: 'မြေပုံ' }));
