@@ -3,6 +3,7 @@ import { useLanguage } from '../i18n/LanguageProvider';
 import { useAccount } from '../hooks/useAccount';
 import { useAvatar } from '../hooks/useAvatar';
 import { useNickname } from '../hooks/useNickname';
+import { useSampleMode } from '../hooks/useSampleMode';
 import { THEME_CHOICE_ENABLED, useTheme } from '../theme/ThemeProvider';
 import { PALETTES } from '../theme/palettes';
 import type { Commute } from '../types';
@@ -44,6 +45,7 @@ export default function MePage({
   const { avatar } = useAvatar();
   const { nickname } = useNickname();
   const { palette } = useTheme();
+  const { sample, setSample } = useSampleMode();
   const [sheet, setSheet] = useState<Sheet>(null);
   const titleId = useId();
   const close = () => setSheet(null);
@@ -102,6 +104,19 @@ export default function MePage({
       <h2 className="group-title">{t('Display')}</h2>
       <div className="group">
         <AppearancePicker />
+        <label className="field">
+          <span>
+            {t('Sample buses')}
+            <small>{t('Show made-up buses to see how the app works. Not real times.')}</small>
+          </span>
+          <input
+            type="checkbox"
+            role="switch"
+            className="switch"
+            checked={sample}
+            onChange={(event) => setSample(event.target.checked)}
+          />
+        </label>
         {THEME_CHOICE_ENABLED && (
           <Row
             icon={<Palette size={18} />}
@@ -136,6 +151,11 @@ export default function MePage({
           onClick={() => setSheet('privacy')}
         />
       </div>
+      <p className="disclaimer">
+        {t(
+          'LAXCommute is an independent app, not affiliated with LAX or Los Angeles World Airports. Times are estimates and can be wrong; always check the sign on the bus.',
+        )}
+      </p>
       <p className="credit">
         <a href="https://normanlinn.github.io/portfolio" target="_blank" rel="noopener noreferrer">
           {t('Created by {name}', { name: 'Norman Linn' })}

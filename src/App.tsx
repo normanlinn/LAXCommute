@@ -12,6 +12,7 @@ import {
   Route,
   Users,
   WifiOff,
+  FlaskConical,
 } from './components/ui/icons';
 import {
   ROUTES,
@@ -34,6 +35,7 @@ import Avatar from './components/Avatar';
 import { useAvatar } from './hooks/useAvatar';
 import { usePaletteSync } from './hooks/usePaletteSync';
 import { useNickname } from './hooks/useNickname';
+import { useSampleMode } from './hooks/useSampleMode';
 import { dayPart } from './domain/nickname';
 import { smoothly } from './domain/motion';
 import CrowdReports from './components/CrowdReports';
@@ -151,7 +153,8 @@ export default function App() {
     () => stops.find((s) => s.id === todayID) || usual,
     [todayID, stops, usual],
   );
-  const live = useLive(route.id, selectedStop?.id, tab === 'map' && Boolean(routeQuery.data));
+  const { sample, setSample } = useSampleMode();
+  const live = useLive(route.id, selectedStop, tab === 'map' && Boolean(routeQuery.data), sample);
   const vehicleFresh = useSnapshotFresh(live.data?.vehicleFetchedAt);
   const arrivalFresh = useSnapshotFresh(live.data?.arrivalFetchedAt);
   // The feed answered but has nothing current to show (or did not answer at all).
@@ -355,6 +358,18 @@ export default function App() {
               )}
             </p>
           )}
+          {sample && (
+            <div className="notice is-warning sample-banner" role="status">
+              <FlaskConical size={18} aria-hidden="true" />
+              <span>
+                <strong>{t('Sample data, not real buses')}</strong>
+                {t('These buses and times are made up to show how the app works.')}
+              </span>
+              <Button className="text-button" onClick={() => setSample(false)}>
+                {t('Turn off')}
+              </Button>
+            </div>
+          )}
           {explore ? (
             <>
               <div className="sheet-heading">
@@ -418,6 +433,7 @@ export default function App() {
                 arriving={nextArriving}
                 scheduled={Boolean(nextArrival?.scheduled)}
                 liveDown={online && feedOutage}
+                sample={sample}
                 typical={TYPICAL_GAP}
                 onExplain={() => setOutageOpen(true)}
               />
@@ -453,6 +469,7 @@ export default function App() {
                   userLocation={userLocation}
                   routeID={route.id}
                   routeLabel={`${route.lot} ${t('Lot')}`}
+                  sample={sample}
                   onRefresh={() => {
                     live.refetch();
                     if (routeQuery.isError) routeQuery.refetch();
@@ -544,7 +561,10 @@ export default function App() {
                 </p>
               )}
 
-              {vehicles.length > 0 && <CrowdReports routeId={route.id} vehicles={vehicles} />}
+              {/* Crowd reports go to the real database, so never for made-up buses. */}
+              {vehicles.length > 0 && !sample && (
+                <CrowdReports routeId={route.id} vehicles={vehicles} />
+              )}
             </>
           ) : (
             <Suspense fallback={<p className="hint">{t('Opening your settings…')}</p>}>

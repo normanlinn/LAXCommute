@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { config } from '../config';
 import { ARRIVAL_TTL_MS } from '../domain/arrivals';
 import { getRoute, getLive, getFallbackRoute } from '../services/shuttle';
+import { sampleLive } from '../domain/sample';
+import type { Stop } from '../types';
 
 export function useRoute(routeID: number) {
   return useQuery({
@@ -26,16 +28,24 @@ export function useRoute(routeID: number) {
     retry: false,
   });
 }
-export function useLive(routeID: number, stopID?: number, enabled = true) {
+/**
+ * Live buses and arrivals for a stop. With `sample` on, made-up buses replace the feed
+ * entirely (no network request), refreshing often so they visibly move.
+ */
+export function useLive(routeID: number, stop?: Stop, enabled = true, sample = false) {
+  const stopID = stop?.id;
   return useQuery({
     // Let the service worker serve a cached response when the device is offline.
     networkMode: 'always',
-    queryKey: ['live', routeID, stopID || 0],
-    queryFn: ({ signal }) => getLive(routeID, stopID, signal),
+    queryKey: ['live', sample ? 'sample' : 'feed', routeID, stopID || 0],
+    queryFn: ({ signal }) =>
+      sample
+        ? sampleLive(routeID, stop, getFallbackRoute(routeID)?.paths || [])
+        : getLive(routeID, stopID, signal),
     enabled,
-    staleTime: 15_000,
+    staleTime: sample ? 0 : 15_000,
     gcTime: 2 * 60_000,
-    refetchInterval: config.refreshInterval,
+    refetchInterval: sample ? 5_000 : config.refreshInterval,
     refetchIntervalInBackground: false,
     refetchOnWindowFocus: true,
     retry: false,

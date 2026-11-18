@@ -16,6 +16,8 @@ type Props = {
   typical: string;
   /** Opens the explanation of why live times are paused. */
   onExplain: () => void;
+  /** Made-up buses: say so instead of Live. */
+  sample?: boolean;
 };
 
 /** The selected lot's next departure: the one solid accent card on the screen. */
@@ -30,6 +32,7 @@ export default function NextShuttleHero({
   liveDown,
   typical,
   onExplain,
+  sample = false,
 }: Props) {
   const { t } = useLanguage();
   const reduce = useReducedMotion();
@@ -86,9 +89,18 @@ export default function NextShuttleHero({
         </button>
       ) : (
         <p className="departure-status">
-          <i className={known && !scheduled ? 'live-dot' : 'live-dot is-off'} aria-hidden="true" />
+          <i
+            className={known && !scheduled && !sample ? 'live-dot' : 'live-dot is-off'}
+            aria-hidden="true"
+          />
           <span>
-            {known ? (scheduled ? t('Scheduled') : t('Live')) : t('Waiting for the tracker')}
+            {sample
+              ? t('Sample data · not a real bus')
+              : known
+                ? scheduled
+                  ? t('Scheduled')
+                  : t('Live')
+                : t('Waiting for the tracker')}
           </span>
           {clockTime && known && (
             <span className="departure-clock-tag">· {arriving ? clockTime : `~${clockTime}`}</span>

@@ -538,5 +538,13 @@
   "Film": "Cine",
   "Car": "Auto",
   "Skyline": "Horizonte urbano",
-  "Music": "Música"
+  "Music": "Música",
+  "Sample": "Muestra",
+  "Sample data · not a real bus": "Datos de muestra · no es un autobús real",
+  "Sample data, not real buses": "Datos de muestra, no son autobuses reales",
+  "These buses and times are made up to show how the app works.": "Estos autobuses y horarios son inventados para mostrar cómo funciona la app.",
+  "Turn off": "Desactivar",
+  "Sample buses": "Autobuses de muestra",
+  "Show made-up buses to see how the app works. Not real times.": "Muestra autobuses inventados para ver cómo funciona la app. No son horarios reales.",
+  "LAXCommute is an independent app, not affiliated with LAX or Los Angeles World Airports. Times are estimates and can be wrong; always check the sign on the bus.": "LAXCommute es una app independiente, sin relación con LAX ni con Los Angeles World Airports. Los horarios son estimados y pueden fallar; revisa siempre el letrero del autobús."
 }

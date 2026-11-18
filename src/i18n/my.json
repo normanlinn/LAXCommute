@@ -538,5 +538,13 @@
   "Film": "ရုပ်ရှင်",
   "Car": "ကား",
   "Skyline": "မြို့ပြမြင်ကွင်း",
-  "Music": "ဂီတ"
+  "Music": "ဂီတ",
+  "Sample": "နမူနာ",
+  "Sample data · not a real bus": "နမူနာဒေတာ · တကယ့်ဘတ်စ်ကား မဟုတ်ပါ",
+  "Sample data, not real buses": "နမူနာဒေတာ၊ တကယ့်ဘတ်စ်ကားများ မဟုတ်ပါ",
+  "These buses and times are made up to show how the app works.": "ဤဘတ်စ်ကားများနှင့် အချိန်များသည် အက်ပ်အလုပ်လုပ်ပုံကို ပြရန် ဖန်တီးထားခြင်းဖြစ်သည်။",
+  "Turn off": "ပိတ်ရန်",
+  "Sample buses": "နမူနာ ဘတ်စ်ကားများ",
+  "Show made-up buses to see how the app works. Not real times.": "အက်ပ်အလုပ်လုပ်ပုံကို ကြည့်ရန် ဖန်တီးထားသော ဘတ်စ်ကားများကို ပြပါ။ တကယ့်အချိန်များ မဟုတ်ပါ။",
+  "LAXCommute is an independent app, not affiliated with LAX or Los Angeles World Airports. Times are estimates and can be wrong; always check the sign on the bus.": "LAXCommute သည် LAX သို့မဟုတ် Los Angeles World Airports နှင့် မသက်ဆိုင်သော သီးခြားအက်ပ်ဖြစ်သည်။ အချိန်များသည် ခန့်မှန်းချက်သာဖြစ်ပြီး မှားနိုင်သည်။ ဘတ်စ်ကားပေါ်ရှိ ဆိုင်းဘုတ်ကို အမြဲစစ်ဆေးပါ။"
 }

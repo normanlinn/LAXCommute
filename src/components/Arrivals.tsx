@@ -55,6 +55,7 @@ export default function Arrivals({
   routeID,
   routeLabel,
   onRefresh,
+  sample = false,
 }: {
   data?: import('../types').LiveData;
   error: Error | null;
@@ -67,6 +68,8 @@ export default function Arrivals({
   routeID?: number;
   routeLabel?: string;
   onRefresh: () => void;
+  /** Made-up buses: label them Sample, and offer no alerts or leave-by advice. */
+  sample?: boolean;
 }) {
   const { t, language } = useLanguage();
   const [now, setNow] = useState(Date.now());
@@ -299,7 +302,7 @@ export default function Arrivals({
               ? Math.min(1, Math.max(0, 1 - (arrival.due - now) / APPROACH_WINDOW_MS))
               : 0;
           const alertOn = busAlert.alert?.vehicleID === arrival.vehicleID && isLive;
-          const showBell = alertOn || (isLive && canSetAlert(arrival, now));
+          const showBell = !sample && (alertOn || (isLive && canSetAlert(arrival, now)));
           return (
             <div
               key={arrival.id}
@@ -313,14 +316,16 @@ export default function Arrivals({
                 <strong>{index === 0 ? t('Next shuttle') : t('Following shuttle')}</strong>
                 <div className="arrival-meta">
                   <span
-                    className={`arrival-badge ${lastKnown || arrival.scheduled ? 'is-scheduled' : 'is-live'}`}
+                    className={`arrival-badge ${lastKnown || arrival.scheduled || sample ? 'is-scheduled' : 'is-live'}`}
                   >
-                    {!arrival.scheduled && !lastKnown && <i aria-hidden="true" />}
+                    {!arrival.scheduled && !lastKnown && !sample && <i aria-hidden="true" />}
                     {lastKnown
                       ? t('Last reported')
                       : arrival.scheduled
                         ? t('Scheduled')
-                        : t('Live')}
+                        : sample
+                          ? t('Sample')
+                          : t('Live')}
                   </span>
                   <span className="arrival-bus-name">
                     {arrival.busName ? t('Bus {name}', { name: arrival.busName }) : ''}
@@ -364,7 +369,7 @@ export default function Arrivals({
           );
         })}
       </div>
-      {advice && (
+      {advice && !sample && (
         <div className="leave-card">
           <Footprints size={21} />
           <div>

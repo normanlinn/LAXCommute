@@ -352,3 +352,25 @@
   justify-content: flex-start;
   min-height: 50px;
 }
+
+// Shown on every tab while sample buses are on, so they are never mistaken for real ones.
+.sample-banner {
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  > svg {
+    margin-top: 2px;
+    color: var(--ios-orange);
+  }
+  > span {
+    display: grid;
+    flex: 1;
+    gap: 2px;
+    font-size: 13px;
+  }
+  strong {
+    font-size: 14px;
+  }
+  .text-button {
+    padding: 0 2px;
+  }
+}

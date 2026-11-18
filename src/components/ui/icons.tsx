@@ -30,6 +30,7 @@ import {
   DownloadSimple,
   EnvelopeSimple,
   Export,
+  Flask,
   Footprints as PhFootprints,
   Globe as PhGlobe,
   House,
@@ -107,6 +108,7 @@ export const Clock3 = icon(Clock);
 export const Copy = icon(PhCopy);
 export const Download = icon(DownloadSimple);
 export const ExternalLink = icon(ArrowSquareOut);
+export const FlaskConical = icon(Flask);
 export const Footprints = icon(PhFootprints);
 export const Globe = icon(PhGlobe);
 export const Home = icon(House);

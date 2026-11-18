@@ -104,7 +104,12 @@ describe('commute UI', () => {
     const again = screen.getByRole('combobox', { name: 'ဘယ်မှတ်တိုင်မှ စီးမလဲ။' });
     expect(again.value).toBe('3');
     expect(again.selectedOptions[0].textContent).toBe('South Lot Stop #1');
-    expect(liveRequests).toHaveBeenLastCalledWith(6884, 3, true);
+    expect(liveRequests).toHaveBeenLastCalledWith(
+      6884,
+      expect.objectContaining({ id: 3 }),
+      true,
+      false,
+    );
     expect(localStorage.getItem('laxcommute:profile:guest')).toBeNull();
   });
   it('preserves account input and translates a sign-in error after switching languages', async () => {
@@ -295,7 +300,12 @@ it.each([
   expect(select.value).toBe('4');
   fireEvent.change(select, { target: { value: '3' } });
   expect(select.value).toBe('3');
-  expect(liveRequests).toHaveBeenLastCalledWith(routeID, 3, true);
+  expect(liveRequests).toHaveBeenLastCalledWith(
+    routeID,
+    expect.objectContaining({ id: 3 }),
+    true,
+    false,
+  );
   expect(localStorage.getItem('laxcommute:profile:guest')).toBeNull();
   fireEvent.click(screen.getByRole('button', { name: 'Usual stop' }));
   expect(select.value).toBe('4');
@@ -360,7 +370,12 @@ it('redirects a saved East preference to its map and shows setup again only afte
     screen.getByRole('combobox', { name: 'Where are you boarding?' }).selectedOptions[0]
       .textContent,
   ).toBe('East Lot Stop #1');
-  expect(liveRequests).toHaveBeenLastCalledWith(6884, 4, true);
+  expect(liveRequests).toHaveBeenLastCalledWith(
+    6884,
+    expect.objectContaining({ id: 4 }),
+    true,
+    false,
+  );
   first.unmount();
   const second = render(<App />);
   expect(screen.queryByRole('dialog')).toBeNull();
