@@ -13,7 +13,7 @@ describe('fixed-path shuttle gateway', () => {
   let options, fetcher;
   beforeEach(() => {
     fetcher = vi.fn(async (url) => {
-      const path = new URL(url).searchParams.get('path');
+      const path = new URL(url).pathname.slice('/portal/'.length) + new URL(url).search;
       if (path.endsWith('/stops'))
         return Response.json([{ id: 101, lat: 33.94, lon: -118.4, name: 'Terminal B' }]);
       if (path.endsWith('/patterns')) return Response.json([{ id: 1, shape: '' }]);
@@ -23,7 +23,7 @@ describe('fixed-path shuttle gateway', () => {
         ]);
       return Response.json([{ route: { id: 6884 }, secondsToArrival: 420 }]);
     });
-    options = { cache: memoryCache(), fetcher };
+    options = { cache: memoryCache(), fetcher, apiKey: 'test-portal-key' };
   });
   it('rejects invalid routes and methods before requesting upstream', async () => {
     expect((await handleAPI(new Request('https://app.test/api/live/999'), options)).status).toBe(
@@ -72,21 +72,23 @@ describe('fixed-path shuttle gateway', () => {
     await handleAPI(request, options);
     expect(fetcher).toHaveBeenCalledTimes(3);
     for (const [url] of fetcher.mock.calls)
-      expect(url).toMatch(/^https:\/\/laxbus\.syncromatics\.com\/api\/rtpi\?/);
+      expect(url).toMatch(/^https:\/\/api\.syncromatics\.com\/portal\//);
   });
   it.each([6883, 6884, 6885])(
     'keeps route %s when requesting arrivals at a shared South stop',
     async (routeID) => {
       const request = new Request(`https://app.test/api/live/${routeID}?stopId=101`);
       expect((await handleAPI(request, options)).status).toBe(200);
-      const paths = fetcher.mock.calls.map(([url]) => new URL(url).searchParams.get('path'));
+      const paths = fetcher.mock.calls.map(
+        ([url]) => new URL(url).pathname.slice('/portal/'.length) + new URL(url).search,
+      );
       expect(paths).toContain(`stops/101/arrivals?routeId=${routeID}`);
     },
   );
   it('keeps the map response when arrivals fail', async () => {
     const original = fetcher.getMockImplementation();
     fetcher.mockImplementation((url) =>
-      new URL(url).searchParams.get('path').includes('arrivals')
+      (new URL(url).pathname.slice('/portal/'.length) + new URL(url).search).includes('arrivals')
         ? Promise.resolve(new Response('unavailable', { status: 503 }))
         : original(url),
     );
@@ -100,7 +102,7 @@ describe('fixed-path shuttle gateway', () => {
   it('keeps predictions available when vehicle positions fail', async () => {
     const original = fetcher.getMockImplementation();
     fetcher.mockImplementation((url) =>
-      new URL(url).searchParams.get('path').endsWith('vehicles')
+      new URL(url).pathname.endsWith('vehicles')
         ? Promise.resolve(new Response('', { status: 503 }))
         : original(url),
     );
@@ -113,7 +115,7 @@ describe('fixed-path shuttle gateway', () => {
   it('keeps stops available when the route shape fails', async () => {
     const original = fetcher.getMockImplementation();
     fetcher.mockImplementation((url) =>
-      new URL(url).searchParams.get('path').endsWith('patterns')
+      new URL(url).pathname.endsWith('patterns')
         ? Promise.resolve(Response.json({ error: 'bad response' }))
         : original(url),
     );
@@ -131,9 +133,10 @@ it('starts stops and route lines together so a slow line request does not delay 
   const paths = [];
   const options = {
     origin: 'https://parallel.test',
+    apiKey: 'test-portal-key',
     cache: memoryCache(),
     fetcher: vi.fn((url) => {
-      const path = new URL(url).searchParams.get('path');
+      const path = new URL(url).pathname.slice('/portal/'.length) + new URL(url).search;
       paths.push(path);
       if (path.endsWith('/stops'))
         return new Promise((resolve) => {

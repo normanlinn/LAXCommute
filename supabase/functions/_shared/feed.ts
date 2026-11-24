@@ -4,12 +4,11 @@ export interface FeedOptions {
   fetcher?: typeof fetch;
   origin?: string;
   claim?: (path: string) => Promise<boolean>;
-  /** Syncromatics portal API key issued for LAXCommute. Without it the public
-   * rtpi proxy is used, which now only answers Syncromatics' own pages. */
+  /** Optional dedicated Syncromatics portal key. Otherwise use FlyLAX's public feed. */
   apiKey?: string;
 }
 type Envelope<T = unknown> = { data: T[]; fetchedAt: string; sourceUnavailable?: boolean };
-const BASE = 'https://laxbus.syncromatics.com/api/rtpi';
+const BASE = 'https://shuttles.flylax.com/api/laxbus/';
 const PORTAL = 'https://api.syncromatics.com/portal/';
 // The portal takes the same paths as the rtpi proxy's `path` parameter.
 export function feedRequest(
@@ -17,8 +16,7 @@ export function feedRequest(
   apiKey?: string,
 ): { url: string; headers: Record<string, string> } {
   if (!apiKey) {
-    const url = new URL(BASE);
-    url.searchParams.set('path', path);
+    const url = new URL(path, BASE);
     return { url: url.toString(), headers: { Accept: 'application/json' } };
   }
   const url = new URL(path, PORTAL);
@@ -82,6 +80,62 @@ export function validFeed(path: string, data: unknown): data is unknown[] {
       : typeof x.lastUpdated === 'string' && Number.isFinite(Date.parse(x.lastUpdated));
   });
 }
+// FlyLAX exposes stops per pattern and can include predictions for several routes.
+// Adapt that response to our existing route-scoped contract without inventing times.
+async function sourceData(path: string, options: FeedOptions): Promise<unknown> {
+  const requestJSON = async (sourcePath: string) => {
+    const request = feedRequest(sourcePath, options.apiKey);
+    const response = await (options.fetcher || globalThis.fetch)(request.url, {
+      headers: request.headers,
+      redirect: 'error',
+      signal: AbortSignal.timeout(3500),
+    });
+    if (!response.ok) {
+      throw new FeedError('The shuttle feed is temporarily unavailable.', response.status);
+    }
+    return response.json();
+  };
+  const stops = path.match(/^routes\/(\d+)\/stops$/);
+  if (!options.apiKey && stops) {
+    const patterns = await cachedFeed<{ id: number; shape: string }>(
+      `routes/${stops[1]}/patterns`,
+      3600,
+      options,
+    );
+    if (patterns.sourceUnavailable || !patterns.data.length || patterns.data.length > 20)
+      throw new FeedError('Route patterns are unavailable.');
+    const groups = await Promise.all(
+      patterns.data.map(async (pattern) => {
+        const rows: unknown = await requestJSON(`routes/${stops[1]}/patterns/${pattern.id}/stops`);
+        if (!Array.isArray(rows) || rows.length > 5000)
+          throw new FeedError('The shuttle feed returned unexpected stops.');
+        return rows.map((row) => row?.stop);
+      }),
+    );
+    const flat = groups.flat();
+    if (!validFeed(path, flat)) throw new FeedError('The shuttle feed returned invalid stops.');
+    return [...new Map((flat as Stop[]).map((stop) => [stop.id, stop])).values()];
+  }
+  const data: unknown = await requestJSON(path);
+  if (path.includes('/arrivals?') && Array.isArray(data)) {
+    // Just-departed predictions may briefly be negative. Discard those while
+    // retaining validation of all other rows before applying the route filter.
+    const current = data.filter(
+      (row) =>
+        !(
+          typeof row?.secondsToArrival === 'number' &&
+          Number.isFinite(row.secondsToArrival) &&
+          row.secondsToArrival < 0 &&
+          row.secondsToArrival >= -60
+        ),
+    );
+    if (!validFeed(path, current))
+      throw new FeedError('The shuttle feed returned invalid arrivals.');
+    const routeID = Number(new URLSearchParams(path.split('?')[1]).get('routeId'));
+    return (current as RawArrival[]).filter((row) => row.route?.id === routeID);
+  }
+  return data;
+}
 export async function cachedFeed<T = unknown>(
   path: string,
   ttl: number,
@@ -121,25 +175,11 @@ export async function cachedFeed<T = unknown>(
         }
         throw new FeedError('The shuttle feed is refreshing. Please retry.', 503);
       }
-      const request = feedRequest(path, apiKey);
       let lastError: unknown;
       for (let attempt = 0; attempt < 2; attempt++) {
         try {
           const fetchedAt = new Date().toISOString();
-          const response = await fetcher(request.url, {
-            headers: request.headers,
-            redirect: 'error',
-            signal: AbortSignal.timeout(3500),
-          });
-          if (!response.ok) {
-            // 401/403: the provider refused this server. Retrying cannot help.
-            if (response.status === 401 || response.status === 403) {
-              console.warn(`Shuttle source refused access (${response.status})`);
-              attempt = 1;
-            }
-            throw new FeedError('The shuttle feed is temporarily unavailable.');
-          }
-          const data: unknown = await response.json();
+          const data = await sourceData(path, { cache, fetcher, origin, claim, apiKey });
           if (!validFeed(path, data))
             throw new FeedError('The shuttle feed returned an unexpected response.');
           const envelope = { data: data as T[], fetchedAt };
@@ -149,6 +189,11 @@ export async function cachedFeed<T = unknown>(
           );
           return envelope;
         } catch (error) {
+          // A refusal is final for this request; never retry or spoof browser headers.
+          if (error instanceof FeedError && (error.status === 401 || error.status === 403)) {
+            console.warn(`Shuttle source refused access (${error.status})`);
+            attempt = 1;
+          }
           lastError = error;
         }
       }
@@ -156,7 +201,7 @@ export async function cachedFeed<T = unknown>(
     } catch (error) {
       if (stale) return stale;
       throw error instanceof FeedError
-        ? error
+        ? new FeedError(error.message)
         : new FeedError('The shuttle feed is taking too long. Please retry.');
     }
   })().finally(() => inFlight.delete(pendingKey));

@@ -45,7 +45,7 @@ The public map needs no API key. Keep private keys out of `.env` variables begin
 
 **React, TypeScript, Vite, Leaflet, MapLibre, Motion, Supabase, and Cloudflare Workers.**
 
-Cloudflare serves the app and its same-origin API; Supabase handles shuttle-data processing and optional account storage. GitHub Pages alone cannot run the shuttle API. The tracker feed is third-party and may change.
+Cloudflare serves the app and its same-origin API; Supabase handles shuttle-data processing and optional account storage. GitHub Pages alone cannot run the shuttle API. The backend reads bus positions, route patterns, pattern stops, and stop arrivals from FlyLAX's public `https://shuttles.flylax.com/api/laxbus/` feed. It caches live requests for 15 seconds and route data for one hour, filters arrivals to the selected route, and discards recently departed predictions. The browser uses our same-origin API; no provider credentials or browser-header impersonation are needed. A dedicated `SYNCROMATICS_API_KEY`, if configured, selects the portal instead. The public feed is third-party and may change; keep the official-tracker fallback and the pending authorization notice.
 
 For detailed setup, use the maintained guides: [Hosting](docs/HOSTING.md) · [Backend](docs/SUPABASE-BACKEND.md) · [Accounts](docs/AUTH.md) · [Security](docs/SECURITY.md) · [Languages](docs/LANGUAGE.md).
 

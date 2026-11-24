@@ -168,7 +168,7 @@ it('Supabase also rejects direct requests when its shared limiter blocks them', 
 
 it("uses the Syncromatics portal with LAXCommute's own key when one is configured", () => {
   expect(feedRequest('routes/6884/vehicles').url).toBe(
-    'https://laxbus.syncromatics.com/api/rtpi?path=routes%2F6884%2Fvehicles',
+    'https://shuttles.flylax.com/api/laxbus/routes/6884/vehicles',
   );
   const keyed = feedRequest('stops/11319518/arrivals?routeId=6884', 'k123');
   expect(keyed.url).toBe(
@@ -189,4 +189,63 @@ it('does not hammer the source after it refuses access', async () => {
     }),
   ).rejects.toThrow();
   expect(fetcher).toHaveBeenCalledTimes(1);
+});
+
+it('builds FlyLAX route stops from pattern stops and deduplicates shared stops', async () => {
+  const stop = { id: 11319515, name: 'Terminal 1', lat: 33.94, lon: -118.4 };
+  const fetcher = vi.fn(async (url) => {
+    if (url.endsWith('/patterns'))
+      return Response.json([
+        { id: 1, shape: '' },
+        { id: 2, shape: '' },
+      ]);
+    return Response.json([{ stopSequence: 0, stop }]);
+  });
+  const result = await cachedFeed('routes/6884/stops', 3600, {
+    cache: memory(),
+    fetcher,
+    origin: 'https://flylax-stops.test',
+  });
+  expect(result.data).toEqual([stop]);
+  expect(fetcher.mock.calls.map(([url]) => url)).toEqual([
+    'https://shuttles.flylax.com/api/laxbus/routes/6884/patterns',
+    'https://shuttles.flylax.com/api/laxbus/routes/6884/patterns/1/stops',
+    'https://shuttles.flylax.com/api/laxbus/routes/6884/patterns/2/stops',
+  ]);
+  for (const [, init] of fetcher.mock.calls) {
+    expect(init.headers).toEqual({ Accept: 'application/json' });
+    expect(init.redirect).toBe('error');
+  }
+});
+
+it('keeps only upcoming arrivals on the requested route from a shared FlyLAX stop', async () => {
+  const east = { secondsToArrival: 120, route: { id: 6884 } };
+  const fetcher = vi.fn(async () =>
+    Response.json([
+      east,
+      { secondsToArrival: -4, route: { id: 6884 } },
+      { secondsToArrival: 30, route: { id: 6885 } },
+    ]),
+  );
+  const result = await cachedFeed('stops/11319515/arrivals?routeId=6884', 15, {
+    cache: memory(),
+    fetcher,
+    origin: 'https://flylax-arrivals.test',
+  });
+  expect(result.data).toEqual([east]);
+});
+
+it('does not cache malformed FlyLAX pattern stops', async () => {
+  const fetcher = vi.fn(async (url) =>
+    Response.json(
+      url.endsWith('/patterns') ? [{ id: 1, shape: '' }] : [{ stop: { id: 1, lat: 200, lon: 0 } }],
+    ),
+  );
+  await expect(
+    cachedFeed('routes/6884/stops', 3600, {
+      cache: memory(),
+      fetcher,
+      origin: 'https://flylax-invalid.test',
+    }),
+  ).rejects.toThrow();
 });

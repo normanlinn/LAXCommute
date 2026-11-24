@@ -102,6 +102,11 @@ export default function NextShuttleHero({
                   : t('Live')
                 : t('Waiting for the tracker')}
           </span>
+          {known && !sample && !scheduled && (
+            <a href="https://shuttles.flylax.com/employeeparking" target="_blank" rel="noreferrer">
+              FlyLAX
+            </a>
+          )}
           {clockTime && known && (
             <span className="departure-clock-tag">· {arriving ? clockTime : `~${clockTime}`}</span>
           )}
