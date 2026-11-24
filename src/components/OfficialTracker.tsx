@@ -63,6 +63,11 @@ export default function OfficialTracker({
         {t('View official live arrivals')} <ExternalLink size={16} aria-hidden="true" />
       </a>
       <div className="official-tracker-details">
+        <p className="crowd-note">
+          <a href="https://shuttles.flylax.com/employeeparking" target="_blank" rel="noreferrer">
+            FlyLAX · {t('Official LAX live tracker')} <ExternalLink size={14} aria-hidden="true" />
+          </a>
+        </p>
         {stopName && <p className="crowd-note">{stopName}</p>}
         <p className="crowd-note">
           {t(

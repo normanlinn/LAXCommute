@@ -91,6 +91,7 @@ async function sourceData(path: string, options: FeedOptions): Promise<unknown> 
       signal: AbortSignal.timeout(3500),
     });
     if (!response.ok) {
+      console.warn(`Shuttle upstream ${new URL(request.url).hostname} returned ${response.status}`);
       throw new FeedError('The shuttle feed is temporarily unavailable.', response.status);
     }
     return response.json();
